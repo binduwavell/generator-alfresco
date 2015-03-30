@@ -1,13 +1,13 @@
 {
   "name": "generator-alfresco",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Yeoman generator",
   "license": "MIT",
   "main": "app/index.js",
   "repository": "binduwavell/generator-alfresco",
   "author": {
     "name": "Bindu Wavell",
-    "email": "",
+    "email": "bindu@ziaconsulting.com",
     "url": "https://github.com/binduwavell"
   },
   "engines": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "yeoman-generator": "^0.18.9",
     "chalk": "^1.0.0",
+    "xml2js": "^0.4.6",
     "yosay": "^1.0.2"
   },
   "devDependencies": {
