@@ -6,36 +6,33 @@ var fs = require('fs');
 var rmdir = require('rmdir');
 var yosay = require('yosay');
 
-/*
-
-Here is how we can setup a project using an unnatended maven archetype
-mvn archetype:generate -DinteractiveMode=false \
-    -DarchetypeGroupId=org.alfresco.maven.archetype -DarchetypeArtifactId=alfresco-allinone-archetype -DarchetypeVersion=2.0.0 \
-    -DgroupId=com.ziaconsulting -DartifactId=aio -Dversion=1.0.0-SNAPSHOT
-
-*/
-
 module.exports = yeoman.generators.Base.extend({
   initializing: function () {
     this.pkg = require('../package.json');
     this.sdkVersions = {
       "2.0.0": {
-        url: "https://github.com/Alfresco/alfresco-sdk.git",
-        username: "Alfresco",
-        repo: "alfresco-sdk",
-        branch: "alfresco-sdk-aggregator-2.0.0",
-        archetyperoot: 'archetypes/alfresco-allinone-archetype/src/main/resources/archetype-resources/',
-        archetypefilters: ['pom.xml', 'run.sh', 'runner/src/main/webapp/index.html'],
+        archetypeGroupId: 'org.alfresco.maven.archetype',
+        archetypeArtifactId: 'alfresco-allinone-archetype',
+        archetypeVersion: '2.0.0',
+        promptForProjectPackage: false,
       },
-      "master": {
-        url: "https://github.com/Alfresco/alfresco-sdk.git",
-        username: "Alfresco",
-        repo: "alfresco-sdk",
-        branch: "master",
-        archetyperoot: 'archetypes/alfresco-allinone-archetype/src/main/resources/archetype-resources/',
-        archetypefilters: ['pom.xml', 'run.sh', 'runner/src/main/webapp/index.html'],
+      local: {
+        archetypeGroupId: "org.alfresco.maven.archetype",
+        archetypeArtifactId: "alfresco-allinone-archetype",
+        archetypeVersion: "2.0.1-SNAPSHOT", // TODO(bwavell): need to figure this out dynamically
+        archetypeCatalog: 'local',
+        promptForProjectPackage: true,
       }
     };
+    this.config.defaults({
+      sdkVersion: '2.0.0',
+      projectGroupId: 'org.alfresco',
+      projectArtifactId: 'demoamp',
+      projectVersion: '1.0.0-SNAPSHOT',
+    });
+    // TODO(bwavell): do we have a valid version of java?
+    // TODO(bwavell): do we have a valid version of maven?
+    // TODO(bwavell): are maven opts specified?
   },
 
   prompting: function () {
@@ -46,22 +43,62 @@ module.exports = yeoman.generators.Base.extend({
       'Welcome to the ' + chalk.green('Alfresco') + ' generator!'
     ));
 
-    var prompts = [{
-      type: 'list',
-      name: 'sdkVersion',
-      message: 'Which SDK version would you like to use?',
-      default: '2.0.0',
-      store: true,
-      choices: [
-        '2.0.0',
-        'master'
-      ]
-    }];
+    var prompts = [
+      {
+        type: 'list',
+        name: 'sdkVersion',
+        message: 'Which SDK version would you like to use?',
+        default: this.config.get('sdkVersion'),
+        store: true,
+        choices: this._.keys(this.sdkVersions),
+      },
+      {
+        type: 'input',
+        name: 'projectGroupId',
+        message: 'Project groupId?',
+        default: this.config.get('projectGroupId'),
+        store: true,
+      },
+      {
+        type: 'input',
+        name: 'projectArtifactId',
+        message: 'Project artifactId?',
+        default: this.config.get('projectArtifactId'),
+        store: true,
+      },
+      {
+        type: 'input',
+        name: 'projectVersion',
+        message: 'Project version?',
+        default: this.config.get('projectVersion'),
+        store: true,
+      },
+    ];
 
     this.prompt(prompts, function (props) {
       this.sdk = this.sdkVersions[props.sdkVersion];
-      this.props = props;
-      done();
+      this.projectGroupId = props.projectGroupId;
+      this.projectArtifactId = props.projectArtifactId;
+      this.projectVersion = props.projectVersion;
+      if (this.sdk.promptForProjectPackage) {
+        prompts = [
+          {
+            type: 'input',
+            name: 'projectPackage',
+            message: 'Project package?',
+            default: this.projectGroupId + '.' + this.projectArtifactId,
+            store: true,
+          },
+        ];
+        this.prompt(prompts, function (props) {
+          this.projectPackage = props.projectPackage;
+          this.config.set('projectPackage', this.projectPackage);
+          done();
+        }.bind(this));
+      } else {
+        this.config.set('projectPackage', 'org.alfresco');
+        done();
+      }
     }.bind(this));
   },
 
@@ -70,60 +107,62 @@ module.exports = yeoman.generators.Base.extend({
       // Save config
       this.config.save();
     },
+  },
+
+  writing: {
     archetype: function () {
       var done = this.async();
 
-      var generated_path = 'yoaio';
       var cwd = process.cwd();
-      this.log('Current working directory: ', cwd);
 
       var cmd = 'mvn';
       var args = [
         'archetype:generate',
         '-DinteractiveMode=false',
-        '-DarchetypeGroupId=org.alfresco.maven.archetype',
-        '-DarchetypeArtifactId=alfresco-allinone-archetype',
-        '-DarchetypeVersion=2.0.0',
-        '-DgroupId=com.ziaconsulting',
-        '-DartifactId=yoaio',
-        '-Dversion=1.0.0-SNAPSHOT',
-        '-Dpackage=com.ziaconsulting.yoaio'
+        '-DarchetypeGroupId=' + this.sdk.archetypeGroupId,
+        '-DarchetypeArtifactId=' + this.sdk.archetypeArtifactId,
+        '-DarchetypeVersion=' + this.sdk.archetypeVersion,
+        '-DgroupId=' + this.projectGroupId,
+        '-DartifactId=' + this.projectArtifactId,
+        '-Dversion=' + this.projectVersion,
       ];
+      if (undefined !== this.sdk.archetypeCatalog) {
+        args.push('-DarchetypeCatalog=' + this.sdk.archetypeCatalog);
+      }
+      if (undefined !== this.projectPackage) {
+        args.push('-Dpackage=' + this.projectPackage);
+      }
       var proc = this.spawnCommand(cmd, args, this._.defaults({ stdio: 'inherit' }));
 
       // Once mvn completes move stuff up a level
       proc.on('exit', function(code, signal) {
-        var sdkContents = fs.readdirSync(cwd + '/' + generated_path);
+        var sdkContents = fs.readdirSync(cwd + '/' + this.projectArtifactId);
         this._(sdkContents).forEach(function(fileOrFolder) {
           this.fs.copy(
-            cwd + '/' + generated_path + '/' + fileOrFolder,
+            cwd + '/' + this.projectArtifactId + '/' + fileOrFolder,
             this.destinationPath(fileOrFolder)
           );
         }.bind(this));
-        rmdir(cwd + '/' + generated_path, function (err, dir, files) {
+        rmdir(cwd + '/' + this.projectArtifactId, function (err, dir, files) {
 
         }.bind(this));
         done();
       }.bind(this));
-    }
-  },
-
-  writing: {
-    app: function () {
-
-      // Copy project files
-      /*
-      this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
-      */
     },
-
+    app: function () {
+      this.fs.copy(
+        this.templatePath('editorconfig'),
+        this.destinationPath('.editorconfig')
+      );
+      // copy folders
+      this._.forEach(['amps', 'amps_share', 'amps_source'], function(folderName) {
+        this.directory(folderName, folderName,
+          function(body, source, dest) {
+            this.log("FROM: " + source + " TO: " + dest);
+            return body;
+          }.bind(this));
+      }.bind(this));
+    },
   },
 
   install: {
