@@ -49,7 +49,6 @@ module.exports = yeoman.generators.Base.extend({
         name: 'sdkVersion',
         message: 'Which SDK version would you like to use?',
         default: this.config.get('sdkVersion'),
-        store: true,
         choices: this._.keys(this.sdkVersions),
       },
       {
@@ -57,50 +56,75 @@ module.exports = yeoman.generators.Base.extend({
         name: 'projectGroupId',
         message: 'Project groupId?',
         default: this.config.get('projectGroupId'),
-        store: true,
       },
       {
         type: 'input',
         name: 'projectArtifactId',
         message: 'Project artifactId?',
         default: this.config.get('projectArtifactId'),
-        store: true,
       },
       {
         type: 'input',
         name: 'projectVersion',
         message: 'Project version?',
         default: this.config.get('projectVersion'),
-        store: true,
       },
     ];
 
     this.prompt(prompts, function (props) {
       this.sdk = this.sdkVersions[props.sdkVersion];
+      this._saveProps(
+        [
+          'sdkVersion',
+          'projectGroupId',
+          'projectArtifactId',
+          'projectVersion',
+        ],
+        props);
+      /*
       this.projectGroupId = props.projectGroupId;
       this.projectArtifactId = props.projectArtifactId;
       this.projectVersion = props.projectVersion;
+      */
       if (this.sdk.promptForProjectPackage) {
         prompts = [
           {
             type: 'input',
             name: 'projectPackage',
             message: 'Project package?',
-            default: this.projectGroupId + '.' + this.projectArtifactId,
-            store: true,
+            default: this.projectGroupId,
           },
         ];
         this.prompt(prompts, function (props) {
+          this._saveProp('projectPackage', props);
+          /*
           this.projectPackage = props.projectPackage;
           this.config.set('projectPackage', this.projectPackage);
+          */
           done();
         }.bind(this));
       } else {
-        this.config.set('projectPackage', 'org.alfresco');
+        this.projectPackage = 'org.alfresco';
+        this.config.set('projectPackage', this.projectPackage);
         done();
       }
+
+
     }.bind(this));
   },
+
+  _saveProp: function(propName, propObject) {
+    var value = propObject[propName];
+    this[propName] = value;
+    this.config.set(propName, value);
+  },
+
+  _saveProps: function(propNames, propObject) {
+    this._.forEach(propNames, function(propName) {
+      this._saveProp(propName, propObject);
+    }.bind(this));
+  },
+
 
   configuring: {
     saveConfig: function () {
@@ -166,6 +190,12 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   install: {
+    makeRunExecutable: function () {
+      var cwd = process.cwd();
+      fs.chmod(cwd + '/run.sh', 755, function(err) {
+        this.log("Marking run.sh as executable.")
+      }.bind(this));
+    }
   },
 
 });
