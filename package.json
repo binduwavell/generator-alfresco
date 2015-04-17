@@ -17,7 +17,9 @@
     "test": "mocha"
   },
   "files": [
-    "app"
+    "app",
+    "webscript",
+    "remove-samples"
   ],
   "keywords": [
     "yeoman-generator"

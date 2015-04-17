@@ -1,0 +1,7 @@
+<webscript>
+    <shortname><%= shortName %></shortname>
+    <description><%= desc %></description>
+    <url><%= url %></url>
+    <authentication><%= auth %></authentication>
+    <format default="<%= format %>"></format>
+</webscript>
