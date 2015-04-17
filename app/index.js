@@ -1,7 +1,9 @@
 'use strict';
-var regulate = require('./regulate');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
+var child_process = require('child_process');
+var fs = require('fs');
+var rmdir = require('rmdir');
 var yosay = require('yosay');
 
 /*
@@ -63,10 +65,52 @@ module.exports = yeoman.generators.Base.extend({
     }.bind(this));
   },
 
-  writing: {
-    app: function () {
+  configuring: {
+    saveConfig: function () {
       // Save config
       this.config.save();
+    },
+    archetype: function () {
+      var done = this.async();
+
+      var generated_path = 'yoaio';
+      var cwd = process.cwd();
+      this.log('Current working directory: ', cwd);
+
+      var cmd = 'mvn';
+      var args = [
+        'archetype:generate',
+        '-DinteractiveMode=false',
+        '-DarchetypeGroupId=org.alfresco.maven.archetype',
+        '-DarchetypeArtifactId=alfresco-allinone-archetype',
+        '-DarchetypeVersion=2.0.0',
+        '-DgroupId=com.ziaconsulting',
+        '-DartifactId=yoaio',
+        '-Dversion=1.0.0-SNAPSHOT',
+        '-Dpackage=com.ziaconsulting.yoaio'
+      ];
+      var proc = this.spawnCommand(cmd, args, this._.defaults({ stdio: 'inherit' }));
+
+      // Once mvn completes move stuff up a level
+      proc.on('exit', function(code, signal) {
+        var sdkContents = fs.readdirSync(cwd + '/' + generated_path);
+        this._(sdkContents).forEach(function(fileOrFolder) {
+          this.fs.copy(
+            cwd + '/' + generated_path + '/' + fileOrFolder,
+            this.destinationPath(fileOrFolder)
+          );
+        }.bind(this));
+        rmdir(cwd + '/' + generated_path, function (err, dir, files) {
+
+        }.bind(this));
+        done();
+      }.bind(this));
+    }
+  },
+
+  writing: {
+    app: function () {
+
       // Copy project files
       /*
       this.fs.copy(
@@ -80,63 +124,9 @@ module.exports = yeoman.generators.Base.extend({
       */
     },
 
-    getarchetype: function () {
-      var done = this.async();
+  },
 
-      // Download the appropriate SDK branch from github and copy the
-      // all-in-one archetype into our project. Performing velocity
-      // substitution for files we plan to adjust.
-      var archetypePathPrefix = this.sdk.archetyperoot;
-      this.remote(this.sdk.username, this.sdk.repo, this.sdk.branch, function(err, remote, files) {
-        // remote.directory() doesn't pass the process function argument to the
-        // main directory() function so we have to do the work ourselves.
-        var savedSourceRoot = this.sourceRoot();
-        this.sourceRoot(remote.cachePath);
-        this.directory(
-          archetypePathPrefix,
-          this.destinationPath(),
-          function(body, source, dest) {
-            // The SDK does some value replacement as the archetypes are built,
-            // before they are posted to maven central, this performs similar
-            // replacements.
-            var shouldPrefilter = this._.any(this.sdk.archetypefilters, function(item) {
-              var pathedItem = remote.cachePath + '/' + archetypePathPrefix + item;
-              return (source == pathedItem)
-            }.bind(this));
-            if (shouldPrefilter) {
-              // TODO: These values should come from the sdk configuration
-              body = regulate.render(body, {
-                'alfresco.sdk.parent.version' : '2.0.0',
-                'springloaded.version' : '1.2.0.RELEASE',
-              });
-            }
-            // Simulate maven archetype velocity filtering
-            // TODO: These values should be provided by the user
-            // TODO: Submodules are handle in a special way by
-            //       the archetype system. As such we need to
-            //       inject an modules list into the top level
-            //       pom. Additionally we need for the artifactId
-            //       for sub-modules to not be the same as the
-            //       rootArtifactId.
-            body = regulate.render(body, {
-              rootArtifactId: 'aio',
-              groupId: 'com.ziaconsulting',
-              artifactId: 'aio',
-              version: '1.0.0-SNAPSHOT',
-              alfresco_target_groupId: 'org.alfresco',
-              alfresco_target_version: '5.0.c',
-            }, {
-              prefix: '\\${',
-              suffix: '}'
-            });
-            return body;
-          }.bind(this));
-        this.sourceRoot(savedSourceRoot);
-
-        done();
-      }.bind(this), false);
-    },
-
+  install: {
   },
 
 });
