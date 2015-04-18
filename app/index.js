@@ -8,6 +8,7 @@ var yosay = require('yosay');
 
 module.exports = yeoman.generators.Base.extend({
   initializing: function () {
+    this.out = require('./app-output.js')(this);
     this.pkg = require('../package.json');
     this.sdkVersions = {
       "2.0.0": {
@@ -193,7 +194,7 @@ module.exports = yeoman.generators.Base.extend({
     makeRunExecutable: function () {
       var cwd = process.cwd();
       fs.chmod(cwd + '/run.sh', 755, function(err) {
-        this.log("Marking run.sh as executable.")
+        this.out.info('Marking run.sh as executable');
       }.bind(this));
     }
   },
