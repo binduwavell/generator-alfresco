@@ -12,7 +12,7 @@ describe('Alfresco:remove-samples', function () {
       .on('end', done);
   });
 
-  it('creates files', function () {
+  it.skip('creates files', function () {
     assert.file([
       'somefile.js'
     ]);
