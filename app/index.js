@@ -156,12 +156,14 @@ module.exports = yeoman.generators.Base.extend({
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
           throw new Error('Unfortunately the current version of java (' + this.javaVersion +
               ') does not match one of the supported versions: ' + this.sdk.supportedJavaVersions +
-              ' for the SDK you have selected (' + this.archetypeVersion + '). Either set JAVA_HOME to point to a valid version of java or install one.');
+              ' for the SDK you have selected (' + this.archetypeVersion + ').' +
+              ' Either set JAVA_HOME to point to a valid version of java or install one.');
         }
         if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
           throw new Error('Unfortunately the current version of maven (' + this.mavenVersion +
               ') does not match one of the supported versions: ' + this.sdk.supportedMavenVersions +
-              '. Please install a .');
+              ' for the SDK you have selected (' + this.archetypeVersion + ').' +
+              ' Please install a supported version.');
         }
       } catch (e) {
         this.out.error(e.message);
