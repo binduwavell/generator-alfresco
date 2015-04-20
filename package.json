@@ -26,8 +26,12 @@
   ],
   "dependencies": {
     "yeoman-generator": "^0.18.9",
+    "deasync": "^0.0.10",
     "chalk": "^1.0.0",
+    "cross-spawn": "^0.2.9",
     "rmdir": "^1.1.0",
+    "semver": "^4.3.3",
+    "split": "^0.3.3",
     "xml2js": "^0.4.6",
     "yosay": "^1.0.2"
   },
