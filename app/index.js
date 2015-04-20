@@ -11,6 +11,7 @@ module.exports = yeoman.generators.Base.extend({
   initializing: function () {
     this.out = require('./app-output.js')(this);
     this.pkg = require('../package.json');
+    this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = {
       "2.0.0": {
         archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -154,16 +155,16 @@ module.exports = yeoman.generators.Base.extend({
     checkVersions: function () {
       try {
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
-          throw new Error('Unfortunately the current version of java (' + this.javaVersion +
-              ') does not match one of the supported versions: ' + this.sdk.supportedJavaVersions +
-              ' for the SDK you have selected (' + this.archetypeVersion + ').' +
-              ' Either set JAVA_HOME to point to a valid version of java or install one.');
+          throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') ' +
+              'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' ' +
+              'for the SDK you have selected (' + this.archetypeVersion + '). ' +
+              'Either set JAVA_HOME to point to a valid version of java or install one.');
         }
         if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
-          throw new Error('Unfortunately the current version of maven (' + this.mavenVersion +
-              ') does not match one of the supported versions: ' + this.sdk.supportedMavenVersions +
-              ' for the SDK you have selected (' + this.archetypeVersion + ').' +
-              ' Please install a supported version.');
+          throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') ' +
+              'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' ' +
+              'for the SDK you have selected (' + this.archetypeVersion + '). ' +
+              'Please install a supported version.');
         }
       } catch (e) {
         this.out.error(e.message);
@@ -232,7 +233,7 @@ module.exports = yeoman.generators.Base.extend({
   install: {
     makeRunExecutable: function () {
       var cwd = process.cwd();
-      fs.chmod(cwd + '/run.sh', 755, function(err) {
+      fs.chmod(cwd + '/run.sh', '0755', function(err) {
         this.out.info('Marking run.sh as executable');
       }.bind(this));
     }
