@@ -14,7 +14,6 @@ describe('alfresco:app', function () {
       .inDir(path.join(os.tmpdir(), './temp-test'))
       .withOptions({ 'skip-install': true })
       .withPrompt({
-        someOption: true
       })
       .on('end', done);
   });
@@ -23,9 +22,11 @@ describe('alfresco:app', function () {
     // TODO(bwavell): add more tests
     assert.file([
       '.editorconfig',
+      '.gitignore',
       '.yo-rc.json',
       'pom.xml',
       'run.sh',
+      'debug.sh',
       'amps/README.md',
       'amps_share/README.md',
       'amps_source/README.md',
@@ -43,5 +44,11 @@ describe('alfresco:app', function () {
       'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml',
       /<import resource="classpath:alfresco\/module\/\${project\.artifactId}\/context\/generated\/\*-context\.xml"\/>/
     );
+  });
+  it('does not update run.sh and debug.sh with -Penterprise flag', function () {
+    assert.noFileContent([
+      ['run.sh', /-Penterprise/],
+      ['debug.sh', /-Penterprise/]
+    ]);
   });
 });
