@@ -11,3 +11,4 @@ TODONE
     [x] debug.sh
 [x] Offer to generate a .gitignore (or just do it)
 [x] Fix npm test after adding npm run fixme
+[x] Update module-context.xml so generated beans are automatically included

@@ -35,6 +35,13 @@ describe('alfresco:app', function () {
       'share/pom.xml',
       'share-amp/pom.xml',
       'solr/pom.xml',
+      'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
     ]);
+  });
+  it('adds generic include for generated beans', function () {
+    assert.fileContent(
+      'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml',
+      /<import resource="classpath:alfresco\/module\/\${project\.artifactId}\/context\/generated\/\*-context\.xml"\/>/
+    );
   });
 });
