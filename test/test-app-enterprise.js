@@ -7,7 +7,7 @@ var os = require('os');
 
 describe('alfresco:app', function () {
 
-  this.timeout(20000);
+  this.timeout(60000);
 
   before(function (done) {
     helpers.run(path.join(__dirname, '../app'))
