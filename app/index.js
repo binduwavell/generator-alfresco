@@ -38,6 +38,8 @@ module.exports = yeoman.generators.Base.extend({
       projectArtifactId: 'demoamp',
       projectVersion: '1.0.0-SNAPSHOT',
       projectPackage: 'org.alfresco',
+      communityOrEnterprise: 'Community',
+      includeGitIgnore: true,
     });
     try {
       this.javaVersion = versions.getJavaVersion();
@@ -116,6 +118,19 @@ module.exports = yeoman.generators.Base.extend({
           return this.sdk.promptForProjectPackage;
         }.bind(this),
       },
+      {
+        type: 'list',
+        name: 'communityOrEnterprise',
+        message: 'Would you like to use Community or Enterprise?',
+        default: this.config.get('communityOrEnterprise'),
+        choices: ['Community', 'Enterprise'],
+      },
+      {
+        type: 'confirm',
+        name: 'includeGitIgnore',
+        message: 'Should we generate a default .gitignore file?',
+        default: this.config.get('includeGitIgnore'),
+      },
     ];
 
     var donePrompting = this.async();
@@ -128,6 +143,8 @@ module.exports = yeoman.generators.Base.extend({
         'projectArtifactId',
         'projectVersion',
         'projectPackage',
+        'communityOrEnterprise',
+        'includeGitIgnore',
       ], props);
       donePrompting();
     }.bind(this));
@@ -220,6 +237,19 @@ module.exports = yeoman.generators.Base.extend({
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
       );
+      if (this.includeGitIgnore) {
+        this.fs.copy(
+          this.templatePath('gitignore'),
+          this.destinationPath('.gitignore')
+        );
+      }
+      // copy scripts
+      this._.forEach(['run.sh', 'debug.sh'], function(scriptName) {
+        this.fs.copy(
+          this.templatePath(this.communityOrEnterprise.toLowerCase() + '/' + scriptName),
+          this.destinationPath(scriptName)
+        );
+      }.bind(this));
       // copy folders
       this._.forEach(['amps', 'amps_share', 'amps_source'], function(folderName) {
         this.directory(folderName, folderName,
@@ -233,8 +263,10 @@ module.exports = yeoman.generators.Base.extend({
   install: {
     makeRunExecutable: function () {
       var cwd = process.cwd();
-      fs.chmod(cwd + '/run.sh', '0755', function(err) {
-        this.out.info('Marking run.sh as executable');
+      this._.forEach(['run.sh', 'debug.sh'], function(scriptName) {
+        fs.chmod(cwd + '/' + scriptName, '0755', function(err) {
+          this.out.info('Marking ' + scriptName + ' as executable');
+        }.bind(this));
       }.bind(this));
     }
   },
