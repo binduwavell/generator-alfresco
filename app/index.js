@@ -3,6 +3,7 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var fs = require('fs');
 var inspect = require('eyes').inspector({maxLength: false});
+var ncp = require('ncp').ncp;
 var rmdir = require('rmdir');
 var semver = require('semver');
 var versions = require('./versions.js');
@@ -229,12 +230,12 @@ module.exports = yeoman.generators.Base.extend({
           );
         }.bind(this));
         rmdir(cwd + '/' + this.projectArtifactId, function (err, dir, files) {
-
+          // nothing to do here
         }.bind(this));
         done();
       }.bind(this));
     },
-    editMavenResources: function() {
+    editGeneratedResources: function() {
       var done = this.async();
       // Arrange for all generated beans to be icnluded
       var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
@@ -261,6 +262,11 @@ module.exports = yeoman.generators.Base.extend({
       )
     },
     generatorOverlay: function () {
+      var isEnterprise = ('Enterprise' === this.communityOrEnterprise);
+      var tplContext = {
+        isEnterprise: isEnterprise,
+        enterpriseFlag: (isEnterprise ? '-Penterprise' : '')
+      };
       this.fs.copy(
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
@@ -271,29 +277,64 @@ module.exports = yeoman.generators.Base.extend({
           this.destinationPath('.gitignore')
         );
       }
-      // copy scripts
-      this._.forEach(['run.sh', 'debug.sh'], function(scriptName) {
-        this.fs.copy(
-          this.templatePath(this.communityOrEnterprise.toLowerCase() + '/' + scriptName),
-          this.destinationPath(scriptName)
-        );
-      }.bind(this));
+      this.fs.copyTpl(
+        this.templatePath('TODO.md'),
+        this.destinationPath('TODO.md'),
+        tplContext
+      );
       // copy folders
-      this._.forEach(['amps', 'amps_share', 'amps_source', 'repo-amp'],
+      this._.forEach(['amps', 'amps_share', 'amps_source', 'amps_source_templates', 'repo-amp', 'scripts'],
         function(folderName) {
-          this.directory(folderName, folderName,
-            function(body, source, dest) {
-              return body;
-            }.bind(this));
+          this.fs.copyTpl(
+            this.templatePath(folderName),
+            this.destinationPath(folderName),
+            tplContext
+            );
         }.bind(this)
       );
-    },
+      // copy run.sh to top level folder
+      this.fs.copy(
+        this.destinationPath('scripts/run.sh'),
+        this.destinationPath('run.sh')
+      );
+      // enterprise specific stuff
+      if (isEnterprise) {
+        this.fs.copy(
+          this.templatePath('repo'),
+          this.destinationPath('repo'),
+          tplContext);
+      }
+    }
   },
 
   install: {
+    saveAMPSourceTemplates: function() {
+      var folders = ['repo-amp', 'share-amp'];
+      var done;
+      // Need to increment async count for each ncp we plan to run
+      this._.forEach(folders, function(folderName) {
+        done = this.async();
+      }.bind(this));
+      this.out.info('Attempting to backup generated amp templates');
+      ncp.limit = 16;
+      this._.forEach(folders,
+        function(folderName) {
+          ncp(
+            this.destinationPath(folderName),
+            this.destinationPath('amps_source_templates/' + folderName),
+            function(err) {
+              if (err) {
+                this.out.error(err);
+              }
+              done();
+            }.bind(this)
+          );
+        }.bind(this)
+      );
+    },
     makeRunExecutable: function () {
       var cwd = process.cwd();
-      this._.forEach(['run.sh', 'debug.sh'], function(scriptName) {
+      this._.forEach(['run.sh', 'scripts/debug.sh', 'scripts/run.sh'], function(scriptName) {
         fs.chmod(cwd + '/' + scriptName, '0755', function(err) {
           this.out.info('Marking ' + scriptName + ' as executable');
         }.bind(this));

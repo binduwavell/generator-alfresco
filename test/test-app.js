@@ -26,16 +26,22 @@ describe('alfresco:app', function () {
       '.yo-rc.json',
       'pom.xml',
       'run.sh',
-      'debug.sh',
+      'scripts/debug.sh',
+      'scripts/env.sh',
+      'scripts/run.sh',
       'amps/README.md',
       'amps_share/README.md',
       'amps_source/README.md',
+      'amps_source_templates/README.md',
+      'amps_source_templates/repo-amp/pom.xml',
+      'amps_source_templates/share-amp/pom.xml',
       'repo/pom.xml',
       'repo-amp/pom.xml',
       'runner/pom.xml',
       'share/pom.xml',
       'share-amp/pom.xml',
       'solr/pom.xml',
+      'TODO.md',
       'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
     ]);
   });
@@ -45,10 +51,16 @@ describe('alfresco:app', function () {
       /<import resource="classpath:alfresco\/module\/\${project\.artifactId}\/context\/generated\/\*-context\.xml"\/>/
     );
   });
-  it('does not update run.sh and debug.sh with -Penterprise flag', function () {
+  it('does not create enterprise specific files', function () {
+    assert.noFile([
+      'repo/src/main/resources/alfresco/extension/license/README.md',
+    ]);
+  });
+  it('run.sh and debug.sh should not include -Penterprise flag', function () {
     assert.noFileContent([
       ['run.sh', /-Penterprise/],
-      ['debug.sh', /-Penterprise/]
+      ['scripts/debug.sh', /-Penterprise/],
+      ['scripts/run.sh', /-Penterprise/]
     ]);
   });
 });

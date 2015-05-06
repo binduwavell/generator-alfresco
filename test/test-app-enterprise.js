@@ -19,10 +19,17 @@ describe('alfresco:app', function () {
       .on('end', done);
   });
 
+  it('creates files', function () {
+    assert.file([
+      'repo/src/main/resources/alfresco/extension/license/README.md',
+    ]);
+  });
+
   it('updates run.sh and debug.sh with -Penterprise flag', function () {
     assert.fileContent([
       ['run.sh', /-Penterprise/],
-      ['debug.sh', /-Penterprise/]
+      ['scripts/debug.sh', /-Penterprise/],
+      ['scripts/run.sh', /-Penterprise/],
     ]);
   });
 });

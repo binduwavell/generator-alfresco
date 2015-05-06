@@ -2,11 +2,11 @@ TODO
 ====
 
 - [ ] Include instructions about how to configure IDEs (or generate the config)
-- [ ] Include instructions for where to place the license file
 
 TODONE
 ======
 
+- [x] Include instructions for where to place the license file when enterprise is selected
 - [x] Prompt for community or enterprise and adjustment scripts
   - [x] run.sh
   - [x] debug.sh
