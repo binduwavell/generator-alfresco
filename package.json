@@ -34,7 +34,7 @@
     "split": "^0.3.3",
     "xml2js": "^0.4.8",
     "yosay": "^1.0.2",
-    "fs-walk": "^0.0.1"
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "fixme": "^0.1.1",

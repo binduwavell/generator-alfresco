@@ -2,9 +2,10 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var fs = require('fs');
+var inspect = require('eyes').inspector({maxLength: false});
 var xml2js = require('xml2js');
 var yosay = require('yosay');
-var walk = require("fs-walk");
+var walk = require("walk");
 var path = require("path");
 var ampProps;
 
@@ -14,7 +15,7 @@ module.exports = yeoman.generators.Base.extend({
                 'Welcome to the ' + chalk.green('Alfresco') + ' AMP generator!'
               ));
     },
-    
+
     prompting: function () {
 
         var prompts = [
@@ -47,15 +48,15 @@ module.exports = yeoman.generators.Base.extend({
 
     writing : function() {
         var done = this.async();
-        
+
         this.template(this.templatePath('/'+this.config.get('sdkVersion')+'/amps_source.xml'), this.destinationPath('amps_source/pom.xml'), {
             groupId : this.config.get('projectGroupId'),
             version : this.config.get('projectVersion'),
             projectName : this.config.get('projectArtifactId')
         });
 
-        this.directory(this.templatePath('/'+this.config.get('sdkVersion')+'/new_module'), 
-            this.destinationPath('amps_source/'+ampProps['moduleId']), 
+        this.directory(this.templatePath('/'+this.config.get('sdkVersion')+'/new_module'),
+            this.destinationPath('amps_source/'+ampProps['moduleId']),
             function(body, source, dest) {
             this.log("======> "+source + " --- " + ampProps['moduleVersion']);
             return this.engine(body, {
@@ -67,21 +68,46 @@ module.exports = yeoman.generators.Base.extend({
                 projectName : this.config.get('projectArtifactId')
             });
         }.bind(this));
-        
+
         done();
     },
-    
+
     install: function() {
         var done = this.async();
-        
-        walk.walk(this.destinationPath('amps_source/'+ampProps['moduleId']), function(basedir, filename, stat, next) {
-            if(filename.indexOf('{moduleId}') >= 0) {
-                fs.renameSync(path.join(basedir, filename), path.join(basedir, filename.replace('{moduleId}',ampProps['moduleId'])));
-            }
-        }.bind(this), function(err) {
-            if (err) this.log(err);
+
+        // We need to process the folders bottom up which can be acheived by
+        // capturing the folders top down and reversing the array. The reason
+        // for this is we can rename something lower before something closer
+        // to the root and then have a change of renaming something closer to
+        // the root. The other way around does not work well.
+        var moduleId = ampProps['moduleId'];
+        var pathToProcess = this.destinationPath('amps_source/'+moduleId);
+        var dirs = [];
+        var walker = walk.walk(pathToProcess);
+        walker.on('directory', function(root, dirStats, next) {
+          dirs.push({"path": root, "filename": dirStats.name});
+          next();
         }.bind(this));
-        
-        done();
+        walker.on('errors', function(root, nodeStatsArray, next) {
+          this._.forEach(nodeStatsArray,
+            function(stat) {
+              this.log("ERROR: " + stat.error);
+            });
+          next();
+        }.bind(this));
+        walker.on('end', function() {
+          dirs.reverse();
+          this._.forEach(dirs,
+            function(dir) {
+              if(dir.filename.indexOf('{moduleId}') >= 0) {
+                try {
+                  fs.renameSync(path.join(dir.path, dir.filename), path.join(dir.path, dir.filename.replace('{moduleId}',moduleId)));
+                } catch (err) {
+                  this.log(err.message);
+                }
+              }
+            }.bind(this));
+          done();
+        }.bind(this));
     }
 });
