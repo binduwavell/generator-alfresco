@@ -78,6 +78,8 @@ module.exports = yeoman.generators.Base.extend({
         name: 'archetypeVersion',
         message: 'Archetype version?',
         default: function(props) {
+          var savedArchetypeVersion = this.config.get('archetypeVersion');
+          if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
         }.bind(this),
         when: function(props) {
@@ -207,7 +209,7 @@ module.exports = yeoman.generators.Base.extend({
         '-DinteractiveMode=false',
         '-DarchetypeGroupId=' + this.sdk.archetypeGroupId,
         '-DarchetypeArtifactId=' + this.sdk.archetypeArtifactId,
-        '-DarchetypeVersion=' + this.sdk.archetypeVersion,
+        '-DarchetypeVersion=' + this.archetypeVersion,
         '-DgroupId=' + this.projectGroupId,
         '-DartifactId=' + this.projectArtifactId,
         '-Dversion=' + this.projectVersion,
