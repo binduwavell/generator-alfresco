@@ -1,6 +1,7 @@
 TODO
 ====
 
+- [ ] Do not backup source amps when generator is re-run
 - [ ] Include instructions about how to configure IDEs (or generate the config)
 
 TODONE

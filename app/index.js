@@ -27,7 +27,7 @@ module.exports = yeoman.generators.Base.extend({
       local: {
         archetypeGroupId: "org.alfresco.maven.archetype",
         archetypeArtifactId: "alfresco-allinone-archetype",
-        archetypeVersion: "2.0.1-SNAPSHOT",
+        archetypeVersion: "2.1.0-SNAPSHOT",
         archetypeCatalog: 'local',
         promptForArchetypeVersion: true,
         promptForProjectPackage: true,
