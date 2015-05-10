@@ -296,6 +296,7 @@ module.exports = yeoman.generators.Base.extend({
       // copy folders
       this._.forEach(['amps', 'amps_share', 'amps_source', 'amps_source_templates', 'repo-amp', 'scripts'],
         function(folderName) {
+          this.out.info('Copying ' + folderName);
           this.fs.copyTpl(
             this.templatePath(folderName),
             this.destinationPath(folderName),
@@ -349,7 +350,16 @@ module.exports = yeoman.generators.Base.extend({
     },
     makeRunExecutable: function () {
       var cwd = process.cwd();
-      this._.forEach(['run.sh', 'scripts/debug.sh', 'scripts/run.sh'], function(scriptName) {
+      var scripts = [
+        'run.sh',
+        'scripts/debug.sh',
+        'scripts/explode-alf-sources.sh',
+        'scripts/find-exploded.sh',
+        'scripts/grep-exploded.sh',
+        'scripts/package-to-exploded.sh',
+        'scripts/run.sh'
+      ];
+      this._.forEach(scripts, function(scriptName) {
         fs.chmod(cwd + '/' + scriptName, '0755', function(err) {
           if (err) {
             this.out.error(err);

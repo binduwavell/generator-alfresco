@@ -9,3 +9,4 @@
 /*.log*
 target/
 alf_data_dev/
+exploded/
