@@ -321,16 +321,20 @@ module.exports = yeoman.generators.Base.extend({
       ncp.limit = 16;
       this._.forEach(folders,
         function(folderName) {
-          ncp(
-            this.destinationPath(folderName),
-            this.destinationPath('amps_source_templates/' + folderName),
-            function(err) {
-              if (err) {
-                this.out.error(err);
-              }
-              done();
-            }.bind(this)
-          );
+          if (fs.existsSync(this.destinationPath('amps_source_templates/' + folderName))) {
+            this.out.warn(folderName + " template already copied, not re-copying");
+          } else {
+            ncp(
+              this.destinationPath(folderName),
+              this.destinationPath('amps_source_templates/' + folderName),
+              function(err) {
+                if (err) {
+                  this.out.error(err);
+                }
+                done();
+              }.bind(this)
+            );
+          }
         }.bind(this)
       );
     },
@@ -338,7 +342,11 @@ module.exports = yeoman.generators.Base.extend({
       var cwd = process.cwd();
       this._.forEach(['run.sh', 'scripts/debug.sh', 'scripts/run.sh'], function(scriptName) {
         fs.chmod(cwd + '/' + scriptName, '0755', function(err) {
-          this.out.info('Marking ' + scriptName + ' as executable');
+          if (err) {
+            this.out.error(err);
+          } else {
+            this.out.info('Marking ' + scriptName + ' as executable');
+          }
         }.bind(this));
       }.bind(this));
     }

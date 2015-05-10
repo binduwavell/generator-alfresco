@@ -1,12 +1,12 @@
 TODO
 ====
 
-- [ ] Do not backup source amps when generator is re-run
 - [ ] Include instructions about how to configure IDEs (or generate the config)
 
 TODONE
 ======
 
+- [x] Do not backup source amps when generator is re-run
 - [x] Include instructions for where to place the license file when enterprise is selected
 - [x] Prompt for community or enterprise and adjustment scripts
   - [x] run.sh
