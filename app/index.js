@@ -4,6 +4,7 @@ var chalk = require('chalk');
 var fs = require('fs');
 var inspect = require('eyes').inspector({maxLength: false});
 var ncp = require('ncp').ncp;
+var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
 var versions = require('./versions.js');
@@ -203,6 +204,12 @@ module.exports = yeoman.generators.Base.extend({
 
       var cwd = process.cwd();
 
+      var tmpDir = path.join(cwd, 'tmp');
+      if (!fs.existsSync(tmpDir)) {
+        fs.mkdirSync(tmpDir);
+      }
+      process.chdir(tmpDir);
+
       var cmd = 'mvn';
       var args = [
         'archetype:generate',
@@ -224,14 +231,16 @@ module.exports = yeoman.generators.Base.extend({
 
       // Once mvn completes move stuff up a level
       proc.on('exit', function(code, signal) {
-        var sdkContents = fs.readdirSync(cwd + '/' + this.projectArtifactId);
+        process.chdir(cwd); // restore current working directory
+        var genDir = path.join(tmpDir, this.projectArtifactId);
+        var sdkContents = fs.readdirSync(genDir);
         this._(sdkContents).forEach(function(fileOrFolder) {
           this.fs.copy(
-            cwd + '/' + this.projectArtifactId + '/' + fileOrFolder,
+            path.join(genDir, fileOrFolder),
             this.destinationPath(fileOrFolder)
           );
         }.bind(this));
-        rmdir(cwd + '/' + this.projectArtifactId, function (err, dir, files) {
+        rmdir(tmpDir, function (err, dir, files) {
           // nothing to do here
         }.bind(this));
         done();
