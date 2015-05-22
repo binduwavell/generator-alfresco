@@ -17,6 +17,14 @@ module.exports = yeoman.generators.Base.extend({
     this.pkg = require('../package.json');
     this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = {
+      "2.1.0": {
+        archetypeGroupId: 'org.alfresco.maven.archetype',
+        archetypeArtifactId: 'alfresco-allinone-archetype',
+        archetypeVersion: '2.1.0',
+        promptForProjectPackage: false,
+        supportedJavaVersions: '^1.8.0',
+        supportedMavenVersions: '^3.2.5',
+      },
       "2.0.0": {
         archetypeGroupId: 'org.alfresco.maven.archetype',
         archetypeArtifactId: 'alfresco-allinone-archetype',
