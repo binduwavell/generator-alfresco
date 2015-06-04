@@ -11,6 +11,8 @@ var versions = require('./versions.js');
 var xml2js = require('xml2js');
 var yosay = require('yosay');
 
+// and yeah
+
 module.exports = yeoman.generators.Base.extend({
   initializing: function () {
     this.out = require('./app-output.js')(this);
@@ -33,19 +35,19 @@ module.exports = yeoman.generators.Base.extend({
         supportedJavaVersions: '^1.7.0',
         supportedMavenVersions: '^3.0.5',
       },
-      local: {
+      "local": {
         archetypeGroupId: "org.alfresco.maven.archetype",
         archetypeArtifactId: "alfresco-allinone-archetype",
         archetypeVersion: "2.1.0-SNAPSHOT",
         archetypeCatalog: 'local',
         promptForArchetypeVersion: true,
         promptForProjectPackage: true,
-        supportedJavaVersions: '^1.7.0',
-        supportedMavenVersions: '^3.2.2',
+        supportedJavaVersions: '^1.8.0',
+        supportedMavenVersions: '^3.2.5',
       }
     };
     this.config.defaults({
-      sdkVersion: '2.0.0',
+      sdkVersion: '2.1.0',
       projectGroupId: 'org.alfresco',
       projectArtifactId: 'demoamp',
       projectVersion: '1.0.0-SNAPSHOT',
