@@ -1,15 +1,8 @@
-FROM binduwavell/codenvy-alfresco-base:0.1
+FROM binduwavell/codenvy-alfresco-generator-community:0.1
 
 ADD $app$/package.json /tmp/application/package.json
 
 RUN cd /tmp/application && npm install
-
-ENV CODENVY_APP_BIND_DIR /home/user/application
-
-VOLUME ["/home/user/application"]
-
-EXPOSE 8080
-ENV CODENVY_APP_PORT_8080_HTTP 8080
 
 # 1. Update permissions
 # 2. Copy nodejs modules to the application folder
