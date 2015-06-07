@@ -65,6 +65,8 @@ Here is a video showing the process:
 
 [![watch video demo using Codenvy](http://img.youtube.com/vi/Pq5IwG5Aq0Q/0.jpg)](http://www.youtube.com/watch?v=Pq5IwG5Aq0Q)
 
+AN EDIT WE SHOULD REJECT
+
 ## License
 
 Apache 2.0
