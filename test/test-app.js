@@ -5,7 +5,7 @@ var assert = require('yeoman-generator').assert;
 var helpers = require('yeoman-generator').test;
 var os = require('os');
 
-describe('alfresco:app', function () {
+describe('generator-alfresco:app', function () {
 
   this.timeout(60000);
 

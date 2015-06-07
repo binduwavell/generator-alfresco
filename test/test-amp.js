@@ -4,7 +4,7 @@ var path = require('path');
 var assert = require('yeoman-generator').assert;
 var helpers = require('yeoman-generator').test;
 
-describe('Alfresco:amp', function () {
+describe('generator-alfresco:amp', function () {
   /*
   before(function (done) {
     helpers.run(path.join(__dirname, '../amp'))
