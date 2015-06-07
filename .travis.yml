@@ -1,8 +1,15 @@
-sudo: false
-language: node_js
-before_script:
-  - jdk_switcher use oraclejdk8
-node_js:
-  - 'iojs'
-  - '0.12'
-  - '0.10'
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  - NODE_VERSION=0.12
+
+install:
+  - nvm install $NODE_VERSION
+  - npm install
+
+script:
+  - nvm use $NODE_VERSION
+  - npm test
