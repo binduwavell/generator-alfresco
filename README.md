@@ -23,13 +23,22 @@ npm install -g yo
 
 Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
 
+<!--
 To install generator-alfresco from npm, run:
 
 ```bash
 npm install -g generator-alfresco
 ```
+-->
 
-Finally, initiate the generator:
+We have not pushed a version to npmjs.org yet, so you need to clone this project and then:
+
+```bash
+npm install
+npm link # may need sudo
+```
+
+Finally, in a new folder you wish to generate a project in, initiate the generator:
 
 ```bash
 yo alfresco
@@ -41,6 +50,9 @@ Yeoman has a heart of gold. He's a person with feelings and opinions, but he's v
 
 If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
 
+### Want To Edit and Run This Project In Your Browser
+
+Click here to create a configured project at [![Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f)
 
 ## License
 
