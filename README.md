@@ -52,7 +52,7 @@ If you'd like to get to know Yeoman better and meet some of his friends, [Grunt]
 
 ### Want To Edit and Run This Project In Your Browser
 
-Click here to create a configured project at [![Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f)
+Click here to create a configured project at Codenvy: [![alt](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f)
 
 ## License
 
