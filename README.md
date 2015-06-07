@@ -50,9 +50,17 @@ Yeoman has a heart of gold. He's a person with feelings and opinions, but he's v
 
 If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
 
-### Want To Edit and Run This Project In Your Browser
+### Try The Project / Contribute
 
-Click here to create a configured project at Codenvy: [![alt](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f)
+Click the following link to open a clone of this project at Codenvy: 
+[![alt](https://codenvy.com/factory/resources/factory-gray.png)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
+
+Clicking the button will clone this project into a Codenvy workspace, allow you to run the generator in an embedded docker container, run the 
+Alfresco All-In-One project produced by the generator, and even allow you to make edits to the generator and send us pull requests.
+
+Here is a video showing the process:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Pq5IwG5Aq0Q" frameborder="0" allowfullscreen></iframe>
 
 ## License
 
