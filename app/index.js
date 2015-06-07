@@ -8,7 +8,6 @@ var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
 var versions = require('./versions.js');
-var xml2js = require('xml2js');
 var yosay = require('yosay');
 
 // and yeah
@@ -257,30 +256,17 @@ module.exports = yeoman.generators.Base.extend({
       }.bind(this));
     },
     editGeneratedResources: function() {
-      var done = this.async();
-      // Arrange for all generated beans to be icnluded
+      // Arrange for all generated beans to be included
       var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
-      xml2js.parseString(
-        this.fs.read(this.destinationPath(moduleContextPath)),
-        function(err, result) {
-          // add generic import for all generated beans
-          result.beans.import.push({$: {"resource": "classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml"}});
-          // output XML, unfortunately xml2js messes with the xml a little bit
-          // so we have to set standalone: false and we have to re-inject the
-          // doctype.
-          var opts = {
-            xmldec: {version: '1.0', encoding: 'UTF-8', standalone: false},
-            doctype: {
-              pubID: '-//SPRING//DTD BEAN//EN',
-              sysID: 'http://www.springframework.org/dtd/spring-beans.dtd'
-            }
-          };
-          var builder = new xml2js.Builder(opts);
-          var xml = builder.buildObject(result);
-          this.fs.write(moduleContextPath, xml);
-          done();
-        }.bind(this)
-      )
+      var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
+
+      var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
+      var context = require('./spring-context.js')(contextDocOrig);
+      if (!context.hasImport(importPath)) {
+        context.addImport(importPath);
+        var contextDocNew = context.getContextString();
+        this.fs.write(moduleContextPath, contextDocNew);
+      }
     },
     generatorOverlay: function () {
       var isEnterprise = ('Enterprise' === this.communityOrEnterprise);
