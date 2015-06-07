@@ -53,14 +53,17 @@ If you'd like to get to know Yeoman better and meet some of his friends, [Grunt]
 ### Try The Project / Contribute
 
 Click the following link to open a clone of this project at Codenvy: 
-[![alt](https://codenvy.com/factory/resources/factory-gray.png)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
+[![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
 
-Clicking the button will clone this project into a Codenvy workspace, allow you to run the generator in an embedded docker container, run the 
-Alfresco All-In-One project produced by the generator, and even allow you to make edits to the generator and send us pull requests.
+Clicking the button will create a temporary workspace at Codenvy with a clone of this project, allowing you to run the generator in an 
+embedded docker container, run the Alfresco All-In-One project produced by the generator. It will even allow you to make edits to the 
+generator-alfresco project, test them and ultimately send pull requests.
+
+As the workspace is temporary, don't forget to save it if you want to save your work for later.
 
 Here is a video showing the process:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Pq5IwG5Aq0Q" frameborder="0" allowfullscreen></iframe>
+[![watch video demo using Codenvy](http://img.youtube.com/vi/Pq5IwG5Aq0Q/0.jpg)](http://www.youtube.com/watch?v=Pq5IwG5Aq0Q)
 
 ## License
 
