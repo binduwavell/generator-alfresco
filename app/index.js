@@ -22,7 +22,7 @@ module.exports = yeoman.generators.Base.extend({
         archetypeGroupId: 'org.alfresco.maven.archetype',
         archetypeArtifactId: 'alfresco-allinone-archetype',
         archetypeVersion: '2.1.0',
-        promptForProjectPackage: false,
+        promptForProjectPackage: true,
         supportedJavaVersions: '^1.8.0',
         supportedMavenVersions: '^3.2.5',
       },
