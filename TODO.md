@@ -25,6 +25,9 @@ TODO
   - [ ] IntelliJ
   - [ ] NetBeans
   - [ ] Codenvy (based on previous answer)
+    - [ ] Codenvy IDE
+    - [ ] Codenvy via Eclipse plugin
+    - [ ] Codenvy via CLI
 - [ ] Finish first pass on alfresco:amp generator
 
 TODONE

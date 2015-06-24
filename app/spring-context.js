@@ -75,6 +75,21 @@ module.exports = function(contextString) {
       }
     }
   }
+  
+  module.removeImport = function(resource) {
+    var imports = _getImports();
+    if (imports && imports.length > 0) {
+      var len = imports.length;
+      for (var i = 0; i < len; i++) {
+        var imp = imports[i];
+        var res = imp.getAttribute('resource');
+        if (res == resource) {
+          imp.parentNode.removeChild(imp);
+          return imp;
+        }
+      }
+    }
+  }
 
   module.getContextString = function() {
     return pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
