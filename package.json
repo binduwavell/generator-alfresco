@@ -20,20 +20,21 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^0.18.9",
-    "deasync": "^0.0.10",
-    "eyes": "^0.1.8",
+    "yeoman-generator": "^0.20.1",
     "chalk": "^1.0.0",
     "cross-spawn": "^0.2.9",
+    "deasync": "^0.0.10",
+    "eyes": "^0.1.8",
+    "lodash": "^3.10.0",
     "ncp": "^2.0.0",
     "pretty-data": "^0.40.0",
     "rmdir": "^1.1.0",
     "semver": "^4.3.3",
     "split": "^0.3.3",
+    "walk": "^2.3.9",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.9",
-    "yosay": "^1.0.2",
-    "walk": "^2.3.9"
+    "yosay": "^1.0.2"
   },
   "devDependencies": {
     "fixme": "^0.1.1",

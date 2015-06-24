@@ -13,7 +13,7 @@ describe('generator-alfresco:app', function () {
     helpers.run(path.join(__dirname, '../app'))
       .inDir(path.join(os.tmpdir(), './temp-test'))
       .withOptions({ 'skip-install': true })
-      .withPrompt({
+      .withPrompts({
       })
       .on('end', done);
   });
@@ -47,6 +47,7 @@ describe('generator-alfresco:app', function () {
       'solr-config/pom.xml',
       'TODO.md',
       'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
+      'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
     ]);
   });
   it('adds generic include for generated beans', function () {
@@ -58,6 +59,13 @@ describe('generator-alfresco:app', function () {
   it('does not create enterprise specific files', function () {
     assert.noFile([
       'repo/src/main/resources/alfresco/extension/license/README.md',
+    ]);
+  });
+  it('removes demo files', function () {
+    assert.noFile([
+      // This list is representative, it is not a complete list of items that are removed
+      'repo-amp/src/main/java/org/alfresco/demoamp/Demo.java',
+      'repo-amp/src/test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
     ]);
   });
   it('run.sh and debug.sh should not include -Penterprise flag', function () {
