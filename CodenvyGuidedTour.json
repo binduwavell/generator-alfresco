@@ -11,49 +11,7 @@
       "yOffset": "100",
       "width" : "400",
       "skipButtonLabel": "Skip",
-      "nextButtonLabel": "Start!",
-      "overlays": [
-        {
-          "zIndex": "5",
-          "width": {"value": 100, "unit" : "%"},
-          "height": {"value": 100, "unit" : "%"},
-          "backgroundColor": "rgba(50,50,50,0.72)"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/3.8.0/execution-bar.png",
-          "element": "gwt-debug-MainToolbar/runApp-true",
-          "xOffset": "-60",
-          "yOffset": "-2"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/help.png",
-          "element": "gwt-debug-MainMenu/helpGroup-true"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/3.8.0/explorer.png",
-          "element": "gwt-debug-tabButton-Datasource",
-          "xOffset": "18",
-          "yOffset": "-58"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/3.8.0/Builder-Runners.png",
-          "element": "gwt-debug-tabButton-Builder",
-          "xOffset": "0",
-          "yOffset": "-1"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/ram.png",
-          "element": "memory-widget-panel",
-          "xOffset": "-264",
-          "yOffset": "-2"
-        },
-        {
-          "url": "https://raw.githubusercontent.com/codenvy/factories/factory-2.0/guided-tour/getting-started/images/visibility-permission.png",
-          "element": "gwt-debug-permissions-panel-rights",
-          "xOffset": "-263",
-          "yOffset": "-4"
-        }
-      ]
+      "nextButtonLabel": "Start!"
     },
     {
       "title": "Start a runner",
@@ -70,8 +28,8 @@
       ]
     },
     {
-      "title": "Preview the app",
-      "content": "Each run creates an isolated Runner instance with its own RAM. Your project's files and artifacts are copied into the Runner.",
+      "title": "Interact with the generator",
+      "content": "Each run creates an isolated Runner instance with its own RAM. Your project's files and artifacts are copied into the Runner. You will see the docker output in the Console tab. Once the docker container has been provisioned and has started, you will be able to interact with the project files from the Terminal tab.",
       "element": "gwt-debug-Terminal-tab",
       "width": "450",
       "placement": "TOP",
