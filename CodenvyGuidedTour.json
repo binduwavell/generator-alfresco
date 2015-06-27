@@ -15,7 +15,7 @@
     },
     {
       "title": "Start a runner",
-      "content": "You execute and test your projectwithin a Runner, which binds a Docker machine with the stack for the app.",
+      "content": "You execute and test your project within a Runner, which binds a Docker machine with the stack for the app.",
       "element": "gwt-debug-MainToolbar/runApp-true",
       "placement": "LEFT",
       "xOffset": "20",
