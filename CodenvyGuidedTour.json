@@ -4,7 +4,7 @@
   "steps": [
     {
       "title": "Getting Started with Codenvy",
-      "content": "Codenvy is a cloud IDE with horizontally-scallable Docker runner microservices.\n\nThis tour takes 3 minutes.",
+      "content": "Codenvy is a cloud IDE with horizontally-scallable Docker runner microservices.\n\nThis tour takes 3 minutes.\n\n<b>NOTE:</b> <em>If you see the Project Configuration dialog, please click close the dialog via the X button in the top right.</em>",
       "element": "gwt-debug-MainToolbar/New",
       "placement": "BOTTOM",
       "xOffset": "500",
