@@ -7,7 +7,7 @@ var ncp = require('ncp').ncp;
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
-var versions = require('./versions.js');
+var versions = require('./dependency-versions.js');
 var yosay = require('yosay');
 
 // and yeah
