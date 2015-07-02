@@ -2,7 +2,7 @@
   "name": "generator-alfresco",
   "version": "0.0.1",
   "description": "Yeoman generator",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "main": "app/index.js",
   "repository": "binduwavell/generator-alfresco",
   "author": {
@@ -14,10 +14,7 @@
     "node": ">=0.10.0"
   },
   "files": [
-    "app",
-    "webscript",
-    "remove-samples",
-    "amp"
+    "app"
   ],
   "keywords": [
     "yeoman-generator"
@@ -34,6 +31,7 @@
     "semver": "^4.3.3",
     "split": "^0.3.3",
     "xmldom": "^0.1.19",
+    "xpath": "^0.0.9",
     "yosay": "^1.0.2",
     "walk": "^2.3.9"
   },
