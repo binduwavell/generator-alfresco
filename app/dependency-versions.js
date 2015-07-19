@@ -54,3 +54,5 @@ function getRegExpMatchFromProcessOutput(cmd, args, re) {
 
   return retv;
 }
+
+// vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
