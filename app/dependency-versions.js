@@ -48,9 +48,7 @@ function getRegExpMatchFromProcessOutput(cmd, args, re) {
   proc.on('error', function(code, signal) { done = true; })
       .on('exit', function(code, signal) { done = true; });
 
-  while (!done) {
-    deasync.sleep(100);
-  }
+  deasync.loopWhile(function() { return !done });
 
   return retv;
 }

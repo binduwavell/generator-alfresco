@@ -23,7 +23,7 @@
     "yeoman-generator": "^0.20.1",
     "chalk": "^1.0.0",
     "cross-spawn": "^0.2.9",
-    "deasync": "^0.0.10",
+    "deasync": "^0.1.0",
     "eyes": "^0.1.8",
     "lodash": "^3.10.0",
     "ncp": "^2.0.0",
