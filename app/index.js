@@ -42,6 +42,7 @@ module.exports = yeoman.generators.Base.extend({
       this.out.error(e.message);
       throw e;
     }
+    this.moduleRegistry = require('./alfresco-module-registry.js')(this);
   },
 
   prompting: function () {
@@ -189,6 +190,11 @@ module.exports = yeoman.generators.Base.extend({
         this.out.error(e.message);
         throw e;
       }
+    },
+    saveDefaultModulesInRegistry: function() {
+      this.moduleRegistry.addModule(this.projectGroupId, 'repo-amp', this.projectVersion, 'amp', 'repo', 'source', 'repo-amp');
+      this.moduleRegistry.addModule(this.projectGroupId, 'share-amp', this.projectVersion, 'amp', 'share', 'source', 'share-amp');
+      this.moduleRegistry.save();
     },
   },
 
