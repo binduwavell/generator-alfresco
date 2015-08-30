@@ -25,9 +25,9 @@
  *   }
  * ]
  *
- * gropuId: groupId for the module
+ * gropuId: groupId for the module, may be ${project.groupId}
  * artifactId: artifactId for the module
- * version: version for the module
+ * version: version for the module, may be ${project.version}
  * packaging: amp or jar
  * war: Client war the module is applied to: repo or share
  * location: Inicates where we can find the artifact: remote, local, source
@@ -38,6 +38,9 @@
  *
  * The user facing name for a module will be constructed as follows:
  *     groupId:[blue]artifactId:version:[green]packaging:[blue]war:[green]location
+ *
+ * ${project.groupId} and ${project.version} will be resolved in the names
+ *
  * Ideally the artifactId, packaging, war and location elements will be color
  * coded as indicated to make them stand out.
  */
@@ -60,7 +63,15 @@ module.exports = function(yo) {
   }
 
   module._getModuleName = function(mod) {
-    return mod.groupId + ':' + mod.artifactId + ':' + mod['version'] + ':' +
+    var groupId = mod.groupId;
+    if ('${project.groupId}' === groupId) {
+      groupId = yo.projectGroupId;
+    }
+    var ver = mod['version'];
+    if ('${project.version}' === ver) {
+      ver = yo.projectVersion;
+    }
+    return groupId + ':' + mod.artifactId + ':' + ver + ':' +
            mod.packaging + ':' + mod.war + ':' + mod['location'];
   }
 

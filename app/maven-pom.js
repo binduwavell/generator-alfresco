@@ -14,7 +14,7 @@ var xpath = require('xpath');
 
 module.exports = function(pomString) {
   var module = {};
-  
+
   var defaultPOMString = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
@@ -66,7 +66,7 @@ module.exports = function(pomString) {
   var project = doc.documentElement;
   var resolver = {
     mappings: {
-      "pom": "http://maven.apache.org/POM/4.0.0", 
+      "pom": "http://maven.apache.org/POM/4.0.0",
       "xsi": "http://www.w3.org/2001/XMLSchema-instance"
     },
     lookupNamespaceURI: function(prefix) {
@@ -178,6 +178,116 @@ module.exports = function(pomString) {
   }
 
   module.removeDependency = function(groupId, artifactId, version, scope) {
+    var dependency = module.findDependency(groupId, artifactId, version, scope);
+    if (dependency) {
+      var parent = dependency.parentNode;
+      if (parent) {
+        parent.removeChild(dependency);
+      }
+    }
+    return dependency;
+  }
+
+  module.findPlugin = function(artifactId) {
+    var plugins = xpath.selectWithResolver('/pom:project/pom:build/pom:pugins/pom:plugin', doc, resolver);
+    // Only process if group and artifact Ids are specified and we have dependencies to process
+    if (groupId && artifactId && plugins) {
+      var len = plugins.length;
+      for(var i = 0; i < len; i++) {
+        var plugin = plugins[i];
+
+        var groupIdNode = _getChild(overlay, 'pom', 'groupId');
+        var artifactIdNode = _getChild(overlay, 'pom', 'artifactId');
+        var scopeNode = _getChild(overlay, 'pom', 'scope');
+
+        var groupIdContent = (groupIdNode ? groupIdNode.textContent : undefined);
+        var artifactIdContent = (artifactIdNode ? artifactIdNode.textContent : undefined);
+        var scopeContent = (scopeNode ? scopeNode.textContent : undefined);
+
+
+        // Don't bother matching things that don't at least match group and artifact Ids
+        if (groupId == groupIdContent && artifactId == artifactIdContent) {
+          if (version && scope) {
+            if (version == versionContent && scope == scopeContent) {
+              return overlay;
+            }
+          } else if (version && version == versionContent) {
+              return overlay;
+          } else if (scope && scope == scopeContent) {
+              return overlay;
+          } else {
+            return overlay;
+          }
+        }
+      }
+    }
+  }
+  module.findOverlay = function(groupId, artifactId, scope) {
+    var plugins = xpath.selectWithResolver('/pom:project/pom:build/pom:pugins/pom:plugin', doc, resolver);
+    // Only process if group and artifact Ids are specified and we have dependencies to process
+    if (groupId && artifactId && plugins) {
+      var len = plugins.length;
+      for(var i = 0; i < len; i++) {
+        var plugin = plugins[i];
+
+        var groupIdNode = _getChild(overlay, 'pom', 'groupId');
+        var artifactIdNode = _getChild(overlay, 'pom', 'artifactId');
+        var scopeNode = _getChild(overlay, 'pom', 'scope');
+
+        var groupIdContent = (groupIdNode ? groupIdNode.textContent : undefined);
+        var artifactIdContent = (artifactIdNode ? artifactIdNode.textContent : undefined);
+        var scopeContent = (scopeNode ? scopeNode.textContent : undefined);
+
+
+        // Don't bother matching things that don't at least match group and artifact Ids
+        if (groupId == groupIdContent && artifactId == artifactIdContent) {
+          if (version && scope) {
+            if (version == versionContent && scope == scopeContent) {
+              return overlay;
+            }
+          } else if (version && version == versionContent) {
+              return overlay;
+          } else if (scope && scope == scopeContent) {
+              return overlay;
+          } else {
+            return overlay;
+          }
+        }
+      }
+    }
+  }
+
+  module.addOverlay = function(groupId, artifactId, scope) {
+    var overlay = module.findOverlay(groupId, artifactId, scope);
+    if (!overlay) {
+      dependency = _createChild(module.getOrCreateTopLevelElement('pom', 'build'), 'pom', 'plugins')
+    }
+    var groupIdNode = _getOrCreateChild(dependency, 'pom', 'groupId');
+    var artifactIdNode = _getOrCreateChild(dependency, 'pom', 'artifactId');
+    groupIdNode.textContent = groupId;
+    artifactIdNode.textContent = artifactId;
+    if (version) {
+      var versionNode = _getOrCreateChild(dependency, 'pom', 'version');
+      versionNode.textContent = version;
+    } else {
+      versionNode = _getChild(dependency, 'pom', 'version');
+      if (versionNode) {
+        _removeParentsChild(dependency, versionNode);
+      }
+    }
+    if (scope) {
+      var scopeNode = _getOrCreateChild(dependency, 'pom', 'scope');
+      scopeNode.textContent = scope;
+    } else {
+      scopeNode = _getChild(dependency, 'pom', 'scope');
+      if (scopeNode) {
+        _removeParentsChild(dependency, scopeNode);
+      }
+    }
+    return dependency;
+  }
+
+  module.removeOverlay = function(groupId, artifactId, scope) {
     var dependency = module.findDependency(groupId, artifactId, version, scope);
     if (dependency) {
       var parent = dependency.parentNode;

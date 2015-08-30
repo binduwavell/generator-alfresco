@@ -10,7 +10,9 @@ describe('generator-alfresco:alfresco-module-registry', function () {
     "config": {
       "get": function(key) { return undefined; },
       "set": function(key, value) { }
-    }
+    },
+    "projectGroupId": 'org.alfresco',
+    "projectVersion": '1.0.0-SNAPSHOT'
   };
 
   describe('.getModules()', function() {
@@ -111,6 +113,25 @@ describe('generator-alfresco:alfresco-module-registry', function () {
           "groupId": 'groupId',
           "artifactId": 'artifactId',
           "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        }
+      }]);
+    });
+
+    it('handles ${project.groupId} and ${project.version}', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      repo.addModule('${project.groupId}', 'artifactId', '${project.version}', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getNamedModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, [{
+        "name": 'org.alfresco:artifactId:1.0.0-SNAPSHOT:packaging:war:location',
+        "module": {
+          "groupId": '${project.groupId}',
+          "artifactId": 'artifactId',
+          "version": '${project.version}',
           "packaging": 'packaging',
           "war": 'war',
           "location": 'location',
