@@ -9,8 +9,8 @@ module.exports = {
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
     removeSamplesScript: function() {
-      var projectPackagePath = this.projectPackage.replace('.', '/');
-      [ 
+      var projectPackagePath = this.projectPackage.replace(/\./g, '/');
+      [
         'repo-amp/src/main/amp/web/css/demoamp.css',
         'repo-amp/src/main/amp/web/jsp/demoamp.jsp',
         'repo-amp/src/main/amp/web/scripts/demoamp.js',
@@ -44,7 +44,7 @@ module.exports = {
         this.fs.delete(file, {globOptions: {strict: true}});
       }.bind(this));
 
-      [ 
+      [
         'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
         'repo-amp/src/main/java/EMPTY.txt',
         'repo-amp/src/test/java/EMPTY.txt',
@@ -60,7 +60,7 @@ module.exports = {
       var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
       var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
       var context = require('./spring-context.js')(contextDocOrig);
-      [ 
+      [
         'classpath:alfresco/module/${project.artifactId}/context/service-context.xml',
         'classpath:alfresco/module/${project.artifactId}/context/bootstrap-context.xml',
         'classpath:alfresco/module/${project.artifactId}/context/webscript-context.xml',
