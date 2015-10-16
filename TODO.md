@@ -1,6 +1,7 @@
 TODO
 ====
 
+- [ ] 4 tests in test-maven-pom.js are failing, need to fix those ASAP
 - [ ] Complete alfresco-module-registry
   - [ ] Make sure we have test coverage for existing modules
     - [ ] alfresco-module-registry.js
