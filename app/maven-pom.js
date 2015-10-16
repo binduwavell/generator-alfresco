@@ -188,7 +188,7 @@ module.exports = function(pomString) {
     return dependency;
   }
 
-  module.findPlugin = function(artifactId) {
+  module.findPlugin = function(groupId, artifactId) {
     var plugins = xpath.selectWithResolver('/pom:project/pom:build/pom:pugins/pom:plugin', doc, resolver);
     // Only process if group and artifact Ids are specified and we have dependencies to process
     if (groupId && artifactId && plugins) {

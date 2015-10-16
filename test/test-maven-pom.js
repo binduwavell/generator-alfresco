@@ -52,7 +52,7 @@ describe('generator-alfresco:maven-pom', function () {
     });
 
   });
-  
+
   describe('.setTopLevelElementTextContent()', function() {
 
     it('can set groupId', function () {
@@ -63,7 +63,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.ok(groupId);
       assert.equal(groupId.textContent, groupIdText);
     });
-    
+
   });
 
   describe('.setParentGAV()', function() {
@@ -75,7 +75,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.ok(parent);
       assert.equal(parent.toString(), '<parent><groupId>com.ziaconsulting</groupId><artifactId>test</artifactId><version>1.2.3</version></parent>');
     });
-    
+
   });
 
   describe('.findDependency()', function() {
@@ -277,7 +277,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.ok(dependency);
       assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <scope>compile</scope>\n    </dependency>');
     });
-    
+
   });
 
   describe('.addDependency()', function() {
@@ -376,6 +376,107 @@ describe('generator-alfresco:maven-pom', function () {
       var dependencies = pom.getOrCreateTopLevelElement('pom', 'dependencies');
       assert.ok(dependencies);
       assert.equal(dependencies.toString(), '<dependencies>\n    \n  </dependencies>');
+    });
+
+  });
+
+  describe('.findPlugin()', function() {
+
+    it('find plugin by gropuId and artifactId', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <build>',
+        '    <plugins>',
+        '      <plugin>',
+        '        <groupId>com.ziaconsulting</groupId>',
+        '        <artifactId>test</artifactId>',
+        '      </plugin>',
+        '    </plugins>',
+        '  </build>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../app/maven-pom.js')(pomString);
+      var plugin = pom.findPlugin('com.ziaconsulting', 'test');
+      assert.ok(plugin);
+      assert.equal(dependency.toString(), '<plugin>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId></dependency>');
+    });
+
+  });
+
+  describe('.findOverlay()', function() {
+
+    it('find overlay by artifactId', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <build>',
+        '    <plugins>',
+        '      <plugin>',
+        '        <artifactId>maven-war-plugin</artifactId>',
+        '        <configuration>',
+        '          <overlays>',
+        '            <overlay>',
+        '              <groupId>${project.groupId}</groupId>',
+        '              <artifactId>repo-amp</artifactId>',
+        '              <type>amp</type>',
+        '            </overlay>',
+        '          </overlays>',
+        '        </configuration>',
+        '      </plugin>',
+        '    </plugins>',
+        '  </build>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../app/maven-pom.js')(pomString);
+      var overlay = pom.findPlugin('${project.groupId}', 'repo-amp', 'amp');
+      assert.ok(overlay);
+      assert.equal(dependency.toString(), '<overlay>\n      <groupId>${project.groupId}</groupId>\n      <artifactId>repo-amp</artifactId>\n      <type>amp</type></dependency>');
+    });
+
+  });
+
+  describe('.addOverlay()', function() {
+
+    it('adds overlay', function () {
+      var pom = require('../app/maven-pom.js')();
+      var overlay = pom.addOverlay('com.ziaconsulting', 'test', 'amp');
+      assert.ok(overlay);
+      // TODO: check that the overlay was actually added
+    });
+
+  });
+
+  describe('.removeOverlay()', function() {
+
+    it('removes only overlay', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <build>',
+        '    <plugins>',
+        '      <plugin>',
+        '        <artifactId>maven-war-plugin</artifactId>',
+        '        <configuration>',
+        '          <overlays>',
+        '            <overlay>',
+        '              <groupId>${project.groupId}</groupId>',
+        '              <artifactId>repo-amp</artifactId>',
+        '              <type>amp</type>',
+        '            </overlay>',
+        '          </overlays>',
+        '        </configuration>',
+        '      </plugin>',
+        '    </plugins>',
+        '  </build>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../app/maven-pom.js')(pomString);
+      var overlay = pom.removeOverlay('com.ziaconsulting', 'test', 'amp');
+      // TODO: check that the overlay was actually removed
     });
 
   });
@@ -568,7 +669,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.ok(property);
       assert.equal(property.toString(), '<fiddle>sticks</fiddle>');
     });
-    
+
   });
 
 });
