@@ -1,7 +1,6 @@
 TODO
 ====
 
-- [ ] 4 tests in test-maven-pom.js are failing, need to fix those ASAP
 - [ ] Complete alfresco-module-registry
   - [ ] Make sure we have test coverage for existing modules
     - [ ] alfresco-module-registry.js
@@ -46,6 +45,7 @@ TODO
 TODONE
 ======
 
+- [x] 4 tests in test-maven-pom.js are failing, need to fix those ASAP
 - [x] Initial attempt to move the remove sample capability into the main generator
 - [x] Do not backup source amps when generator is re-run
 - [x] Include instructions for where to place the license file when enterprise is selected
