@@ -156,13 +156,16 @@ amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
                               ${project.parent.basedir}/AMPName/target/AMPName/config;
                               ${project.parent.basedir}/AMPName/target/test-classes;${project.parent.basedir}/AMPName/target/classes" />
    ~~~
+8. Internal step within code
+Internal to the yeoman generator, the .yo-rc.json file is updated. There is a "moduleRegistry" section here that keeps
+track of modules that the alfresco generator adds.
 
 
 # TODO
 * currently the top level generator removes samples before it makes copies for the template. Should it do that? Do we
 want to have an option to add/remove samples?
 * need to add an update for functional-testing for runner/pom.xml
-8. Edit runner/pom.xml
+9. Edit runner/pom.xml
    1. Update the maven-failsafe-plugin in the functional-testing profile to specify the functional tests for
    the new AMP. The 2.x SDK puts the \<configuration\> block above the \<execution\> blocks for testing, thus you
    can only specify a single share AMP test in here. It should be moved more appropriately.
