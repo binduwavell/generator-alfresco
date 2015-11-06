@@ -70,6 +70,14 @@ describe('generator-alfresco:app', function () {
         'repo-amp/src/test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
       ]);
     });
+    it('rename slingshot context to *.sample', function () {
+      assert.noFile([
+        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml',
+      ]);
+      assert.file([
+        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml.sample',
+      ]);
+    });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
@@ -88,7 +96,7 @@ describe('generator-alfresco:app', function () {
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
-          sdkVersion: '2.1.0',
+          sdkVersion: '2.1.1',
           projectGroupId: 'org.alfresco',
           projectArtifactId: 'demoamp',
           projectVersion: '1.0.0-SNAPSHOT',
