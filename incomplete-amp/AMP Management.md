@@ -44,7 +44,7 @@ yo alfresco:amp
 ```
 
 
-### Steps the sub-generator takes when adding a new Alfresco AMP
+### Steps the sub-generator takes when adding a new Alfresco (repo) AMP
 
 1. Make sure that amps_source/*AMPName* doesn't exist. Throw error if it does.
 2. Create *AMPName* and Copy amps_source_templates/repo-amp/* to amps_source/*AMPName*
@@ -110,7 +110,7 @@ amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
       <Context docBase="${project.parent.basedir}/alfresco-war/target/${project.build.finalName}">
          <!-- Pick up static resource files from AMPs and other directories (this should not include docBase) -->
          <Resources className="org.apache.naming.resources.VirtualDirContext"
-               extraResourcePaths="/=${project.parent.basedir}/AMPName/target/AMPName/web" />   
+               extraResourcePaths="/=${project.parent.basedir}/amps_source/AMPName/target/AMPName/web" />   
    ~~~
    
    If there is already another resource path to an amp target \(e.g. OtherAMPName) add yours to the end with a comma seperator.
@@ -118,8 +118,8 @@ amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
       <Context docBase="${project.parent.basedir}/alfresco-war/target/${project.build.finalName}">
          <!-- Pick up static resource files from AMPs and other directories (this should not include docBase) -->
          <Resources className="org.apache.naming.resources.VirtualDirContext"
-               extraResourcePaths="/=${project.parent.basedir}/OtherAMPName/target/OtherAMPName/web,
-                                   /=${project.parent.basedir}/AMPName/target/AMPName/web" />   
+               extraResourcePaths="/=${project.parent.basedir}/amps_source/OtherAMPName/target/OtherAMPName/web,
+                                   /=${project.parent.basedir}/amps_source/AMPName/target/AMPName/web" />   
    ~~~
    2. Edit the \<Loader> element and the virtualClassPath attribute and point it to the classes, config, and test-classes folders
    for your AMPName.
@@ -133,9 +133,9 @@ amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
     -->
     <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
             searchVirtualFirst="true"
-            virtualClasspath="${project.parent.basedir}/AMPName/target/classes;
-                              ${project.parent.basedir}/AMPName/target/AMPName/config;
-                              ${project.parent.basedir}/AMPName/target/test-classes;${project.parent.basedir}/AMPName/target/classes" />
+            virtualClasspath="${project.parent.basedir}/amps_source/AMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/AMPName/config;
+                              ${project.parent.basedir}/amps_source/AMPName/target/test-classes;${project.parent.basedir}/AMPName/target/classes" />
    ~~~
    
    If there is already other paths there say to an amp target \(e.g. OtherAMPName) add yours to the end with a semicolon seperator.
@@ -149,12 +149,138 @@ amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
     -->
     <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
             searchVirtualFirst="true"
-            virtualClasspath="${project.parent.basedir}/OtherAMPName/target/classes;
-                              ${project.parent.basedir}/OtherAMPName/target/OtherAMPName/config;
-                              ${project.parent.basedir}/OtherAMPName/target/test-classes;${project.parent.basedir}/OtherAMPName/target/classes;
-                              ${project.parent.basedir}/AMPName/target/classes;
-                              ${project.parent.basedir}/AMPName/target/AMPName/config;
-                              ${project.parent.basedir}/AMPName/target/test-classes;${project.parent.basedir}/AMPName/target/classes" />
+            virtualClasspath="${project.parent.basedir}/amps_source/OtherAMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/OtherAMPName/target/OtherAMPName/config;
+                              ${project.parent.basedir}/amps_source/OtherAMPName/target/test-classes;
+                              ${project.parent.basedir}/amps_source/OtherAMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/AMPName/config;
+                              ${project.parent.basedir}/amps_source/AMPName/target/test-classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/classes" />
+   ~~~
+8. Internal step within code
+Internal to the yeoman generator, the .yo-rc.json file is updated. There is a "moduleRegistry" section here that keeps
+track of modules that the alfresco generator adds.
+
+### Steps the sub-generator takes when adding a new Share AMP
+
+1. Make sure that amps_source/*AMPName* doesn't exist. Throw error if it does.
+2. Create *AMPName* and Copy amps_source_templates/share-amp/* to amps_source/*AMPName*
+3. Rename *AMPName*/src/main/amp/config/alfresco/module/**share-amp** to 
+amps_source/*AMPName*/src/main/amp/config/alfresco/module/**AMPName**
+4. Edit /pom.xml to reference new AMP adding *\<module>AMPName\</module>* to \<modules>.
+~~~
+  <modules>
+    <module>AMPName</module>
+    <module>repo</module>
+    <module>solr-config</module>
+    <module>share</module>
+    <module>runner</module>
+  </modules>
+~~~
+5. Edit amps_source/*AMPName*/pom.xml
+   1. Update the \<artifactId>, \<name>, and \<description> elements with the new AMPName.
+    ~~~
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+       <modelVersion>4.0.0</modelVersion>
+       <artifactId>AMPName</artifactId>
+       <name>AMPName</name>
+       ...
+       <description>AMPName</description>
+    ~~~
+6. Edit share/pom.xml
+   1. Edit the \<dependencies> and add the new module dependency
+   ~~~
+      <dependencies>
+      ...
+         <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>AMPName</artifactId>
+           <version>${project.version}</version>
+           <type>amp</type>
+         </dependency>
+      ...
+   ~~~
+   2. Edit the \<overlays> and add the new overlay (right after Add / sort your AMPs here)
+   ~~~
+      <overlays>
+          <!-- The current project customizations -->
+          <overlay/>
+          <!-- The Share WAR -->
+          <overlay>
+             <groupId>${alfresco.groupId}</groupId>
+             <artifactId>${alfresco.share.artifactId}</artifactId>
+             <type>war</type>
+             <!-- To allow inclusion of META-INF -->
+             <excludes/>
+          </overlay>
+          <!-- Add / sort your AMPs here -->
+          <overlay>
+             <groupId>${project.groupId}</groupId>
+             <artifactId>AMPName</artifactId>
+             <type>amp</type>
+          </overlay>
+    ~~~
+7. Edit runner/tomcat/context-share.xml
+   1. Edit the \<Resources> element and update the extraResourcePaths attribute adding your target web folder   
+   ~~~
+   <Context>
+       <!-- Pick up static resource files from any Share extensions, being it a JAR or an AMP
+            (this should not include docBase) -->
+       <Resources className="org.apache.naming.resources.VirtualDirContext"
+                  extraResourcePaths="/=${project.parent.basedir}/amps_source/AMPName/target/AMPName/web" />
+   ~~~
+   
+   If there is already another resource path to an amp target \(e.g. OtherAMPName) add yours to the end with a comma seperator.
+   ~~~
+      <Context docBase="${project.parent.basedir}/alfresco-war/target/${project.build.finalName}">
+         <!-- Pick up static resource files from AMPs and other directories (this should not include docBase) -->
+         <Resources className="org.apache.naming.resources.VirtualDirContext"
+               extraResourcePaths="/=${project.parent.basedir}/amps_source/OtherAMPName/target/OtherAMPName/web,
+                                   /=${project.parent.basedir}/amps_source/AMPName/target/AMPName/web" />   
+   ~~~
+   2. Edit the \<Loader> element and the virtualClassPath attribute and point it to the classes, config, and test-classes folders
+   for your AMPName.
+   ~~~
+    <!-- Configure where the Share (share.war) web application can load classes, config, and test classes (in that order) -->
+    <!-- Setup the virtual class path like this:
+         1) share-amp/target/classes
+         2) share-amp/target/${project.build.finalName}/config
+         3) share-amp/target/test-classes
+         4)     Add other AMP paths here....
+         5) share/target/test-classes              (loads the share-config-custom.xml used during test runs)
+
+         This way mvn compile can be invoked and all changes will be picked up
+    -->
+    <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
+            searchVirtualFirst="true"
+            virtualClasspath="${project.parent.basedir}/amps_source/AMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/share-amp/config;
+                              ${project.parent.basedir}/amps_source/AMPName/target/test-classes;
+            ${project.parent.basedir}/share/target/test-classes" />
+   ~~~
+   
+   If there is already other paths there say to an amp target \(e.g. OtherAMPName) add yours to the end with a semicolon seperator.
+   ~~~
+    <!-- Configure where the Share (share.war) web application can load classes, config, and test classes (in that order) -->
+    <!-- Setup the virtual class path like this:
+         1) share-amp/target/classes
+         2) share-amp/target/${project.build.finalName}/config
+         3) share-amp/target/test-classes
+         4)     Add other AMP paths here....
+         5) share/target/test-classes              (loads the share-config-custom.xml used during test runs)
+
+         This way mvn compile can be invoked and all changes will be picked up
+    -->
+    <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
+            searchVirtualFirst="true"
+            virtualClasspath="${project.parent.basedir}/amps_source/OtherAMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/OtherAMPName/target/share-amp/config;
+                              ${project.parent.basedir}/amps_source/OtherAMPName/target/test-classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/classes;
+                              ${project.parent.basedir}/amps_source/AMPName/target/share-amp/config;
+                              ${project.parent.basedir}/amps_source/AMPName/target/test-classes;
+            ${project.parent.basedir}/share/target/test-classes" />
    ~~~
 8. Internal step within code
 Internal to the yeoman generator, the .yo-rc.json file is updated. There is a "moduleRegistry" section here that keeps
