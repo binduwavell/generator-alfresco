@@ -20,7 +20,7 @@ module.exports = yeoman.generators.Base.extend({
     this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = require("./sdk-versions.js");
     this.config.defaults({
-      sdkVersion: '2.1.0',
+      sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
       projectArtifactId: 'demoamp',
       projectVersion: '1.0.0-SNAPSHOT',

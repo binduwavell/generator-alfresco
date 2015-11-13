@@ -13,7 +13,7 @@ var xmldom = require('xmldom');
 
 module.exports = function(contextString) {
   var module = {};
-  
+
   var defaultContextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!--',
@@ -75,7 +75,7 @@ module.exports = function(contextString) {
       }
     }
   }
-  
+
   module.removeImport = function(resource) {
     var imports = _getImports();
     if (imports && imports.length > 0) {
