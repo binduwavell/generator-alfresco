@@ -1,4 +1,4 @@
-FROM binduwavell/codenvy-alfresco-generator-community:0.2
+FROM binduwavell/codenvy-alfresco-generator-community:0.3
 
 ADD $app$/package.json /tmp/application/package.json
 
