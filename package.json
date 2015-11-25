@@ -37,7 +37,7 @@
     "yosay": "^1.0.2"
   },
   "devDependencies": {
-    "fixme": "^0.1.1",
+    "fixme": "^0.2.0",
     "mocha": "*"
   },
   "scripts": {
