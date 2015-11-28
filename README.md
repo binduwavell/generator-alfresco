@@ -1,58 +1,88 @@
 # generator-alfresco [![Build Status](https://secure.travis-ci.org/binduwavell/generator-alfresco.png?branch=master)](https://travis-ci.org/binduwavell/generator-alfresco) [![Coverage Status](https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github)](https://coveralls.io/github/binduwavell/generator-alfresco?branch=master) [![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f) [![Join the chat at https://gitter.im/binduwavell/generator-alfresco](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
-> [Yeoman](http://yeoman.io) generator
-
-
 ## Getting Started
 
-### What is Yeoman?
+### What is [Alfresco](http://www.alfresco.com)?
 
-Trick question. It's not a thing. It's this guy:
+Alfresco is an open-source content management application. This project provides some tools for 
+setting up and working projects for extending/enhancing Alfresco via the Alfresco supported 
+Alfresco SDK and specifically the All in One archetype.
 
-![](http://i.imgur.com/JHaAlBJ.png)
+### What is [Yeoman](http://yeoman.io)?
 
-Basically, he wears a top hat, lives in your computer, and waits for you to tell him what kind of application you wish to create.
+Yeoman is a command line tool that helps you to automate coding tasks. Out of the box, Yeoman 
+doesn't do very much. It relies on a library of thousands of 
+[generators](http://yeoman.io/generators/) to actually perform the coding tasks for you.
 
-Not every new computer comes with a Yeoman pre-installed. He lives in the [npm](https://npmjs.org) package repository. You only have to ask for him once, then he packs up and moves into your hard drive. *Make sure you clean up, he likes new and shiny things.*
+Yeoman lives in the [npm](https://npmjs.org) package repository. Assuming you have a recent
+version of [node.js](http://www.nodejs.org) installed, you can use the following command
+to install Yeoman.
 
 ```bash
 npm install -g yo
 ```
 
-### Yeoman Generators
+### Installing and using the generator
 
-Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
+You have a couple of options for installing Alfresco generator for Yeoman. Your choice will 
+depend on if you plan to extend the generator or if you simply want to use it.
+
+We have not pushed a version of the Alfresco generator to npmjs.org yet, so if you don't 
+plan to make changes to the generator itself, run:
+
+```bash
+npm install -g binduwavell/generator-alfresco
+```
+
+WARNING: you will likely need to update this occasionally as the project is under active 
+development.
 
 <!--
-To install generator-alfresco from npm, run:
-
 ```bash
 npm install -g generator-alfresco
 ```
 -->
 
-We have not pushed a version of the Alfresco generator to npmjs.org yet, so you need to clone this project and then:
+Now, assuming you have all of the pre-requisites installed (including appropriate
+versions of Java and Maven.) You can create an Alfresco extension project using
+this generator.
+
+First of all you should create a new folder for your project and change into the
+new folder. Then run the following command:
+
+```bash
+yo alfresco
+```
+
+This will ask you a number of questions and then generate a project based on your
+answers.
+
+We are currently in the process of finalising the code that is needed for brining
+in new local, remote and source modules into projects created with the generator.
+Once that is done we will add commands for creating things like webscripts, repo
+actions, behaviors, workflows, etc.
+
+Checkout the next section for what to do instead of this, if you plan to work on the 
+generator code.
+
+### Try The Project / Contribute
+
+If you plan to to make changes to the generator itself, you'll want to
+check it out (or a fork it) from GitHub and then run the following command from the 
+checked out project directory:
 
 ```bash
 npm install
 npm link # may need sudo
 ```
 
-Finally, in a new folder you wish to generate a project in, initiate the generator:
+This is essentially the same as the ```npm install -g binduwavell/generator-alfresco```
+command above, but you'll have a project directory where you can tweak things.
 
-```bash
-yo alfresco
-```
+Pull requests are very welcome, please make sure to add/udpate tests appropriately if
+you do come up with something to add to the project.
 
-### Getting To Know Yeoman
-
-Yeoman has a heart of gold. He's a person with feelings and opinions, but he's very easy to work with. 
-If you think he's too opinionated, he can be easily convinced, check out the complete 
-[Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
-
-### Try The Project / Contribute
-
-Click the following link to open a clone of this project at Codenvy: 
+Click the following link to open a clone of this project in Codenvy (a cloud IDE): 
 [![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
 
 Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
