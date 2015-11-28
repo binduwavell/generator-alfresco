@@ -2,7 +2,7 @@
   "name": "generator-alfresco",
   "version": "0.0.1",
   "description": "Yeoman generator",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "main": "app/index.js",
   "repository": "binduwavell/generator-alfresco",
   "author": {
@@ -20,7 +20,7 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^0.20.1",
+    "yeoman-generator": "^0.21.1",
     "chalk": "^1.0.0",
     "cross-spawn": "^2.0.0",
     "deasync": "^0.1.0",
@@ -37,11 +37,15 @@
     "yosay": "^1.0.2"
   },
   "devDependencies": {
-    "fixme": "^0.2.0",
-    "mocha": "*"
+    "coveralls": "^2.11.4",
+    "fixme": "binduwavell/fixme",
+    "istanbul": "^0.4.1",
+    "mocha": "*",
+    "mocha-lcov-reporter": "^1.0.0"
   },
   "scripts": {
     "fixme": "node -e \"require('fixme')()\"",
-    "test": "mocha --reporter spec test"
+    "test": "mocha --reporter spec test",
+    "cover": "istanbul cover _mocha -- --report spec test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   }
 }
