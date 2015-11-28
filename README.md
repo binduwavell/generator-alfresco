@@ -37,6 +37,9 @@ npm install -g binduwavell/generator-alfresco
 WARNING: you will likely need to update this occasionally as the project is under active 
 development.
 
+Checkout the next section for what to do instead of this, if you plan to work on the 
+generator code.
+
 <!--
 ```bash
 npm install -g generator-alfresco
@@ -44,11 +47,10 @@ npm install -g generator-alfresco
 -->
 
 Now, assuming you have all of the pre-requisites installed (including appropriate
-versions of Java and Maven.) You can create an Alfresco extension project using
-this generator.
-
-First of all you should create a new folder for your project and change into the
-new folder. Then run the following command:
+versions of node, npm, yeoman, this generator, Java and Maven.) You can create an 
+Alfresco extension project using this generator. First of all you should create a 
+new folder for your project and change into the new folder. Then run the 
+following command:
 
 ```bash
 yo alfresco
@@ -62,14 +64,12 @@ in new local, remote and source modules into projects created with the generator
 Once that is done we will add commands for creating things like webscripts, repo
 actions, behaviors, workflows, etc.
 
-Checkout the next section for what to do instead of this, if you plan to work on the 
-generator code.
 
 ### Try The Project / Contribute
 
 If you plan to to make changes to the generator itself, you'll want to
-check it out (or a fork it) from GitHub and then run the following command from the 
-checked out project directory:
+check it (or a fork or it) out from GitHub and then run the following command from 
+the checked out project directory:
 
 ```bash
 npm install
@@ -77,10 +77,10 @@ npm link # may need sudo
 ```
 
 This is essentially the same as the ```npm install -g binduwavell/generator-alfresco```
-command above, but you'll have a project directory where you can tweak things.
+command above, but you'll have a project directory where you can tweak things, and
+push updates back to GitHub.
 
-Pull requests are very welcome, please make sure to add/udpate tests appropriately if
-you do come up with something to add to the project.
+Pull requests are very welcome! Please make sure to add/update tests appropriately.
 
 Click the following link to open a clone of this project in Codenvy (a cloud IDE): 
 [![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
