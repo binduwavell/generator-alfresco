@@ -1,4 +1,4 @@
-# generator-alfresco [![Build Status](https://secure.travis-ci.org/binduwavell/generator-alfresco.png?branch=master)](https://travis-ci.org/binduwavell/generator-alfresco) [![Coverage Status](https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github)](https://coveralls.io/github/binduwavell/generator-alfresco?branch=master) [![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f) [![Join the chat at https://gitter.im/binduwavell/generator-alfresco](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+# generator-alfresco [![Build Status](https://secure.travis-ci.org/binduwavell/generator-alfresco.png?branch=master)](https://travis-ci.org/binduwavell/generator-alfresco) [![Coverage Status](https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github)](https://coveralls.io/github/binduwavell/generator-alfresco?branch=master) [![Join the chat at https://gitter.im/binduwavell/generator-alfresco](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](https://codenvy.com/factory?id=zmv24wynr689af6f) 
 
 ## Getting Started
 
@@ -60,8 +60,8 @@ This will ask you a number of questions and then generate a project based on you
 answers.
 
 We are currently in the process of finalising the code that is needed for brining
-in new local, remote and source modules into projects created with the generator.
-Once that is done we will add commands for creating things like webscripts, repo
+new: local, remote and source modules into projects created with the generator.
+Once that is done we will add sub-generators for creating things like webscripts, repo
 actions, behaviors, workflows, etc.
 
 
