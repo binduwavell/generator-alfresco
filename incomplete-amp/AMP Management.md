@@ -93,6 +93,7 @@ pre-packaged remote
 3. Copy /amps_source_templates/repo-amp/\* to /amps_source/*artifactId*
 4. Rename folder /amps_source/*artifactId*/src/main/amp/config/alfresco/module/**repo-amp** to **artifactId**
 5. Add module reference to /pom.xml by adding \<module>*artifactId*\</module> to the \<modules> element
+
    ~~~xml
    <modules>
      <module>ARTIFACTID</module>
@@ -103,8 +104,10 @@ pre-packaged remote
      <module>runner</module>
    </modules>
    ~~~
+   
 6. Edit /amps_source/*artifactId*/pom.xml
    1. Update the \<artifactId>, \<name>, and \<description> elements with the new *artifactId*
+   
       ~~~xml
       <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -115,8 +118,10 @@ pre-packaged remote
         <description>ARTIFACTID</description>
       </project>  
       ~~~
+      
 7. Edit /repo/pom.xml
    1. Edit the \<dependencies> and add the new module dependency
+   
       ~~~xml
       <dependencies>
         ...
@@ -129,7 +134,9 @@ pre-packaged remote
         ...
       </dependencies> 
       ~~~
+      
    2. Edit the \<overlays> and add the new overlay
+   
       ~~~xml
       <overlays>
         <!-- Current project customizations. This is normally empty, since customizations come from the AMPs -->
@@ -155,6 +162,7 @@ pre-packaged remote
 
 8. Edit /runner/tomcat/context-repo.xml
    1. Edit the \<Resources> element and update the extraResourcePaths attribute adding your target web folder   
+   
       ~~~xml
       <Context docBase="${project.parent.basedir}/alfresco-war/target/${project.build.finalName}">
         <!-- Pick up static resource files from AMPs and other directories (this should not include docBase) -->
@@ -176,8 +184,10 @@ pre-packaged remote
         ...
       </Context>
       ~~~
+      
    2. Edit the \<Loader> element and the virtualClassPath attribute and point it to the classes, config, and 
       test-classes folders for your *artifactId*.
+      
       ~~~xml
       <!-- Setup the virtual class path like this:
            1) target/classes
@@ -213,6 +223,7 @@ pre-packaged remote
                                 ${project.parent.basedir}/amps_source/ARTIFACTID/target/ARTIFACTID/config;
                                 ${project.parent.basedir}/amps_source/ARTIFACTID/target/test-classes" />
       ~~~
+      
 9. Internal step within code
 
    Internal to the yeoman generator, the .yo-rc.json file is updated. There is a "moduleRegistry" section here that keeps
@@ -225,6 +236,7 @@ pre-packaged remote
 3. Copy /amps_source_templates/share-amp/* to /amps_source/*artifactId*
 4. Rename /amps_source/*artifactId*/src/main/amp/config/alfresco/module/**share-amp** to *artifactId*
 5. Edit /pom.xml to reference new AMP adding \<module>*artifactId*\</module> to \<modules>
+
    ~~~xml
    <modules>
      <module>ARTIFACTID</module>
@@ -235,8 +247,10 @@ pre-packaged remote
      <module>runner</module>
    </modules>
    ~~~
+   
 6. Edit /amps_source/*artifactId*/pom.xml
    1. Update the \<artifactId>, \<name>, and \<description> elements with the new *artifactId*
+   
       ~~~xml
       <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -247,8 +261,10 @@ pre-packaged remote
         ...
       </project>
       ~~~
+      
 7. Edit share/pom.xml
    1. Edit the \<dependencies> and add the new module dependency
+   
       ~~~xml
       <dependencies>
         ...
@@ -261,7 +277,9 @@ pre-packaged remote
         ...
       </dependencies>
       ~~~
+      
    2. Edit the \<overlays> and add the new overlay (right after Add / sort your AMPs here)
+   
       ~~~xml
       <overlays>
         <!-- The current project customizations -->
@@ -284,8 +302,10 @@ pre-packaged remote
         ...
       </overlays>
       ~~~
+      
 8. Edit /runner/tomcat/context-share.xml
    1. Edit the \<Resources> element and update the extraResourcePaths attribute adding your target web folder   
+   
       ~~~xml
       <Context>
         <!-- Pick up static resource files from any Share extensions, being it a JAR or an AMP
@@ -296,6 +316,7 @@ pre-packaged remote
       ~~~
    
       If there is already another resource path to an amp target \(e.g. OtherAMPName) add yours to the end with a comma seperator.
+      
       ~~~xml
       <Context docBase="${project.parent.basedir}/alfresco-war/target/${project.build.finalName}">
          <!-- Pick up static resource files from AMPs and other directories (this should not include docBase) -->
@@ -303,8 +324,10 @@ pre-packaged remote
                extraResourcePaths="/=${project.parent.basedir}/amps_source/OtherAMPName/target/OtherAMPName/web,
                                    /=${project.parent.basedir}/amps_source/ARTIFACTID/target/ARTIFACTID/web" />
       ~~~
+      
    2. Edit the \<Loader> element and the virtualClassPath attribute and point it to the classes, config, and test-classes folders
    for your AMPName.
+   
       ~~~xml
       <!-- Configure where the Share (share.war) web application can load classes, config, and test classes (in that order) -->
       <!-- Setup the virtual class path like this:
@@ -345,6 +368,7 @@ pre-packaged remote
                                 ${project.parent.basedir}/amps_source/ARTIFACTID/target/share-amp/config;
                                 ${project.parent.basedir}/amps_source/ARTIFACTID/target/test-classes" />
       ~~~
+      
 9. Internal step within code
 
    Internal to the yeoman generator, the .yo-rc.json file is updated. There is a "moduleRegistry" section here that keeps
