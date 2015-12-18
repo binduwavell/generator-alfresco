@@ -15,17 +15,14 @@ describe('generator-alfresco:app', function () {
       var tmpdir = os.tmpdir();
       helpers.run(path.join(__dirname, '../app'))
         .inDir(path.join(tmpdir, './temp-test'))
-        .withOptions({ 'skip-install': true })
+        .withOptions({ 'skip-install': false })
         .withPrompts({
           sdkVersion: 'local',
         })
         .on('end', function() {
           helpers.run(path.join(__dirname, '../app'))
             .inDir(path.join(tmpdir, './temp-test'))
-            .withOptions({ 'skip-install': true })
-            .withPrompts({
-              sdkVersion: 'local',
-            })
+            .withOptions({ 'skip-install': false })
             .on('end', done);
         });
     });
@@ -69,14 +66,6 @@ describe('generator-alfresco:app', function () {
     it('does not create enterprise specific files', function () {
       assert.noFile([
         'repo/src/main/resources/alfresco/extension/license/README.md',
-      ]);
-    });
-    it('rename slingshot context to *.sample', function () {
-      assert.noFile([
-        'share-amp/src/main/amp/config/alfresco/web-extension/custom-slingshot-application-context.xml',
-      ]);
-      assert.file([
-        'share-amp/src/main/amp/config/alfresco/web-extension/custom-slingshot-application-context.xml.sample',
       ]);
     });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
