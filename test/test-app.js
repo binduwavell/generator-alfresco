@@ -18,6 +18,7 @@ describe('generator-alfresco:app', function () {
         .withOptions({ 'skip-install': false })
         .withPrompts({
           sdkVersion: 'local',
+          archetypeVersion: '2.1.1',
         })
         .on('end', function() {
           helpers.run(path.join(__dirname, '../app'))
