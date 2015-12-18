@@ -89,16 +89,28 @@ describe('generator-alfresco:spring-context', function () {
     it('can add an import where there is nothing', function () {
       var context = require('../app/spring-context.js')();
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
-    
+
     it('can add an import where there is nothing in beans', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!-- Stuff -->',
         '<beans>',
         '</beans>',
+      ].join('\n');
+      var context = require('../app/spring-context.js')(contextString);
+      assert.equal(context.hasImport('asdf'), false);
+      context.addImport('asdf')
+      assert.equal(context.hasImport('asdf'), true);
+    });
+
+    it('can add an import where there is a completely empty beans element', function () {
+      var contextString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<beans/>'
       ].join('\n');
       var context = require('../app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
@@ -134,8 +146,23 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('asdf'), true);
     });
 
+    it('can add an import where there is one and some other stuff', function () {
+      var contextString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<beans>',
+        '  <import resource="fdsa"/>',
+        '  <stuff/>',
+        '</beans>',
+      ].join('\n');
+      var context = require('../app/spring-context.js')(contextString);
+      assert.equal(context.hasImport('asdf'), false);
+      context.addImport('asdf')
+      assert.equal(context.hasImport('asdf'), true);
+    });
+
   });
-  
+
   describe('.removeImport()', function() {
 
     it('can remove an import where there is nothing', function () {
@@ -144,7 +171,7 @@ describe('generator-alfresco:spring-context', function () {
       context.removeImport('asdf')
       assert.equal(context.hasImport('asdf'), false);
     });
-    
+
     it('can remove an import where there is nothing in beans', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -185,7 +212,7 @@ describe('generator-alfresco:spring-context', function () {
       context.removeImport('fdsa')
       assert.equal(context.hasImport('fdsa'), false);
     });
-    
+
     it('can remove first of many imports', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -208,7 +235,7 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), true);
     });
-    
+
     it('can remove middle of many imports', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -254,7 +281,7 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), false);
     });
-    
+
     it('can remove many imports', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',

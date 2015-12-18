@@ -1,6 +1,7 @@
 'use strict';
 var pd = require('pretty-data').pd;
 var xmldom = require('xmldom');
+var domutil = require('./xml-dom-utils.js');
 
 /*
  * Given a context file that at least has a root <beans> element, this module
@@ -62,8 +63,9 @@ module.exports = function(contextString) {
     var imports = _getImports();
     if (imports && imports.length > 0) {
       var lastImport = imports[imports.length - 1];
-      if (lastImport.nextSibiling) {
-        beans.insertBefore(imp, lastImport.nextSibiling);
+      var nextElementSibling = domutil.getNextElementSibling(lastImport);
+      if (nextElementSibling) {
+        beans.insertBefore(imp, nextElementSibling);
       } else {
         beans.appendChild(imp);
       }

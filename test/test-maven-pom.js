@@ -338,6 +338,26 @@ describe('generator-alfresco:maven-pom', function () {
       assert.equal(dependencies.toString(), '<dependencies>\n    <dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <scope>compile</scope>\n    </dependency>\n  <dependency><groupId>net.ziaconsulting</groupId><artifactId>test</artifactId><version>1.0.0</version><scope>compile</scope></dependency></dependencies>');
     });
 
+    it('Remove version and scope from existing dependency', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../app/maven-pom.js')(pomString);
+      var dependency = pom.addDependency('com.ziaconsulting', 'test');
+      assert.ok(dependency);
+      assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      \n      \n    </dependency>');
+    });
   });
 
   describe('.removeDependency()', function() {
@@ -708,8 +728,8 @@ describe('generator-alfresco:maven-pom', function () {
         '</project>',
       ].join('\n');
       var pom = require('../app/maven-pom.js')(pomString);
-      pom.removeOverlay('com.ziaconsulting', 'test', 'amp');
-      var overlay = pom.findOverlay('com.ziaconsulting', 'test', 'amp');
+      pom.removeOverlay('${project.groupId}', 'repo-amp', 'amp');
+      var overlay = pom.findOverlay('${project.groupId}', 'repo-amp', 'amp');
       assert.equal(overlay, undefined);
     });
 
