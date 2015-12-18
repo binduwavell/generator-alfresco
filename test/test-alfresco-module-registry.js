@@ -298,6 +298,19 @@ describe('generator-alfresco:alfresco-module-registry', function () {
       });
     });
 
+    it('returns null for an incomplete module provided via object form', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      var module = repo.normalizeModule({
+        "groupId": 'groupId',
+        "artifactId": 'artifactId',
+        "version": 'version',
+        "packaging": 'packaging',
+        "war": 'war',
+        "location": 'location'
+      });
+      assert.equal(module, undefined);
+    });
+
   });
 
 });
