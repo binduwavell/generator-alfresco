@@ -68,8 +68,8 @@ actions, behaviors, workflows, etc.
 ### Try The Project / Contribute
 
 If you plan to to make changes to the generator itself, you'll want to
-check it (or a fork or it) out from GitHub and then run the following command from 
-the checked out project directory:
+check it out (or fork it and checkout your own copy) from GitHub and 
+then run the following command from the checked out project directory:
 
 ```bash
 npm install
