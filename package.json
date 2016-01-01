@@ -42,7 +42,9 @@
     "fs-extra": "0.26.3",
     "istanbul": "0.4.1",
     "mocha": "2.3.4",
-    "mocha-lcov-reporter": "1.0.0"
+    "mocha-lcov-reporter": "1.0.0",
+    "yeoman-assert": "2.1.1",
+    "yeoman-test": "1.0.0"
   },
   "scripts": {
     "fixme": "node -e \"require('fixme')()\"",
