@@ -163,7 +163,7 @@ module.exports = yeoman.Base.extend({
 
   _saveProps: function(propNames, propObject) {
     propNames.forEach(function(propName) {
-      console.log("SETTING " + propName + " to " + propObject[propName]);
+      // console.log("SETTING " + propName + " to " + propObject[propName]);
       this._saveProp(propName, propObject);
     }.bind(this));
   },

@@ -2,7 +2,7 @@
 
 var assert = require('yeoman-assert');
 var helpers = require('yeoman-test');
-var fs = require('fs-extra');
+var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
@@ -25,9 +25,9 @@ describe('generator-alfresco:app', function () {
         .on('end', function() {
           helpers.run(path.join(__dirname, '../app'))
             .inDir(tmpdir, function(dir) {
-              fs.ensureDirSync(path.join(dir, '/amps_source_templates/repo-amp'));
-              fs.ensureDirSync(path.join(dir, '/amps_source_templates/share-amp'));
-              fs.outputFileSync(path.join(dir, '/amps_source_templates/share-amp/pom.xml'), 'dummy');
+              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
+              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), 'dummy' );
             })
             .withLocalConfig({ 'archetypeVersion': '2.1.0' })
             .withOptions({ 'skip-install': false })
