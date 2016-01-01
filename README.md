@@ -5,8 +5,8 @@
 ### What is [Alfresco](http://www.alfresco.com)?
 
 Alfresco is an open-source content management application. This project provides some tools for 
-setting up and working projects for extending/enhancing Alfresco via the Alfresco supported 
-Alfresco SDK and specifically the All in One archetype.
+setting up and working with Alfresco extension/enhancement projects. It wraps and extends the
+Alfresco SDK and specifically the All in One maven archetype.
 
 ### What is [Yeoman](http://yeoman.io)?
 
