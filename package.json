@@ -20,33 +20,36 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^0.21.1",
-    "chalk": "^1.0.0",
-    "cross-spawn": "^2.0.0",
-    "deasync": "^0.1.0",
-    "eyes": "^0.1.8",
-    "lodash": "^3.10.0",
-    "ncp": "^2.0.0",
-    "pretty-data": "^0.40.0",
-    "rmdir": "^1.1.0",
-    "semver": "^4.3.3",
-    "split": "^0.3.3",
-    "walk": "^2.3.9",
-    "xmldom": "^0.1.19",
-    "xpath": "^0.0.9",
-    "yosay": "^1.0.2"
+    "yeoman-generator": "0.22.2",
+    "chalk": "1.1.1",
+    "cross-spawn": "2.1.0",
+    "deasync": "0.1.4",
+    "eyes": "0.1.8",
+    "lodash": "3.10.1",
+    "ncp": "2.0.0",
+    "pretty-data": "0.40.0",
+    "rmdir": "1.1.0",
+    "semver": "5.1.0",
+    "split": "1.0.0",
+    "walk": "2.3.9",
+    "xmldom": "0.1.19",
+    "xpath": "0.0.9",
+    "yosay": "1.1.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.4",
-    "fixme": "binduwavell/fixme",
-    "istanbul": "^0.4.1",
-    "mocha": "*",
-    "mocha-lcov-reporter": "^1.0.0"
+    "coveralls": "2.11.6",
+    "fixme": "0.3.0",
+    "fs-extra": "0.26.3",
+    "istanbul": "0.4.1",
+    "mocha": "2.3.4",
+    "mocha-lcov-reporter": "1.0.0"
   },
   "scripts": {
     "fixme": "node -e \"require('fixme')()\"",
-    "test": "mocha --reporter spec test",
+    "test": "mocha --reporter spec test -w",
+    "test:single": "mocha --reporter spec test",
     "howto-cover-local": "echo 'Place a repo_token: entry with the project secret from the coveralls dashboard into .coveralls.yml' ; echo 'WARNING: do not commit this secret!!!'",
-    "cover": "istanbul cover _mocha -- --report spec test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "cover": "istanbul cover _mocha -- --report spec test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover:local": "istanbul cover _mocha -- --report spec test ; node -e \"require('fixme')()\""
   }
 }

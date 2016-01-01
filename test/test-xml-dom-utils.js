@@ -150,6 +150,11 @@ describe('generator-alfresco:xml-dom-utils', function () {
 
   describe('.getNextElementSibling()', function() {
 
+    it('Get undefined when no node', function () {
+      var sibling = domutils.getNextElementSibling();
+      assert.equal(sibling, undefined);
+    });
+
     it('Get null when no sibling', function () {
       var xmlString = [
         '<?xml version="1.0" encoding="UTF-8"?>',

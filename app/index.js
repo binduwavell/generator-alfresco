@@ -13,7 +13,7 @@ var _ = require('lodash');
 
 // and yeah
 
-module.exports = yeoman.generators.Base.extend({
+module.exports = yeoman.Base.extend({
   initializing: function () {
     this.out = require('./app-output.js')(this);
     this.pkg = require('../package.json');
@@ -29,6 +29,7 @@ module.exports = yeoman.generators.Base.extend({
       includeGitIgnore: true,
       removeSamples: true,
     });
+    this.bail = false;
     try {
       this.javaVersion = versions.getJavaVersion();
       if (!this.javaVersion) {
@@ -40,12 +41,13 @@ module.exports = yeoman.generators.Base.extend({
       }
     } catch (e) {
       this.out.error(e.message);
-      throw e;
+      this.bail = true;
     }
     this.moduleRegistry = require('./alfresco-module-registry.js')(this);
   },
 
   prompting: function () {
+    if (this.bail) return;
     // Have Yeoman greet the user.
     this.log(yosay(
       'Welcome to the ' + chalk.green('Alfresco') + ' generator!'
@@ -161,18 +163,21 @@ module.exports = yeoman.generators.Base.extend({
 
   _saveProps: function(propNames, propObject) {
     propNames.forEach(function(propName) {
+      console.log("SETTING " + propName + " to " + propObject[propName]);
       this._saveProp(propName, propObject);
     }.bind(this));
   },
 
   configuring: {
     saveConfig: function () {
+      if (this.bail) return;
       this.config.save();
     },
   },
 
   default: {
     checkVersions: function () {
+      if (this.bail) return;
       try {
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
           throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') ' +
@@ -188,10 +193,11 @@ module.exports = yeoman.generators.Base.extend({
         }
       } catch (e) {
         this.out.error(e.message);
-        throw e;
+        this.bail = true;
       }
     },
     saveDefaultModulesInRegistry: function() {
+      if (this.bail) return;
       this.moduleRegistry.addModule(this.projectGroupId, 'repo-amp', this.projectVersion, 'amp', 'repo', 'source', 'repo-amp');
       this.moduleRegistry.addModule(this.projectGroupId, 'share-amp', this.projectVersion, 'amp', 'share', 'source', 'share-amp');
       this.moduleRegistry.save();
@@ -200,6 +206,7 @@ module.exports = yeoman.generators.Base.extend({
 
   writing: {
     generateArchetype: function () {
+      if (this.bail) return;
       var done = this.async();
 
       this.out.info('Attempting to use maven and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
@@ -250,6 +257,7 @@ module.exports = yeoman.generators.Base.extend({
       }.bind(this));
     },
     editGeneratedResources: function() {
+      if (this.bail) return;
       // Arrange for all generated beans to be included
       var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
       var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
@@ -263,6 +271,7 @@ module.exports = yeoman.generators.Base.extend({
       }
     },
     generatorOverlay: function () {
+      if (this.bail) return;
       var isEnterprise = ('Enterprise' === this.communityOrEnterprise);
       var tplContext = {
         isEnterprise: isEnterprise,
@@ -308,6 +317,7 @@ module.exports = yeoman.generators.Base.extend({
       }
     },
     removeSamplesScript: function () {
+      if (this.bail) return;
       if (this.removeSamples) {
         this.sdk.removeSamplesScript.call(this);
       }
@@ -316,6 +326,7 @@ module.exports = yeoman.generators.Base.extend({
 
   install: {
     saveAMPSourceTemplates: function() {
+      if (this.bail) return;
       var folders = ['repo-amp', 'share-amp'];
       var done;
       // Need to increment async count for each ncp we plan to run
@@ -344,6 +355,7 @@ module.exports = yeoman.generators.Base.extend({
       );
     },
     makeRunExecutable: function () {
+      if (this.bail) return;
       var cwd = process.cwd();
       var scripts = [
         'run.sh',

@@ -1,9 +1,11 @@
 'use strict';
 
-var path = require('path');
-var assert = require('yeoman-generator').assert;
-var helpers = require('yeoman-generator').test;
+var assert = require('yeoman-assert');
+var helpers = require('yeoman-test');
+var fs = require('fs-extra');
 var os = require('os');
+var path = require('path');
+
 
 describe('generator-alfresco:app', function () {
 
@@ -12,9 +14,9 @@ describe('generator-alfresco:app', function () {
     this.timeout(60000);
 
     before(function (done) {
-      var tmpdir = os.tmpdir();
+      var tmpdir = path.join(os.tmpdir(), './temp-test');
       helpers.run(path.join(__dirname, '../app'))
-        .inDir(path.join(tmpdir, './temp-test'))
+        .inDir(tmpdir)
         .withOptions({ 'skip-install': false })
         .withPrompts({
           sdkVersion: 'local',
@@ -22,8 +24,17 @@ describe('generator-alfresco:app', function () {
         })
         .on('end', function() {
           helpers.run(path.join(__dirname, '../app'))
-            .inDir(path.join(tmpdir, './temp-test'))
+            .inDir(tmpdir, function(dir) {
+              fs.ensureDirSync(path.join(dir, '/amps_source_templates/repo-amp'));
+              fs.ensureDirSync(path.join(dir, '/amps_source_templates/share-amp'));
+              fs.outputFileSync(path.join(dir, '/amps_source_templates/share-amp/pom.xml'), 'dummy');
+            })
+            .withLocalConfig({ 'archetypeVersion': '2.1.0' })
             .withOptions({ 'skip-install': false })
+            .withPrompts({
+              sdkVersion: 'local',
+              archetypeVersion: '2.1.1',
+            })
             .on('end', done);
         });
     });
@@ -268,6 +279,109 @@ describe('generator-alfresco:app', function () {
         'repo-amp/src/main/java/foo/bar/baz/demoamp',
         'repo-amp/src/test/java/foo/bar/baz/demoamp/test/DemoComponentTest.java',
         'repo-amp/src/test/java/foo/bar/baz/demoamp'
+      ]);
+    });
+  });
+
+  describe('detects invalid JAVA_HOME quickly', function () {
+
+    this.timeout(1000);
+
+    before(function (done) {
+      if (process.env.JAVA_HOME) {
+        var javaHome = process.env.JAVA_HOME;
+        process.env.JAVA_HOME = 'asdfASDF';
+        helpers.run(path.join(__dirname, '../app'))
+          .inDir(path.join(os.tmpdir(), './temp-test'))
+          .withOptions({ 'skip-install': false })
+          .on('end', function() {
+              process.env.JAVA_HOME = javaHome;
+              done();
+            });
+      } else {
+        console.log("WARNING: Skipping test because JAVA_HOME is not set");
+        done();
+      }
+    });
+
+    it('does not generate a project', function () {
+      assert.noFile([
+        '.editorconfig',
+        '.gitignore',
+        'pom.xml',
+        'run.sh',
+        'scripts/debug.sh',
+        'scripts/env.sh',
+        'scripts/explode-alf-sources.sh',
+        'scripts/find-exploded.sh',
+        'scripts/grep-exploded.sh',
+        'scripts/package-to-exploded.sh',
+        'scripts/run.sh',
+        'amps/README.md',
+        'amps_share/README.md',
+        'amps_source/README.md',
+        'amps_source_templates/README.md',
+        'amps_source_templates/repo-amp/pom.xml',
+        'amps_source_templates/share-amp/pom.xml',
+        'repo/pom.xml',
+        'repo-amp/pom.xml',
+        'runner/pom.xml',
+        'share/pom.xml',
+        'share-amp/pom.xml',
+        'solr-config/pom.xml',
+        'TODO.md',
+        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
+      ]);
+    });
+  });
+
+  describe('detects invalid M2_HOME quickly', function () {
+
+    this.timeout(1000);
+
+    before(function (done) {
+      var m2Home = process.env.M2_HOME;
+      process.env.M2_HOME = 'asdfASDF';
+      helpers.run(path.join(__dirname, '../app'))
+        .inDir(path.join(os.tmpdir(), './temp-test'))
+        .withOptions({ 'skip-install': false })
+        .on('end', function() {
+            if (m2Home) {
+              process.env.M2_HOME = m2Home;
+            } else {
+              delete process.env.M2_HOME;
+            }
+            done();
+          });
+    });
+
+    it('does not generate a project', function () {
+      assert.noFile([
+        '.editorconfig',
+        '.gitignore',
+        'pom.xml',
+        'run.sh',
+        'scripts/debug.sh',
+        'scripts/env.sh',
+        'scripts/explode-alf-sources.sh',
+        'scripts/find-exploded.sh',
+        'scripts/grep-exploded.sh',
+        'scripts/package-to-exploded.sh',
+        'scripts/run.sh',
+        'amps/README.md',
+        'amps_share/README.md',
+        'amps_source/README.md',
+        'amps_source_templates/README.md',
+        'amps_source_templates/repo-amp/pom.xml',
+        'amps_source_templates/share-amp/pom.xml',
+        'repo/pom.xml',
+        'repo-amp/pom.xml',
+        'runner/pom.xml',
+        'share/pom.xml',
+        'share-amp/pom.xml',
+        'solr-config/pom.xml',
+        'TODO.md',
+        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
       ]);
     });
   });
