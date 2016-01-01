@@ -11,7 +11,7 @@ describe('generator-alfresco:app', function () {
 
   describe('default prompts with local SDK, twice', function () {
 
-    this.timeout(60000);
+    this.timeout(120000);
 
     before(function (done) {
       var tmpdir = path.join(os.tmpdir(), './temp-test');
