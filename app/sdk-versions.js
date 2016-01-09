@@ -8,37 +8,37 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.7.0',
     supportedMavenVersions: '^3.2.5',
-    removeRepoSamplesScript: function() {
+    removeRepoSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
-        'repo-amp/src/main/amp/web/css/demoamp.css',
-        'repo-amp/src/main/amp/web/jsp/demoamp.jsp',
-        'repo-amp/src/main/amp/web/scripts/demoamp.js',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.js',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/bootstrap-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/service-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/webscript-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/content-model.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/workflow-model.xml',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/Demo.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/DemoComponent.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/HelloWorldWebScript.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp',
-        'repo-amp/src/test/java/' + projectPackagePath + '/demoamp/test/DemoComponentTest.java',
-        'repo-amp/src/test/java/' + projectPackagePath + '/demoamp',
+        pathPrefix + '/src/main/amp/web/css/demoamp.css',
+        pathPrefix + '/src/main/amp/web/jsp/demoamp.jsp',
+        pathPrefix + '/src/main/amp/web/scripts/demoamp.js',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.js',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/bootstrap-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/service-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/webscript-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/content-model.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/workflow-model.xml',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/Demo.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/DemoComponent.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/HelloWorldWebScript.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/test/DemoComponentTest.java',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp',
       ].forEach(function(file) {
         this.out.info("Removing repo-amp sample file created by maven archetype: " + file);
         this.fs.delete(file, {globOptions: {strict: true}});
       }.bind(this));
 
       [
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/EMPTY.txt',
-        'repo-amp/src/main/java/EMPTY.txt',
-        'repo-amp/src/test/java/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/EMPTY.txt',
+        pathPrefix + '/src/main/java/EMPTY.txt',
+        pathPrefix + '/src/test/java/EMPTY.txt',
       ].forEach(function(empty) {
         this.out.info("Creating empty file to protect important repo-amp folder: " + empty);
         this.fs.write(empty, '<EMPTY/>\n');
@@ -58,38 +58,38 @@ module.exports = {
       var contextDocNew = context.getContextString();
       this.fs.write(moduleContextPath, contextDocNew);
     },
-    removeShareSamplesScript: function() {
+    removeShareSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-data/extensions/share-amp-example-widgets.xml',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
-        'share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js',
-        'share-amp/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
-        'share-amp/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
-        'share-amp/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
-        'share-amp/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
-        'share-amp/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
-        'share-amp/src/test/resources/testng.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/share-amp-example-widgets.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/TemplateWidget.js',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
+        pathPrefix + '/src/test/resources/testng.xml',
       ].forEach(function(file) {
         this.out.info("Removing share-amp sample file created by maven archetype: " + file);
         this.fs.delete(file, {globOptions: {strict: true}});
       }.bind(this));
 
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
-        'share-amp/src/main/amp/web/js/EMPTY.txt',
-        'share-amp/src/test/java/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
+        pathPrefix + '/src/main/amp/web/js/EMPTY.txt',
+        pathPrefix + '/src/test/java/EMPTY.txt',
       ].forEach(function(empty) {
         this.out.info("Creating empty file to protect important share-amp folder: " + empty);
         this.fs.write(empty, '<EMPTY/>\n');
       }.bind(this));
 
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml',
       ].forEach(function(file) {
         this.out.info("Renaming share-amp file to *.sample: " + file);
         this.fs.move(file, file + '.sample');
@@ -103,37 +103,37 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
-    removeRepoSamplesScript: function() {
+    removeRepoSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
-        'repo-amp/src/main/amp/web/css/demoamp.css',
-        'repo-amp/src/main/amp/web/jsp/demoamp.jsp',
-        'repo-amp/src/main/amp/web/scripts/demoamp.js',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.js',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/bootstrap-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/service-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/webscript-context.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/content-model.xml',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/workflow-model.xml',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/Demo.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/DemoComponent.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp/HelloWorldWebScript.java',
-        'repo-amp/src/main/java/' + projectPackagePath + '/demoamp',
-        'repo-amp/src/test/java/' + projectPackagePath + '/demoamp/test/DemoComponentTest.java',
-        'repo-amp/src/test/java/' + projectPackagePath + '/demoamp',
+        pathPrefix + '/src/main/amp/web/css/demoamp.css',
+        pathPrefix + '/src/main/amp/web/jsp/demoamp.jsp',
+        pathPrefix + '/src/main/amp/web/scripts/demoamp.js',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.js',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/bootstrap-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/service-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/context/webscript-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/content-model.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/workflow-model.xml',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/Demo.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/DemoComponent.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp/HelloWorldWebScript.java',
+        pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/test/DemoComponentTest.java',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp',
       ].forEach(function(file) {
         this.out.info("Removing repo-amp sample file created by maven archetype: " + file);
         this.fs.delete(file, {globOptions: {strict: true}});
       }.bind(this));
 
       [
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/EMPTY.txt',
-        'repo-amp/src/main/java/EMPTY.txt',
-        'repo-amp/src/test/java/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/module/repo-amp/model/EMPTY.txt',
+        pathPrefix + '/src/main/java/EMPTY.txt',
+        pathPrefix + '/src/test/java/EMPTY.txt',
       ].forEach(function(empty) {
         this.out.info("Creating empty file to protect important repo-amp folder: " + empty);
         this.fs.write(empty, '<EMPTY/>\n');
@@ -153,38 +153,38 @@ module.exports = {
       var contextDocNew = context.getContextString();
       this.fs.write(moduleContextPath, contextDocNew);
     },
-    removeShareSamplesScript: function() {
+    removeShareSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-data/extensions/share-amp-example-widgets.xml',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
-        'share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js',
-        'share-amp/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
-        'share-amp/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
-        'share-amp/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
-        'share-amp/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
-        'share-amp/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
-        'share-amp/src/test/resources/testng.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/share-amp-example-widgets.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/TemplateWidget.js',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
+        pathPrefix + '/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
+        pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
+        pathPrefix + '/src/test/resources/testng.xml',
       ].forEach(function(file) {
         this.out.info("Removing share-amp sample file created by maven archetype: " + file);
         this.fs.delete(file, {globOptions: {strict: true}});
       }.bind(this));
 
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
-        'share-amp/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
-        'share-amp/src/main/amp/web/js/EMPTY.txt',
-        'share-amp/src/test/java/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
+        pathPrefix + '/src/main/amp/web/js/EMPTY.txt',
+        pathPrefix + '/src/test/java/EMPTY.txt',
       ].forEach(function(empty) {
         this.out.info("Creating empty file to protect important share-amp folder: " + empty);
         this.fs.write(empty, '<EMPTY/>\n');
       }.bind(this));
 
       [
-        'share-amp/src/main/amp/config/alfresco/web-extension/custom-slingshot-application-context.xml',
+        pathPrefix + '/src/main/amp/config/alfresco/web-extension/custom-slingshot-application-context.xml',
       ].forEach(function(file) {
         this.out.info("Renaming files to *.sample: " + file);
         this.fs.move(file, file + '.sample');

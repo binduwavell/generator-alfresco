@@ -319,8 +319,8 @@ module.exports = yeoman.Base.extend({
     removeSamplesScript: function () {
       if (this.bail) return;
       if (this.removeSamples) {
-        this.sdk.removeRepoSamplesScript.call(this);
-        this.sdk.removeShareSamplesScript.call(this);
+        this.sdk.removeRepoSamplesScript.call(this, 'repo-amp');
+        this.sdk.removeShareSamplesScript.call(this, 'share-amp');
       }
     }
   },
