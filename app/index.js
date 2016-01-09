@@ -131,7 +131,7 @@ module.exports = yeoman.Base.extend({
         default: this.config.get('removeSamples'),
         when: function(props) {
           this.sdk = this.sdkVersions[props.sdkVersion];
-          props['removeSamples'] = (true && this.sdk.removeSamplesScript);
+          props['removeSamples'] = (true && this.sdk.removeRepoSamplesScript && this.sdk.removeShareSamplesScript);
           return props['removeSamples'];
         }.bind(this),
       },
@@ -319,7 +319,8 @@ module.exports = yeoman.Base.extend({
     removeSamplesScript: function () {
       if (this.bail) return;
       if (this.removeSamples) {
-        this.sdk.removeSamplesScript.call(this);
+        this.sdk.removeRepoSamplesScript.call(this);
+        this.sdk.removeShareSamplesScript.call(this);
       }
     }
   },
