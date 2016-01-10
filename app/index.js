@@ -15,7 +15,7 @@ module.exports = yeoman.Base.extend({
     this.out = require('./app-output.js')(this);
     this.pkg = require('../package.json');
     this.config.set('generatorVersion', this.pkg.version);
-    this.sdkVersions = require("./sdk-versions.js");
+    this.sdkVersions = require('./sdk-versions.js');
     this.config.defaults({
       sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
@@ -24,7 +24,8 @@ module.exports = yeoman.Base.extend({
       projectPackage: 'org.alfresco',
       communityOrEnterprise: 'Community',
       includeGitIgnore: true,
-      removeSamples: true,
+      removeDefaultSourceAmps: false,
+      removeDefaultSourceSamples: true,
     });
     this.bail = false;
     try {
@@ -40,7 +41,6 @@ module.exports = yeoman.Base.extend({
       this.out.error(e.message);
       this.bail = true;
     }
-    this.moduleRegistry = require('./alfresco-module-registry.js')(this);
   },
 
   prompting: function () {
@@ -123,13 +123,29 @@ module.exports = yeoman.Base.extend({
       },
       {
         type: 'confirm',
-        name: 'removeSamples',
-        message: 'Should we remove samples from default source amps?',
-        default: this.config.get('removeSamples'),
+        name: 'removeDefaultSourceAmps',
+        message: 'Should we remove the default source amps?',
+        default: this.config.get('removeDefaultSourceAmps'),
         when: function(props) {
           this.sdk = this.sdkVersions[props.sdkVersion];
-          props['removeSamples'] = (true && this.sdk.removeRepoSamplesScript && this.sdk.removeShareSamplesScript);
-          return props['removeSamples'];
+          props['removeDefaultSourceAmps'] = (true && this.sdk.defaultModuleRegistry);
+          return props['removeDefaultSourceAmps'];
+        }.bind(this),
+      },
+      {
+        type: 'confirm',
+        name: 'removeDefaultSourceSamples',
+        message: 'Should we remove samples from the default source amps?',
+        default: this.config.get('removeDefaultSourceSamples'),
+        when: function(props) {
+          if (props['removeDefaultSourceAmps']) {
+            props['removeDefaultSourceSamples'] = false;
+          } else {
+              this.sdk = this.sdkVersions[props.sdkVersion];
+              props['removeDefaultSourceSamples'] =
+                (true && this.sdk.removeRepoSamplesScript && this.sdk.removeShareSamplesScript);
+          }
+          return props['removeDefaultSourceSamples'];
         }.bind(this),
       },
     ];
@@ -146,8 +162,12 @@ module.exports = yeoman.Base.extend({
         'projectPackage',
         'communityOrEnterprise',
         'includeGitIgnore',
-        'removeSamples',
+        'removeDefaultSourceAmps',
+        'removeDefaultSourceSamples',
       ], props);
+      // can only setup module registry/manager once we have other variables setup
+      this.moduleRegistry = require('./alfresco-module-registry.js')(this);
+      this.moduleManager = require('./alfresco-module-manager.js')(this);
       donePrompting();
     }.bind(this));
   },
@@ -195,8 +215,12 @@ module.exports = yeoman.Base.extend({
     },
     saveDefaultModulesInRegistry: function() {
       if (this.bail) return;
-      this.moduleRegistry.addModule(this.projectGroupId, 'repo-amp', this.projectVersion, 'amp', 'repo', 'source', 'repo-amp');
-      this.moduleRegistry.addModule(this.projectGroupId, 'share-amp', this.projectVersion, 'amp', 'share', 'source', 'share-amp');
+      if (this.sdk.defaultModuleRegistry) {
+        var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+        defaultModules.forEach(function(mod) {
+          this.moduleRegistry.addModule(mod);
+        }.bind(this));
+      }
       this.moduleRegistry.save();
     },
   },
@@ -242,8 +266,16 @@ module.exports = yeoman.Base.extend({
         var genDir = path.join(tmpDir, this.projectArtifactId);
         var sdkContents = fs.readdirSync(genDir);
         sdkContents.forEach(function(fileOrFolder) {
+          var absSourcePath = path.join(genDir, fileOrFolder);
+          //var absRepoAmp = path.join(genDir, 'repo-amp');
+          //var absShareAmp = path.join(genDir, 'share-amp');
+          //if (this.removeDefaultSourceAmps &&
+          //  (absSourcePath.indexOf(absRepoAmp) > -1 || absSourcePath.indexOf(absShareAmp) > -1)) {
+          //  this.out.warn('SKIPPING: ' + absSourcePath);
+          //  return;
+          //}
           this.fs.copy(
-            path.join(genDir, fileOrFolder),
+            absSourcePath,
             this.destinationPath(fileOrFolder)
           );
         }.bind(this));
@@ -330,12 +362,21 @@ module.exports = yeoman.Base.extend({
           tplContext);
       }
     },
-    saveAMPSourceTemplates: function() {
+    removeSampleAmps: function() {
       if (this.bail) return;
+      if (this.removeDefaultSourceAmps) {
+        if (this.sdk.defaultModuleRegistry) {
+          var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+          defaultModules.forEach(function(mod) {
+            this.moduleManager.removeModule(mod);
+          }.bind(this));
+        }
+        this.moduleManager.save();
+      }
     },
-    removeSamplesScript: function () {
+    removeSamplesScript: function() {
       if (this.bail) return;
-      if (this.removeSamples) {
+      if (this.removeDefaultSourceSamples) {
         this.sdk.removeRepoSamplesScript.call(this, 'repo-amp');
         this.sdk.removeShareSamplesScript.call(this, 'share-amp');
       }

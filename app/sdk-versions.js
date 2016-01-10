@@ -8,6 +8,28 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.7.0',
     supportedMavenVersions: '^3.2.5',
+    defaultModuleRegistry: function() {
+      return [
+        {
+          "groupId": this.projectGroupId,
+          "artifactId": "repo-amp",
+          "version": this.projectVersion,
+          "packaging": "amp",
+          "war": "repo",
+          "location": "source",
+          "path": "repo-amp",
+        },
+        {
+          "groupId": this.projectGroupId,
+          "artifactId": "share-amp",
+          "version": this.projectVersion,
+          "packaging": "amp",
+          "war": "share",
+          "location": "source",
+          "path": "share-amp",
+        }
+      ];
+    },
     removeRepoSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
@@ -103,6 +125,28 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
+    defaultModuleRegistry: function() {
+      return [
+        {
+          "groupId": this.projectGroupId,
+          "artifactId": "repo-amp",
+          "version": this.projectVersion,
+          "packaging": "amp",
+          "war": "repo",
+          "location": "source",
+          "path": "repo-amp",
+        },
+        {
+          "groupId": this.projectGroupId,
+          "artifactId": "share-amp",
+          "version": this.projectVersion,
+          "packaging": "amp",
+          "war": "share",
+          "location": "source",
+          "path": "share-amp",
+        }
+      ];
+    },
     removeRepoSamplesScript: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
