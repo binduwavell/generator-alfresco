@@ -2,17 +2,13 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var fs = require('fs');
-//var glob = require('glob');
 var inspect = require('eyes').inspector({maxLength: false});
-//var ncp = require('ncp').ncp;
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
 var versions = require('./dependency-versions.js');
 var yosay = require('yosay');
 var _ = require('lodash');
-
-// and yeah
 
 module.exports = yeoman.Base.extend({
   initializing: function () {
