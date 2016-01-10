@@ -75,35 +75,6 @@ module.exports = function(yo) {
            mod.packaging + ':' + mod.war + ':' + mod['location'];
   }
 
-  module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (undefined !== mod) {
-      var foundMod = module.findModule(mod);
-      if (!foundMod) {
-        modules.push(mod);
-      }
-    } else {
-      throw new Error('All components of the module are required: ' +
-          'groupId, artifactId, version, packaging, war, location and path.');
-    }
-  }
-
-  module.findModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    var found = undefined;
-    var moduleToFind = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (undefined !== moduleToFind) {
-      modules.forEach(function(mod) {
-        if (moduleToFind.groupId === mod.groupId && moduleToFind.artifactId === mod.artifactId &&
-            moduleToFind['version'] === mod['version'] && moduleToFind.packaging === mod.packaging &&
-            moduleToFind.war === mod.war && moduleToFind['location'] === mod['location'] && moduleToFind.path === mod.path
-        ) {
-          found = mod;
-        }
-      });
-    }
-    return found;
-  }
-
   module.normalizeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     // first argument is always required
     if (undefined !== modOrGroupId) {
@@ -111,8 +82,8 @@ module.exports = function(yo) {
       // properties for a module, if so add the module
       if (!artifactId && !ver && !packaging && !war && !loc && !path) {
         if (modOrGroupId.groupId && modOrGroupId.artifactId &&
-            modOrGroupId['version'] && modOrGroupId.packaging &&
-            modOrGroupId.war && modOrGroupId['location'] && modOrGroupId.path
+          modOrGroupId['version'] && modOrGroupId.packaging &&
+          modOrGroupId.war && modOrGroupId['location'] && modOrGroupId.path
         ) {
           return modOrGroupId;
         }
@@ -138,6 +109,51 @@ module.exports = function(yo) {
           "path": path
         };
       }
+    }
+  }
+
+  module.findModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    var found = undefined;
+    var moduleToFind = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    if (undefined !== moduleToFind) {
+      modules.forEach(function(mod) {
+        if (moduleToFind.groupId === mod.groupId && moduleToFind.artifactId === mod.artifactId &&
+            moduleToFind['version'] === mod['version'] && moduleToFind.packaging === mod.packaging &&
+            moduleToFind.war === mod.war && moduleToFind['location'] === mod['location'] && moduleToFind.path === mod.path
+        ) {
+          found = mod;
+        }
+      });
+    }
+    return found;
+  }
+
+  module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    if (undefined !== mod) {
+      var foundMod = module.findModule(mod);
+      if (!foundMod) {
+        modules.push(mod);
+      }
+    } else {
+      throw new Error('All components of the module are required: ' +
+        'groupId, artifactId, version, packaging, war, location and path.');
+    }
+  }
+
+  module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    if (undefined !== mod) {
+      var foundMod = module.findModule(mod);
+      if (foundMod) {
+        var idx = modules.indexOf(foundMod);
+        modules.splice(idx, 1); // weird javascript array mutation, for removing element
+      } else {
+        throw new Error('You may only remove a module that has already been registered');
+      }
+    } else {
+      throw new Error('All components of the module are required: ' +
+        'groupId, artifactId, version, packaging, war, location and path.');
     }
   }
 

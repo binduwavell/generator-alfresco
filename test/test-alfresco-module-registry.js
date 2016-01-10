@@ -142,15 +142,13 @@ describe('generator-alfresco:alfresco-module-registry', function () {
 
   });
 
-  describe('.addModule()', function() {
+  describe('.normalizeModule()', function() {
 
-    it('ignores requests to add an existing module', function () {
+    it('handles a module provided via long argument list', function () {
       var repo = require('../app/alfresco-module-registry.js')(yomock);
-      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
-      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
-      var modules = repo.getModules();
-      assert.ok(modules);
-      assert.deepEqual(modules, [{
+      var module = repo.normalizeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      assert.ok(module);
+      assert.deepEqual(module, {
         "groupId": 'groupId',
         "artifactId": 'artifactId',
         "version": 'version',
@@ -158,23 +156,66 @@ describe('generator-alfresco:alfresco-module-registry', function () {
         "war": 'war',
         "location": 'location',
         "path": 'path'
-      }]);
+      });
     });
 
-    it('throws for invalid modules', function () {
+    it('handles a module provided via object form', function () {
       var repo = require('../app/alfresco-module-registry.js')(yomock);
-      // throw if no arguments
-      assert.throws(function() {
-        repo.addModule();
+      var module = repo.normalizeModule({
+        "groupId": 'groupId',
+        "artifactId": 'artifactId',
+        "version": 'version',
+        "packaging": 'packaging',
+        "war": 'war',
+        "location": 'location',
+        "path": 'path'
       });
-      // throw if we are missing an argument
-      assert.throws(function() {
-        repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location');
+      assert.ok(module);
+      assert.deepEqual(module, {
+        "groupId": 'groupId',
+        "artifactId": 'artifactId',
+        "version": 'version',
+        "packaging": 'packaging',
+        "war": 'war',
+        "location": 'location',
+        "path": 'path'
       });
-      // throw if inner arguments are undefined
-      assert.throws(function() {
-        repo.addModule('groupId', 'artifactId', undefined, 'packaging', 'war', undefined, 'path');
+    });
+
+    it('returns undefined if no arguments', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.equal(repo.normalizeModule(), undefined);
+    });
+
+    it('returns undefined if we are missing an argument', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.equal(repo.normalizeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location'), undefined);
+    });
+
+    it('returns undefined if inner arguments are undefined', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.equal(
+        repo.normalizeModule('groupId', 'artifactId', undefined, 'packaging', 'war', undefined, 'path'),
+        undefined);
+    });
+
+    it('returns undefined for an empty module provided via object form', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      var module = repo.normalizeModule({});
+      assert.equal(module, undefined);
+    });
+
+    it('returns undefined for an incomplete module provided via object form', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      var module = repo.normalizeModule({
+        "groupId": 'groupId',
+        "artifactId": 'artifactId',
+        "version": 'version',
+        "packaging": 'packaging',
+        "war": 'war',
+        "location": 'location'
       });
+      assert.equal(module, undefined);
     });
 
   });
@@ -258,13 +299,15 @@ describe('generator-alfresco:alfresco-module-registry', function () {
 
   });
 
-  describe('.normalizeModule()', function() {
+  describe('.addModule()', function() {
 
-    it('handles a module provided via long argument list', function () {
+    it('ignores requests to add an existing module', function () {
       var repo = require('../app/alfresco-module-registry.js')(yomock);
-      var module = repo.normalizeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
-      assert.ok(module);
-      assert.deepEqual(module, {
+      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, [{
         "groupId": 'groupId',
         "artifactId": 'artifactId',
         "version": 'version',
@@ -272,45 +315,160 @@ describe('generator-alfresco:alfresco-module-registry', function () {
         "war": 'war',
         "location": 'location',
         "path": 'path'
-      });
+      }]);
     });
 
-    it('handles a module provided via object form', function () {
+    it('throws if no arguments', function () {
       var repo = require('../app/alfresco-module-registry.js')(yomock);
-      var module = repo.normalizeModule({
-        "groupId": 'groupId',
-        "artifactId": 'artifactId',
-        "version": 'version',
-        "packaging": 'packaging',
-        "war": 'war',
-        "location": 'location',
-        "path": 'path'
-      });
-      assert.ok(module);
-      assert.deepEqual(module, {
-        "groupId": 'groupId',
-        "artifactId": 'artifactId',
-        "version": 'version',
-        "packaging": 'packaging',
-        "war": 'war',
-        "location": 'location',
-        "path": 'path'
+      assert.throws(function() {
+        repo.addModule();
       });
     });
 
-    it('returns null for an incomplete module provided via object form', function () {
+    it('throws if we are missing an argument', function () {
       var repo = require('../app/alfresco-module-registry.js')(yomock);
-      var module = repo.normalizeModule({
-        "groupId": 'groupId',
-        "artifactId": 'artifactId',
-        "version": 'version',
-        "packaging": 'packaging',
-        "war": 'war',
-        "location": 'location'
+      assert.throws(function() {
+        repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location');
       });
-      assert.equal(module, undefined);
     });
 
+    it('throws if inner arguments are undefined', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.throws(function() {
+        repo.addModule('groupId', 'artifactId', undefined, 'packaging', 'war', undefined, 'path');
+      });
+    });
+
+  });
+
+  describe('.removeModule()', function() {
+
+    it('removes only module', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      repo.removeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, []);
+    });
+
+    it('removes first module', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      repo.addModule('groupId', 'artifactId1', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId2', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId3', 'version', 'packaging', 'war', 'location', 'path');
+      repo.removeModule('groupId', 'artifactId1', 'version', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, [
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId2',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId3',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+      ]);
+    });
+
+    it('removes middle module', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      repo.addModule('groupId', 'artifactId1', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId2', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId3', 'version', 'packaging', 'war', 'location', 'path');
+      repo.removeModule('groupId', 'artifactId2', 'version', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, [
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId1',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId3',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+      ]);
+    });
+
+    it('removes last module', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      repo.addModule('groupId', 'artifactId1', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId2', 'version', 'packaging', 'war', 'location', 'path');
+      repo.addModule('groupId', 'artifactId3', 'version', 'packaging', 'war', 'location', 'path');
+      repo.removeModule('groupId', 'artifactId3', 'version', 'packaging', 'war', 'location', 'path');
+      var modules = repo.getModules();
+      assert.ok(modules);
+      assert.deepEqual(modules, [
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId1',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+        {
+          "groupId": 'groupId',
+          "artifactId": 'artifactId2',
+          "version": 'version',
+          "packaging": 'packaging',
+          "war": 'war',
+          "location": 'location',
+          "path": 'path'
+        },
+      ]);
+    });
+
+    it('throws if no arguments', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.throws(function() {
+        repo.removeModule();
+      });
+    });
+
+    it('throws if we are missing an argument', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.throws(function() {
+        repo.removeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location');
+      });
+    });
+
+    it('throws if inner arguments are undefined', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.throws(function() {
+        repo.removeModule('groupId', 'artifactId', undefined, 'packaging', 'war', undefined, 'path');
+      });
+    });
+
+    it('throws if module does not exist', function () {
+      var repo = require('../app/alfresco-module-registry.js')(yomock);
+      assert.throws(function() {
+        repo.removeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      });
+    });
   });
 
 });
