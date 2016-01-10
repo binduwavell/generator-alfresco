@@ -2,8 +2,9 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var fs = require('fs');
+//var glob = require('glob');
 var inspect = require('eyes').inspector({maxLength: false});
-var ncp = require('ncp').ncp;
+//var ncp = require('ncp').ncp;
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
@@ -250,9 +251,26 @@ module.exports = yeoman.Base.extend({
             this.destinationPath(fileOrFolder)
           );
         }.bind(this));
+
+        this.out.info('Attempting to backup generated amp templates');
+        var folders = ['repo-amp', 'share-amp'];
+        folders.forEach(
+          function(folderName) {
+            var to = path.join(this.destinationPath('amps_source_templates'), folderName );
+            if (!fs.existsSync(to)) {
+                var from = path.join(genDir, folderName);
+                this.out.info('Copying from: ' + from + ' to: ' + to);
+                this.fs.copy(from, to);
+            } else {
+              this.out.warn('Not copying ' + folderName + ' as it has already been backed up')
+            }
+          }.bind(this)
+        );
+
         rmdir(tmpDir, function (err, dir, files) {
           // nothing to do here
         }.bind(this));
+
         done();
       }.bind(this));
     },
@@ -316,6 +334,9 @@ module.exports = yeoman.Base.extend({
           tplContext);
       }
     },
+    saveAMPSourceTemplates: function() {
+      if (this.bail) return;
+    },
     removeSamplesScript: function () {
       if (this.bail) return;
       if (this.removeSamples) {
@@ -326,35 +347,6 @@ module.exports = yeoman.Base.extend({
   },
 
   install: {
-    saveAMPSourceTemplates: function() {
-      if (this.bail) return;
-      var folders = ['repo-amp', 'share-amp'];
-      var done;
-      // Need to increment async count for each ncp we plan to run
-      folders.forEach(function(folderName) {
-        done = this.async();
-      }.bind(this));
-      this.out.info('Attempting to backup generated amp templates');
-      ncp.limit = 16;
-      folders.forEach(
-        function(folderName) {
-          if (fs.existsSync(this.destinationPath('amps_source_templates/' + folderName))) {
-            this.out.warn(folderName + " template already copied, not re-copying");
-          } else {
-            ncp(
-              this.destinationPath(folderName),
-              this.destinationPath('amps_source_templates/' + folderName),
-              function(err) {
-                if (err) {
-                  this.out.error(err);
-                }
-                done();
-              }.bind(this)
-            );
-          }
-        }.bind(this)
-      );
-    },
     makeRunExecutable: function () {
       if (this.bail) return;
       var cwd = process.cwd();
