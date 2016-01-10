@@ -218,7 +218,7 @@ module.exports = yeoman.Base.extend({
       if (this.sdk.defaultModuleRegistry) {
         var defaultModules = this.sdk.defaultModuleRegistry.call(this);
         defaultModules.forEach(function(mod) {
-          this.moduleRegistry.addModule(mod);
+          this.moduleManager.addModule(mod);
         }.bind(this));
       }
       this.moduleRegistry.save();
