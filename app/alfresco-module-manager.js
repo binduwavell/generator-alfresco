@@ -24,16 +24,26 @@ module.exports = function(yo) {
     yo.moduleRegistry.addModule(mod);
     if ('source' === mod.location) {
       //console.log('Scheduling ops for ' + mod.artifactId);
-      // TODO: copy the actual files
-      // TODO: add module to top pom.xml
+      ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { addModuleToTopPom(mod) } );
-      // TODO: add to repo / share war wrapper modules
       ops.push(function() { addModuleToWarWrapper(mod) } );
+      // TODO: what else do we need to do when we remove a module?
     }
-    // TODO: what else do we need to do when we remove a module?
+  }
+
+  function copyTemplateForModule(mod) {
+    var toPath = yo.destinationPath(mod.path);
+    if (yo.fs.exists(toPath)) {
+      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging)
+      yo.out.info('TODO: Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
+      yo.fs.copy(fromPath, toPath);
+    } else {
+      yo.out.warn('Not copying module as target path already exists: ' + toPath);
+    }
   }
 
   function addModuleToTopPom(mod) {
+    // TODO: if intermediate source modules are not included, include them too (amps_source for example.)
     var topPomPath = yo.destinationPath('pom.xml');
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + topPomPath);
     var topPom = yo.fs.read(topPomPath);
@@ -90,26 +100,28 @@ module.exports = function(yo) {
       //console.log("REMOVING MODULE: " + mod.artifactId);
       yo.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
-          // remove the actual files
-          yo.out.warn('Deleting source amp: ' + mod.path);
-          var absPath = yo.destinationPath(mod.path);
-          // if we have files on disk already this will get them
-          //console.log("DELETING EXISTING FILES FROM: " + absPath);
-          yo.fs.delete(absPath);
-          // if we have files in mem-fs, this should get those
-          yo.fs.store.each(function(file, idx) {
-            if (file.path.indexOf(absPath) == 0) {
-              //console.log("DELETING: " + file.path);
-              yo.fs.delete(file.path);
-            }
-          });
-          // TODO: remove module from top pom.xml
-          ops.push(function() { removeModuleFromTopPom(mod) } );
-          // TODO: remove from repo / share war wrapper modules
-          ops.push(function() { removeModuleFromWarWrapper(mod) } );
+        ops.push(function() { removeModuleFiles(mod) } );
+        ops.push(function() { removeModuleFromTopPom(mod) } );
+        ops.push(function() { removeModuleFromWarWrapper(mod) } );
+        // TODO: what else do we need to do when we remove a module?
       }
-      // TODO: what else do we need to do when we remove a module?
     }
+  }
+
+  function removeModuleFiles(mod) {
+    // remove the actual files
+    yo.out.warn('Deleting source module: ' + mod.path);
+    var absPath = yo.destinationPath(mod.path);
+    // if we have files on disk already this will get them
+    //console.log("DELETING EXISTING FILES FROM: " + absPath);
+    yo.fs.delete(absPath);
+    // if we have files in mem-fs, this should get those
+    yo.fs.store.each(function(file, idx) {
+      if (file.path.indexOf(absPath) == 0) {
+        //console.log("DELETING: " + file.path);
+        yo.fs.delete(file.path);
+      }
+    });
   }
 
   function removeModuleFromTopPom(mod) {
@@ -124,6 +136,7 @@ module.exports = function(yo) {
   }
 
   function removeModuleFromWarWrapper(mod) {
+    // TODO: remove dependency and overlay from repo / share war wrapper modules
     yo.out.warn('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
   }
 
