@@ -213,16 +213,6 @@ module.exports = yeoman.Base.extend({
         this.bail = true;
       }
     },
-    saveDefaultModulesInRegistry: function() {
-      if (this.bail) return;
-      if (this.sdk.defaultModuleRegistry) {
-        var defaultModules = this.sdk.defaultModuleRegistry.call(this);
-        defaultModules.forEach(function(mod) {
-          this.moduleManager.addModule(mod);
-        }.bind(this));
-      }
-      this.moduleRegistry.save();
-    },
   },
 
   writing: {
@@ -267,13 +257,6 @@ module.exports = yeoman.Base.extend({
         var sdkContents = fs.readdirSync(genDir);
         sdkContents.forEach(function(fileOrFolder) {
           var absSourcePath = path.join(genDir, fileOrFolder);
-          //var absRepoAmp = path.join(genDir, 'repo-amp');
-          //var absShareAmp = path.join(genDir, 'share-amp');
-          //if (this.removeDefaultSourceAmps &&
-          //  (absSourcePath.indexOf(absRepoAmp) > -1 || absSourcePath.indexOf(absShareAmp) > -1)) {
-          //  this.out.warn('SKIPPING: ' + absSourcePath);
-          //  return;
-          //}
           this.fs.copy(
             absSourcePath,
             this.destinationPath(fileOrFolder)
@@ -362,21 +345,29 @@ module.exports = yeoman.Base.extend({
           tplContext);
       }
     },
-    removeSampleAmps: function() {
+    registerDefaultSampleAmps: function() {
       if (this.bail) return;
-      if (this.removeDefaultSourceAmps) {
-        if (this.sdk.defaultModuleRegistry) {
-          var defaultModules = this.sdk.defaultModuleRegistry.call(this);
-          defaultModules.forEach(function(mod) {
-            this.moduleManager.removeModule(mod);
-          }.bind(this));
-        }
+      if (this.sdk.defaultModuleRegistry) {
+        var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+        defaultModules.forEach(function (mod) {
+          this.moduleManager.addModule(mod);
+        }.bind(this));
+        this.moduleManager.save();
+      }
+    },
+    removeDefaultSampleAmps: function() {
+      if (this.bail) return;
+      if (this.removeDefaultSourceAmps && this.sdk.defaultModuleRegistry) {
+        var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+        defaultModules.forEach(function(mod) {
+          this.moduleManager.removeModule(mod);
+        }.bind(this));
         this.moduleManager.save();
       }
     },
     removeSamplesScript: function() {
       if (this.bail) return;
-      if (this.removeDefaultSourceSamples) {
+      if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
         this.sdk.removeRepoSamplesScript.call(this, 'repo-amp');
         this.sdk.removeShareSamplesScript.call(this, 'share-amp');
       }

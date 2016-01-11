@@ -1,4 +1,6 @@
 'use strict';
+var xmldom = require('xmldom');
+var domutils = require('./xml-dom-utils.js');
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -18,8 +20,10 @@ module.exports = function(yo) {
     if (!mod) {
       mod = yo.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     }
+    yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
     yo.moduleRegistry.addModule(mod);
     if ('source' === mod.location) {
+      //console.log('Scheduling ops for ' + mod.artifactId);
       // TODO: copy the actual files
       // TODO: add module to top pom.xml
       ops.push(function() { addModuleToTopPom(mod) } );
@@ -31,7 +35,7 @@ module.exports = function(yo) {
 
   function addModuleToTopPom(mod) {
     var topPomPath = yo.destinationPath('pom.xml');
-    yo.out.warn('Adding ' + mod.artifactId + ' module to ' + topPomPath);
+    yo.out.info('Adding ' + mod.artifactId + ' module to ' + topPomPath);
     var topPom = yo.fs.read(topPomPath);
     var pom = require('./maven-pom.js')(topPom);
     if (!pom.findModule(mod.artifactId)) {
@@ -41,22 +45,61 @@ module.exports = function(yo) {
   }
 
   function addModuleToWarWrapper(mod) {
-    yo.out.warn('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
+    yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
+    var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
+    var wrapperPom = yo.fs.read(wrapperPomPath);
+    var pom = require('./maven-pom.js')(wrapperPom);
+    if (!pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
+      pom.addDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
+    }
+
+    // search existing plugins for maven-war-plugin, create if necessary
+    // once found/created, make sure we have configuation/overlays
+    var build = pom.getOrCreateTopLevelElement('pom', 'build');
+    var doc = build.ownerDocument;
+    var plugins = domutils.getOrCreateChild(doc, build, 'pom', 'plugins');
+    var plugin = domutils.getOrCreateChild(doc, plugins, 'pom', 'plugin');
+    var artifactIdText = '';
+    do {
+      var artifactId = domutils.getOrCreateChild(doc, plugin, 'pom', 'artifactId');
+      artifactIdText = artifactId.textContent;
+      if (artifactIdText) {
+        if ('maven-war-plugin' !== artifactIdText) {
+          plugin = domutils.getNextElementSibling(plugin);
+          // exhausted existing plugins, so we need to add one
+          if (undefined === plugin) {
+            plugin = domutils.createChild(doc, plugins, 'pom', 'plugin');
+          }
+        }
+      } else {
+        artifactIdText = 'maven-war-plugin';
+        artifactId.textContent = artifactIdText;
+      }
+    } while ('maven-war-plugin' !== artifactIdText)
+    var configuration = domutils.getOrCreateChild(doc, plugin, 'pom', 'configuration');
+    var overlays = domutils.getOrCreateChild(doc, configuration, 'pom', 'overlays');
+    var overlay = pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
+    //console.log(pom.getPOMString());
+    yo.fs.write(wrapperPomPath, pom.getPOMString());
   }
 
   module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    //console.log("SEARCHING FOR MODULE: " + modOrGroupId.artifactId);
     var mod = yo.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
-      yo.moduleRegistry.removeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      //console.log("REMOVING MODULE: " + mod.artifactId);
+      yo.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
           // remove the actual files
           yo.out.warn('Deleting source amp: ' + mod.path);
           var absPath = yo.destinationPath(mod.path);
           // if we have files on disk already this will get them
+          //console.log("DELETING EXISTING FILES FROM: " + absPath);
           yo.fs.delete(absPath);
           // if we have files in mem-fs, this should get those
           yo.fs.store.each(function(file, idx) {
             if (file.path.indexOf(absPath) == 0) {
+              //console.log("DELETING: " + file.path);
               yo.fs.delete(file.path);
             }
           });
@@ -85,10 +128,12 @@ module.exports = function(yo) {
   }
 
   module.save = function() {
+    //console.log('Saving module registry and performing scheduled tasks');
     yo.moduleRegistry.save();
     ops.forEach(function(op) {
       op.call(this);
     });
+    ops = [];
   }
 
   return module;

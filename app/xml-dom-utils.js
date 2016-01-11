@@ -37,7 +37,7 @@ module.exports = {
   },
 
   removeParentsChild: function(parent, child) {
-    if (parent && child) {
+    if (parent && child && parent == child.parentNode) {
       parent.removeChild(child);
     }
   },

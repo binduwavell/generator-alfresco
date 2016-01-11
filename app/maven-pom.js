@@ -102,7 +102,7 @@ module.exports = function(pomString) {
     }
   }
 
-  module.findDependency = function(groupId, artifactId, version, scope) {
+  module.findDependency = function(groupId, artifactId, version, type, scope) {
     var dependencies = xpath.selectWithResolver('/pom:project/pom:dependencies/pom:dependency', doc, domutils.resolver);
     // Only process if group and artifact Ids are specified and we have dependencies to process
     if (groupId && artifactId && dependencies) {
@@ -113,25 +113,45 @@ module.exports = function(pomString) {
         var groupIdNode = domutils.getChild(dependency, 'pom', 'groupId');
         var artifactIdNode = domutils.getChild(dependency, 'pom', 'artifactId');
         var versionNode = domutils.getChild(dependency, 'pom', 'version');
+        var typeNode = domutils.getChild(dependency, 'pom', 'type');
         var scopeNode = domutils.getChild(dependency, 'pom', 'scope');
 
         var groupIdContent = (groupIdNode ? groupIdNode.textContent : undefined);
         var artifactIdContent = (artifactIdNode ? artifactIdNode.textContent : undefined);
         var versionContent = (versionNode ? versionNode.textContent : undefined);
+        var typeContent = (typeNode ? typeNode.textContent : undefined);
         var scopeContent = (scopeNode ? scopeNode.textContent : undefined);
 
 
         // Don't bother matching things that don't at least match group and artifact Ids
         if (groupId == groupIdContent && artifactId == artifactIdContent) {
-          if (version && scope) {
+          if (version && type && scope) {
+            if (version == versionContent && type == typeContent && scope == scopeContent) {
+              return dependency;
+            }
+            return;
+          } else if (version && type) {
+            if (version == versionContent && type == typeContent) {
+              return dependency;
+            }
+            return;
+          } else if (version && scope) {
             if (version == versionContent && scope == scopeContent) {
               return dependency;
             }
+            return;
+          } else if (type && scope) {
+            if (type == typeContent && scope == scopeContent) {
+              return dependency;
+            }
+            return;
           } else if (version && version == versionContent) {
-              return dependency;
+            return dependency;
+          } else if (type && type == typeContent) {
+            return dependency;
           } else if (scope && scope == scopeContent) {
-              return dependency;
-          } else {
+            return dependency;
+          } else if (!version && !type && !scope) {
             return dependency;
           }
         }
@@ -139,8 +159,8 @@ module.exports = function(pomString) {
     }
   }
 
-  module.addDependency = function(groupId, artifactId, version, scope) {
-    var dependency = module.findDependency(groupId, artifactId, version, scope);
+  module.addDependency = function(groupId, artifactId, version, type, scope) {
+    var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (!dependency) {
       dependency = domutils.createChild(doc, module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency')
     }
@@ -157,6 +177,15 @@ module.exports = function(pomString) {
         domutils.removeParentsChild(dependency, versionNode);
       }
     }
+    if (type) {
+      var typeNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'type');
+      typeNode.textContent = type;
+    } else {
+      typeNode = domutils.getChild(dependency, 'pom', 'type');
+      if (typeNode) {
+        domutils.removeParentsChild(dependency, typeNode);
+      }
+    }
     if (scope) {
       var scopeNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'scope');
       scopeNode.textContent = scope;
@@ -169,8 +198,8 @@ module.exports = function(pomString) {
     return dependency;
   }
 
-  module.removeDependency = function(groupId, artifactId, version, scope) {
-    var dependency = module.findDependency(groupId, artifactId, version, scope);
+  module.removeDependency = function(groupId, artifactId, version, type, scope) {
+    var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (dependency) {
       var parent = dependency.parentNode;
       if (parent) {

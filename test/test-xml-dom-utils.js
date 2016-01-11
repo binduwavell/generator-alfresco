@@ -83,7 +83,7 @@ describe('generator-alfresco:xml-dom-utils', function () {
 
   describe('.removeParentsChild()', function() {
 
-    it('delete top level element', function () {
+    it('deletes top level element', function () {
       var xmlString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!-- Comment -->',
@@ -103,6 +103,31 @@ describe('generator-alfresco:xml-dom-utils', function () {
         '<!-- Comment -->',
         '<root ',
         '  xmlns:ns="http://www.example.com/">',
+        '</root>',
+      ].join('\n'));
+    });
+
+    it('does not delete if not parent/child', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns:ns="http://www.example.com/">',
+        '  <ns:element />',
+        '</root>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      var element = domutils.getChild(rootElement, 'ns', 'element');
+      domutils.removeParentsChild(element, rootElement);
+      var docStr = pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
+      assert.equal(docStr, [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root ',
+        '  xmlns:ns="http://www.example.com/">',
+        '  <ns:element/>',
         '</root>',
       ].join('\n'));
     });

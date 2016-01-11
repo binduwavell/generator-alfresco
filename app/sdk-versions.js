@@ -11,22 +11,22 @@ module.exports = {
     defaultModuleRegistry: function() {
       return [
         {
-          "groupId": this.projectGroupId,
-          "artifactId": "repo-amp",
-          "version": this.projectVersion,
-          "packaging": "amp",
-          "war": "repo",
-          "location": "source",
-          "path": "repo-amp",
+          "groupId": '${project.groupId}',
+          "artifactId": 'repo-amp',
+          "version": '${project.version}',
+          "packaging": 'amp',
+          "war": 'repo',
+          "location": 'source',
+          "path": 'repo-amp',
         },
         {
-          "groupId": this.projectGroupId,
-          "artifactId": "share-amp",
-          "version": this.projectVersion,
-          "packaging": "amp",
-          "war": "share",
-          "location": "source",
-          "path": "share-amp",
+          "groupId": '${project.groupId}',
+          "artifactId": 'share-amp',
+          "version": '${project.version}',
+          "packaging": 'amp',
+          "war": 'share',
+          "location": 'source',
+          "path": 'share-amp',
         }
       ];
     },
@@ -128,22 +128,22 @@ module.exports = {
     defaultModuleRegistry: function() {
       return [
         {
-          "groupId": this.projectGroupId,
-          "artifactId": "repo-amp",
-          "version": this.projectVersion,
-          "packaging": "amp",
-          "war": "repo",
-          "location": "source",
-          "path": "repo-amp",
+          "groupId": '${project.groupId}',
+          "artifactId": 'repo-amp',
+          "version": '${project.version}',
+          "packaging": 'amp',
+          "war": 'repo',
+          "location": 'source',
+          "path": 'repo-amp',
         },
         {
-          "groupId": this.projectGroupId,
-          "artifactId": "share-amp",
-          "version": this.projectVersion,
-          "packaging": "amp",
-          "war": "share",
-          "location": "source",
-          "path": "share-amp",
+          "groupId": '${project.groupId}',
+          "artifactId": 'share-amp',
+          "version": '${project.version}',
+          "packaging": 'amp',
+          "war": 'share',
+          "location": 'source',
+          "path": 'share-amp',
         }
       ];
     },

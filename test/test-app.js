@@ -9,37 +9,19 @@ var path = require('path');
 
 describe('generator-alfresco:app', function () {
 
-  describe('default prompts with local SDK, twice', function () {
+  describe('default prompts with default SDK (2.1.1)', function () {
 
     this.timeout(60000);
 
     before(function (done) {
-      var tmpdir = path.join(os.tmpdir(), './temp-test');
       helpers.run(path.join(__dirname, '../app'))
-        .inDir(tmpdir)
-        .withOptions({ 'skip-install': false })
-        .withPrompts({
-          sdkVersion: 'local',
-          archetypeVersion: '2.1.1',
-        })
-        .on('end', function() {
-          helpers.run(path.join(__dirname, '../app'))
-            .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
-              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), 'dummy' );
-            })
-            .withLocalConfig({ 'archetypeVersion': '2.1.0' })
-            .withOptions({ 'skip-install': false })
-            .withPrompts({
-              sdkVersion: 'local',
-              archetypeVersion: '2.1.1',
-            })
-            .on('end', done);
-        });
+        .inDir(path.join(os.tmpdir(), './temp-test'))
+        .withOptions({ 'skip-install': true })
+        .on('end', done);
     });
 
     it('creates files', function () {
+      // TODO(bwavell): add more tests
       assert.file([
         '.editorconfig',
         '.gitignore',
@@ -67,6 +49,7 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
         'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
+        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
       ]);
     });
     it('adds generic include for generated beans', function () {
@@ -80,6 +63,21 @@ describe('generator-alfresco:app', function () {
         'repo/src/main/resources/alfresco/extension/license/README.md',
       ]);
     });
+    it('removes demo files', function () {
+      assert.noFile([
+        // This list is representative, it is not a complete list of items that are removed
+        'repo-amp/src/main/java/org/alfresco/demoamp/Demo.java',
+        'repo-amp/src/test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
+      ]);
+    });
+    it('rename slingshot context to *.sample', function () {
+      assert.noFile([
+        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml',
+      ]);
+      assert.file([
+        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml.sample',
+      ]);
+    });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
@@ -88,6 +86,7 @@ describe('generator-alfresco:app', function () {
       ]);
     });
   });
+
   describe('default prompts with SDK 2.1.0', function () {
 
     this.timeout(60000);
@@ -169,22 +168,37 @@ describe('generator-alfresco:app', function () {
     });
   });
 
-  describe('default prompts with SDK 2.1.1', function () {
+  describe('default prompts with local SDK, twice', function () {
 
     this.timeout(60000);
 
     before(function (done) {
+      var tmpdir = path.join(os.tmpdir(), './temp-test');
       helpers.run(path.join(__dirname, '../app'))
-        .inDir(path.join(os.tmpdir(), './temp-test'))
-        .withOptions({ 'skip-install': true })
+        .inDir(tmpdir)
+        .withOptions({ 'skip-install': false })
         .withPrompts({
-          sdkVersion: '2.1.1',
+          sdkVersion: 'local',
+          archetypeVersion: '2.1.1',
         })
-        .on('end', done);
+        .on('end', function() {
+          helpers.run(path.join(__dirname, '../app'))
+            .inDir(tmpdir, function(dir) {
+              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
+              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), 'dummy' );
+            })
+            .withLocalConfig({ 'archetypeVersion': '2.1.0' })
+            .withOptions({ 'skip-install': false })
+            .withPrompts({
+              sdkVersion: 'local',
+              archetypeVersion: '2.1.1',
+            })
+            .on('end', done);
+        });
     });
 
     it('creates files', function () {
-      // TODO(bwavell): add more tests
       assert.file([
         '.editorconfig',
         '.gitignore',
@@ -212,7 +226,6 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
         'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
-        'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/EMPTY.txt',
       ]);
     });
     it('adds generic include for generated beans', function () {
@@ -226,26 +239,71 @@ describe('generator-alfresco:app', function () {
         'repo/src/main/resources/alfresco/extension/license/README.md',
       ]);
     });
-    it('removes demo files', function () {
-      assert.noFile([
-        // This list is representative, it is not a complete list of items that are removed
-        'repo-amp/src/main/java/org/alfresco/demoamp/Demo.java',
-        'repo-amp/src/test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
-      ]);
-    });
-    it('rename slingshot context to *.sample', function () {
-      assert.noFile([
-        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml',
-      ]);
-      assert.file([
-        'share-amp/src/main/amp/config/alfresco/web-extension/share-amp-slingshot-application-context.xml.sample',
-      ]);
-    });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/]
+      ]);
+    });
+  });
+
+  describe('remove sdk samples', function () {
+
+    this.timeout(60000);
+
+    before(function (done) {
+      helpers.run(path.join(__dirname, '../app'))
+        .inDir(path.join(os.tmpdir(), './temp-test'))
+        .withOptions({ 'skip-install': false })
+        .withPrompts({
+          removeDefaultSourceAmps: true,
+          removeDefaultSourceSamples: false,
+        })
+        .on('end', done);
+    });
+
+    it('does not create sample amp specific files', function () {
+      assert.noFile([
+        'repo-amp/pom.xml',
+        'share-amp/pom.xml',
+      ]);
+    });
+  });
+
+  describe('remove sdk samples, twice', function () {
+
+    this.timeout(60000);
+
+    before(function (done) {
+      var tmpdir = path.join(os.tmpdir(), './temp-test');
+      helpers.run(path.join(__dirname, '../app'))
+        .inDir(tmpdir)
+        .withOptions({ 'skip-install': false })
+        .withPrompts({
+          removeDefaultSourceAmps: true,
+          removeDefaultSourceSamples: false,
+        })
+        .on('end', function() {
+          helpers.run(path.join(__dirname, '../app'))
+            .inDir(tmpdir, function(dir) {
+              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
+              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), 'dummy' );
+            })
+            .withLocalConfig({
+              removeDefaultSourceAmps: true,
+              removeDefaultSourceSamples: false,
+            })
+            .withOptions({ 'skip-install': false })
+            .on('end', done);
+        });
+    });
+
+    it('does not create sample amp specific files', function () {
+      assert.noFile([
+        'repo-amp/pom.xml',
+        'share-amp/pom.xml',
       ]);
     });
   });
@@ -266,7 +324,8 @@ describe('generator-alfresco:app', function () {
           projectPackage: 'foo.bar.baz',
           communityOrEnterprise: 'Community',
           includeGitIgnore: true,
-          removeSamples: true,
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: true,
         })
         .on('end', done);
     });
