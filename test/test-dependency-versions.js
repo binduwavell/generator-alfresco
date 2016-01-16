@@ -4,7 +4,7 @@ var assert = require('assert');
 var chalk = require('chalk');
 var inspect = require('eyes').inspector({maxLength: false});
 var pd = require('pretty-data').pd;
-var dependencyVersions = require('../app/dependency-versions.js');
+var dependencyVersions = require('../generators/app/dependency-versions.js');
 
 describe('generator-alfresco:dependency-versions', function () {
 

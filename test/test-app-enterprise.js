@@ -10,7 +10,7 @@ describe('generator-alfresco:app:enterprise', function () {
   this.timeout(60000);
 
   before(function (done) {
-    helpers.run(path.join(__dirname, '../app'))
+    helpers.run(path.join(__dirname, '../generators/app'))
       .inDir(path.join(os.tmpdir(), './temp-test'))
       .withOptions({ 'skip-install': true })
       .withPrompts({

@@ -13,7 +13,7 @@ var _ = require('lodash');
 module.exports = yeoman.Base.extend({
   initializing: function () {
     this.out = require('./app-output.js')(this);
-    this.pkg = require('../package.json');
+    this.pkg = require('../../package.json');
     this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = require('./sdk-versions.js');
     this.config.defaults({
@@ -166,7 +166,6 @@ module.exports = yeoman.Base.extend({
         'removeDefaultSourceSamples',
       ], props);
       // can only setup module registry/manager once we have other variables setup
-      this.moduleRegistry = require('./alfresco-module-registry.js')(this);
       this.moduleManager = require('./alfresco-module-manager.js')(this);
       donePrompting();
     }.bind(this));

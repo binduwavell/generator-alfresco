@@ -14,7 +14,7 @@ describe('generator-alfresco:app', function () {
     this.timeout(60000);
 
     before(function (done) {
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .on('end', done);
@@ -92,7 +92,7 @@ describe('generator-alfresco:app', function () {
     this.timeout(60000);
 
     before(function (done) {
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -174,7 +174,7 @@ describe('generator-alfresco:app', function () {
 
     before(function (done) {
       var tmpdir = path.join(os.tmpdir(), './temp-test');
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(tmpdir)
         .withOptions({ 'skip-install': false })
         .withPrompts({
@@ -182,7 +182,7 @@ describe('generator-alfresco:app', function () {
           archetypeVersion: '2.1.1',
         })
         .on('end', function() {
-          helpers.run(path.join(__dirname, '../app'))
+          helpers.run(path.join(__dirname, '../generators/app'))
             .inDir(tmpdir, function(dir) {
               fs.mkdirSync( path.join(dir, 'amps_source_templates') );
               fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
@@ -253,7 +253,7 @@ describe('generator-alfresco:app', function () {
     this.timeout(60000);
 
     before(function (done) {
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': false })
         .withPrompts({
@@ -277,7 +277,7 @@ describe('generator-alfresco:app', function () {
 
     before(function (done) {
       var tmpdir = path.join(os.tmpdir(), './temp-test');
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(tmpdir)
         .withOptions({ 'skip-install': false })
         .withPrompts({
@@ -285,7 +285,7 @@ describe('generator-alfresco:app', function () {
           removeDefaultSourceSamples: false,
         })
         .on('end', function() {
-          helpers.run(path.join(__dirname, '../app'))
+          helpers.run(path.join(__dirname, '../generators/app'))
             .inDir(tmpdir, function(dir) {
               fs.mkdirSync( path.join(dir, 'amps_source_templates') );
               fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
@@ -313,7 +313,7 @@ describe('generator-alfresco:app', function () {
     this.timeout(60000);
 
     before(function (done) {
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -350,7 +350,7 @@ describe('generator-alfresco:app', function () {
       if (process.env.JAVA_HOME) {
         var javaHome = process.env.JAVA_HOME;
         process.env.JAVA_HOME = 'asdfASDF';
-        helpers.run(path.join(__dirname, '../app'))
+        helpers.run(path.join(__dirname, '../generators/app'))
           .inDir(path.join(os.tmpdir(), './temp-test'))
           .withOptions({ 'skip-install': false })
           .on('end', function() {
@@ -401,7 +401,7 @@ describe('generator-alfresco:app', function () {
     before(function (done) {
       var m2Home = process.env.M2_HOME;
       process.env.M2_HOME = 'asdfASDF';
-      helpers.run(path.join(__dirname, '../app'))
+      helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': false })
         .on('end', function() {

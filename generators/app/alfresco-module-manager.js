@@ -15,13 +15,15 @@ module.exports = function(yo) {
 
   var ops = [];
 
+  module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
+
   module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    var mod = yo.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (!mod) {
-      mod = yo.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     }
     yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
-    yo.moduleRegistry.addModule(mod);
+    this.moduleRegistry.addModule(mod);
     if ('source' === mod.location) {
       //console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
@@ -95,10 +97,10 @@ module.exports = function(yo) {
 
   module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     //console.log("SEARCHING FOR MODULE: " + modOrGroupId.artifactId);
-    var mod = yo.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
       //console.log("REMOVING MODULE: " + mod.artifactId);
-      yo.moduleRegistry.removeModule(mod);
+      this.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
         ops.push(function() { removeModuleFiles(mod) } );
         ops.push(function() { removeModuleFromTopPom(mod) } );
@@ -142,7 +144,7 @@ module.exports = function(yo) {
 
   module.save = function() {
     //console.log('Saving module registry and performing scheduled tasks');
-    yo.moduleRegistry.save();
+    this.moduleRegistry.save();
     ops.forEach(function(op) {
       op.call(this);
     });

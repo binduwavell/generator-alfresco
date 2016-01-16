@@ -14,7 +14,7 @@ describe('generator-alfresco:spring-context', function () {
         '<beans>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
     });
 
@@ -26,7 +26,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="fdsa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
     });
 
@@ -38,7 +38,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="asdf"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -51,7 +51,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="fdsa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -64,7 +64,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="asdf"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -78,7 +78,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="aabb"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -87,7 +87,7 @@ describe('generator-alfresco:spring-context', function () {
   describe('.addImport()', function() {
 
     it('can add an import where there is nothing', function () {
-      var context = require('../app/spring-context.js')();
+      var context = require('../generators/app/spring-context.js')();
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
@@ -100,7 +100,7 @@ describe('generator-alfresco:spring-context', function () {
         '<beans>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf')
       assert.equal(context.hasImport('asdf'), true);
@@ -112,7 +112,7 @@ describe('generator-alfresco:spring-context', function () {
         '<!-- Stuff -->',
         '<beans/>'
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf')
       assert.equal(context.hasImport('asdf'), true);
@@ -126,7 +126,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <bean id="asdf"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf')
       assert.equal(context.hasImport('asdf'), true);
@@ -140,7 +140,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="fdsa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf')
       assert.equal(context.hasImport('asdf'), true);
@@ -155,7 +155,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <stuff/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.addImport('asdf')
       assert.equal(context.hasImport('asdf'), true);
@@ -166,7 +166,7 @@ describe('generator-alfresco:spring-context', function () {
   describe('.removeImport()', function() {
 
     it('can remove an import where there is nothing', function () {
-      var context = require('../app/spring-context.js')();
+      var context = require('../generators/app/spring-context.js')();
       assert.equal(context.hasImport('asdf'), false);
       context.removeImport('asdf')
       assert.equal(context.hasImport('asdf'), false);
@@ -179,7 +179,7 @@ describe('generator-alfresco:spring-context', function () {
         '<beans>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.removeImport('asdf')
       assert.equal(context.hasImport('asdf'), false);
@@ -193,7 +193,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <bean id="asdf"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
       context.removeImport('asdf')
       assert.equal(context.hasImport('asdf'), false);
@@ -207,7 +207,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="fdsa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('fdsa'), true);
       context.removeImport('fdsa')
       assert.equal(context.hasImport('fdsa'), false);
@@ -224,7 +224,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="ffaa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
@@ -247,7 +247,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="ffaa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
@@ -270,7 +270,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="ffaa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
@@ -293,7 +293,7 @@ describe('generator-alfresco:spring-context', function () {
         '  <import resource="ffaa"/>',
         '</beans>',
       ].join('\n');
-      var context = require('../app/spring-context.js')(contextString);
+      var context = require('../generators/app/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
