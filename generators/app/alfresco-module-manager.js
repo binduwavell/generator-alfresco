@@ -1,6 +1,7 @@
 'use strict';
-var xmldom = require('xmldom');
 var domutils = require('./xml-dom-utils.js');
+var path = require('path');
+var xmldom = require('xmldom');
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -19,13 +20,15 @@ module.exports = function(yo) {
 
   module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    // console.log("Existing module: " + JSON.stringify(mod));
     if (!mod) {
       mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      // console.log("Adding module: " + JSON.stringify(mod));
     }
     yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
     this.moduleRegistry.addModule(mod);
     if ('source' === mod.location) {
-      //console.log('Scheduling ops for ' + mod.artifactId);
+      // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { addModuleToTopPom(mod) } );
       ops.push(function() { addModuleToWarWrapper(mod) } );
@@ -35,9 +38,10 @@ module.exports = function(yo) {
 
   function copyTemplateForModule(mod) {
     var toPath = yo.destinationPath(mod.path);
-    if (yo.fs.exists(toPath)) {
-      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging)
-      yo.out.info('TODO: Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
+    // console.log('Copy destination: ' + toPath);
+    if (!yo.fs.exists(toPath)) {
+      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging + '/**');
+      yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       yo.fs.copy(fromPath, toPath);
     } else {
       yo.out.warn('Not copying module as target path already exists: ' + toPath);
@@ -68,19 +72,18 @@ module.exports = function(yo) {
     // search existing plugins for maven-war-plugin, create if necessary
     // once found/created, make sure we have configuation/overlays
     var build = pom.getOrCreateTopLevelElement('pom', 'build');
-    var doc = build.ownerDocument;
-    var plugins = domutils.getOrCreateChild(doc, build, 'pom', 'plugins');
-    var plugin = domutils.getOrCreateChild(doc, plugins, 'pom', 'plugin');
+    var plugins = domutils.getOrCreateChild(build, 'pom', 'plugins');
+    var plugin = domutils.getOrCreateChild(plugins, 'pom', 'plugin');
     var artifactIdText = '';
     do {
-      var artifactId = domutils.getOrCreateChild(doc, plugin, 'pom', 'artifactId');
+      var artifactId = domutils.getOrCreateChild(plugin, 'pom', 'artifactId');
       artifactIdText = artifactId.textContent;
       if (artifactIdText) {
         if ('maven-war-plugin' !== artifactIdText) {
           plugin = domutils.getNextElementSibling(plugin);
           // exhausted existing plugins, so we need to add one
           if (undefined === plugin) {
-            plugin = domutils.createChild(doc, plugins, 'pom', 'plugin');
+            plugin = domutils.createChild(plugins, 'pom', 'plugin');
           }
         }
       } else {
@@ -88,8 +91,8 @@ module.exports = function(yo) {
         artifactId.textContent = artifactIdText;
       }
     } while ('maven-war-plugin' !== artifactIdText)
-    var configuration = domutils.getOrCreateChild(doc, plugin, 'pom', 'configuration');
-    var overlays = domutils.getOrCreateChild(doc, configuration, 'pom', 'overlays');
+    var configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
+    var overlays = domutils.getOrCreateChild(configuration, 'pom', 'overlays');
     var overlay = pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
     //console.log(pom.getPOMString());
     yo.fs.write(wrapperPomPath, pom.getPOMString());
@@ -115,12 +118,12 @@ module.exports = function(yo) {
     yo.out.warn('Deleting source module: ' + mod.path);
     var absPath = yo.destinationPath(mod.path);
     // if we have files on disk already this will get them
-    //console.log("DELETING EXISTING FILES FROM: " + absPath);
+    // console.log("DELETING EXISTING FILES FROM: " + absPath);
     yo.fs.delete(absPath);
     // if we have files in mem-fs, this should get those
     yo.fs.store.each(function(file, idx) {
       if (file.path.indexOf(absPath) == 0) {
-        //console.log("DELETING: " + file.path);
+        // console.log("DELETING: " + file.path);
         yo.fs.delete(file.path);
       }
     });
@@ -143,7 +146,7 @@ module.exports = function(yo) {
   }
 
   module.save = function() {
-    //console.log('Saving module registry and performing scheduled tasks');
+    // console.log('Saving module registry and performing scheduled tasks');
     this.moduleRegistry.save();
     ops.forEach(function(op) {
       op.call(this);

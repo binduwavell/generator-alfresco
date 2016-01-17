@@ -15,17 +15,42 @@ module.exports = {
     }
   },
 
-  createChild: function(doc, node, ns, tag) {
+  /**
+   * Create an element and add it to the given node in the given document
+   *
+   * @param {!Node} node
+   * @param {string} ns
+   * @param {string} tag
+   * @returns {Element}
+     */
+  createChild: function(node, ns, tag) {
+    var doc = node.ownerDocument;
     var child = doc.createElementNS(this.resolver.lookupNamespaceURI(ns), tag);
     node.appendChild(child);
     return child;
   },
 
+  /**
+   * Given a node, find a child with a given namespace and tag. Returns undefined if the child is not found.
+   *
+   * @param {!Node} node
+   * @param {string} ns
+   * @param {string} tag
+   * @returns {Element|undefined}
+   */
   getChild: function(node, ns, tag) {
     var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
     return child;
   },
 
+  /**
+   * If we find a node with the given namespace and tag as a child of the the given node, we remove
+   * the child.
+   *
+   * @param {!Node} node
+   * @param {string} ns
+   * @param {string} tag
+     */
   removeChild: function(node, ns, tag) {
     var child = this.getChild(node, ns, tag)
     if (child) {
@@ -36,21 +61,64 @@ module.exports = {
     }
   },
 
+  /**
+   * Assuming parent is the parent of child, child is removed from parent.
+   *
+   * @param {!Node} parent
+   * @param {!Node} child
+     */
   removeParentsChild: function(parent, child) {
     if (parent && child && parent == child.parentNode) {
       parent.removeChild(child);
     }
   },
 
-  getOrCreateChild: function(doc, node, ns, tag) {
+  /**
+   * Find a child with the given namespace and tag within the given node, if not found, we create such a child.
+   *
+   * @param {!Node} node
+   * @param {string} ns
+   * @param {string} tag
+   * @returns {Element}
+   */
+  getOrCreateChild: function(node, ns, tag) {
     var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
     if (!child) {
+      var doc = node.ownerDocument;
       child = doc.createElementNS(this.resolver.lookupNamespaceURI(ns), tag);
       node.appendChild(child);
     }
     return child;
   },
 
+  /**
+   * Given a textual value that is not contra indicated, we make sure we have a child with the given text.
+   * If the text is empty or is contra indicated we make sure there is no child.
+   *
+   * @param {!Node} node
+   * @param {string} ns
+   * @param {string} tag
+   * @param {string} text
+   * @param {string} contraIndicatedText
+   */
+  setOrClearChildText: function(node, ns, tag, text, contraIndicatedText) {
+    if (text && text !== contraIndicatedText) {
+      var child = this.getChild(node, ns, tag);
+      if (!child) {
+        child = this.getOrCreateChild(node, ns, tag);
+      }
+      child.textContent = text;
+    } else {
+      this.removeChild(node, ns, tag);
+    }
+  },
+
+  /**
+   * Given a node, search through subsequent siblings until we find an element
+   *
+   * @param {!Node} node
+   * @returns {Node|undefined}
+     */
   getNextElementSibling: function(node) {
     if (!node) return undefined;
     var next = node;

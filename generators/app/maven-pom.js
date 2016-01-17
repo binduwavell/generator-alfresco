@@ -91,9 +91,9 @@ module.exports = function(pomString) {
   module.setParentGAV = function(groupId, artifactId, version) {
     var parent = module.getOrCreateTopLevelElement('pom', 'parent');
     if (parent) {
-      var groupIdNode = domutils.getOrCreateChild(doc, parent, 'pom', 'groupId');
-      var artifactIdNode = domutils.getOrCreateChild(doc, parent, 'pom', 'artifactId');
-      var versionNode = domutils.getOrCreateChild(doc, parent, 'pom', 'version');
+      var groupIdNode = domutils.getOrCreateChild(parent, 'pom', 'groupId');
+      var artifactIdNode = domutils.getOrCreateChild(parent, 'pom', 'artifactId');
+      var versionNode = domutils.getOrCreateChild(parent, 'pom', 'version');
       if (groupIdNode && artifactIdNode && versionNode) {
         groupIdNode.textContent = groupId;
         artifactIdNode.textContent = artifactId;
@@ -162,14 +162,14 @@ module.exports = function(pomString) {
   module.addDependency = function(groupId, artifactId, version, type, scope) {
     var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (!dependency) {
-      dependency = domutils.createChild(doc, module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency')
+      dependency = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency')
     }
-    var groupIdNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'groupId');
-    var artifactIdNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'artifactId');
+    var groupIdNode = domutils.getOrCreateChild(dependency, 'pom', 'groupId');
+    var artifactIdNode = domutils.getOrCreateChild(dependency, 'pom', 'artifactId');
     groupIdNode.textContent = groupId;
     artifactIdNode.textContent = artifactId;
     if (version) {
-      var versionNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'version');
+      var versionNode = domutils.getOrCreateChild(dependency, 'pom', 'version');
       versionNode.textContent = version;
     } else {
       versionNode = domutils.getChild(dependency, 'pom', 'version');
@@ -178,7 +178,7 @@ module.exports = function(pomString) {
       }
     }
     if (type) {
-      var typeNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'type');
+      var typeNode = domutils.getOrCreateChild(dependency, 'pom', 'type');
       typeNode.textContent = type;
     } else {
       typeNode = domutils.getChild(dependency, 'pom', 'type');
@@ -187,7 +187,7 @@ module.exports = function(pomString) {
       }
     }
     if (scope) {
-      var scopeNode = domutils.getOrCreateChild(doc, dependency, 'pom', 'scope');
+      var scopeNode = domutils.getOrCreateChild(dependency, 'pom', 'scope');
       scopeNode.textContent = scope;
     } else {
       scopeNode = domutils.getChild(dependency, 'pom', 'scope');
@@ -228,7 +228,7 @@ module.exports = function(pomString) {
   module.addModule = function(mod) {
     var moduleNode = module.findModule(mod);
     if (!moduleNode) {
-      moduleNode = domutils.createChild(doc, module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module')
+      moduleNode = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module')
     }
     moduleNode.textContent = mod;
     return moduleNode;
@@ -308,13 +308,13 @@ module.exports = function(pomString) {
     if (!overlay) {
       var overlays = xpath.selectWithResolver('/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays', doc, domutils.resolver);
       if (overlays) {
-        overlay = domutils.createChild(doc, overlays[0], 'pom', 'overlay');
+        overlay = domutils.createChild(overlays[0], 'pom', 'overlay');
       }
     }
     if (overlay) {
-      var groupIdNode = domutils.getOrCreateChild(doc, overlay, 'pom', 'groupId');
-      var artifactIdNode = domutils.getOrCreateChild(doc, overlay, 'pom', 'artifactId');
-      var typeNode = domutils.getOrCreateChild(doc, overlay, 'pom', 'type');
+      var groupIdNode = domutils.getOrCreateChild(overlay, 'pom', 'groupId');
+      var artifactIdNode = domutils.getOrCreateChild(overlay, 'pom', 'artifactId');
+      var typeNode = domutils.getOrCreateChild(overlay, 'pom', 'type');
       groupIdNode.textContent = groupId;
       artifactIdNode.textContent = artifactId;
       typeNode.textContent = type;
@@ -333,7 +333,7 @@ module.exports = function(pomString) {
   }
 
   module.setProperty = function(tag, value) {
-    var propElement = domutils.getOrCreateChild(doc, domutils.getOrCreateChild(doc, project, 'pom', 'properties'), 'pom', tag);
+    var propElement = domutils.getOrCreateChild(domutils.getOrCreateChild(project, 'pom', 'properties'), 'pom', tag);
     propElement.textContent = value;
     return propElement;
   }

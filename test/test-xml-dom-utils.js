@@ -21,7 +21,7 @@ describe('generator-alfresco:xml-dom-utils', function () {
       assert.ok(doc);
       var rootElement = doc.documentElement;
       assert.ok(rootElement);
-      var element = domutils.createChild(doc, rootElement, 'ns', 'node');
+      var element = domutils.createChild(rootElement, 'ns', 'node');
       assert.ok(element);
       var docStr = pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
       assert.equal(docStr, [
@@ -52,6 +52,22 @@ describe('generator-alfresco:xml-dom-utils', function () {
       var element = domutils.getChild(rootElement, 'ns', 'element');
       assert.ok(element);
       assert.ok(element.nodeType === element.ELEMENT_NODE);
+    });
+
+    it('undefined for non-existent child', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns="http://www.example.com/">',
+        '  <element />',
+        '</root>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      var element = domutils.getChild(rootElement, 'ns', 'garbage');
+      assert.equal(element, undefined);
     });
   });
 
@@ -147,7 +163,7 @@ describe('generator-alfresco:xml-dom-utils', function () {
       assert.ok(doc);
       var rootElement = doc.documentElement;
       assert.ok(rootElement);
-      var element = domutils.getOrCreateChild(doc, rootElement, 'ns', 'element');
+      var element = domutils.getOrCreateChild(rootElement, 'ns', 'element');
       assert.ok(element);
       assert.ok(element.nodeType === element.ELEMENT_NODE);
       var elementStr = pd.xml(new xmldom.XMLSerializer().serializeToString(element));
@@ -165,7 +181,7 @@ describe('generator-alfresco:xml-dom-utils', function () {
       assert.ok(doc);
       var rootElement = doc.documentElement;
       assert.ok(rootElement);
-      var element = domutils.getOrCreateChild(doc, rootElement, 'ns', 'element');
+      var element = domutils.getOrCreateChild(rootElement, 'ns', 'element');
       assert.ok(element);
       assert.ok(element.nodeType === element.ELEMENT_NODE);
       var elementStr = pd.xml(new xmldom.XMLSerializer().serializeToString(element));
@@ -224,6 +240,62 @@ describe('generator-alfresco:xml-dom-utils', function () {
       var sibling2Str = pd.xml(new xmldom.XMLSerializer().serializeToString(sibling2));
       assert.equal(sibling2Str, '<element3/>');
     });
+  });
+
+  describe('.setOrClearChildText()', function() {
+
+    it('can add text to existing element', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns="http://www.example.com/">',
+        '  <element />',
+        '</root>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      domutils.setOrClearChildText(rootElement, 'ns', 'element', 'it worked');
+      var element = domutils.getChild(rootElement, 'ns', 'element');
+      assert.ok(element);
+      assert.equal(element.textContent, 'it worked');
+    });
+
+    it('adds element if necessary', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns="http://www.example.com/">',
+        '</root>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      domutils.setOrClearChildText(rootElement, 'ns', 'element', 'it worked');
+      var element = domutils.getChild(rootElement, 'ns', 'element');
+      assert.ok(element);
+      assert.equal(element.textContent, 'it worked');
+    });
+
+    it('removes element when text is contra indicated', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns="http://www.example.com/">',
+        '  <element />',
+        '</root>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      domutils.setOrClearChildText(rootElement, 'ns', 'element', 'it is contra indicated', 'it is contra indicated');
+      var element = domutils.getChild(rootElement, 'ns', 'element');
+      assert.equal(element, undefined);
+    });
+
   });
 
 });

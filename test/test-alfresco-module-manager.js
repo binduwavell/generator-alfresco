@@ -12,12 +12,15 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       "get": function() { return undefined; },
       "set": function() { }
     },
-    destinationPath: function(p) { return path.join('/tmp', p)},
+    destinationPath: function(p) { if (p) { return path.join('/tmp', p); } else { return '/tmp'; } },
     out: {
       info: function(msg) { /* console.log('INFO: ' + msg) */ },
       warn: function(msg) { /* console.log('WARN: ' + msg) */ },
       error: function(msg) { /* console.log('ERROR: ' + msg) */ },
     },
+    projectGroupId: 'org.example',
+    projectArtifactId: 'test',
+    projectPackaging: 'pom'
   };
 
   describe('.addModule()', function() {
@@ -31,6 +34,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.fs.write(yomock.wrapperPomPath, "");
       yomock.templatePomPath = yomock.destinationPath('amps_source_templates/war-packaging/pom.xml');
       yomock.fs.write(yomock.templatePomPath, "");
+      yomock.projectPomPath = yomock.destinationPath('path/pom.xml');
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
       yomock.moduleManager.save();
     });
@@ -104,7 +108,6 @@ describe('generator-alfresco:alfresco-module-manager', function () {
 
     beforeEach(function () {
       yomock.fs = FileEditor.create(memFs.create());
-      yomock.moduleRegistry = require('../generators/app/alfresco-module-registry.js')(yomock);
       yomock.moduleManager = require('../generators/app/alfresco-module-manager.js')(yomock);
       yomock.topPomPath = yomock.destinationPath('pom.xml');
       yomock.fs.write(yomock.topPomPath, "");
@@ -118,7 +121,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes a module from the registry', function () {
-      var modules = yomock.moduleRegistry.getModules();
+      var modules = yomock.moduleManager.moduleRegistry.getModules();
       assert.ok(modules);
       assert.deepEqual(modules, []);
     });
