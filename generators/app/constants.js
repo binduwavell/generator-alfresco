@@ -21,6 +21,7 @@ module.exports = {
   PROP_ARCHETYPE_VERSION: 'archetypeVersion',
   PROP_COMMUNITY_OR_ENTERPRISE: 'communityOrEnterprise',
   PROP_PROJECT_ARTIFACT_ID: 'projectArtifactId',
+  PROP_PROJECT_ARTIFACT_ID_PREFIX: 'projectArtifactIdPrefix',
   PROP_PROJECT_GROUP_ID: 'projectGroupId',
   PROP_PROJECT_PACKAGE: 'projectPackage',
   PROP_PROJECT_VERSION: 'projectVersion',

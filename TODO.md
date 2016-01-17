@@ -1,8 +1,8 @@
 TODO
 ====
 
-- [ ] Make progress on amp sub-generator
-  - [ ] Support creating a parent folder when creating repo and share amp together
+- [x] Make progress on amp sub-generator
+  - [x] Support creating a parent folder when creating repo and share amp together
   - [x] When creating source AMP prompt for name and description and inject into project
   - [x] Only allow sub-generator to be run from inside a project created with yo alfresco
   - [x] Create a pom editing module under app (like spring-context.js) and use this

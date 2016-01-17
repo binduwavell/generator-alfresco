@@ -22,6 +22,8 @@ module.exports = function(pomString) {
     '  <artifactId>placeholder</artifactId>',
     '  <version>0.0.1-SNAPSHOT</version>',
     '  <packaging>pom</packaging>    ',
+    '  <name>Example name should be changed</name>',
+    '  <description>Example description should be changed</description>',
     '',
     '  <parent></parent>',
     '',
@@ -42,12 +44,10 @@ module.exports = function(pomString) {
     '',
     '  <profiles></profiles>',
     '',
-    '  <name>Example Module</name>',
-    '  <description>Example module description should be changed</description>',
     '  <url></url>',
     '  <inceptionYear></inceptionYear>',
     '  <licenses></licenses>',
-    '  <organizations></organizations>',
+    '  <organization></organization>',
     '  <developers></developers>',
     '  <contributors></contributors>',
     '',
@@ -87,7 +87,7 @@ module.exports = function(pomString) {
     }
   }
 
-  module.setProjectGAV = function(groupId, artifactId, version, packaging, removeDefaults) {
+  module.setProjectGAV = function(groupId, artifactId, version, packaging) {
     domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, constants.VAR_PROJECT_GROUPID);
     domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId, undefined);
     domutils.setOrClearChildText(project, 'pom', 'version', version, constants.VAR_PROJECT_VERSION);
