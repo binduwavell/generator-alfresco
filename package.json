@@ -20,7 +20,7 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "0.22.2",
+    "yeoman-generator": "0.22.4",
     "chalk": "1.1.1",
     "cross-spawn": "2.1.0",
     "deasync": "0.1.4",
