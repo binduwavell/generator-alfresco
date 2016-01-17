@@ -13,7 +13,17 @@ var _ = require('lodash');
 module.exports = yeoman.Base.extend({
   initializing: function () {
     this.out = require('./app-output.js')(this);
+
+    // ==== WORKAROUND FOR yeoman/generator#890 ====
+    if (process.cwd() != this.destinationPath()) {
+      this.out.info('Resetting generator project root to: ' + chalk.green(process.cwd()));
+      this.destinationRoot(process.cwd());
+    }
+
     this.pkg = require('../../package.json');
+    if (!this.config.get('originalGeneratorVersion')) {
+      this.config.set('originalGeneratorVersion', this.pkg.version);
+    }
     this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = require('./sdk-versions.js');
     this.config.defaults({
