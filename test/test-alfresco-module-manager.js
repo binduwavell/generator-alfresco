@@ -3,6 +3,7 @@
 var assert = require('assert');
 var memFs = require('mem-fs');
 var FileEditor = require('mem-fs-editor');
+var os = require('os');
 var path = require('path');
 
 describe('generator-alfresco:alfresco-module-manager', function () {
@@ -12,7 +13,8 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       "get": function() { return undefined; },
       "set": function() { }
     },
-    destinationPath: function(p) { if (p) { return path.join('/tmp', p); } else { return '/tmp'; } },
+    tmpDir: os.tmpDir(),
+    destinationPath: function(p) { if (p) { return path.join(yomock.tmpDir, p); } else { return yomock.tmpDir; }}.bind(this),
     out: {
       info: function(msg) { /* console.log('INFO: ' + msg) */ },
       warn: function(msg) { /* console.log('WARN: ' + msg) */ },
@@ -34,7 +36,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.wrapperPomPath = yomock.destinationPath('war/pom.xml');
       yomock.fs.write(yomock.wrapperPomPath, "");
       yomock.templatePomPath = yomock.destinationPath('amps_source_templates/war-packaging/pom.xml');
-      yomock.fs.write(yomock.templatePomPath, "");
+      yomock.fs.write(yomock.templatePomPath, '');
       yomock.projectPomPath = yomock.destinationPath('path/pom.xml');
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
       yomock.moduleManager.save();

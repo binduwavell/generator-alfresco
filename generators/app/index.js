@@ -288,20 +288,6 @@ module.exports = yeoman.Base.extend({
         done();
       }.bind(this));
     },
-    editGeneratedResources: function() {
-      if (this.bail) return;
-      // Arrange for all generated beans to be included
-      var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
-      var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
-
-      var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
-      var context = require('./spring-context.js')(contextDocOrig);
-      if (!context.hasImport(importPath)) {
-        context.addImport(importPath);
-        var contextDocNew = context.getContextString();
-        this.fs.write(moduleContextPath, contextDocNew);
-      }
-    },
     generatorOverlay: function () {
       if (this.bail) return;
       var isEnterprise = ('Enterprise' === this.communityOrEnterprise);
@@ -356,6 +342,24 @@ module.exports = yeoman.Base.extend({
           this.moduleManager.addModule(mod);
         }.bind(this));
         this.moduleManager.save();
+      }
+    },
+    editGeneratedResources: function() {
+      if (this.bail) return;
+      if (!this.removeDefaultSourceAmps) {
+        // Arrange for all generated beans to be included
+        var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
+        var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
+
+        var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
+        var context = require('./spring-context.js')(contextDocOrig);
+        if (!context.hasImport(importPath)) {
+          context.addImport(importPath);
+          var contextDocNew = context.getContextString();
+          console.log("PATH: " + moduleContextPath);
+          // console.log(contextDocNew);
+          this.fs.write(moduleContextPath, contextDocNew);
+        }
       }
     },
     removeDefaultSampleAmps: function() {

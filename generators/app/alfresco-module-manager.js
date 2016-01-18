@@ -1,7 +1,7 @@
 'use strict';
-var domutils = require('./xml-dom-utils.js');
 var path = require('path');
-var xmldom = require('xmldom');
+var domutils = require('./xml-dom-utils.js');
+var memFsUtils = require('./mem-fs-utils.js');
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -41,9 +41,13 @@ module.exports = function(yo) {
     var toPath = yo.destinationPath(mod.path);
     // console.log('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
-      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging + '/**');
+      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
-      yo.fs.copy(fromPath, toPath);
+      if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+        memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
+      } else {
+        yo.fs.copy(path.join(fromPath, '/**'), toPath);
+      }
     } else {
       yo.out.warn('Not copying module as target path already exists: ' + toPath);
     }
@@ -64,6 +68,7 @@ module.exports = function(yo) {
   function updateProjectPom(mod) {
     var projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
     yo.out.info('Setting project/parent GAVs for ' + mod.artifactId + ' in ' + projectPomPath);
+    // console.log("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
     var projectPom = yo.fs.read(projectPomPath);
     var pom = require('./maven-pom.js')(projectPom);
     pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
@@ -105,15 +110,15 @@ module.exports = function(yo) {
     var configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
     var overlays = domutils.getOrCreateChild(configuration, 'pom', 'overlays');
     var overlay = pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
-    //console.log(pom.getPOMString());
+    // console.log(pom.getPOMString());
     yo.fs.write(wrapperPomPath, pom.getPOMString());
   }
 
   module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    //console.log("SEARCHING FOR MODULE: " + modOrGroupId.artifactId);
+    // console.log("SEARCHING FOR MODULE: " + modOrGroupId.artifactId);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
-      //console.log("REMOVING MODULE: " + mod.artifactId);
+      // console.log("REMOVING MODULE: " + mod.artifactId);
       this.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
         ops.push(function() { removeModuleFiles(mod) } );
