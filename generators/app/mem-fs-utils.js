@@ -48,6 +48,19 @@ module.exports = {
         store.add(newFile);
       }
     });
+  },
+
+  /**
+   *
+   * @param {!Store|!EditionInterface} storeOrEditor
+   * @param {Function|undefined} logFn
+   */
+  dumpFileNames: function(storeOrEditor, logFn) {
+    var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
+    var fn = logFn || console.log;
+    store.each(function(file) {
+      fn.call(this, file.path + ' [STATE:' + file.state + ']');
+    });
   }
 
 };
