@@ -253,6 +253,28 @@ describe('generator-alfresco:maven-pom', function () {
       assert.equal(dependency, undefined);
     });
 
+    it('find dependency by groupId, artifactId & type', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', undefined, 'amp', undefined);
+      assert.ok(dependency);
+      assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <type>amp</type>\n      <scope>compile</scope>\n    </dependency>');
+    });
+
     it('find dependency by groupId, artifactId & scope', function () {
       var pomString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -271,6 +293,28 @@ describe('generator-alfresco:maven-pom', function () {
       ].join('\n');
       var pom = require('../generators/app/maven-pom.js')(pomString);
       var dependency = pom.findDependency('com.ziaconsulting', 'test', undefined, undefined, 'compile');
+      assert.ok(dependency);
+      assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <type>amp</type>\n      <scope>compile</scope>\n    </dependency>');
+    });
+
+    it('find dependency by groupId, artifactId, type & scope', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', undefined, 'amp', 'compile');
       assert.ok(dependency);
       assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <type>amp</type>\n      <scope>compile</scope>\n    </dependency>');
     });
@@ -295,6 +339,90 @@ describe('generator-alfresco:maven-pom', function () {
       var dependency = pom.findDependency('com.ziaconsulting', 'test', '1.0.0', 'amp', 'compile');
       assert.ok(dependency);
       assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <type>amp</type>\n      <scope>compile</scope>\n    </dependency>');
+    });
+
+    it('doesn\'t find dependency by groupId, artifactId, version, type & scope with invalid version', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', '2.0.0', 'amp', 'compile');
+      assert.equal(dependency, undefined);
+    });
+
+    it('doesn\'t find dependency by groupId, artifactId, version & type with invalid version', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', '2.0.0', 'amp');
+      assert.equal(dependency, undefined);
+    });
+
+    it('doesn\'t find dependency by groupId, artifactId, version & scope with invalid version', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', '2.0.0', null, 'compile');
+      assert.equal(dependency, undefined);
+    });
+
+    it('doesn\'t find dependency by groupId, artifactId, type & scope with invalid type', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <dependencies>',
+        '    <dependency>',
+        '      <groupId>com.ziaconsulting</groupId>',
+        '      <artifactId>test</artifactId>',
+        '      <version>1.0.0</version>',
+        '      <type>amp</type>',
+        '      <scope>compile</scope>',
+        '    </dependency>',
+        '  </dependencies>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var dependency = pom.findDependency('com.ziaconsulting', 'test', null, 'asdf', 'compile');
+      assert.equal(dependency, undefined);
     });
 
   });
@@ -357,7 +485,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.equal(dependencies.toString(), '<dependencies>\n    <dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      <version>1.0.0</version>\n      <scope>compile</scope>\n    </dependency>\n  <dependency><groupId>net.ziaconsulting</groupId><artifactId>test</artifactId><version>1.0.0</version><scope>compile</scope></dependency></dependencies>');
     });
 
-    it('Remove version and scope from existing dependency', function () {
+    it('removes type, version and scope from existing dependency', function () {
       var pomString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!-- Stuff -->',
@@ -367,6 +495,7 @@ describe('generator-alfresco:maven-pom', function () {
         '      <groupId>com.ziaconsulting</groupId>',
         '      <artifactId>test</artifactId>',
         '      <version>1.0.0</version>',
+        '      <type>amp</type>',
         '      <scope>compile</scope>',
         '    </dependency>',
         '  </dependencies>',
@@ -375,7 +504,7 @@ describe('generator-alfresco:maven-pom', function () {
       var pom = require('../generators/app/maven-pom.js')(pomString);
       var dependency = pom.addDependency('com.ziaconsulting', 'test');
       assert.ok(dependency);
-      assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      \n      \n    </dependency>');
+      assert.equal(dependency.toString(), '<dependency>\n      <groupId>com.ziaconsulting</groupId>\n      <artifactId>test</artifactId>\n      \n      \n      \n    </dependency>');
     });
   });
 
