@@ -66,6 +66,10 @@ module.exports = function(pomString) {
   var doc = new xmldom.DOMParser().parseFromString(pomString || defaultPOMString, 'text/xml');
   var project = doc.documentElement;
 
+  module.getTopLevelElement = function(ns, tag) {
+    return domutils.getChild(project, ns, tag);
+  }
+
   module.getOrCreateTopLevelElement = function(ns, tag) {
     var element = undefined;
     var xp = '/pom:project/' + ns + ':' + tag;
@@ -86,6 +90,13 @@ module.exports = function(pomString) {
     if (element) {
       element.textContent = value;
     }
+  }
+
+  module.setProjectGAV = function(groupId, artifactId, version, packaging) {
+    domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, '${project.groupId}');
+    domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId);
+    domutils.setOrClearChildText(project, 'pom', 'version', version, '${project.version}');
+    domutils.setOrClearChildText(project, 'pom', 'packaging', packaging);
   }
 
   module.setParentGAV = function(groupId, artifactId, version) {

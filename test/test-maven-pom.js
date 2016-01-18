@@ -1,8 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var chalk = require('chalk');
-var inspect = require('eyes').inspector({maxLength: false});
 
 describe('generator-alfresco:maven-pom', function () {
 
@@ -62,6 +60,26 @@ describe('generator-alfresco:maven-pom', function () {
       var groupId = pom.getOrCreateTopLevelElement('pom', 'groupId');
       assert.ok(groupId);
       assert.equal(groupId.textContent, groupIdText);
+    });
+
+  });
+
+  describe('.setProjectGAV()', function() {
+
+    it('can set project GAV', function () {
+      var pom = require('../generators/app/maven-pom.js')();
+      pom.setProjectGAV('${project.groupId}', 'test', '${project.version}', 'amp');
+      // console.log(pom.getPOMString());
+      var groupIdNode = pom.getTopLevelElement('pom', 'groupId');
+      assert.equal(groupIdNode, undefined);
+      var artifactIdNode = pom.getOrCreateTopLevelElement('pom', 'artifactId');
+      assert.ok(artifactIdNode);
+      assert.equal(artifactIdNode.textContent, 'test');
+      var versionNode = pom.getTopLevelElement('pom', 'version');
+      assert.equal(versionNode, undefined);
+      var packagingNode = pom.getOrCreateTopLevelElement('pom', 'packaging');
+      assert.ok(packagingNode);
+      assert.equal(packagingNode.textContent, 'amp');
     });
 
   });
