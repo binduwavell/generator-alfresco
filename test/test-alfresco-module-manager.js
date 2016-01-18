@@ -20,7 +20,8 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     },
     projectGroupId: 'org.example',
     projectArtifactId: 'test',
-    projectPackaging: 'pom'
+    projectPackaging: 'pom',
+    projectVersion: '1.0'
   };
 
   describe('.addModule()', function() {
@@ -58,6 +59,28 @@ describe('generator-alfresco:alfresco-module-manager', function () {
         yomock.fs.read(yomock.templatePomPath)
       );
       assert.ok( pom.getPOMString() );
+    });
+
+    it('updates the project pom', function () {
+      var pom = require('../generators/app/maven-pom.js')(
+        yomock.fs.read(yomock.projectPomPath)
+      );
+      // console.log(pom.getPOMString());
+      var groupIdNode = pom.getOrCreateTopLevelElement('pom', 'groupId');
+      assert.ok(groupIdNode);
+      assert.equal(groupIdNode.textContent, 'groupId');
+      var artifactIdNode = pom.getOrCreateTopLevelElement('pom', 'artifactId');
+      assert.ok(artifactIdNode);
+      assert.equal(artifactIdNode.textContent, 'artifactId');
+      var versionNode = pom.getOrCreateTopLevelElement('pom', 'version');
+      assert.ok(versionNode);
+      assert.equal(versionNode.textContent, 'version');
+      var packagingNode = pom.getOrCreateTopLevelElement('pom', 'packaging');
+      assert.ok(packagingNode);
+      assert.equal(packagingNode.textContent, 'packaging');
+      var parentNode = pom.getOrCreateTopLevelElement('pom', 'parent');
+      assert.ok(parentNode);
+      assert.equal(parentNode.toString(), '<parent>\n    <groupId>org.example</groupId>\n    <artifactId>test</artifactId>\n    <version>1.0</version>\n  </parent>');
     });
 
     it('adds a module to the top pom', function () {

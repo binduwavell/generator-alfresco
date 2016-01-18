@@ -31,6 +31,7 @@ module.exports = function(yo) {
       // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { addModuleToTopPom(mod) } );
+      ops.push(function() { updateProjectPom(mod) } );
       ops.push(function() { addModuleToWarWrapper(mod) } );
       // TODO: what else do we need to do when we remove a module?
     }
@@ -58,6 +59,16 @@ module.exports = function(yo) {
       pom.addModule(mod.artifactId);
       yo.fs.write(topPomPath, pom.getPOMString());
     }
+  }
+
+  function updateProjectPom(mod) {
+    var projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
+    yo.out.info('Setting project/parent GAVs for ' + mod.artifactId + ' in ' + projectPomPath);
+    var projectPom = yo.fs.read(projectPomPath);
+    var pom = require('./maven-pom.js')(projectPom);
+    pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
+    pom.setParentGAV(yo.projectGroupId, yo.projectArtifactId, yo.projectVersion);
+    yo.fs.write(projectPomPath, pom.getPOMString());
   }
 
   function addModuleToWarWrapper(mod) {
