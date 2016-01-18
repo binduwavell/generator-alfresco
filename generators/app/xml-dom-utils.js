@@ -39,6 +39,7 @@ module.exports = {
    * @returns {Element|undefined}
    */
   getChild: function(node, ns, tag) {
+    if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getChild() are required");
     var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
     return child;
   },
@@ -82,6 +83,7 @@ module.exports = {
    * @returns {Element}
    */
   getOrCreateChild: function(node, ns, tag) {
+    if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getOrCreateChild() are required");
     var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
     if (!child) {
       var doc = node.ownerDocument;
@@ -98,10 +100,12 @@ module.exports = {
    * @param {!Node} node
    * @param {string} ns
    * @param {string} tag
-   * @param {string} text
-   * @param {string} contraIndicatedText
+   * @param {string|undefined} text
+   * @param {string|undefined} contraIndicatedText
    */
   setOrClearChildText: function(node, ns, tag, text, contraIndicatedText) {
+    // console.log("setOrClearChildText(" + (node ? "node" : "undefined") + "," + ns + ":" + tag + ")");
+    if (!node || !ns || !tag) throw new Error("All parameters except text and contraIndicatedText to xml-dom-utils:setOrClearChildText() are required");
     if (text && text !== contraIndicatedText) {
       var child = this.getChild(node, ns, tag);
       if (!child) {
