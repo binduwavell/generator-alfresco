@@ -29,7 +29,7 @@ module.exports = yeoman.Base.extend({
       communityOrEnterprise: 'Community',
       includeGitIgnore: true,
       removeDefaultSourceAmps: false,
-      removeDefaultSourceSamples: true,
+      removeDefaultSourceSamples: false,
     });
     this.bail = false;
     try {

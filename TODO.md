@@ -3,8 +3,6 @@ TODO
 
 - [ ] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [ ] Complete alfresco-module-registry
-  - [ ] In the module data structure war values should be alfresco instead of repo
-  - [ ] removeDefaultSourceSamples should default to false instead of true
   - [ ] Make sure we have test coverage for existing modules
     - [ ] alfresco-module-registry.js
     - [ ] maven-pom.js
@@ -48,6 +46,9 @@ TODO
 TODONE
 ======
 
+- [x] removeDefaultSourceSamples should default to false instead of true
+- [x] IGNORED: In the module data structure war values should be alfresco instead of repo
+- [x] tons of stuff done at this point related to module registry that was not tracked directly by todos
 - [x] 4 tests in test-maven-pom.js are failing, need to fix those ASAP
 - [x] Initial attempt to move the remove sample capability into the main generator
 - [x] Do not backup source amps when generator is re-run
