@@ -5,7 +5,7 @@ var nodeVersion = '' + process.argv[2];
 
 var child;
 if (0 === nodeVersion.indexOf('0')) {
-  args = ['test'];
+  args = ['run', 'test'];
 } else {
   args = ['run', 'cover'];
 }
