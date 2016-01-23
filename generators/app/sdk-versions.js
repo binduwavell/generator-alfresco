@@ -208,7 +208,7 @@ module.exports = {
   "local": {
     archetypeGroupId: "org.alfresco.maven.archetype",
     archetypeArtifactId: "alfresco-allinone-archetype",
-    archetypeVersion: "2.1.0-SNAPSHOT",
+    archetypeVersion: "2.1.2-SNAPSHOT",
     archetypeCatalog: 'local',
     promptForArchetypeVersion: true,
     promptForProjectPackage: true,
