@@ -10,6 +10,8 @@ describe('generator-alfresco:dependency-versions', function () {
 
   describe('.getJavaVersion()', function() {
 
+    this.timeout(5000);
+
     it('gets a java version with JAVA_HOME', function () {
       var javaHome = process.env.JAVA_HOME;
       if (javaHome) {
