@@ -4,6 +4,8 @@ jdk:
   - oraclejdk8
 
 env:
+  - NODE_VERSION=0.10
+  - NODE_VERSION=0.12
   - NODE_VERSION=4.1
 
 install:
@@ -12,7 +14,7 @@ install:
 
 script:
   - nvm use $NODE_VERSION
-  - npm run cover
+  - node ci.sh
 
 notifications:
   webhooks:

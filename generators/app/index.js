@@ -363,7 +363,6 @@ module.exports = yeoman.Base.extend({
         if (paths && paths.length > 0) {
           paths.forEach(function(p) {
             var moduleContextPath = p + '/src/main/amp/config/alfresco/module/' + p + '/module-context.xml';
-            console.log("MODULE CONTEXT PATH: " + moduleContextPath);
             var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
 
             var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
@@ -371,7 +370,6 @@ module.exports = yeoman.Base.extend({
             if (!context.hasImport(importPath)) {
               context.addImport(importPath);
               var contextDocNew = context.getContextString();
-              console.log("PATH: " + moduleContextPath);
               // console.log(contextDocNew);
               this.fs.write(moduleContextPath, contextDocNew);
             }
