@@ -14,7 +14,7 @@ install:
 
 script:
   - nvm use $NODE_VERSION
-  - node ci.js
+  - node ci.js $NODE_VERSION
 
 notifications:
   webhooks:
