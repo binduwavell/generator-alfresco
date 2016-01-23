@@ -1,7 +1,10 @@
 TODO
 ====
 
+- [ ] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [ ] Complete alfresco-module-registry
+  - [ ] In the module data structure war values should be alfresco instead of repo
+  - [ ] removeDefaultSourceSamples should default to false instead of true
   - [ ] Make sure we have test coverage for existing modules
     - [ ] alfresco-module-registry.js
     - [ ] maven-pom.js

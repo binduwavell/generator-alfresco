@@ -214,6 +214,7 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
+    defaultModuleRegistry: dynamicAmpModuleRegistry,
   }
 };
 
@@ -242,10 +243,38 @@ function staticAmpModuleRegistry() {
   ];
 }
 
+function dynamicAmpModuleRegistry() {
+  var prefix = '';
+  if (0 === this.archetypeVersion.indexOf('2.1.2')) {
+    console.log("SETTING PREFIX FOR ARTIFACT ID");
+    prefix = this.projectArtifactId + '-';
+  }
+  return [
+    {
+      "groupId": '${project.groupId}',
+      "artifactId": prefix + 'repo-amp',
+      "version": '${project.version}',
+      "packaging": 'amp',
+      "war": 'repo',
+      "location": 'source',
+      "path": prefix + 'repo-amp',
+    },
+    {
+      "groupId": '${project.groupId}',
+      "artifactId": prefix + 'share-amp',
+      "version": '${project.version}',
+      "packaging": 'amp',
+      "war": 'share',
+      "location": 'source',
+      "path": prefix + 'share-amp',
+    }
+  ];
+}
+
 function registerAmps() {
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
-    if (defaultModules) {
+    if (defaultModules && defaultModules.length > 0) {
       defaultModules.forEach(function (mod) {
         this.moduleManager.addModule(mod);
       }.bind(this));
@@ -257,7 +286,7 @@ function registerAmps() {
 function removeAmps() {
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
-    if (defaultModules) {
+    if (defaultModules && defaultModules.length > 0) {
       defaultModules.forEach(function (mod) {
         this.moduleManager.removeModule(mod);
       }.bind(this));

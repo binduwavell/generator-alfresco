@@ -266,20 +266,26 @@ module.exports = yeoman.Base.extend({
           );
         }.bind(this));
 
-        this.out.info('Attempting to backup generated amp templates');
-        var folders = ['repo-amp', 'share-amp'];
-        folders.forEach(
-          function(folderName) {
-            var to = path.join(this.destinationPath('amps_source_templates'), folderName );
-            if (!fs.existsSync(to)) {
+        if (this.sdk.defaultModuleRegistry) {
+          this.out.info('Attempting to backup generated amp templates');
+          var folders = this.sdk.defaultModuleRegistry.call(this).map(function(mod) {
+            return mod.artifactId;
+          })
+          folders.forEach(
+            function(folderName) {
+              var to = path.join(this.destinationPath('amps_source_templates'), folderName );
+              if (!fs.existsSync(to)) {
                 var from = path.join(genDir, folderName);
                 this.out.info('Copying from: ' + from + ' to: ' + to);
                 this.fs.copy(from, to);
-            } else {
-              this.out.warn('Not copying ' + folderName + ' as it has already been backed up')
-            }
-          }.bind(this)
-        );
+              } else {
+                this.out.warn('Not copying ' + folderName + ' as it has already been backed up')
+              }
+            }.bind(this));
+        } else {
+          this.out.warn("Not backing up generated amp templates as we don't have default modules defined for this "
+              + "version of the SDK.");
+        }
 
         rmdir(tmpDir, function (err, dir, files) {
           // nothing to do here
@@ -344,17 +350,32 @@ module.exports = yeoman.Base.extend({
       if (this.bail) return;
       if (!this.removeDefaultSourceAmps) {
         // Arrange for all generated beans to be included
-        var moduleContextPath = 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml';
-        var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
+        var paths = [];
+        if (this.sdk.defaultModuleRegistry) {
+          paths = this.sdk.defaultModuleRegistry.call(this)
+            .filter(function (mod) {
+              return (mod.war === 'repo');
+            })
+            .map(function (mod) {
+              return mod.path;
+            });
+        }
+        if (paths && paths.length > 0) {
+          paths.forEach(function(p) {
+            var moduleContextPath = p + '/src/main/amp/config/alfresco/module/' + p + '/module-context.xml';
+            console.log("MODULE CONTEXT PATH: " + moduleContextPath);
+            var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
 
-        var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
-        var context = require('./spring-context.js')(contextDocOrig);
-        if (!context.hasImport(importPath)) {
-          context.addImport(importPath);
-          var contextDocNew = context.getContextString();
-          console.log("PATH: " + moduleContextPath);
-          // console.log(contextDocNew);
-          this.fs.write(moduleContextPath, contextDocNew);
+            var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
+            var context = require('./spring-context.js')(contextDocOrig);
+            if (!context.hasImport(importPath)) {
+              context.addImport(importPath);
+              var contextDocNew = context.getContextString();
+              console.log("PATH: " + moduleContextPath);
+              // console.log(contextDocNew);
+              this.fs.write(moduleContextPath, contextDocNew);
+            }
+          }.bind(this));
         }
       }
     },
