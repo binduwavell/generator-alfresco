@@ -1,27 +1,13 @@
 #!/usr/bin/env node
-var spawnSync = require('child_process').spawnSync;
+require('shelljs/global');
 
 var nodeVersion = '' + process.argv[2];
-var child;
+var cmd;
 
 if (0 === nodeVersion.indexOf('0')) {
-  args = ['run', 'test'];
+  cmd = 'npm run test:color';
 } else {
-  args = ['run', 'cover'];
+  cmd = 'npm run cover:color';
 }
 
-function startChild(){
-  console.log("STARTING", "npm", args);
-  child = spawnSync('npm',  args, {
-      cwd: process.cwd(),
-      env: process.env,
-      stdio: 'inherit',
-      detached: false
-  });
-}
-
-process.on('SIGQUIT', function() {
-  child.kill();
-});
-
-startChild();
+exec(cmd, {stdin: 'inherit'});

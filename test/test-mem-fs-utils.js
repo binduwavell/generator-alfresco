@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var process = require('process');
 var memFs = require('mem-fs');
 var editor = require('mem-fs-editor');
 var memFsUtils = require('../generators/app/mem-fs-utils.js');
