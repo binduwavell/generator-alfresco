@@ -8,29 +8,10 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.7.0',
     supportedMavenVersions: '^3.2.5',
-    defaultModuleRegistry: function() {
-      return [
-        {
-          "groupId": '${project.groupId}',
-          "artifactId": 'repo-amp',
-          "version": '${project.version}',
-          "packaging": 'amp',
-          "war": 'repo',
-          "location": 'source',
-          "path": 'repo-amp',
-        },
-        {
-          "groupId": '${project.groupId}',
-          "artifactId": 'share-amp',
-          "version": '${project.version}',
-          "packaging": 'amp',
-          "war": 'share',
-          "location": 'source',
-          "path": 'share-amp',
-        }
-      ];
-    },
-    removeRepoSamplesScript: function(pathPrefix) {
+    defaultModuleRegistry: staticAmpModuleRegistry,
+    registerDefaultModules: registerAmps,
+    removeDefaultModules: removeAmps,
+    removeRepoSamples: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
         pathPrefix + '/src/main/amp/web/css/demoamp.css',
@@ -80,7 +61,7 @@ module.exports = {
       var contextDocNew = context.getContextString();
       this.fs.write(moduleContextPath, contextDocNew);
     },
-    removeShareSamplesScript: function(pathPrefix) {
+    removeShareSamples: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
         pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
@@ -125,29 +106,10 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
-    defaultModuleRegistry: function() {
-      return [
-        {
-          "groupId": '${project.groupId}',
-          "artifactId": 'repo-amp',
-          "version": '${project.version}',
-          "packaging": 'amp',
-          "war": 'repo',
-          "location": 'source',
-          "path": 'repo-amp',
-        },
-        {
-          "groupId": '${project.groupId}',
-          "artifactId": 'share-amp',
-          "version": '${project.version}',
-          "packaging": 'amp',
-          "war": 'share',
-          "location": 'source',
-          "path": 'share-amp',
-        }
-      ];
-    },
-    removeRepoSamplesScript: function(pathPrefix) {
+    defaultModuleRegistry: staticAmpModuleRegistry,
+    registerDefaultModules: registerAmps,
+    removeDefaultModules: removeAmps,
+    removeRepoSamples: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
         pathPrefix + '/src/main/amp/web/css/demoamp.css',
@@ -197,7 +159,7 @@ module.exports = {
       var contextDocNew = context.getContextString();
       this.fs.write(moduleContextPath, contextDocNew);
     },
-    removeShareSamplesScript: function(pathPrefix) {
+    removeShareSamples: function(pathPrefix) {
       var projectPackagePath = this.projectPackage.replace(/\./g, '/');
       [
         pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/share-amp.properties',
@@ -254,5 +216,54 @@ module.exports = {
     supportedMavenVersions: '^3.2.5',
   }
 };
+
+// ===== Shared scripts =====
+
+function staticAmpModuleRegistry() {
+  return [
+    {
+      "groupId": '${project.groupId}',
+      "artifactId": 'repo-amp',
+      "version": '${project.version}',
+      "packaging": 'amp',
+      "war": 'repo',
+      "location": 'source',
+      "path": 'repo-amp',
+    },
+    {
+      "groupId": '${project.groupId}',
+      "artifactId": 'share-amp',
+      "version": '${project.version}',
+      "packaging": 'amp',
+      "war": 'share',
+      "location": 'source',
+      "path": 'share-amp',
+    }
+  ];
+}
+
+function registerAmps() {
+  if (this.sdk.defaultModuleRegistry) {
+    var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+    if (defaultModules) {
+      defaultModules.forEach(function (mod) {
+        this.moduleManager.addModule(mod);
+      }.bind(this));
+      this.moduleManager.save();
+    }
+  }
+}
+
+function removeAmps() {
+  if (this.sdk.defaultModuleRegistry) {
+    var defaultModules = this.sdk.defaultModuleRegistry.call(this);
+    if (defaultModules) {
+      defaultModules.forEach(function (mod) {
+        this.moduleManager.removeModule(mod);
+      }.bind(this));
+      this.moduleManager.save();
+    }
+  }
+}
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
