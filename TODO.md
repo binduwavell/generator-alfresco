@@ -2,10 +2,6 @@ TODO
 ====
 
 - [ ] Complete alfresco-module-registry
-  - [ ] Make sure we have test coverage for existing modules
-    - [ ] alfresco-module-registry.js
-    - [ ] maven-pom.js
-    - [ ] spring-context.js
   - [ ] Provide a method to update project configuration based on current registry settings
     - [ ] /pom.xml (modules)
     - [ ] /repo/pom.xml (dep & overlay)
@@ -45,6 +41,11 @@ TODO
 TODONE
 ======
 
+- [ ] Complete alfresco-module-registry
+  - [x] Make sure we have test coverage for existing modules
+    - [x] alfresco-module-registry.js
+    - [x] maven-pom.js
+    - [x] spring-context.js
 - [x] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [x] removeDefaultSourceSamples should default to false instead of true
 - [x] IGNORED: In the module data structure war values should be alfresco instead of repo
