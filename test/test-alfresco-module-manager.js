@@ -23,7 +23,9 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     projectGroupId: 'org.example',
     projectArtifactId: 'test',
     projectPackaging: 'pom',
-    projectVersion: '1.0'
+    projectVersion: '1.0',
+    sdkVersions: require('../generators/app/sdk-versions.js'),
+    sdk: require('../generators/app/sdk-versions.js')['2.1.1']
   };
 
   describe('.addModule()', function() {
@@ -33,12 +35,12 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.moduleManager = require('../generators/app/alfresco-module-manager.js')(yomock);
       yomock.topPomPath = yomock.destinationPath('pom.xml');
       yomock.fs.write(yomock.topPomPath, "");
-      yomock.wrapperPomPath = yomock.destinationPath('war/pom.xml');
+      yomock.wrapperPomPath = yomock.destinationPath('repo/pom.xml');
       yomock.fs.write(yomock.wrapperPomPath, "");
-      yomock.templatePomPath = yomock.destinationPath('amps_source_templates/war-packaging/pom.xml');
+      yomock.templatePomPath = yomock.destinationPath('amps_source_templates/repo-packaging/pom.xml');
       yomock.fs.write(yomock.templatePomPath, '');
       yomock.projectPomPath = yomock.destinationPath('path/pom.xml');
-      yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
+      yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');
       yomock.moduleManager.save();
     });
 
@@ -50,7 +52,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
         "artifactId": 'artifactId',
         "version": 'version',
         "packaging": 'packaging',
-        "war": 'war',
+        "war": 'repo',
         "location": 'source',
         "path": 'path'
       }]);
@@ -90,7 +92,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
         yomock.fs.read(yomock.topPomPath)
       );
       var mod = pom.findModule('artifactId');
-      //console.log(pom.getPOMString());
+      // console.log(pom.getPOMString());
       assert.ok(mod);
     });
 
@@ -117,7 +119,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       // added twice we'll end up with a module when we find the module
       // if the second add was squashed as expected, we'll end up with
       // no module.
-      yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
+      yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');
       yomock.moduleManager.save();
       var pom = require('../generators/app/maven-pom.js')(
         yomock.fs.read(yomock.topPomPath)

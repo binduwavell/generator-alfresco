@@ -51,6 +51,31 @@ module.exports = {
   },
 
   /**
+   * Given the path for a virtual file or folder and a destination path perform a move
+   * completely within mem-fs.
+   *
+   * @param {!Store|!EditionInterface} storeOrEditor
+   * @param {string} from - file path or folder path
+   * @param {string} to - folder path
+   */
+  inMemoryMove: function(storeOrEditor, from, to) {
+    var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
+    var fromLen = from.length;
+    store.each(function(file) {
+      var idx = file.path.indexOf(from);
+      if (0 === idx && file.contents !== null && file.state !== 'deleted') {
+        var absTo = path.join(to, file.path.substr(fromLen));
+        // exact match so we are copying a single file and not a folder
+        if (fromLen === file.path.length) {
+          absTo = path.join(to, path.basename(file.path));
+        }
+        // console.log("MOVING FROM: " + file.path + " TO: " + absTo);
+        file.path = absTo;
+      }
+    });
+  },
+
+  /**
    *
    * @param {!Store|!EditionInterface} storeOrEditor
    * @param {(Function|undefined)} logFn

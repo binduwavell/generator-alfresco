@@ -27,14 +27,20 @@ module.exports = function(yo) {
     }
     yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
     this.moduleRegistry.addModule(mod);
+
+    // Stuff we only need to do for source amps
     if ('source' === mod.location) {
       // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
-      ops.push(function() { addModuleToTopPom(mod) } );
-      ops.push(function() { updateProjectPom(mod) } );
-      ops.push(function() { addModuleToWarWrapper(mod) } );
-      // TODO: what else do we need to do when we remove a module?
+      ops.push(function() { renamePathElementsForModule(mod) } );
+      if ('repo' === mod.war) {
+        ops.push(function () { addModuleToTopPom(mod) } );
+      }
     }
+
+    ops.push(function() { updateProjectPom(mod) } );
+    ops.push(function() { addModuleToWarWrapper(mod) } );
+    // TODO: what else do we need to do when we remove a module?
   }
 
   function copyTemplateForModule(mod) {
@@ -50,6 +56,36 @@ module.exports = function(yo) {
       }
     } else {
       yo.out.warn('Not copying module as target path already exists: ' + toPath);
+    }
+  }
+
+  function renamePathElementsForModule(mod) {
+    // get default repo module artifactId
+    var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function(mod) {
+      return ('source' === mod.location && 'repo' === mod.war);
+    });
+    if (defaultMods && defaultMods.length > 0) {
+      if (defaultMods[0].artifactId != mod.artifactId) {
+        // <path>/src/main/amp/config/alfresco/module/<artifactId>
+        var fromPath = path.join(
+          yo.destinationPath(),
+          mod.path,
+          '/src/main/amp/config/alfresco/module',
+          defaultMods[0].artifactId
+        );
+        var toPath = path.join(
+          yo.destinationPath(),
+          mod.path,
+          '/src/main/amp/config/alfresco/module',
+          mod.artifactId
+        );
+        // console.log("MOVING FROM: " + fromPath + " to: " + toPath);
+        if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+          memFsUtils.inMemoryMove(yo.fs, fromPath, toPath)
+        } else {
+          yo.fs.move(fromPath + "/**", toPath);
+        }
+      }
     }
   }
 

@@ -67,6 +67,8 @@ describe('generator-alfresco:mem-fs-utils', function () {
       this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
       this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
       memFsUtils.inMemoryCopy(this.store, '/asdf/fdsa', '/asdf/asdf');
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file1.txt'), true);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file2.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file1.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file2.txt'), true);
     });
@@ -75,6 +77,32 @@ describe('generator-alfresco:mem-fs-utils', function () {
       this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
       this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
       memFsUtils.inMemoryCopy(this.store, '/asdf/fdsa/file1.txt', '/asdf/asdf');
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file1.txt'), true);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file2.txt'), true);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file1.txt'), true);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file2.txt'), false);
+    });
+
+  });
+
+  describe('.inMemoryMove()', function() {
+
+    it('moves files from a folder', function () {
+      this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
+      this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
+      memFsUtils.inMemoryMove(this.store, '/asdf', '/fdsa');
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file1.txt'), false);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file2.txt'), false);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/fdsa/fdsa/file1.txt'), true);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/fdsa/fdsa/file2.txt'), true);
+    });
+
+    it('moves a single file', function () {
+      this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
+      this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
+      memFsUtils.inMemoryMove(this.store, '/asdf/fdsa/file1.txt', '/asdf/asdf');
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file1.txt'), false);
+      assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file2.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file1.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file2.txt'), false);
     });
