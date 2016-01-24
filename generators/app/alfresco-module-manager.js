@@ -34,7 +34,7 @@ module.exports = function(yo) {
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { renamePathElementsForModule(mod) } );
       if ('repo' === mod.war) {
-        ops.push(function () { addModuleToTopPom(mod) } );
+        ops.push(function () { addModuleToParentPom(mod) } );
       }
     }
 
@@ -89,15 +89,15 @@ module.exports = function(yo) {
     }
   }
 
-  function addModuleToTopPom(mod) {
+  function addModuleToParentPom(mod) {
     // TODO: if intermediate source modules are not included, include them too (amps_source for example.)
-    var topPomPath = yo.destinationPath('pom.xml');
-    yo.out.info('Adding ' + mod.artifactId + ' module to ' + topPomPath);
-    var topPom = yo.fs.read(topPomPath);
-    var pom = require('./maven-pom.js')(topPom);
+    var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
+    yo.out.info('Adding ' + mod.artifactId + ' module to ' + parentPomPath);
+    var parentPom = yo.fs.read(parentPomPath);
+    var pom = require('./maven-pom.js')(parentPom);
     if (!pom.findModule(mod.artifactId)) {
       pom.addModule(mod.artifactId, true);
-      yo.fs.write(topPomPath, pom.getPOMString());
+      yo.fs.write(parentPomPath, pom.getPOMString());
     }
   }
 
@@ -161,7 +161,7 @@ module.exports = function(yo) {
       this.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
         ops.push(function() { removeModuleFiles(mod) } );
-        ops.push(function() { removeModuleFromTopPom(mod) } );
+        ops.push(function() { removeModuleFromParentPom(mod) } );
         ops.push(function() { removeModuleFromWarWrapper(mod) } );
         // TODO: what else do we need to do when we remove a module?
       }
@@ -184,14 +184,14 @@ module.exports = function(yo) {
     });
   }
 
-  function removeModuleFromTopPom(mod) {
-    var topPomPath = yo.destinationPath('pom.xml');
-    yo.out.warn('Removing ' + mod.artifactId + ' module from ' + topPomPath);
-    var topPom = yo.fs.read(topPomPath);
-    var pom = require('./maven-pom.js')(topPom);
+  function removeModuleFromParentPom(mod) {
+    var parentPomPath = yo.destinationPath('pom.xml');
+    yo.out.warn('Removing ' + mod.artifactId + ' module from ' + parentPomPath);
+    var parentPom = yo.fs.read(parentPomPath);
+    var pom = require('./maven-pom.js')(parentPom);
     if (pom.findModule(mod.artifactId)) {
       pom.removeModule(mod.artifactId);
-      yo.fs.write(topPomPath, pom.getPOMString());
+      yo.fs.write(parentPomPath, pom.getPOMString());
     }
   }
 

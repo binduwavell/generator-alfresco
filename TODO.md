@@ -49,6 +49,8 @@ TODONE
     - [x] alfresco-module-registry.js
     - [x] maven-pom.js
     - [x] spring-context.js
+- [x] source_amps template should include an emptyish amp packaged pom
+  - [x] source_amps/pom.xml should be referened in modules section of top level pom
 - [x] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [x] removeDefaultSourceSamples should default to false instead of true
 - [x] IGNORED: In the module data structure war values should be alfresco instead of repo

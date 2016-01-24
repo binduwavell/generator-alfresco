@@ -299,7 +299,10 @@ module.exports = yeoman.Base.extend({
       var isEnterprise = ('Enterprise' === this.communityOrEnterprise);
       var tplContext = {
         isEnterprise: isEnterprise,
-        enterpriseFlag: (isEnterprise ? '-Penterprise' : '')
+        enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
+        projectGroupId: this.config.get('projectGroupId'),
+        projectArtifactId: this.config.get('projectArtifactId'),
+        projectVersion: this.config.get('projectVersion'),
       };
       this.fs.copy(
         this.templatePath('editorconfig'),
@@ -382,6 +385,18 @@ module.exports = yeoman.Base.extend({
           }.bind(this));
         }
       }
+      /* Eventually we'll need to make sure the modules
+         list is updated if the app generator is run
+         after some custom source amps are added. Following
+         code gets us access to the pom file.
+      var ampsSourcePomPath = 'amps_source/pom.xml';
+      var pom = require('./maven-pom.js')(ampsSourcePomPath);
+      pom.setParentGAV(
+          this.config.get('projectGroupId'),
+          this.config.get('projectArtifactId'),
+          this.config.get('projectVersion'));
+      this.fs.write(ampsSourcePomPath, pom.getPOMString());
+      */
     },
     removeDefaultSampleAmps: function() {
       if (this.bail) return;
