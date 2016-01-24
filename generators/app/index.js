@@ -385,12 +385,19 @@ module.exports = yeoman.Base.extend({
           }.bind(this));
         }
       }
+      // Make sure source_amps is included in the top pom
+      var topPomPath = this.destinationPath('pom.xml');
+      var topPomContent = this.fs.read(topPomPath);
+      var topPom = require('./maven-pom.js')(topPomContent);
+      topPom.addModule('source_amps');
+      this.fs.write(topPomPath, topPom.getPOMString());
       /* Eventually we'll need to make sure the modules
          list is updated if the app generator is run
          after some custom source amps are added. Following
          code gets us access to the pom file.
-      var ampsSourcePomPath = 'amps_source/pom.xml';
-      var pom = require('./maven-pom.js')(ampsSourcePomPath);
+      var ampsSourcePomPath = this.destinationPath('amps_source/pom.xml');
+      var ampsSourcePom = this.fs.read(ampsSourcePomPath);
+      var pom = require('./maven-pom.js')(ampsSourcePom);
       pom.setParentGAV(
           this.config.get('projectGroupId'),
           this.config.get('projectArtifactId'),

@@ -39,6 +39,7 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
+        'amps_source/pom.xml',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',
@@ -50,6 +51,12 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
       ]);
+    });
+    if('adds source_amps to modules in top pom', function() {
+      assert.fileContent(
+        'amps_source/pom.xml',
+        /<module>amps_source<\/module>/
+      );
     });
     it('debug.sh does not reference springloaded', function () {
       assert.noFileContent(
