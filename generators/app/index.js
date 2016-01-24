@@ -23,7 +23,7 @@ module.exports = yeoman.Base.extend({
     this.config.defaults({
       sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
-      projectArtifactId: 'demoamp',
+      projectArtifactId: 'demo',
       projectVersion: '1.0.0-SNAPSHOT',
       projectPackage: 'org.alfresco',
       communityOrEnterprise: 'Community',
