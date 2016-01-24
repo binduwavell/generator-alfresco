@@ -1,7 +1,8 @@
 TODO
 ====
 
-- [ ] Complete alfresco-module-registry
+- [ ] Complete alfresco-module-manager
+  - [ ] Rename module directory if necessary
   - [ ] Provide a method to update project configuration based on current registry settings
     - [ ] /pom.xml (modules)
     - [ ] /repo/pom.xml (dep & overlay)
@@ -41,7 +42,7 @@ TODO
 TODONE
 ======
 
-- [ ] Complete alfresco-module-registry
+- [ ] Complete alfresco-module-manager
   - [x] Fix /...-amp/pom.xml parent reference
   - [x] Adding module to top pom should add to top of list of modules rather than bottom
   - [x] Make sure we have test coverage for existing modules
