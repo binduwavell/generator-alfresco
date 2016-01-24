@@ -36,7 +36,7 @@ module.exports = {
    * @param {!Node} node
    * @param {string} ns
    * @param {string} tag
-   * @returns {Element|undefined}
+   * @returns {(Element|undefined)}
    */
   getChild: function(node, ns, tag) {
     if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getChild() are required");
@@ -100,8 +100,8 @@ module.exports = {
    * @param {!Node} node
    * @param {string} ns
    * @param {string} tag
-   * @param {string|undefined} text
-   * @param {string|undefined} contraIndicatedText
+   * @param {(string|undefined)} text
+   * @param {(string|undefined)} contraIndicatedText
    */
   setOrClearChildText: function(node, ns, tag, text, contraIndicatedText) {
     // console.log("setOrClearChildText(" + (node ? "node" : "undefined") + "," + ns + ":" + tag + ")");
@@ -121,7 +121,7 @@ module.exports = {
    * Given a node, search through subsequent siblings until we find an element
    *
    * @param {!Node} node
-   * @returns {Node|undefined}
+   * @returns {(Node|undefined)}
      */
   getNextElementSibling: function(node) {
     if (!node) return undefined;

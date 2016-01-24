@@ -1,7 +1,6 @@
 TODO
 ====
 
-- [ ] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [ ] Complete alfresco-module-registry
   - [ ] Make sure we have test coverage for existing modules
     - [ ] alfresco-module-registry.js
@@ -46,6 +45,7 @@ TODO
 TODONE
 ======
 
+- [x] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
 - [x] removeDefaultSourceSamples should default to false instead of true
 - [x] IGNORED: In the module data structure war values should be alfresco instead of repo
 - [x] tons of stuff done at this point related to module registry that was not tracked directly by todos

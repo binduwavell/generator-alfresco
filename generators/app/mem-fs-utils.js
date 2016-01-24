@@ -53,7 +53,7 @@ module.exports = {
   /**
    *
    * @param {!Store|!EditionInterface} storeOrEditor
-   * @param {Function|undefined} logFn
+   * @param {(Function|undefined)} logFn
    */
   dumpFileNames: function(storeOrEditor, logFn) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
