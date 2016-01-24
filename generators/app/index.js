@@ -389,7 +389,7 @@ module.exports = yeoman.Base.extend({
       var topPomPath = this.destinationPath('pom.xml');
       var topPomContent = this.fs.read(topPomPath);
       var topPom = require('./maven-pom.js')(topPomContent);
-      topPom.addModule('source_amps', true);
+      topPom.addModule('amps_source', true);
       this.fs.write(topPomPath, topPom.getPOMString());
       /* Eventually we'll need to make sure the modules
          list is updated if the app generator is run

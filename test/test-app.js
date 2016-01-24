@@ -52,9 +52,9 @@ describe('generator-alfresco:app', function () {
         'TODO.md',
       ]);
     });
-    if('adds source_amps to modules in top pom', function() {
+    it('adds amps_source to modules in top pom', function() {
       assert.fileContent(
-        'amps_source/pom.xml',
+        'pom.xml',
         /<module>amps_source<\/module>/
       );
     });
