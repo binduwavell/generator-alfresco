@@ -72,7 +72,10 @@ module.exports = function(yo) {
     var projectPom = yo.fs.read(projectPomPath);
     var pom = require('./maven-pom.js')(projectPom);
     pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
-    pom.setParentGAV(yo.projectGroupId, yo.projectArtifactId, yo.projectVersion);
+    pom.setParentGAV(
+        yo.projectGroupId || yo.config.get('projectGroupId'),
+        yo.projectArtifactId || yo.config.get('projectArtifactId'),
+        yo.projectVersion || yo.config.get('projectVersion'));
     yo.fs.write(projectPomPath, pom.getPOMString());
   }
 
