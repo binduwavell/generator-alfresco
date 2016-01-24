@@ -208,7 +208,7 @@ module.exports = {
   "local": {
     archetypeGroupId: "org.alfresco.maven.archetype",
     archetypeArtifactId: "alfresco-allinone-archetype",
-    archetypeVersion: "2.1.2-SNAPSHOT",
+    archetypeVersion: "2.2.0-SNAPSHOT",
     archetypeCatalog: 'local',
     promptForArchetypeVersion: true,
     promptForProjectPackage: true,
@@ -245,7 +245,7 @@ function staticAmpModuleRegistry() {
 
 function dynamicAmpModuleRegistry() {
   var prefix = '';
-  if (0 === this.archetypeVersion.indexOf('2.1.2')) {
+  if (0 === this.archetypeVersion.indexOf('2.2.0')) {
     console.log("SETTING PREFIX FOR ARTIFACT ID");
     prefix = this.projectArtifactId + '-';
   }

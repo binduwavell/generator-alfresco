@@ -10,6 +10,6 @@ then
   cd ..
 fi
 
-MAVEN_OPTS="-Xms256m -Xmx2G -XX:PermSize=300m" mvnDebug install -Prun <%= enterpriseFlag %> $@
+MAVEN_OPTS="-Xms256m -Xmx2G -XX:PermSize=300m" mvn install -Prun <%= enterpriseFlag %> $@
 
 popd > /dev/null

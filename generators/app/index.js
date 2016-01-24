@@ -317,7 +317,7 @@ module.exports = yeoman.Base.extend({
         tplContext
       );
       // copy folders
-      ['amps', 'amps_share', 'amps_source', 'amps_source_templates', 'repo-amp', 'scripts'].forEach(
+      ['amps', 'amps_share', 'amps_source', 'amps_source_templates', 'scripts'].forEach(
         function(folderName) {
           this.out.info('Copying ' + folderName);
           this.fs.copyTpl(
@@ -373,6 +373,12 @@ module.exports = yeoman.Base.extend({
               // console.log(contextDocNew);
               this.fs.write(moduleContextPath, contextDocNew);
             }
+
+            var generatedReadmePath = p + '/src/main/amp/config/alfresco/module/' + p + '/context/generated/README.md';
+            this.fs.copyTpl(
+              this.templatePath('generated-README.md'),
+              this.destinationPath(generatedReadmePath)
+            );
           }.bind(this));
         }
       }

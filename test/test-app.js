@@ -35,6 +35,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
@@ -49,6 +50,12 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
       ]);
+    });
+    it('debug.sh does not reference springloaded', function () {
+      assert.noFileContent(
+        'scripts/debug.sh',
+        /springloaded/
+      );
     });
     it('adds generic include for generated beans', function () {
       assert.fileContent(
@@ -65,7 +72,8 @@ describe('generator-alfresco:app', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
-        ['scripts/run.sh', /-Penterprise/]
+        ['scripts/run.sh', /-Penterprise/],
+        ['scripts/run-without-springloaded.sh', /-Penterprise/]
       ]);
     });
   });
@@ -99,6 +107,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
@@ -129,7 +138,8 @@ describe('generator-alfresco:app', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
-        ['scripts/run.sh', /-Penterprise/]
+        ['scripts/run.sh', /-Penterprise/],
+        ['scripts/run-without-springloaded.sh', /-Penterprise/]
       ]);
     });
   });
@@ -178,6 +188,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
@@ -209,7 +220,8 @@ describe('generator-alfresco:app', function () {
       assert.noFileContent([
         ['run.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
-        ['scripts/run.sh', /-Penterprise/]
+        ['scripts/run.sh', /-Penterprise/],
+        ['scripts/run-without-springloaded.sh', /-Penterprise/]
       ]);
     });
   });
@@ -419,6 +431,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
@@ -470,6 +483,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
         'amps_source/README.md',
