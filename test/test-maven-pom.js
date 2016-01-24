@@ -656,7 +656,7 @@ describe('generator-alfresco:maven-pom', function () {
       assert.equal(moduleNodes.toString(), '<modules>\n    <module>asdf</module>\n  </modules>');
     });
 
-    it('add second module', function () {
+    it('adds second module', function () {
       var pomString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!-- Stuff -->',
@@ -672,7 +672,34 @@ describe('generator-alfresco:maven-pom', function () {
       assert.ok(moduleNode);
       assert.ok(moduleNodes);
       assert.equal(moduleNode.toString(), '<module>asdf</module>');
-      assert.equal(moduleNodes.toString(), '<modules>\n    <module>fdsa</module>\n  <module>asdf</module></modules>');
+      assert.equal(moduleNodes.toString(), [
+        '<modules>',
+        '    <module>fdsa</module>',
+        '  <module>asdf</module></modules>'
+      ].join('\n'));
+    });
+
+    it('adds second module as first child', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <modules>',
+        '    <module>fdsa</module>',
+        '  </modules>',
+        '</project>',
+      ].join('\n');
+      var pom = require('../generators/app/maven-pom.js')(pomString);
+      var moduleNode = pom.addModule('asdf', true);
+      var moduleNodes = pom.getOrCreateTopLevelElement('pom', 'modules');
+      assert.ok(moduleNode);
+      assert.ok(moduleNodes);
+      assert.equal(moduleNode.toString(), '<module>asdf</module>');
+      assert.equal(moduleNodes.toString(), [
+        '<modules><module>asdf</module>',
+        '    <module>fdsa</module>',
+        '  </modules>'
+      ].join('\n'));
     });
 
   });

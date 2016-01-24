@@ -236,10 +236,11 @@ module.exports = function(pomString) {
     }
   }
 
-  module.addModule = function(mod) {
+  module.addModule = function(mod, addToTop) {
+    var toTop = addToTop || false;
     var moduleNode = module.findModule(mod);
     if (!moduleNode) {
-      moduleNode = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module')
+      moduleNode = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module', addToTop)
     }
     moduleNode.textContent = mod;
     return moduleNode;

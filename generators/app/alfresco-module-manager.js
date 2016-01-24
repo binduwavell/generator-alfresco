@@ -60,7 +60,7 @@ module.exports = function(yo) {
     var topPom = yo.fs.read(topPomPath);
     var pom = require('./maven-pom.js')(topPom);
     if (!pom.findModule(mod.artifactId)) {
-      pom.addModule(mod.artifactId);
+      pom.addModule(mod.artifactId, true);
       yo.fs.write(topPomPath, pom.getPOMString());
     }
   }

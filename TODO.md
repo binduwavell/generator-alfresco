@@ -42,6 +42,7 @@ TODONE
 ======
 
 - [ ] Complete alfresco-module-registry
+  - [x] Adding module to top pom should add to top of list of modules rather than bottom
   - [x] Make sure we have test coverage for existing modules
     - [x] alfresco-module-registry.js
     - [x] maven-pom.js

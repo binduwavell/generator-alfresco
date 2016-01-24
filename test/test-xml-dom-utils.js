@@ -33,6 +33,58 @@ describe('generator-alfresco:xml-dom-utils', function () {
         '</root>',
       ].join('\n'));
     });
+
+    it('adding child defaults to adding at the end', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns:ns="http://www.example.com/">',
+        '  <element/>',
+        '</root>'
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      var element = domutils.createChild(rootElement, 'ns', 'node');
+      assert.ok(element);
+      var docStr = pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
+      assert.equal(docStr, [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root ',
+        '  xmlns:ns="http://www.example.com/">',
+        '  <element/>',
+        '  <node/>',
+        '</root>',
+      ].join('\n'));
+    });
+
+    it('adding child can be set to add to add at the beginning', function () {
+      var xmlString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root xmlns:ns="http://www.example.com/">',
+        '  <element/>',
+        '</root>'
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+      assert.ok(doc);
+      var rootElement = doc.documentElement;
+      assert.ok(rootElement);
+      var element = domutils.createChild(rootElement, 'ns', 'node', true);
+      assert.ok(element);
+      var docStr = pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
+      assert.equal(docStr, [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Comment -->',
+        '<root ',
+        '  xmlns:ns="http://www.example.com/">',
+        '  <node/>',
+        '  <element/>',
+        '</root>',
+      ].join('\n'));
+    });
   });
 
   describe('.getChild()', function() {

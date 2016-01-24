@@ -21,12 +21,18 @@ module.exports = {
    * @param {!Node} node
    * @param {string} ns
    * @param {string} tag
+   * @param {boolean} addFirstChild - default to false
    * @returns {Element}
      */
-  createChild: function(node, ns, tag) {
+  createChild: function(node, ns, tag, addFirstChild) {
+    var addFirst = addFirstChild || false;
     var doc = node.ownerDocument;
     var child = doc.createElementNS(this.resolver.lookupNamespaceURI(ns), tag);
-    node.appendChild(child);
+    if (addFirst && node.hasChildNodes()) {
+      node.insertBefore(child, node.childNodes[0]);
+    } else {
+      node.appendChild(child);
+    }
     return child;
   },
 
