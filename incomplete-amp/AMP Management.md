@@ -92,16 +92,11 @@ pre-packaged remote
 2. Create /amps_source/*artifactId* folder 
 3. Copy /amps_source_templates/repo-amp/\* to /amps_source/*artifactId*
 4. Rename folder /amps_source/*artifactId*/src/main/amp/config/alfresco/module/**repo-amp** to **artifactId**
-5. Add module reference to /pom.xml by adding \<module>*artifactId*\</module> to the \<modules> element
+5. Add module reference to /amps-source/pom.xml by adding \<module>*artifactId*\</module> to the \<modules> element
 
    ~~~xml
    <modules>
      <module>ARTIFACTID</module>
-     <!-- out of the box modules -->
-     <module>repo</module>
-     <module>solr-config</module>
-     <module>share</module>
-     <module>runner</module>
    </modules>
    ~~~
    
