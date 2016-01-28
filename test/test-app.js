@@ -169,7 +169,7 @@ describe('generator-alfresco:app', function () {
             .inDir(tmpdir, function(dir) {
               fs.mkdirSync( path.join(dir, 'amps_source_templates') );
               fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), 'dummy' );
+              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), '' );
             })
             .withLocalConfig({ 'archetypeVersion': '2.1.0' })
             .withOptions({ 'skip-install': false })
