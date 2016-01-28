@@ -33,7 +33,7 @@ module.exports = function(yo) {
       // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { renamePathElementsForModule(mod) } );
-      if ('repo' === mod.war) {
+      if ('repo' === mod.war || 'share' == mod.war) {
         ops.push(function () { addModuleToParentPom(mod) } );
       }
     }
