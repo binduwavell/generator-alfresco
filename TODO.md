@@ -3,25 +3,31 @@ TODO
 
 - [ ] Complete alfresco-module-manager
   - [ ] Provide a method to update project configuration based on current registry settings
-    - [ ] /pom.xml (modules)
-    - [ ] /repo/pom.xml (dep & overlay)
     - [ ] /share/pom.xml (dep & overlay)
     - [ ] /runner/pom.xml (failsafe configuration for share source modules)
     - [ ] /runner/tomcat/context-(repo|share).xml
-- [ ] Complete remove-samples option in main generator
-  - [ ] Make sure everything that should be removed is
-- [ ] Offer to remove default repo-amp and share-amp projects
-- [ ] If repo-amp and/or share-amp are retained, add info about them to list of project amps in config so that sub-generators can target them
+      - [ ] <Resources>
+      - [ ] <Loader>
+    - [x] /pom.xml (modules)
+    - [x] /repo/pom.xml (dep & overlay)
+  - [x] Rename repo module directory if necessary
+  - [x] Fix /...-amp/pom.xml parent reference
+  - [x] Adding module to top pom should add to top of list of modules rather than bottom
+  - [x] Make sure we have test coverage for existing modules
+    - [x] alfresco-module-registry.js
+    - [x] maven-pom.js
+    - [x] spring-context.js
 - [ ] Make progress on amp sub-generator
-  - [x] Move amp sub-generators so it can't be used yet
+  - [ ] When creating source AMP prompt for name and description and inject into project
   - [ ] Offer different types of amp creation
-  - [ ] Use the backed up repo-amp and share-amp projects instead of caching structures in templates folder
-  - [ ] Create a pom editing module under app (like spring-context.js) and use this
   - [ ] Make sure that context files are regenerated
+  - [x] Create a pom editing module under app (like spring-context.js) and use this
+  - [x] Use the backed up repo-amp and share-amp projects instead of caching structures in templates folder
+  - [x] Move amp sub-generators so it can't be used yet
 - [ ] Make progress on webscript sub-generator
-  - [x] Move webscript sub-generators so it can't be used yet
   - [ ] List project amps that we can generate webscripts in
   - [ ] Update wizard to include more/all options for .desc.xml
+  - [x] Move webscript sub-generators so it can't be used yet
 - [ ] Make progress on action sub-generator
   - [ ] Review action branch and see what all needs to be done
   - [ ] List project amps that we can generate webscripts in
@@ -41,14 +47,10 @@ TODO
 TODONE
 ======
 
-- [ ] Complete alfresco-module-manager
-  - [x] Rename repo module directory if necessary
-  - [x] Fix /...-amp/pom.xml parent reference
-  - [x] Adding module to top pom should add to top of list of modules rather than bottom
-  - [x] Make sure we have test coverage for existing modules
-    - [x] alfresco-module-registry.js
-    - [x] maven-pom.js
-    - [x] spring-context.js
+- [x] Complete remove-samples option in main generator
+  - [x] Make sure everything that should be removed is
+- [x] Offer to remove default repo-amp and share-amp projects
+- [x] If repo-amp and/or share-amp are retained, add info about them to list of project amps in config so that sub-generators can target them
 - [x] source_amps template should include an emptyish amp packaged pom
   - [x] source_amps/pom.xml should be referened in modules section of top level pom
 - [x] Update incorrect {string|undefined} jsdoc type specifier, use {(string|undefined)}
