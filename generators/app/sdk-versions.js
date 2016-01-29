@@ -1,5 +1,7 @@
 'use strict';
 
+var semver = require('semver');
+
 module.exports = {
   "2.1.1": {
     archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -8,7 +10,8 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.7.0',
     supportedMavenVersions: '^3.2.5',
-    defaultModuleRegistry: staticAmpModuleRegistry,
+    sdkVersionPrefix: sdkVersionPrefix,
+    defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerAmps,
     removeDefaultModules: removeAmps,
     removeRepoSamples: function(pathPrefix) {
@@ -106,7 +109,8 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
-    defaultModuleRegistry: staticAmpModuleRegistry,
+    sdkVersionPrefix: sdkVersionPrefix,
+    defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerAmps,
     removeDefaultModules: removeAmps,
     removeRepoSamples: function(pathPrefix) {
@@ -204,6 +208,10 @@ module.exports = {
     promptForProjectPackage: false,
     supportedJavaVersions: '^1.7.0',
     supportedMavenVersions: '^3.0.5',
+    sdkVersionPrefix: sdkVersionPrefix,
+    defaultModuleRegistry: ampModuleRegistry,
+    registerDefaultModules: registerAmps,
+    removeDefaultModules: removeAmps,
   },
   "local": {
     archetypeGroupId: "org.alfresco.maven.archetype",
@@ -214,41 +222,28 @@ module.exports = {
     promptForProjectPackage: true,
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.2.5',
-    defaultModuleRegistry: dynamicAmpModuleRegistry,
-  }
+    sdkVersionPrefix: sdkVersionPrefix,
+    defaultModuleRegistry: ampModuleRegistry,
+    registerDefaultModules: registerAmps,
+    removeDefaultModules: removeAmps,
+  },
 };
 
 // ===== Shared scripts =====
 
-function staticAmpModuleRegistry() {
-  return [
-    {
-      "groupId": '${project.groupId}',
-      "artifactId": 'repo-amp',
-      "version": '${project.version}',
-      "packaging": 'amp',
-      "war": 'repo',
-      "location": 'source',
-      "path": 'repo-amp',
-    },
-    {
-      "groupId": '${project.groupId}',
-      "artifactId": 'share-amp',
-      "version": '${project.version}',
-      "packaging": 'amp',
-      "war": 'share',
-      "location": 'source',
-      "path": 'share-amp',
+function sdkVersionPrefix() {
+  // console.log("CHECKING PREFIX FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
+  if (this.config.get('archetypeVersion')) {
+    if (semver.satisfies(semver.clean(this.config.get('archetypeVersion')), ">=2.2.0-SNAPSHOT")) {
+      // console.log("SETTING PREFIX FOR ARTIFACT ID");
+      return this.config.get('projectArtifactId') + '-';
     }
-  ];
+  }
+  return '';
 }
 
-function dynamicAmpModuleRegistry() {
-  var prefix = '';
-  if (0 === this.archetypeVersion.indexOf('2.2.0')) {
-    console.log("SETTING PREFIX FOR ARTIFACT ID");
-    prefix = this.projectArtifactId + '-';
-  }
+function ampModuleRegistry() {
+  var prefix = sdkVersionPrefix.call(this);
   return [
     {
       "groupId": '${project.groupId}',

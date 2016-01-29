@@ -47,7 +47,9 @@ module.exports = function(yo) {
     var toPath = yo.destinationPath(mod.path);
     // console.log('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
-      var fromPath = yo.destinationPath('amps_source_templates/' + mod.war + '-' + mod.packaging);
+      var prefix = yo.sdk.sdkVersionPrefix.call(yo);
+      yo.config.get('artifactId')
+      var fromPath = yo.destinationPath('amps_source_templates/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
