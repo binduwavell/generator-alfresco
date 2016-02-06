@@ -350,6 +350,85 @@ describe('generator-alfresco:xml-dom-utils', function () {
 
   });
 
+  describe('.getFirstNodeMatchingXPath()', function() {
+    it('finds element in a document using an absolute xpath', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <stuff/>',
+        '  <profiles>',
+        '    <profile>',
+        '      <id>foo</id>',
+        '      <build>',
+        '        <plugins>',
+        '          <plugin>this is the first wrong one</plugin>',
+        '          <plugin>this is the wrong two</plugin>',
+        '        </plugins>',
+        '      </build>',
+        '    </profile>',
+        '    <profile>',
+        '      <id>functional-testing</id>',
+        '      <build>',
+        '        <plugins>',
+        '          <plugin>you found me</plugin>',
+        '          <plugin>this is the other wrong one</plugin>',
+        '        </plugins>',
+        '      </build>',
+        '    </profile>',
+        '  </profiles>',
+        '  <otherstuff/>',
+        '</project>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(pomString, 'text/xml');
+      assert.ok(doc);
+      var xp = "/pom:project/pom:profiles/pom:profile[pom:id='functional-testing']/pom:build/pom:plugins/pom:plugin[1]";
+      var element = domutils.getFirstNodeMatchingXPath(xp, doc)
+      //console.log(pd.xml(new xmldom.XMLSerializer().serializeToString(element)));
+      assert.equal(pd.xml(new xmldom.XMLSerializer().serializeToString(element)), '<plugin>you found me</plugin>');
+    });
+
+    it('finds element under an using a relative xpath', function () {
+      var pomString = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Stuff -->',
+        '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">',
+        '  <stuff/>',
+        '  <profiles>',
+        '    <profile>',
+        '      <id>foo</id>',
+        '      <build>',
+        '        <plugins>',
+        '          <plugin>this is the first wrong one</plugin>',
+        '          <plugin>this is the wrong two</plugin>',
+        '        </plugins>',
+        '      </build>',
+        '    </profile>',
+        '    <profile>',
+        '      <id>functional-testing</id>',
+        '      <build>',
+        '        <plugins>',
+        '          <plugin>you found me</plugin>',
+        '          <plugin>this is the other wrong one</plugin>',
+        '        </plugins>',
+        '      </build>',
+        '    </profile>',
+        '  </profiles>',
+        '  <otherstuff/>',
+        '</project>',
+      ].join('\n');
+      var doc = new xmldom.DOMParser().parseFromString(pomString, 'text/xml');
+      assert.ok(doc);
+      var xp1 = "/pom:project/pom:profiles/pom:profile[pom:id='functional-testing']";
+      var element1 = domutils.getFirstNodeMatchingXPath(xp1, doc)
+      //console.log(pd.xml(new xmldom.XMLSerializer().serializeToString(element1)));
+      var xp2 = "pom:build/pom:plugins/pom:plugin[1]";
+      var element2 = domutils.getFirstNodeMatchingXPath(xp2, element1);
+      //console.log(pd.xml(new xmldom.XMLSerializer().serializeToString(element2)));
+      assert.equal(pd.xml(new xmldom.XMLSerializer().serializeToString(element2)), '<plugin>you found me</plugin>');
+    });
+  });
+
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

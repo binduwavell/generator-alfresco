@@ -1,4 +1,5 @@
 'use strict';
+var pd = require('pretty-data').pd;
 var xmldom = require('xmldom');
 var xpath = require('xpath');
 
@@ -13,6 +14,18 @@ module.exports = {
     lookupNamespaceURI: function(prefix) {
       return this.mappings[prefix];
     }
+  },
+
+  /**
+   * Given a string representation of some XML, parse the string and return the
+   * associated DOM.
+   *
+   * @param {string} xmlString
+   * @returns {Document} the parsed xml document
+   */
+  parseFromString: function(xmlString) {
+    var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
+    return doc;
   },
 
   /**
@@ -46,7 +59,7 @@ module.exports = {
    */
   getChild: function(node, ns, tag) {
     if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getChild() are required");
-    var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
+    var child = this.getFirstNodeMatchingXPath(ns + ':' + tag, node);
     return child;
   },
 
@@ -90,7 +103,7 @@ module.exports = {
    */
   getOrCreateChild: function(node, ns, tag) {
     if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getOrCreateChild() are required");
-    var child = xpath.selectWithResolver(ns + ':' + tag, node, this.resolver, true);
+    var child = this.getFirstNodeMatchingXPath(ns + ':' + tag, node);
     if (!child) {
       var doc = node.ownerDocument;
       child = doc.createElementNS(this.resolver.lookupNamespaceURI(ns), tag);
@@ -128,7 +141,7 @@ module.exports = {
    *
    * @param {!Node} node
    * @returns {(Node|undefined)}
-     */
+   */
   getNextElementSibling: function(node) {
     if (!node) return undefined;
     var next = node;
@@ -136,6 +149,42 @@ module.exports = {
       next = next.nextSibling;
     } while (next && next.nodeType !== next.ELEMENT_NODE);
     return next;
+  },
+
+  /**
+   * Attempts to find the first item matching the provided xpath expression
+   * starting from the provided document or element.
+   *
+   * @param {string} xpath
+   * @param {!(Document|Element)} docOrElement
+   * @returns {?*}
+   */
+  getFirstNodeMatchingXPath: function(expression, docOrElement) {
+    var match = xpath.selectWithResolver(expression, docOrElement, this.resolver, true);
+    return match;
+  },
+
+  /**
+   * Attempts to find stuff matching the provided xpath expression
+   * starting from the provided document or element.
+   *
+   * @param {string} xpath
+   * @param {!(Document|Element)} docOrElement
+   * @returns {?*}
+   */
+  selectMatchingXPath: function(expression, docOrElement) {
+    var matches = xpath.selectWithResolver(expression, docOrElement, this.resolver, false);
+    return matches;
+  },
+
+  /**
+   * Given a dom object, produce a pretty printed xml representation as a string.
+   *
+   * @param {!Document} doc
+   * @returns {(string|undefined}}
+     */
+  prettyPrint: function(doc) {
+    return pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
   }
 
 };

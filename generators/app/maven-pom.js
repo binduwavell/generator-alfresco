@@ -1,7 +1,4 @@
 'use strict';
-var pd = require('pretty-data').pd;
-var xmldom = require('xmldom');
-var xpath = require('xpath');
 var domutils = require('./xml-dom-utils.js');
 
 /*
@@ -63,7 +60,7 @@ module.exports = function(pomString) {
     '</project>'
   ].join('\n');
 
-  var doc = new xmldom.DOMParser().parseFromString(pomString || defaultPOMString, 'text/xml');
+  var doc = domutils.parseFromString(pomString || defaultPOMString);
   var project = doc.documentElement;
 
   module.getTopLevelElement = function(ns, tag) {
@@ -73,10 +70,7 @@ module.exports = function(pomString) {
   module.getOrCreateTopLevelElement = function(ns, tag) {
     var element = undefined;
     var xp = '/pom:project/' + ns + ':' + tag;
-    var elements = xpath.selectWithResolver(xp, doc, domutils.resolver);
-    if (elements && elements.length > 0) {
-      element = elements[0];
-    }
+    var element = domutils.getFirstNodeMatchingXPath(xp, doc);
     if (!element) {
       element = doc.createElementNS(domutils.resolver.lookupNamespaceURI(ns), tag);
       project.appendChild(element);
@@ -114,7 +108,7 @@ module.exports = function(pomString) {
   }
 
   module.findDependency = function(groupId, artifactId, version, type, scope) {
-    var dependencies = xpath.selectWithResolver('/pom:project/pom:dependencies/pom:dependency', doc, domutils.resolver);
+    var dependencies = domutils.selectMatchingXPath('/pom:project/pom:dependencies/pom:dependency', doc);
     // Only process if group and artifact Ids are specified and we have dependencies to process
     if (groupId && artifactId && dependencies) {
       var len = dependencies.length;
@@ -220,7 +214,7 @@ module.exports = function(pomString) {
   }
 
   module.findModule = function(moduleName) {
-    var moduleNodes = xpath.selectWithResolver('/pom:project/pom:modules/pom:module', doc, domutils.resolver);
+    var moduleNodes = domutils.selectMatchingXPath('/pom:project/pom:modules/pom:module', doc);
     // Only process if module name is specified and we have modules to process
     if (moduleName && moduleNodes) {
       var len = moduleNodes.length;
@@ -262,7 +256,7 @@ module.exports = function(pomString) {
     var groupId = (second ? first : undefined);
     var artifactId = (second ? second : first);
 
-    var plugins = xpath.selectWithResolver('/pom:project/pom:build/pom:plugins/pom:plugin', doc, domutils.resolver);
+    var plugins = domutils.selectMatchingXPath('/pom:project/pom:build/pom:plugins/pom:plugin', doc);
     // Only process if group and artifact Ids are specified and we have plugins to process
     if (artifactId && plugins) {
       var len = plugins.length;
@@ -288,7 +282,8 @@ module.exports = function(pomString) {
   }
 
   module.findOverlay = function(groupId, artifactId, type) {
-    var overlays = xpath.selectWithResolver('/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays/pom:overlay', doc, domutils.resolver);
+    var overlays = domutils.selectMatchingXPath(
+        '/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays/pom:overlay', doc);
     // Only process if group and artifact Ids are specified and we have overlays to process
     if (groupId && artifactId && overlays) {
       var len = overlays.length;
@@ -318,9 +313,9 @@ module.exports = function(pomString) {
   module.addOverlay = function(groupId, artifactId, type) {
     var overlay = module.findOverlay(groupId, artifactId, type);
     if (!overlay) {
-      var overlays = xpath.selectWithResolver('/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays', doc, domutils.resolver);
+      var overlays = domutils.getFirstNodeMatchingXPath('/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays', doc);
       if (overlays) {
-        overlay = domutils.createChild(overlays[0], 'pom', 'overlay');
+        overlay = domutils.createChild(overlays, 'pom', 'overlay');
       }
     }
     if (overlay) {
@@ -351,7 +346,7 @@ module.exports = function(pomString) {
   }
 
   module.getPOMString = function() {
-    return pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
+    return domutils.prettyPrint(doc);
   }
 
   return module;
