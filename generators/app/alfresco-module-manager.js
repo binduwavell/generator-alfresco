@@ -198,8 +198,15 @@ module.exports = function(yo) {
   }
 
   function removeModuleFromWarWrapper(mod) {
-    // TODO: remove dependency and overlay from repo / share war wrapper modules
-    yo.out.warn('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
+    yo.out.info('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
+    var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
+    var wrapperPom = yo.fs.read(wrapperPomPath);
+    var pom = require('./maven-pom.js')(wrapperPom);
+    if (pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
+      pom.removeDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
+      pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging );
+      yo.fs.write(wrapperPomPath, pom.getPOMString());
+    }
   }
 
   module.save = function() {

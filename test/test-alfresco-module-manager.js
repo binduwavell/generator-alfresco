@@ -165,8 +165,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       assert.equal(mod, undefined);
     });
 
-    it.skip('removes dependency from the war wrapper pom', function () {
-      // TODO: implement dependency removal logic in alfresco-module-manager
+    it('removes dependency from the war wrapper pom', function () {
       var pom = require('../generators/app/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
@@ -174,8 +173,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       assert.equal(dep, undefined);
     });
 
-    it.skip('removes overlay from the war wrapper pom', function () {
-      // TODO: implement overlay removal logic in alfresco-module-manager
+    it('removes overlay from the war wrapper pom', function () {
       var pom = require('../generators/app/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
