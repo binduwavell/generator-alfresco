@@ -273,7 +273,7 @@ module.exports = yeoman.Base.extend({
           })
           folders.forEach(
             function(folderName) {
-              var to = path.join(this.destinationPath('amps_source_templates'), folderName );
+              var to = path.join(this.destinationPath(constants.SOURCE_TEMPLATES_FOLDER), folderName );
               if (!fs.existsSync(to)) {
                 var from = path.join(genDir, folderName);
                 this.out.info('Copying from: ' + from + ' to: ' + to);
@@ -320,7 +320,7 @@ module.exports = yeoman.Base.extend({
         tplContext
       );
       // copy folders
-      ['amps', 'amps_share', constants.CUSTOMIZATIONS_FOLDER, 'amps_source_templates', 'scripts'].forEach(
+      ['amps', 'amps_share', constants.CUSTOMIZATIONS_FOLDER, constants.SOURCE_TEMPLATES_FOLDER, 'scripts'].forEach(
         function(folderName) {
           this.out.info('Copying ' + folderName);
           this.fs.copyTpl(

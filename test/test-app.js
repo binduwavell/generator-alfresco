@@ -41,9 +41,9 @@ describe('generator-alfresco:app', function () {
         'amps_share/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/pom.xml',
-        'amps_source_templates/README.md',
-        'amps_source_templates/repo-amp/pom.xml',
-        'amps_source_templates/share-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/README.md',
+        constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/share-amp/pom.xml',
         'repo/pom.xml',
         'repo-amp/pom.xml',
         'runner/pom.xml',
@@ -119,9 +119,9 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/README.md',
-        'amps_source_templates/README.md',
-        'amps_source_templates/repo-amp/pom.xml',
-        'amps_source_templates/share-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/README.md',
+        constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/share-amp/pom.xml',
         'repo/pom.xml',
         'repo-amp/pom.xml',
         'runner/pom.xml',
@@ -168,9 +168,9 @@ describe('generator-alfresco:app', function () {
         .on('end', function() {
           helpers.run(path.join(__dirname, '../generators/app'))
             .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
-              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), '' );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER) );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml') ), '' );
             })
             .withLocalConfig({ 'archetypeVersion': '2.1.0' })
             .withOptions({ 'skip-install': false })
@@ -200,9 +200,9 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/README.md',
-        'amps_source_templates/README.md',
-        'amps_source_templates/repo-amp/pom.xml',
-        'amps_source_templates/share-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/README.md',
+        constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/share-amp/pom.xml',
         'repo/pom.xml',
         'repo-amp/pom.xml',
         'runner/pom.xml',
@@ -273,9 +273,9 @@ describe('generator-alfresco:app', function () {
         .on('end', function() {
           helpers.run(path.join(__dirname, '../generators/app'))
             .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
-              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), '' );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER) );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml') ), '' );
             })
             .withLocalConfig({
               removeDefaultSourceAmps: true,
@@ -311,9 +311,9 @@ describe('generator-alfresco:app', function () {
         .on('end', function() {
           helpers.run(path.join(__dirname, '../generators/app'))
             .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, 'amps_source_templates') );
-              fs.mkdirSync( path.join(dir, 'amps_source_templates/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, 'amps_source_templates/repo-amp/pom.xml') ), '' );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER) );
+              fs.mkdirSync( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml') ), '' );
             })
             .withLocalConfig({
               archetypeVersion: '2.1.1',
@@ -443,9 +443,9 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/README.md',
-        'amps_source_templates/README.md',
-        'amps_source_templates/repo-amp/pom.xml',
-        'amps_source_templates/share-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/README.md',
+        constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/share-amp/pom.xml',
         'repo/pom.xml',
         'repo-amp/pom.xml',
         'runner/pom.xml',
@@ -495,9 +495,9 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.CUSTOMIZATIONS_FOLDER + '/README.md',
-        'amps_source_templates/README.md',
-        'amps_source_templates/repo-amp/pom.xml',
-        'amps_source_templates/share-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/README.md',
+        constants.SOURCE_TEMPLATES_FOLDER + '/repo-amp/pom.xml',
+        constants.SOURCE_TEMPLATES_FOLDER + '/share-amp/pom.xml',
         'repo/pom.xml',
         'repo-amp/pom.xml',
         'runner/pom.xml',

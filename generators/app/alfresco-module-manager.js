@@ -1,5 +1,6 @@
 'use strict';
 var path = require('path');
+var constants = require('./constants.js');
 var domutils = require('./xml-dom-utils.js');
 var memFsUtils = require('./mem-fs-utils.js');
 
@@ -49,7 +50,7 @@ module.exports = function(yo) {
     if (!yo.fs.exists(toPath)) {
       var prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId')
-      var fromPath = yo.destinationPath('amps_source_templates/' + prefix + mod.war + '-' + mod.packaging);
+      var fromPath = yo.destinationPath(constants.SOURCE_TEMPLATES_FOLDER + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
