@@ -1,8 +1,8 @@
 'use strict';
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
+var constants = require('./constants.js');
 var fs = require('fs');
-var inspect = require('eyes').inspector({maxLength: false});
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
@@ -320,7 +320,7 @@ module.exports = yeoman.Base.extend({
         tplContext
       );
       // copy folders
-      ['amps', 'amps_share', 'amps_source', 'amps_source_templates', 'scripts'].forEach(
+      ['amps', 'amps_share', constants.CUSTOMIZATIONS_FOLDER, 'amps_source_templates', 'scripts'].forEach(
         function(folderName) {
           this.out.info('Copying ' + folderName);
           this.fs.copyTpl(
@@ -389,20 +389,20 @@ module.exports = yeoman.Base.extend({
       var topPomPath = this.destinationPath('pom.xml');
       var topPomContent = this.fs.read(topPomPath);
       var topPom = require('./maven-pom.js')(topPomContent);
-      topPom.addModule('amps_source', true);
+      topPom.addModule(constants.CUSTOMIZATIONS_FOLDER, true);
       this.fs.write(topPomPath, topPom.getPOMString());
       /* Eventually we'll need to make sure the modules
          list is updated if the app generator is run
          after some custom source amps are added. Following
          code gets us access to the pom file.
-      var ampsSourcePomPath = this.destinationPath('amps_source/pom.xml');
-      var ampsSourcePom = this.fs.read(ampsSourcePomPath);
-      var pom = require('./maven-pom.js')(ampsSourcePom);
+      var customizationsPomPath = this.destinationPath(constants.CUSTOMIZATIONS_FOLDER + '/pom.xml');
+      var customizationsPom = this.fs.read(customizationsPomPath);
+      var pom = require('./maven-pom.js')(customizationsPom);
       pom.setParentGAV(
           this.config.get('projectGroupId'),
           this.config.get('projectArtifactId'),
           this.config.get('projectVersion'));
-      this.fs.write(ampsSourcePomPath, pom.getPOMString());
+      this.fs.write(customizationsPomPath, pom.getPOMString());
       */
     },
     removeDefaultSampleAmps: function() {

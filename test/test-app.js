@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('yeoman-assert');
+var constants = require('../generators/app/constants.js');
 var helpers = require('yeoman-test');
 var fs = require('fs');
 var os = require('os');
@@ -38,8 +39,8 @@ describe('generator-alfresco:app', function () {
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
-        'amps_source/README.md',
-        'amps_source/pom.xml',
+        constants.CUSTOMIZATIONS_FOLDER + '/README.md',
+        constants.CUSTOMIZATIONS_FOLDER + '/pom.xml',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',
@@ -55,7 +56,7 @@ describe('generator-alfresco:app', function () {
     it('adds amps_source to modules in top pom', function() {
       assert.fileContent(
         'pom.xml',
-        /<module>amps_source<\/module>/
+        /<module>customizations<\/module>/
       );
     });
     it('debug.sh does not reference springloaded', function () {
@@ -117,7 +118,7 @@ describe('generator-alfresco:app', function () {
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
-        'amps_source/README.md',
+        constants.CUSTOMIZATIONS_FOLDER + '/README.md',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',
@@ -198,7 +199,7 @@ describe('generator-alfresco:app', function () {
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
-        'amps_source/README.md',
+        constants.CUSTOMIZATIONS_FOLDER + '/README.md',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',
@@ -441,7 +442,7 @@ describe('generator-alfresco:app', function () {
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
-        'amps_source/README.md',
+        constants.CUSTOMIZATIONS_FOLDER + '/README.md',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',
@@ -493,7 +494,7 @@ describe('generator-alfresco:app', function () {
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
-        'amps_source/README.md',
+        constants.CUSTOMIZATIONS_FOLDER + '/README.md',
         'amps_source_templates/README.md',
         'amps_source_templates/repo-amp/pom.xml',
         'amps_source_templates/share-amp/pom.xml',

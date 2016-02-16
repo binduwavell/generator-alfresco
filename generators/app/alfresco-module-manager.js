@@ -92,7 +92,7 @@ module.exports = function(yo) {
   }
 
   function addModuleToParentPom(mod) {
-    // TODO: if intermediate source modules are not included, include them too (amps_source for example.)
+    // TODO: if intermediate source modules are not included, include them too (customizations for example.)
     var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + parentPomPath);
     var parentPom = yo.fs.read(parentPomPath);
