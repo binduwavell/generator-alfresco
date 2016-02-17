@@ -1,6 +1,7 @@
 'use strict';
 
 var semver = require('semver');
+var constants = require('./constants.js');
 
 module.exports = {
   "2.1.1": {
@@ -233,10 +234,10 @@ module.exports = {
 
 function sdkVersionPrefix() {
   // console.log("CHECKING PREFIX FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
-  if (this.config.get('archetypeVersion')) {
-    if (semver.satisfies(semver.clean(this.config.get('archetypeVersion')), ">=2.2.0-SNAPSHOT")) {
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
       // console.log("SETTING PREFIX FOR ARTIFACT ID");
-      return this.config.get('projectArtifactId') + '-';
+      return this.config.get(constants.PROP_PROJECT_ARTIFACT_ID) + '-';
     }
   }
   return '';
@@ -250,7 +251,7 @@ function ampModuleRegistry() {
       "artifactId": prefix + 'repo-amp',
       "version": '${project.version}',
       "packaging": 'amp',
-      "war": 'repo',
+      "war": constants.WAR_TYPE_REPO,
       "location": 'source',
       "path": prefix + 'repo-amp',
     },
@@ -259,7 +260,7 @@ function ampModuleRegistry() {
       "artifactId": prefix + 'share-amp',
       "version": '${project.version}',
       "packaging": 'amp',
-      "war": 'share',
+      "war": constants.WAR_TYPE_SHARE,
       "location": 'source',
       "path": prefix + 'share-amp',
     }

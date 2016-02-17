@@ -1,8 +1,32 @@
 'use strict';
 
 module.exports = {
-  CUSTOMIZATIONS_FOLDER: 'customizations',
-  SOURCE_TEMPLATES_FOLDER: 'source_templates',
+  FILE_RUN_SH: 'run.sh',
+
+  FOLDER_AMPS: 'amps',
+  FOLDER_AMPS_SHARE: 'amps_share',
+  FOLDER_CUSTOMIZATIONS: 'customizations',
+  FOLDER_MODULES: 'modules',
+  FOLDER_MODULES_PLATFORM: 'platform',
+  FOLDER_MODULES_SHARE: 'platform',
+  FOLDER_REPO: 'repo',
+  FOLDER_RUNNER: 'runner',
+  FOLDER_SCRIPTS: 'scripts',
+  FOLDER_SHARE: 'share',
+  FOLDER_SOURCE_TEMPLATES: 'source_templates',
+
+  PROP_ARCHETYPE_VERSION: 'archetypeVersion',
+  PROP_COMMUNITY_OR_ENTERPRISE: 'communityOrEnterprise',
+  PROP_PROJECT_ARTIFACT_ID: 'projectArtifactId',
+  PROP_PROJECT_GROUP_ID: 'projectGroupId',
+  PROP_PROJECT_PACKAGE: 'projectPackage',
+  PROP_PROJECT_VERSION: 'projectVersion',
+  PROP_REMOVE_DEFAULT_SOURCE_AMPS: 'removeDefaultSourceAmps',
+  PROP_REMOVE_DEFAULT_SOURCE_SAMPLES: 'removeDefaultSourceSamples',
+  PROP_SDK_VERSION: 'sdkVersion',
+
+  WAR_TYPE_REPO: 'repo',
+  WAR_TYPE_SHARE: 'share',
 }
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

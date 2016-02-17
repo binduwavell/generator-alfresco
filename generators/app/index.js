@@ -27,7 +27,6 @@ module.exports = yeoman.Base.extend({
       projectVersion: '1.0.0-SNAPSHOT',
       projectPackage: 'org.alfresco',
       communityOrEnterprise: 'Community',
-      includeGitIgnore: true,
       removeDefaultSourceAmps: false,
       removeDefaultSourceSamples: false,
     });
@@ -57,17 +56,17 @@ module.exports = yeoman.Base.extend({
     var prompts = [
       {
         type: 'list',
-        name: 'sdkVersion',
+        name: constants.PROP_SDK_VERSION,
         message: 'Which SDK version would you like to use?',
-        default: this.config.get('sdkVersion'),
+        default: this.config.get(constants.PROP_SDK_VERSION),
         choices: _.keys(this.sdkVersions),
       },
       {
         type: 'input',
-        name: 'archetypeVersion',
+        name: constants.PROP_ARCHETYPE_VERSION,
         message: 'Archetype version?',
         default: function(props) {
-          var savedArchetypeVersion = this.config.get('archetypeVersion');
+          var savedArchetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
           if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
         }.bind(this),
@@ -77,32 +76,32 @@ module.exports = yeoman.Base.extend({
             return true;
           } else {
             // if we don't prompt then save the version anyway
-            props['archetypeVersion'] = this.sdk.archetypeVersion;
+            props[constants.PROP_ARCHETYPE_VERSION] = this.sdk.archetypeVersion;
             return false;
           }
         }.bind(this),
       },
       {
         type: 'input',
-        name: 'projectGroupId',
+        name: constants.PROP_PROJECT_GROUP_ID,
         message: 'Project groupId?',
-        default: this.config.get('projectGroupId'),
+        default: this.config.get(constants.PROP_PROJECT_GROUP_ID),
       },
       {
         type: 'input',
-        name: 'projectArtifactId',
+        name: constants.PROP_PROJECT_ARTIFACT_ID,
         message: 'Project artifactId?',
-        default: this.config.get('projectArtifactId'),
+        default: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
       },
       {
         type: 'input',
-        name: 'projectVersion',
+        name: constants.PROP_PROJECT_VERSION,
         message: 'Project version?',
-        default: this.config.get('projectVersion'),
+        default: this.config.get(constants.PROP_PROJECT_VERSION),
       },
       {
         type: 'input',
-        name: 'projectPackage',
+        name: constants.PROP_PROJECT_PACKAGE,
         message: 'Project package?',
         default: function(props) {
           return props.projectGroupId
@@ -114,42 +113,36 @@ module.exports = yeoman.Base.extend({
       },
       {
         type: 'list',
-        name: 'communityOrEnterprise',
+        name: constants.PROP_COMMUNITY_OR_ENTERPRISE,
         message: 'Would you like to use Community or Enterprise?',
-        default: this.config.get('communityOrEnterprise'),
+        default: this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE),
         choices: ['Community', 'Enterprise'],
       },
       {
         type: 'confirm',
-        name: 'includeGitIgnore',
-        message: 'Should we generate a default .gitignore file?',
-        default: this.config.get('includeGitIgnore'),
-      },
-      {
-        type: 'confirm',
-        name: 'removeDefaultSourceAmps',
+        name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
         message: 'Should we remove the default source amps?',
-        default: this.config.get('removeDefaultSourceAmps'),
+        default: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         when: function(props) {
           this.sdk = this.sdkVersions[props.sdkVersion];
-          props['removeDefaultSourceAmps'] = (true && this.sdk.removeDefaultModules);
-          return props['removeDefaultSourceAmps'];
+          props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS] = (true && this.sdk.removeDefaultModules);
+          return props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS];
         }.bind(this),
       },
       {
         type: 'confirm',
-        name: 'removeDefaultSourceSamples',
+        name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
         message: 'Should we remove samples from the default source amps?',
-        default: this.config.get('removeDefaultSourceSamples'),
+        default: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
         when: function(props) {
-          if (props['removeDefaultSourceAmps']) {
-            props['removeDefaultSourceSamples'] = false;
+          if (props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]) {
+            props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = false;
           } else {
               this.sdk = this.sdkVersions[props.sdkVersion];
-              props['removeDefaultSourceSamples'] =
+              props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] =
                 (true && (this.sdk.removeRepoSamples || this.sdk.removeShareSamples));
           }
-          return props['removeDefaultSourceSamples'];
+          return props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES];
         }.bind(this),
       },
     ];
@@ -158,16 +151,15 @@ module.exports = yeoman.Base.extend({
     this.prompt(prompts, function (props) {
       this.sdk = this.sdkVersions[props.sdkVersion];
       this._saveProps([
-        'sdkVersion',
-        'archetypeVersion',
-        'projectGroupId',
-        'projectArtifactId',
-        'projectVersion',
-        'projectPackage',
-        'communityOrEnterprise',
-        'includeGitIgnore',
-        'removeDefaultSourceAmps',
-        'removeDefaultSourceSamples',
+        constants.PROP_SDK_VERSION,
+        constants.PROP_ARCHETYPE_VERSION,
+        constants.PROP_PROJECT_GROUP_ID,
+        constants.PROP_PROJECT_ARTIFACT_ID,
+        constants.PROP_PROJECT_VERSION,
+        constants.PROP_PROJECT_PACKAGE,
+        constants.PROP_COMMUNITY_OR_ENTERPRISE,
+        constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
+        constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
       ], props);
       // can only setup module registry/manager once we have other variables setup
       this.moduleManager = require('./alfresco-module-manager.js')(this);
@@ -273,7 +265,7 @@ module.exports = yeoman.Base.extend({
           })
           folders.forEach(
             function(folderName) {
-              var to = path.join(this.destinationPath(constants.SOURCE_TEMPLATES_FOLDER), folderName );
+              var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName );
               if (!fs.existsSync(to)) {
                 var from = path.join(genDir, folderName);
                 this.out.info('Copying from: ' + from + ' to: ' + to);
@@ -300,27 +292,26 @@ module.exports = yeoman.Base.extend({
       var tplContext = {
         isEnterprise: isEnterprise,
         enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
-        projectGroupId: this.config.get('projectGroupId'),
-        projectArtifactId: this.config.get('projectArtifactId'),
-        projectVersion: this.config.get('projectVersion'),
+        projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
+        projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+        projectVersion: this.config.get(constants.PROP_PROJECT_VERSION),
       };
       this.fs.copy(
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
       );
-      if (this.includeGitIgnore) {
-        this.fs.copy(
-          this.templatePath('gitignore'),
-          this.destinationPath('.gitignore')
-        );
-      }
+      this.fs.copy(
+        this.templatePath('gitignore'),
+        this.destinationPath('.gitignore')
+      );
       this.fs.copyTpl(
         this.templatePath('TODO.md'),
         this.destinationPath('TODO.md'),
         tplContext
       );
       // copy folders
-      ['amps', 'amps_share', constants.CUSTOMIZATIONS_FOLDER, constants.SOURCE_TEMPLATES_FOLDER, 'scripts'].forEach(
+      [constants.FOLDER_AMPS, constants.FOLDER_AMPS_SHARE, constants.FOLDER_CUSTOMIZATIONS,
+        constants.FOLDER_MODULES, constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS].forEach(
         function(folderName) {
           this.out.info('Copying ' + folderName);
           this.fs.copyTpl(
@@ -332,14 +323,14 @@ module.exports = yeoman.Base.extend({
       );
       // copy run.sh to top level folder
       this.fs.copy(
-        this.destinationPath('scripts/run.sh'),
-        this.destinationPath('run.sh')
+        this.destinationPath(path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH)),
+        this.destinationPath(constants.FILE_RUN_SH)
       );
       // enterprise specific stuff
       if (isEnterprise) {
         this.fs.copy(
-          this.templatePath('repo'),
-          this.destinationPath('repo'),
+          this.templatePath(constants.FOLDER_REPO),
+          this.destinationPath(constants.FOLDER_REPO),
           tplContext);
       }
     },
@@ -357,7 +348,7 @@ module.exports = yeoman.Base.extend({
         if (this.sdk.defaultModuleRegistry) {
           paths = this.sdk.defaultModuleRegistry.call(this)
             .filter(function (mod) {
-              return (mod.war === 'repo');
+              return (mod.war === constants.WAR_TYPE_REPO);
             })
             .map(function (mod) {
               return mod.path;
@@ -389,19 +380,19 @@ module.exports = yeoman.Base.extend({
       var topPomPath = this.destinationPath('pom.xml');
       var topPomContent = this.fs.read(topPomPath);
       var topPom = require('./maven-pom.js')(topPomContent);
-      topPom.addModule(constants.CUSTOMIZATIONS_FOLDER, true);
+      topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
       /* Eventually we'll need to make sure the modules
          list is updated if the app generator is run
          after some custom source amps are added. Following
          code gets us access to the pom file.
-      var customizationsPomPath = this.destinationPath(constants.CUSTOMIZATIONS_FOLDER + '/pom.xml');
+      var customizationsPomPath = this.destinationPath(constants.FOLDER_CUSTOMIZATIONS + '/pom.xml');
       var customizationsPom = this.fs.read(customizationsPomPath);
       var pom = require('./maven-pom.js')(customizationsPom);
       pom.setParentGAV(
-          this.config.get('projectGroupId'),
-          this.config.get('projectArtifactId'),
-          this.config.get('projectVersion'));
+          this.config.get(constants.PROP_PROJECT_GROUP_ID),
+          this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+          this.config.get(constants.PROP_PROJECT_VERSION));
       this.fs.write(customizationsPomPath, pom.getPOMString());
       */
     },
@@ -415,9 +406,11 @@ module.exports = yeoman.Base.extend({
       if (this.bail) return;
       if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
         if (this.sdk.removeRepoSamples) {
+          // TODO(bwavell): 'repo-amp' should be generalized
           this.sdk.removeRepoSamples.call(this, 'repo-amp');
         }
         if (this.sdk.removeShareSamples) {
+          // TODO(bwavell): 'share-amp' should be generalized
           this.sdk.removeShareSamples.call(this, 'share-amp');
         }
       }
@@ -425,17 +418,18 @@ module.exports = yeoman.Base.extend({
   },
 
   install: {
-    makeRunExecutable: function () {
+    makeScriptsExecutable: function () {
       if (this.bail) return;
       var cwd = process.cwd();
       var scripts = [
-        'run.sh',
-        'scripts/debug.sh',
-        'scripts/explode-alf-sources.sh',
-        'scripts/find-exploded.sh',
-        'scripts/grep-exploded.sh',
-        'scripts/package-to-exploded.sh',
-        'scripts/run.sh'
+        constants.FILE_RUN_SH,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
       ];
       scripts.forEach(function(scriptName) {
         fs.chmod(cwd + '/' + scriptName, '0755', function(err) {

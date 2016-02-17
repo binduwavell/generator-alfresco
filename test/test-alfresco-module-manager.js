@@ -38,7 +38,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.fs.write(yomock.topPomPath, "");
       yomock.wrapperPomPath = yomock.destinationPath('repo/pom.xml');
       yomock.fs.write(yomock.wrapperPomPath, "");
-      yomock.templatePomPath = yomock.destinationPath(constants.SOURCE_TEMPLATES_FOLDER + '/repo-packaging/pom.xml');
+      yomock.templatePomPath = yomock.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/repo-packaging/pom.xml');
       yomock.fs.write(yomock.templatePomPath, '');
       yomock.projectPomPath = yomock.destinationPath('path/pom.xml');
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');

@@ -34,7 +34,7 @@ module.exports = function(yo) {
       // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { renamePathElementsForModule(mod) } );
-      if ('repo' === mod.war || 'share' == mod.war) {
+      if (constants.WAR_TYPE_REPO === mod.war || constants.WAR_TYPE_SHARE == mod.war) {
         ops.push(function () { addModuleToParentPom(mod) } );
       }
     }
@@ -50,7 +50,7 @@ module.exports = function(yo) {
     if (!yo.fs.exists(toPath)) {
       var prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId')
-      var fromPath = yo.destinationPath(constants.SOURCE_TEMPLATES_FOLDER + '/' + prefix + mod.war + '-' + mod.packaging);
+      var fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
@@ -65,7 +65,7 @@ module.exports = function(yo) {
   function renamePathElementsForModule(mod) {
     // get default repo module artifactId
     var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function(mod) {
-      return ('source' === mod.location && 'repo' === mod.war);
+      return ('source' === mod.location && constants.WAR_TYPE_REPO === mod.war);
     });
     if (defaultMods && defaultMods.length > 0) {
       if (defaultMods[0].artifactId != mod.artifactId) {
@@ -112,9 +112,9 @@ module.exports = function(yo) {
     var pom = require('./maven-pom.js')(projectPom);
     pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
     pom.setParentGAV(
-        yo.projectGroupId || yo.config.get('projectGroupId'),
-        yo.projectArtifactId || yo.config.get('projectArtifactId'),
-        yo.projectVersion || yo.config.get('projectVersion'));
+        yo.projectGroupId || yo.config.get(constants.PROP_PROJECT_GROUP_ID),
+        yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+        yo.projectVersion || yo.config.get(constants.PROP_PROJECT_VERSION));
     yo.fs.write(projectPomPath, pom.getPOMString());
   }
 
