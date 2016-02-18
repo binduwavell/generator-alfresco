@@ -309,17 +309,18 @@ module.exports = yeoman.Base.extend({
         this.destinationPath('TODO.md'),
         tplContext
       );
-      // copy folders
+      // copy template folders
       [constants.FOLDER_AMPS, constants.FOLDER_AMPS_SHARE, constants.FOLDER_CUSTOMIZATIONS,
-        constants.FOLDER_MODULES, constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS].forEach(
-        function(folderName) {
-          this.out.info('Copying ' + folderName);
-          this.fs.copyTpl(
-            this.templatePath(folderName),
-            this.destinationPath(folderName),
-            tplContext
-            );
-        }.bind(this)
+       constants.FOLDER_MODULES, constants.FOLDER_RUNNER, constants.FOLDER_SOURCE_TEMPLATES,
+       constants.FOLDER_SCRIPTS].forEach(
+          function(folderName) {
+            this.out.info('Copying ' + folderName);
+            this.fs.copyTpl(
+              this.templatePath(folderName),
+              this.destinationPath(folderName),
+              tplContext
+              );
+          }.bind(this)
       );
       // copy run.sh to top level folder
       this.fs.copy(
@@ -334,7 +335,7 @@ module.exports = yeoman.Base.extend({
           tplContext);
       }
     },
-    registerDefaultSampleAmps: function() {
+    registerDefaultSampleModules: function() {
       if (this.bail) return;
       if (this.sdk.registerDefaultModules) {
         this.sdk.registerDefaultModules.call(this);
@@ -382,27 +383,14 @@ module.exports = yeoman.Base.extend({
       var topPom = require('./maven-pom.js')(topPomContent);
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
-      /* Eventually we'll need to make sure the modules
-         list is updated if the app generator is run
-         after some custom source amps are added. Following
-         code gets us access to the pom file.
-      var customizationsPomPath = this.destinationPath(constants.FOLDER_CUSTOMIZATIONS + '/pom.xml');
-      var customizationsPom = this.fs.read(customizationsPomPath);
-      var pom = require('./maven-pom.js')(customizationsPom);
-      pom.setParentGAV(
-          this.config.get(constants.PROP_PROJECT_GROUP_ID),
-          this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
-          this.config.get(constants.PROP_PROJECT_VERSION));
-      this.fs.write(customizationsPomPath, pom.getPOMString());
-      */
     },
-    removeDefaultSampleAmps: function() {
+    removeDefaultSourceModules: function() {
       if (this.bail) return;
       if (this.removeDefaultSourceAmps && this.sdk.removeDefaultModules) {
         this.sdk.removeDefaultModules.call(this);
       }
     },
-    removeSamplesScript: function() {
+    removeDefaultSourceModuleSamples: function() {
       if (this.bail) return;
       if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
         if (this.sdk.removeRepoSamples) {

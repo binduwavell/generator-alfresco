@@ -2,12 +2,11 @@ TODO
 ====
 
 - [ ] Complete alfresco-module-manager
+  - [ ] Generated amps should have correct common parent and should have project group and version explicitly
   - [ ] Provide a method to update project configuration based on current registry settings
-    - [ ] /share/pom.xml (dep & overlay)
     - [ ] /runner/pom.xml (failsafe configuration for share source modules)
-    - [ ] /runner/tomcat/context-(repo|share).xml
-      - [ ] <Resources>
-      - [ ] <Loader>
+    - [x] /runner/tomcat/context-(repo|share).xml
+    - [x] /share/pom.xml (dep & overlay)
     - [x] /pom.xml (modules)
     - [x] /repo/pom.xml (dep & overlay)
   - [x] Rename repo module directory if necessary

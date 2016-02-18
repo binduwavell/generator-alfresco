@@ -232,6 +232,16 @@ module.exports = {
 
 // ===== Shared scripts =====
 
+/**
+ * Starting in the dev branch for the 2.2.0 SDK we started creating
+ * dynamic names for the repo-amp and share-amp by prepending these
+ * names with the project artifactId followed by a dash. This
+ * function uses semver to provide a prefix or an empty string that
+ * can be placed in front of repo-amp and share-amp to get the
+ * appropriate names.
+ *
+ * @returns {string} empty string if sdk >= 2.2.0-SNAPSHOT
+ */
 function sdkVersionPrefix() {
   // console.log("CHECKING PREFIX FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
@@ -243,6 +253,17 @@ function sdkVersionPrefix() {
   return '';
 }
 
+/**
+ * All supported SDK versions work with amps and not
+ * jar modules. However, we know jar modules are
+ * going to happen soon, so factored this out so we
+ * can create something similar for jar modules for
+ * newer SDK version.
+ *
+ * @returns {*[]} The module registry that represents
+ *   what is provided when the archetype has stamped
+ *   a project out.
+ */
 function ampModuleRegistry() {
   var prefix = sdkVersionPrefix.call(this);
   return [
