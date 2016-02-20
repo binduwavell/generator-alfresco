@@ -70,7 +70,8 @@ module.exports = {
    * @param {!Node} node
    * @param {string} ns
    * @param {string} tag
-     */
+   * @returns {undefined}
+   */
   removeChild: function(node, ns, tag) {
     var child = this.getChild(node, ns, tag)
     if (child) {
@@ -86,7 +87,8 @@ module.exports = {
    *
    * @param {!Node} parent
    * @param {!Node} child
-     */
+   * @returns {undefined}
+   */
   removeParentsChild: function(parent, child) {
     if (parent && child && parent == child.parentNode) {
       parent.removeChild(child);
@@ -121,6 +123,7 @@ module.exports = {
    * @param {string} tag
    * @param {(string|undefined)} text
    * @param {(string|undefined)} contraIndicatedText
+   * @returns {undefined}
    */
   setOrClearChildText: function(node, ns, tag, text, contraIndicatedText) {
     // console.log("setOrClearChildText(" + (node ? "node" : "undefined") + "," + ns + ":" + tag + ")");
@@ -185,6 +188,47 @@ module.exports = {
      */
   prettyPrint: function(doc) {
     return pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
+  },
+
+  /**
+   * Given an attribute a value and a separator add the value to the attribute
+   * value. If there is an existing value use the separator.
+   *
+   * @param {!Attr} attr
+   * @param {string} value
+   * @param {string} sep
+   * @returns {undefined}
+   */
+  // TODO(bwavell): add tests for this
+  appendToAttributeValueList: function(attr, value, sep) {
+      var val = attr.value;
+      if (val && val.length > 0) {
+        val = val + sep + value;
+      } else {
+        val = value;
+      }
+      attr.value = val;
+  },
+
+  /**
+   * Given an attribute a value and a separator, split the attribute using the
+   * separator and see if you can find the value, if so, remove it and put the
+   * list back together with the separator.
+   *
+   * @param {!Attr} attr
+   * @param {string} value
+   * @param {string} sep
+   * @returns {undefined}
+   */
+  // TODO(bwavell): add tests for this
+  removeFromAttributeValueList: function(attr, value, sep) {
+    var re = new RegExp('\\s*' + sep + '\\s*');
+    var list = attr.value.split(re);
+    var idx = list.indexOf(value);
+    if (idx > -1) {
+      list.splice(idx, 1);
+    }
+    attr.value = list.join(sep);
   }
 
 };

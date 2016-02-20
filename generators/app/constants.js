@@ -2,6 +2,8 @@
 
 module.exports = {
   FILE_RUN_SH: 'run.sh',
+  FILE_CONTEXT_REPO_XML: 'context-repo.xml',
+  FILE_CONTEXT_SHARE_XML: 'context-share.xml',
 
   FOLDER_AMPS: 'amps',
   FOLDER_AMPS_SHARE: 'amps_share',
@@ -14,6 +16,7 @@ module.exports = {
   FOLDER_SCRIPTS: 'scripts',
   FOLDER_SHARE: 'share',
   FOLDER_SOURCE_TEMPLATES: 'source_templates',
+  FOLDER_TOMCAT: 'tomcat',
 
   PROP_ARCHETYPE_VERSION: 'archetypeVersion',
   PROP_COMMUNITY_OR_ENTERPRISE: 'communityOrEnterprise',

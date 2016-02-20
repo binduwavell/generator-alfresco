@@ -2,10 +2,12 @@ TODO
 ====
 
 - [ ] Complete alfresco-module-manager
+  - [ ] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
   - [ ] Generated amps should have correct common parent and should have project group and version explicitly
   - [ ] Provide a method to update project configuration based on current registry settings
     - [ ] /runner/pom.xml (failsafe configuration for share source modules)
-    - [x] /runner/tomcat/context-(repo|share).xml
+    - [x] /runner/tomcat/context-(repo|share).xml (using tomcat context file editor)
+    - [x] /runner/tomcat/context-(repo|share).xml (using wildcards -- turned out tomcat did not support this)
     - [x] /share/pom.xml (dep & overlay)
     - [x] /pom.xml (modules)
     - [x] /repo/pom.xml (dep & overlay)
@@ -22,11 +24,11 @@ TODO
   - [ ] Make sure that context files are regenerated
   - [x] Create a pom editing module under app (like spring-context.js) and use this
   - [x] Use the backed up repo-amp and share-amp projects instead of caching structures in templates folder
-  - [x] Move amp sub-generators so it can't be used yet
+  - [x] Move amp sub-generators so it can''t be used yet
 - [ ] Make progress on webscript sub-generator
   - [ ] List project amps that we can generate webscripts in
   - [ ] Update wizard to include more/all options for .desc.xml
-  - [x] Move webscript sub-generators so it can't be used yet
+  - [x] Move webscript sub-generators so it can''t be used yet
 - [ ] Make progress on action sub-generator
   - [ ] Review action branch and see what all needs to be done
   - [ ] List project amps that we can generate webscripts in

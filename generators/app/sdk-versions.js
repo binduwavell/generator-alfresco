@@ -102,6 +102,7 @@ module.exports = {
         this.fs.move(file, file + '.sample');
       }.bind(this));
     },
+    targetFolderName: targetFolderName,
   },
   "2.1.0": {
     archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -201,6 +202,7 @@ module.exports = {
         this.fs.move(file, file + '.sample');
       }.bind(this));
     },
+    targetFolderName: targetFolderName,
   },
   "2.0.0": {
     archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -213,6 +215,7 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerAmps,
     removeDefaultModules: removeAmps,
+    targetFolderName: targetFolderName,
   },
   "local": {
     archetypeGroupId: "org.alfresco.maven.archetype",
@@ -227,6 +230,7 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerAmps,
     removeDefaultModules: removeAmps,
+    targetFolderName: targetFolderName,
   },
 };
 
@@ -251,6 +255,24 @@ function sdkVersionPrefix() {
     }
   }
   return '';
+}
+
+/**
+ * Starting in the dev branch for the 2.2.0 SDK we changed where
+ * the filtered assets from src/main/amp end up in the target
+ * folder.
+ *
+ * @param basename
+ * @returns {string} 'amp' if sdk >= 2.2.0-SNAPSHOT otherwise basename
+ */
+function targetFolderName(basename) {
+  // console.log("CHECKING TARGET FOLDER NAME FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
+      return 'amp';
+    }
+  }
+  return basename;
 }
 
 /**

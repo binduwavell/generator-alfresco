@@ -311,8 +311,7 @@ module.exports = yeoman.Base.extend({
       );
       // copy template folders
       [constants.FOLDER_AMPS, constants.FOLDER_AMPS_SHARE, constants.FOLDER_CUSTOMIZATIONS,
-       constants.FOLDER_MODULES, constants.FOLDER_RUNNER, constants.FOLDER_SOURCE_TEMPLATES,
-       constants.FOLDER_SCRIPTS].forEach(
+       constants.FOLDER_MODULES, constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS].forEach(
           function(folderName) {
             this.out.info('Copying ' + folderName);
             this.fs.copyTpl(

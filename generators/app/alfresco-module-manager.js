@@ -37,12 +37,13 @@ module.exports = function(yo) {
       if (constants.WAR_TYPE_REPO === mod.war || constants.WAR_TYPE_SHARE == mod.war) {
         ops.push(function () { addModuleToParentPom(mod) } );
       }
+      ops.push(function() { addModuleToTomcatContext(mod) } );
     }
 
     ops.push(function() { updateProjectPom(mod) } );
     ops.push(function() { addModuleToWarWrapper(mod) } );
     // TODO: what else do we need to do when we remove a module?
-  }
+  };
 
   function copyTemplateForModule(mod) {
     var toPath = yo.destinationPath(mod.path);
@@ -101,6 +102,38 @@ module.exports = function(yo) {
     if (!pom.findModule(mod.artifactId)) {
       pom.addModule(mod.artifactId, true);
       yo.fs.write(parentPomPath, pom.getPOMString());
+    }
+  }
+
+  // TODO(bwavell): Add tests for this
+  function addModuleToTomcatContext(mod) {
+    yo.out.info('Adding path elements for ' + mod.artifactId + ' tomcat context file');
+    var warType = mod.war;
+    var modPath = mod.path;
+    var basename = path.basename(modPath);
+    if ([constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE].indexOf(warType) > -1) {
+      var fileName = constants.FILE_CONTEXT_REPO_XML;
+      if (constants.WAR_TYPE_SHARE === warType) {
+        fileName = constants.FILE_CONTEXT_SHARE_XML;
+      }
+      var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
+      if (yo.fs.exists(ctxPath)) {
+        var ctxFile = yo.fs.read(ctxPath);
+        var ctx = require('./tomcat-context.js')(ctxFile);
+        var targetFolder = yo.sdk.targetFolderName.call(yo, basename);
+
+        ctx.addExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + targetFolder + '/web');
+        ctx.addVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/classes');
+        ctx.addVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/' + targetFolder + '/config');
+        ctx.addVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/test-classes');
+        // Special weirdness for share, we want this at the end of the list
+        if (constants.WAR_TYPE_SHARE === warType) {
+          ctx.removeVirtualClasspath('${project.parent.basedir}/share/target/test-classes');
+          ctx.addVirtualClasspath('${project.parent.basedir}/share/target/test-classes');
+        }
+
+        yo.fs.write(ctxPath, ctx.getContextString());
+      }
     }
   }
 
@@ -166,10 +199,11 @@ module.exports = function(yo) {
         ops.push(function() { removeModuleFiles(mod) } );
         ops.push(function() { removeModuleFromParentPom(mod) } );
         ops.push(function() { removeModuleFromWarWrapper(mod) } );
+        ops.push(function() { removeModuleFromTomcatContext(mod) } );
         // TODO: what else do we need to do when we remove a module?
       }
     }
-  }
+  };
 
   function removeModuleFiles(mod) {
     // remove the actual files
@@ -210,6 +244,32 @@ module.exports = function(yo) {
     }
   }
 
+  // TODO(bwavell): Add tests for this
+  function removeModuleFromTomcatContext(mod) {
+    yo.out.info('Removing path elements for ' + mod.artifactId + ' from tomcat context file');
+    var warType = mod.war;
+    var modPath = mod.path;
+    var basename = path.basename(modPath);
+    if ([constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE].indexOf(warType) > -1) {
+      var fileName = constants.FILE_CONTEXT_REPO_XML;
+      if (constants.WAR_TYPE_SHARE === warType) {
+        fileName = constants.FILE_CONTEXT_SHARE_XML;
+      }
+      var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
+      if (yo.fs.exists(ctxPath)) {
+        var ctxFile = yo.fs.read(ctxPath);
+        var ctx = require('./tomcat-context.js')(ctxFile);
+
+        ctx.removeExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + basename + '/web');
+        ctx.removeVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/classes');
+        ctx.removeVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/' + basename + '/config');
+        ctx.removeVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/test-classes');
+
+        yo.fs.write(ctxPath, ctx.getContextString());
+      }
+    }
+  }
+
   module.save = function() {
     // console.log('Saving module registry and performing scheduled tasks');
     this.moduleRegistry.save();
@@ -217,7 +277,7 @@ module.exports = function(yo) {
       op.call(this);
     });
     ops = [];
-  }
+  };
 
   return module;
 };
