@@ -29,6 +29,7 @@ module.exports = {
   PROP_SDK_VERSION: 'sdkVersion',
 
   VAR_PROJECT_GROUPID: '${project.groupId}',
+  VAR_PROJECT_ARTIFACTID: '${project.artifactId}',
   VAR_PROJECT_VERSION: '${project.version}',
 
   WAR_TYPE_REPO: 'repo',

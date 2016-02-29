@@ -3,6 +3,7 @@
 var path = require('path');
 var semver = require('semver');
 var constants = require('./constants.js');
+var domutils = require('./xml-dom-utils.js');
 
 module.exports = {
   "2.1.1": {
@@ -179,9 +180,9 @@ function registerDefaultModules() {
  */
 function setupNewRepoAmp(pathPrefix) {
   var basename = path.basename(pathPrefix);
+
   var moduleContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/module-context.xml';
   var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
-
   var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
   var context = require('./spring-context.js')(contextDocOrig);
   if (!context.hasImport(importPath)) {
@@ -189,6 +190,21 @@ function setupNewRepoAmp(pathPrefix) {
     var contextDocNew = context.getContextString();
     // console.log(contextDocNew);
     this.fs.write(moduleContextPath, contextDocNew);
+  }
+
+  // TODO(bwavell): Consider updating spring-context.js module to handle this
+  var serviceContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/service-context.xml';
+  var serviceContextDocOrig = this.fs.read(this.destinationPath(serviceContextPath));
+  var doc = domutils.parseFromString(serviceContextDocOrig);
+  var moduleIdProp = domutils.getFirstNodeMatchingXPath('//property[@name="moduleId"]', doc);
+  if (moduleIdProp) {
+    var valueAttr = moduleIdProp.getAttribute('value');
+    if (valueAttr) {
+      moduleIdProp.setAttribute('value', constants.VAR_PROJECT_ARTIFACTID);
+      var serviceContextDocNew = domutils.prettyPrint(doc);
+      // console.log(serviceContextDocNew);
+      this.fs.write(serviceContextPath, serviceContextDocNew);
+    }
   }
 
   var generatedReadmePath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/generated/README.md';
