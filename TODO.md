@@ -2,7 +2,6 @@ TODO
 ====
 
 - [ ] Complete alfresco-module-manager
-  - [ ] Generated amps should have correct common parent and should have project group and version explicitly
   - [ ] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
         This is displayed in the console output after creating a project (deleting default) amps and creating new amps (under customizations)
   - [ ] Provide a method to update project configuration based on current registry settings
@@ -12,6 +11,7 @@ TODO
     - [x] /share/pom.xml (dep & overlay)
     - [x] /pom.xml (modules)
     - [x] /repo/pom.xml (dep & overlay)
+  - [x] Generated amps should have correct common parent and should have project group and version explicitly
   - [x] Rename repo module directory if necessary
   - [x] Fix /...-amp/pom.xml parent reference
   - [x] Adding module to top pom should add to top of list of modules rather than bottom

@@ -28,6 +28,9 @@ module.exports = {
   PROP_REMOVE_DEFAULT_SOURCE_SAMPLES: 'removeDefaultSourceSamples',
   PROP_SDK_VERSION: 'sdkVersion',
 
+  VAR_PROJECT_GROUPID: '${project.groupId}',
+  VAR_PROJECT_VERSION: '${project.version}',
+
   WAR_TYPE_REPO: 'repo',
   WAR_TYPE_SHARE: 'share',
 }

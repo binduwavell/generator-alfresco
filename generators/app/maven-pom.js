@@ -1,5 +1,6 @@
 'use strict';
 var domutils = require('./xml-dom-utils.js');
+var constants = require('./constants.js');
 
 /*
  * Given a context file that at least has a root <beans> element, this module
@@ -86,11 +87,14 @@ module.exports = function(pomString) {
     }
   }
 
-  module.setProjectGAV = function(groupId, artifactId, version, packaging) {
-    domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, '${project.groupId}');
-    domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId);
-    domutils.setOrClearChildText(project, 'pom', 'version', version, '${project.version}');
-    domutils.setOrClearChildText(project, 'pom', 'packaging', packaging);
+  module.setProjectGAV = function(groupId, artifactId, version, packaging, removeDefaults) {
+    var removeDefs = removeDefaults || true;
+    var defGroupId = (removeDefs ? constants.VAR_PROJECT_GROUPID : undefined);
+    var defVersion = (removeDefs ? constants.VAR_PROJECT_VERSION : undefined);
+    domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, defGroupId);
+    domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId, undefined);
+    domutils.setOrClearChildText(project, 'pom', 'version', version, defVersion);
+    domutils.setOrClearChildText(project, 'pom', 'packaging', packaging, undefined);
   }
 
   module.setParentGAV = function(groupId, artifactId, version) {
