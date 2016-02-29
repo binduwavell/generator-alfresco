@@ -44,7 +44,7 @@ module.exports = function(contextString) {
         '</Context>'
   ].join('\n');
 
-  var doc = new xmldom.DOMParser().parseFromString(contextString || defaultContextString, 'text/xml');
+  var doc = domutil.parseFromString(contextString || defaultContextString);
   var extraResourcePaths = domutil.getFirstNodeMatchingXPath('/Context/Resources/@extraResourcePaths', doc)
   var virtualClasspath = domutil.getFirstNodeMatchingXPath('/Context/Loader/@virtualClasspath', doc);
 

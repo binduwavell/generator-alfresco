@@ -37,7 +37,7 @@ module.exports = function(contextString) {
         '</beans>'
   ].join('\n');
 
-  var doc = new xmldom.DOMParser().parseFromString(contextString || defaultContextString, 'text/xml');
+  var doc = domutil.parseFromString(contextString || defaultContextString);
   var beans = doc.documentElement;
 
   var _getImports = function() {
