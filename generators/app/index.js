@@ -342,38 +342,36 @@ module.exports = yeoman.Base.extend({
     },
     editGeneratedResources: function() {
       if (this.bail) return;
-      if (!this.removeDefaultSourceAmps) {
-        // Arrange for all generated beans to be included
-        var paths = [];
-        if (this.sdk.defaultModuleRegistry) {
-          paths = this.sdk.defaultModuleRegistry.call(this)
+      if (!this.removeDefaultSourceAmps && this.sdk.defaultModuleRegistry) {
+        if (this.sdk.setupNewRepoModule) {
+          // Arrange for all generated beans to be included
+          var paths = this.sdk.defaultModuleRegistry.call(this)
             .filter(function (mod) {
               return (mod.war === constants.WAR_TYPE_REPO);
             })
             .map(function (mod) {
               return mod.path;
             });
+          if (paths && paths.length > 0) {
+            paths.forEach(function(p) {
+              this.sdk.setupNewRepoModule.call(this, p);
+            }.bind(this));
+          }
         }
-        if (paths && paths.length > 0) {
-          paths.forEach(function(p) {
-            var moduleContextPath = p + '/src/main/amp/config/alfresco/module/' + p + '/module-context.xml';
-            var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
-
-            var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
-            var context = require('./spring-context.js')(contextDocOrig);
-            if (!context.hasImport(importPath)) {
-              context.addImport(importPath);
-              var contextDocNew = context.getContextString();
-              // console.log(contextDocNew);
-              this.fs.write(moduleContextPath, contextDocNew);
-            }
-
-            var generatedReadmePath = p + '/src/main/amp/config/alfresco/module/' + p + '/context/generated/README.md';
-            this.fs.copyTpl(
-              this.templatePath('generated-README.md'),
-              this.destinationPath(generatedReadmePath)
-            );
-          }.bind(this));
+        if (this.sdk.setupNewShareModule) {
+          // Arrange for all generated beans to be included
+          var paths = this.sdk.defaultModuleRegistry.call(this)
+            .filter(function (mod) {
+              return (mod.war === constants.WAR_TYPE_REPO);
+            })
+            .map(function (mod) {
+              return mod.path;
+            });
+          if (paths && paths.length > 0) {
+            paths.forEach(function(p) {
+              this.sdk.setupNewShareModule.call(this, p);
+            }.bind(this));
+          }
         }
       }
       // Make sure source_amps is included in the top pom
