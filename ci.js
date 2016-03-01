@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 require('shelljs/global');
 
+// Get TravisCI to list versions of node it will support
+exec('nvm ls-remote', {stdin: 'inherit'});
+
 var nodeVersion = '' + process.argv[2];
 var cmd;
 
