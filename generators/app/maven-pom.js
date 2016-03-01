@@ -88,12 +88,9 @@ module.exports = function(pomString) {
   }
 
   module.setProjectGAV = function(groupId, artifactId, version, packaging, removeDefaults) {
-    var removeDefs = removeDefaults || true;
-    var defGroupId = (removeDefs ? constants.VAR_PROJECT_GROUPID : undefined);
-    var defVersion = (removeDefs ? constants.VAR_PROJECT_VERSION : undefined);
-    domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, defGroupId);
+    domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, constants.VAR_PROJECT_GROUPID);
     domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId, undefined);
-    domutils.setOrClearChildText(project, 'pom', 'version', version, defVersion);
+    domutils.setOrClearChildText(project, 'pom', 'version', version, constants.VAR_PROJECT_VERSION);
     domutils.setOrClearChildText(project, 'pom', 'packaging', packaging, undefined);
   }
 

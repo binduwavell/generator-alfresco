@@ -2,8 +2,6 @@ TODO
 ====
 
 - [ ] Complete alfresco-module-manager
-  - [ ] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
-        This is displayed in the console output after creating a project (deleting default) amps and creating new amps (under customizations)
   - [ ] Provide a method to update project configuration based on current registry settings
     - [ ] /runner/pom.xml (failsafe configuration for share source modules)
     - [x] /runner/tomcat/context-(repo|share).xml (using tomcat context file editor)
@@ -11,6 +9,8 @@ TODO
     - [x] /share/pom.xml (dep & overlay)
     - [x] /pom.xml (modules)
     - [x] /repo/pom.xml (dep & overlay)
+  - [x] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
+        This is displayed in the console output after creating a project (deleting default) amps and creating new amps (under customizations)
   - [x] Generated amps should have correct common parent and should have project group and version explicitly
   - [x] Rename repo module directory if necessary
   - [x] Fix /...-amp/pom.xml parent reference

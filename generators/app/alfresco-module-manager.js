@@ -153,17 +153,24 @@ module.exports = function(yo) {
     var projectPom = yo.fs.read(projectPomPath);
     var pom = require('./maven-pom.js')(projectPom);
     var basename = path.basename(mod.path);
-    var removeDefs = true;
     if (mod.path === basename) {
+      pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
       pom.setParentGAV(
         yo.projectGroupId || yo.config.get(constants.PROP_PROJECT_GROUP_ID),
         yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
         yo.projectVersion || yo.config.get(constants.PROP_PROJECT_VERSION));
     } else {
+      var groupId = mod.groupId;
+      var version = mod.version;
+      if (constants.VAR_PROJECT_GROUPID === groupId) {
+        groupId = yo.config.get(constants.PROP_PROJECT_GROUP_ID);
+      }
+      if (constants.VAR_PROJECT_VERSION === version) {
+        version = yo.config.get(constants.PROP_PROJECT_VERSION);
+      }
+      pom.setProjectGAV(groupId, mod.artifactId, version, mod.packaging);
       pom.setParentGAV('org.alfresco.maven', 'customizations', '1.0.0-SNAPSHOT');
-      removeDefs = false;
     }
-    pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging, removeDefs);
     yo.fs.write(projectPomPath, pom.getPOMString());
   }
 
