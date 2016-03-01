@@ -60,6 +60,7 @@ module.exports = {
    */
   inMemoryMove: function(storeOrEditor, from, to) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
+    var memFsEditor = require('mem-fs-editor').create(store);
     var fromLen = from.length;
     store.each(function(file) {
       var idx = file.path.indexOf(from);
@@ -70,7 +71,7 @@ module.exports = {
           absTo = path.join(to, path.basename(file.path));
         }
         // console.log("MOVING FROM: " + file.path + " TO: " + absTo);
-        file.path = absTo;
+        memFsEditor.move(file.path, absTo)
       }
     });
   },
@@ -85,6 +86,16 @@ module.exports = {
     var fn = logFn || console.log;
     store.each(function(file) {
       fn.call(this, file.path + ' [STATE:' + file.state + ']');
+      /*
+      fn.call(this, JSON.stringify(file, function(k, v) {
+        if (k === '_contents') {
+          if (undefined !== v) {
+            return 'data';
+          }
+        }
+        return v;
+      }));
+      */
     });
   }
 

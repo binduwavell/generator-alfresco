@@ -17,6 +17,10 @@ module.exports = function(yo) {
 
   var ops = [];
 
+  module.pushOp = function(fn) {
+    ops.push(fn);
+  }
+
   module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
 
   module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
@@ -54,8 +58,10 @@ module.exports = function(yo) {
       var fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+        // console.log('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
         memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
       } else {
+        // console.log('PHYSICAL COPY: ' + fromPath + '/** to: ' + toPath);
         yo.fs.copy(path.join(fromPath, '/**'), toPath);
       }
     } else {
@@ -83,10 +89,13 @@ module.exports = function(yo) {
           '/src/main/amp/config/alfresco/module',
           mod.artifactId
         );
+        yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
         // console.log("MOVING FROM: " + fromPath + " to: " + toPath);
         if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+          // console.log('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
           memFsUtils.inMemoryMove(yo.fs, fromPath, toPath)
         } else {
+          // console.log('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
           yo.fs.move(fromPath + "/**", toPath);
         }
       }

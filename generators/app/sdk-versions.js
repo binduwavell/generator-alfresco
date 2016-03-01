@@ -4,6 +4,7 @@ var path = require('path');
 var semver = require('semver');
 var constants = require('./constants.js');
 var domutils = require('./xml-dom-utils.js');
+var memFsUtils = require('./mem-fs-utils.js');
 
 module.exports = {
   "2.1.1": {
@@ -179,17 +180,22 @@ function registerDefaultModules() {
  * @param pathPrefix
  */
 function setupNewRepoAmp(pathPrefix) {
+  this.out.info('Setting up new repository amp: ' + pathPrefix);
   var basename = path.basename(pathPrefix);
 
   var moduleContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/module-context.xml';
   var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
+  // console.log('EDITING: ' + this.destinationPath(moduleContextPath));
+  // console.log(memFsUtils.dumpFileNames(this.fs));
   var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
+  // console.log(contextDocOrig);
   var context = require('./spring-context.js')(contextDocOrig);
   if (!context.hasImport(importPath)) {
     context.addImport(importPath);
     var contextDocNew = context.getContextString();
+    // console.log('WRITING: ' + this.destinationPath(moduleContextPath));
     // console.log(contextDocNew);
-    this.fs.write(moduleContextPath, contextDocNew);
+    this.fs.write(this.destinationPath(moduleContextPath), contextDocNew);
   }
 
   // TODO(bwavell): Consider updating spring-context.js module to handle this
@@ -207,9 +213,10 @@ function setupNewRepoAmp(pathPrefix) {
     }
   }
 
+  var templatePath = path.resolve(this.sourceRoot(), '../../app/templates/generated-README.md');
   var generatedReadmePath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/generated/README.md';
   this.fs.copyTpl(
-    this.templatePath('generated-README.md'),
+    templatePath,
     this.destinationPath(generatedReadmePath)
   );
 }
@@ -221,7 +228,7 @@ function setupNewRepoAmp(pathPrefix) {
  * @param pathPrefix
  */
 function setupNewShareAmp(pathPrefix) {
-
+  this.out.info('Setting up new share amp: ' + pathPrefix);
 }
 
 function removeAmps() {
