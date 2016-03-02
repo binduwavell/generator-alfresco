@@ -374,7 +374,7 @@ module.exports = yeoman.Base.extend({
           }
         }
       }
-      // Make sure source_amps is included in the top pom
+      // Make sure customizations/pom.xml is included in the top pom
       var topPomPath = this.destinationPath('pom.xml');
       var topPomContent = this.fs.read(topPomPath);
       var topPom = require('./maven-pom.js')(topPomContent);
