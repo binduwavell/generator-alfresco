@@ -216,16 +216,29 @@ module.exports = function(yo) {
   function updateProjectPom(mod) {
     var projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
     yo.out.info('Setting project/parent GAVs for ' + mod.artifactId + ' in ' + projectPomPath);
+
+    // Obtain GAV from parent
+    var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
+    yo.out.info('Finding parent GAV info for ' + mod.artifactId + ' module from ' + parentPomPath);
+    var parentPomStr = yo.fs.read(parentPomPath);
+    var parentPom = require('./maven-pom.js')(parentPomStr);
+    var parentGroupIdEl = parentPom.getTopLevelElement('pom', 'groupId');
+    var parentArtifactIdEl = parentPom.getTopLevelElement('pom', 'artifactId');
+    var parentVersionEl = parentPom.getTopLevelElement('pom', 'version');
+    var parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROJECT_GROUP_ID));
+    var parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
+    var parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
+
+
     // console.log("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
     var projectPom = yo.fs.read(projectPomPath);
+    // console.log("POM CONTENTS: " + projectPom);
     var pom = require('./maven-pom.js')(projectPom);
-    var basename = path.basename(mod.path);
-    if (mod.path === basename) {
+    // Unless we are in the customizations folder we can use provided values with
+    // inheritance magic for project.blah references. In the customizations folder
+    // we have to be more explicit as that folder has fixed GAV.
+    if (constants.FOLDER_CUSTOMIZATIONS !== path.basename(path.dirname(mod.path))) {
       pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
-      pom.setParentGAV(
-        yo.projectGroupId || yo.config.get(constants.PROP_PROJECT_GROUP_ID),
-        yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
-        yo.projectVersion || yo.config.get(constants.PROP_PROJECT_VERSION));
     } else {
       var groupId = mod.groupId;
       var version = mod.version;
@@ -236,8 +249,8 @@ module.exports = function(yo) {
         version = yo.config.get(constants.PROP_PROJECT_VERSION);
       }
       pom.setProjectGAV(groupId, mod.artifactId, version, mod.packaging);
-      pom.setParentGAV('org.alfresco.maven', 'customizations', '1.0.0-SNAPSHOT');
     }
+    pom.setParentGAV(parentGroupId, parentArtifactId, parentVersion);
     yo.fs.write(projectPomPath, pom.getPOMString());
   }
 
