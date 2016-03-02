@@ -27,6 +27,7 @@ module.exports = {
   PROP_REMOVE_DEFAULT_SOURCE_AMPS: 'removeDefaultSourceAmps',
   PROP_REMOVE_DEFAULT_SOURCE_SAMPLES: 'removeDefaultSourceSamples',
   PROP_SDK_VERSION: 'sdkVersion',
+  PROP_WAR: 'war',
 
   VAR_PROJECT_GROUPID: '${project.groupId}',
   VAR_PROJECT_ARTIFACTID: '${project.artifactId}',
