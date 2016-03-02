@@ -1,24 +1,6 @@
 TODO
 ====
 
-- [ ] Complete alfresco-module-manager
-  - [ ] Provide a method to update project configuration based on current registry settings
-    - [ ] /runner/pom.xml (failsafe configuration for share source modules)
-    - [x] /runner/tomcat/context-(repo|share).xml (using tomcat context file editor)
-    - [x] /runner/tomcat/context-(repo|share).xml (using wildcards -- turned out tomcat did not support this)
-    - [x] /share/pom.xml (dep & overlay)
-    - [x] /pom.xml (modules)
-    - [x] /repo/pom.xml (dep & overlay)
-  - [x] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
-        This is displayed in the console output after creating a project (deleting default) amps and creating new amps (under customizations)
-  - [x] Generated amps should have correct common parent and should have project group and version explicitly
-  - [x] Rename repo module directory if necessary
-  - [x] Fix /...-amp/pom.xml parent reference
-  - [x] Adding module to top pom should add to top of list of modules rather than bottom
-  - [x] Make sure we have test coverage for existing modules
-    - [x] alfresco-module-registry.js
-    - [x] maven-pom.js
-    - [x] spring-context.js
 - [ ] Make progress on amp sub-generator
   - [ ] When creating source AMP prompt for name and description and inject into project
   - [ ] Offer different types of amp creation
@@ -30,6 +12,9 @@ TODO
   - [ ] List project amps that we can generate webscripts in
   - [ ] Update wizard to include more/all options for .desc.xml
   - [x] Move webscript sub-generators so it can''t be used yet
+- [ ] Make progress on a share widget sub-generator
+  - [ ] Offer list of share source modules
+  - [ ] Start from https://github.com/myprysm/generator-alfresco/tree/master/generators/share-widget
 - [ ] Make progress on action sub-generator
   - [ ] Review action branch and see what all needs to be done
   - [ ] List project amps that we can generate webscripts in
@@ -48,6 +33,24 @@ TODO
 TODONE
 ======
 
+- [x] Complete alfresco-module-manager
+  - [x] Provide a method to update project configuration based on current registry settings
+    - [x] /runner/pom.xml (failsafe configuration for share source modules)
+    - [x] /runner/tomcat/context-(repo|share).xml (using tomcat context file editor)
+    - [x] /runner/tomcat/context-(repo|share).xml (using wildcards -- turned out tomcat did not support this)
+    - [x] /share/pom.xml (dep & overlay)
+    - [x] /pom.xml (modules)
+    - [x] /repo/pom.xml (dep & overlay)
+  - [x] Fix error: The component ''com.ziaconsulting.ace.exampleComponent'' belongs to a non-existent module ''repo-amp''.
+        This is displayed in the console output after creating a project (deleting default) amps and creating new amps (under customizations)
+  - [x] Generated amps should have correct common parent and should have project group and version explicitly
+  - [x] Rename repo module directory if necessary
+  - [x] Fix /...-amp/pom.xml parent reference
+  - [x] Adding module to top pom should add to top of list of modules rather than bottom
+  - [x] Make sure we have test coverage for existing modules
+    - [x] alfresco-module-registry.js
+    - [x] maven-pom.js
+    - [x] spring-context.js
 - [x] Complete remove-samples option in main generator
   - [x] Make sure everything that should be removed is
 - [x] Offer to remove default repo-amp and share-amp projects
