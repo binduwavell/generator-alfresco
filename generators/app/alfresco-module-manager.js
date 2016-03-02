@@ -38,8 +38,9 @@ module.exports = function(yo) {
       // console.log('Scheduling ops for ' + mod.artifactId);
       ops.push(function() { copyTemplateForModule(mod) } );
       ops.push(function() { renamePathElementsForModule(mod) } );
-      if (constants.WAR_TYPE_REPO === mod.war || constants.WAR_TYPE_SHARE == mod.war) {
-        ops.push(function () { addModuleToParentPom(mod) } );
+      ops.push(function() { addModuleToParentPom(mod) } );
+      if (constants.WAR_TYPE_SHARE == mod.war) {
+        ops.push(function() { addFailsafeConfigToRunner(mod) } )
       }
       ops.push(function() { addModuleToTomcatContext(mod) } );
     }
@@ -98,6 +99,72 @@ module.exports = function(yo) {
           // console.log('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
           yo.fs.move(fromPath + "/**", toPath);
         }
+      }
+    }
+  }
+
+  function addFailsafeConfigToRunner(mod) {
+    var runnerPomPath = yo.destinationPath('runner/pom.xml');
+    yo.out.info('Configuring failsafe entries for ' + mod.artifactId + ' in ' + runnerPomPath);
+    var runnerPom = yo.fs.read(runnerPomPath);
+    var pomDoc = domutils.parseFromString(runnerPom);
+    var plugin = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]', pomDoc);
+    if (plugin) {
+      var pluginExs = domutils.getFirstNodeMatchingXPath('pom:executions', plugin);
+      if (pluginExs) {
+        // if we have generic config we should remove it
+        var pluginConfig = domutils.getFirstNodeMatchingXPath('pom:configuration', plugin);
+        if (pluginConfig) {
+          domutils.removeChild(pluginConfig, 'pom', 'suiteXmlFiles');
+          domutils.removeChild(pluginConfig, 'pom', 'testClassesDirectory');
+        }
+        // if we have the generic executions we should remove them
+        var ft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests"]', pluginExs);
+        if (ft) {
+          domutils.removeParentsChild(pluginExs, ft);
+        }
+        var vt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests"]', pluginExs);
+        if (vt) {
+          domutils.removeParentsChild(pluginExs, vt);
+        }
+        // now add module specific instances
+        var ftx = [
+            '<execution>',
+            '    <id>functional-tests-' + mod.artifactId + '</id>',
+            '    <phase>integration-test</phase>',
+            '    <goals>',
+            '      <goal>integration-test</goal>',
+            '    </goals>',
+            '    <configuration>',
+            '        <suiteXmlFiles>',
+            '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
+            '        </suiteXmlFiles>',
+            '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
+            '    </configuration>',
+            '</execution>',
+        ].join('\n');
+        var ftdoc = domutils.parseFromString(ftx);
+        var ftn = pomDoc.importNode(ftdoc.documentElement, true);
+        pluginExs.appendChild(ftn);
+        var vtx = [
+            '<execution>',
+            '    <id>verify-tests-' + mod.artifactId + '</id>',
+            '    <phase>verify</phase>',
+            '    <goals>',
+            '        <goal>verify</goal>',
+            '    </goals>',
+            '    <configuration>',
+            '        <suiteXmlFiles>',
+            '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
+            '        </suiteXmlFiles>',
+            '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
+            '    </configuration>',
+            '</execution>',
+        ].join('\n');
+        var vtdoc = domutils.parseFromString(vtx);
+        var vtn = pomDoc.importNode(vtdoc.documentElement, true);
+        pluginExs.appendChild(vtn);
+        yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
       }
     }
   }
@@ -222,6 +289,9 @@ module.exports = function(yo) {
         ops.push(function() { removeModuleFiles(mod) } );
         ops.push(function() { removeModuleFromParentPom(mod) } );
         ops.push(function() { removeModuleFromWarWrapper(mod) } );
+        if (constants.WAR_TYPE_SHARE == mod.war) {
+          ops.push(function () { removeFailsafeConfigFromRunner(mod) });
+        }
         ops.push(function() { removeModuleFromTomcatContext(mod) } );
         // TODO: what else do we need to do when we remove a module?
       }
@@ -264,6 +334,28 @@ module.exports = function(yo) {
       pom.removeDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
       pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging );
       yo.fs.write(wrapperPomPath, pom.getPOMString());
+    }
+  }
+
+  function removeFailsafeConfigFromRunner(mod) {
+    var runnerPomPath = yo.destinationPath('runner/pom.xml');
+    yo.out.info('Removing failsafe entries for ' + mod.artifactId + ' from ' + runnerPomPath);
+    var runnerPom = yo.fs.read(runnerPomPath);
+    var pomDoc = domutils.parseFromString(runnerPom);
+    var pluginExs = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]/pom:executions', pomDoc);
+    if (pluginExs) {
+      // now if we find executions for this module remove them too
+      var mft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests-' + mod.artifactId + '"]', pluginExs);
+      if (mft) {
+        console.log("Removing functional-tests-" + mod.artifactId)
+        domutils.removeParentsChild(pluginExs, mft);
+      }
+      var mvt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests-' + mod.artifactId + '"]', pluginExs);
+      if (mvt) {
+        console.log("Removing verify-tests-" + mod.artifactId)
+        domutils.removeParentsChild(pluginExs, mvt);
+      }
+      yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
     }
   }
 
