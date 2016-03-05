@@ -1,13 +1,6 @@
 TODO
 ====
 
-- [x] Make progress on amp sub-generator
-  - [x] Support creating a parent folder when creating repo and share amp together
-  - [x] When creating source AMP prompt for name and description and inject into project
-  - [x] Only allow sub-generator to be run from inside a project created with yo alfresco
-  - [x] Create a pom editing module under app (like spring-context.js) and use this
-  - [x] Use the backed up repo-amp and share-amp projects instead of caching structures in templates folder
-  - [x] Move amp sub-generators so it can''t be used yet
 - [ ] Make progress on webscript sub-generator
   - [ ] List project amps that we can generate webscripts in
   - [ ] Update wizard to include more/all options for .desc.xml
@@ -33,6 +26,13 @@ TODO
 TODONE
 ======
 
+- [x] Make progress on amp sub-generator
+  - [x] Support creating a parent folder when creating repo and share amp together
+  - [x] When creating source AMP prompt for name and description and inject into project
+  - [x] Only allow sub-generator to be run from inside a project created with yo alfresco
+  - [x] Create a pom editing module under app (like spring-context.js) and use this
+  - [x] Use the backed up repo-amp and share-amp projects instead of caching structures in templates folder
+  - [x] Move amp sub-generators so it can''t be used yet
 - [x] Complete alfresco-module-manager
   - [x] Provide a method to update project configuration based on current registry settings
     - [x] /runner/pom.xml (failsafe configuration for share source modules)
