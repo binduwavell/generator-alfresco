@@ -1,0 +1,6 @@
+Notes:
+  The module-path option should be specified as a relative path from the root of
+  your project to the folder that contains the pom.xml file for your module. Say
+  you used 'yo alfresco:amp' to create a repository module called
+  client-repo-amp directly in the customizations folder. In this case you would
+  provide the value 'customizations/client-repo-amp'.

@@ -231,3 +231,5 @@ module.exports = yeoman.Base.extend({
     if (this.bail) return;
   }
 });
+
+// vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
