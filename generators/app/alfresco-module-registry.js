@@ -1,4 +1,5 @@
 'use strict';
+var constants = require('./constants.js');
 
 /**
  * Node module that manages a config object that describes all Alfresco modules
@@ -65,11 +66,11 @@ module.exports = function(yo) {
   module._getModuleName = function(mod) {
     var groupId = mod.groupId;
     if ('${project.groupId}' === groupId) {
-      groupId = yo.projectGroupId;
+      groupId = yo.config.get(constants.PROP_PROJECT_GROUP_ID) || yo[constants.PROP_PROJECT_GROUP_ID];
     }
     var ver = mod['version'];
     if ('${project.version}' === ver) {
-      ver = yo.projectVersion;
+      ver = yo.config.get(constants.PROP_PROJECT_VERSION) || yo[constants.PROP_PROJECT_VERSION];
     }
     return groupId + ':' + mod.artifactId + ':' + ver + ':' +
            mod.packaging + ':' + mod.war + ':' + mod['location'];

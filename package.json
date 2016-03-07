@@ -21,7 +21,6 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "0.22.5",
     "chalk": "1.1.1",
     "cross-spawn": "2.1.5",
     "deasync": "0.1.4",
@@ -32,17 +31,18 @@
     "semver": "5.1.0",
     "split": "1.0.0",
     "walk": "2.3.9",
+    "window-size": "^0.2.0",
+    "wrap-ansi": "^2.0.0",
     "xmldom": "0.1.22",
     "xpath": "0.0.22",
+    "yeoman-generator": "0.22.5",
     "yosay": "1.1.0"
   },
   "devDependencies": {
     "coveralls": "2.11.8",
     "fixme": "0.3.0",
     "istanbul": "0.4.2",
-    "mem-fs": "COMMENT: this should be kept in sync with yeoman-environment, from yeoman-generator",
     "mem-fs": "1.1.2",
-    "mem-fs-editor": "COMMENT: this should be kept in sync with yeoman-generator",
     "mem-fs-editor": "2.2.0",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",

@@ -85,7 +85,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       assert.equal(packagingNode.textContent, 'packaging');
       var parentNode = pom.getOrCreateTopLevelElement('pom', 'parent');
       assert.ok(parentNode);
-      assert.equal(parentNode.toString(), '<parent>\n    <groupId>org.example</groupId>\n    <artifactId>test</artifactId>\n    <version>1.0</version>\n  </parent>');
+      assert.equal(parentNode.toString(), '<parent>\n    <groupId>com.example</groupId>\n    <artifactId>placeholder</artifactId>\n    <version>0.0.1-SNAPSHOT</version>\n  </parent>');
     });
 
     it('adds a module to the top pom', function () {
