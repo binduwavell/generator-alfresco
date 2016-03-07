@@ -28,7 +28,9 @@ describe('generator-alfresco:app', function () {
         '.gitignore',
         '.yo-rc.json',
         'pom.xml',
+        'debug.sh',
         'run.sh',
+        'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
         'scripts/explode-alf-sources.sh',
@@ -78,7 +80,9 @@ describe('generator-alfresco:app', function () {
     });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
+        ['debug.sh', /-Penterprise/],
         ['run.sh', /-Penterprise/],
+        ['run-without-springloaded.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
         ['scripts/run-without-springloaded.sh', /-Penterprise/]
@@ -107,7 +111,9 @@ describe('generator-alfresco:app', function () {
         '.gitignore',
         '.yo-rc.json',
         'pom.xml',
+        'debug.sh',
         'run.sh',
+        'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
         'scripts/explode-alf-sources.sh',
@@ -144,7 +150,9 @@ describe('generator-alfresco:app', function () {
     });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
+        ['debug.sh', /-Penterprise/],
         ['run.sh', /-Penterprise/],
+        ['run-without-springloaded.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
         ['scripts/run-without-springloaded.sh', /-Penterprise/]
@@ -188,7 +196,9 @@ describe('generator-alfresco:app', function () {
         '.gitignore',
         '.yo-rc.json',
         'pom.xml',
+        'debug.sh',
         'run.sh',
+        'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
         'scripts/explode-alf-sources.sh',
@@ -226,7 +236,9 @@ describe('generator-alfresco:app', function () {
     });
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
+        ['debug.sh', /-Penterprise/],
         ['run.sh', /-Penterprise/],
+        ['run-without-springloaded.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
         ['scripts/run-without-springloaded.sh', /-Penterprise/]
@@ -431,7 +443,9 @@ describe('generator-alfresco:app', function () {
         '.editorconfig',
         '.gitignore',
         'pom.xml',
+        'debug.sh',
         'run.sh',
+        'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
         'scripts/explode-alf-sources.sh',
@@ -483,7 +497,9 @@ describe('generator-alfresco:app', function () {
         '.editorconfig',
         '.gitignore',
         'pom.xml',
+        'debug.sh',
         'run.sh',
+        'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
         'scripts/explode-alf-sources.sh',

@@ -27,9 +27,12 @@ describe('generator-alfresco:app:enterprise', function () {
 
   it('updates run.sh and debug.sh with -Penterprise flag', function () {
     assert.fileContent([
+      ['debug.sh', /-Penterprise/],
       ['run.sh', /-Penterprise/],
+      ['run-without-springloaded.sh', /-Penterprise/],
       ['scripts/debug.sh', /-Penterprise/],
       ['scripts/run.sh', /-Penterprise/],
+      ['scripts/run-without-springloaded.sh', /-Penterprise/],
     ]);
   });
 });

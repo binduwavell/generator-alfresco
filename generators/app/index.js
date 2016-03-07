@@ -57,8 +57,14 @@ module.exports = yeoman.Base.extend({
       {
         type: 'list',
         name: constants.PROP_SDK_VERSION,
-        message: 'Which SDK version would you like to use?',
+        when: function(props) {
+          this.out.docs(
+            'For Alfresco 5.0 development we suggest using the 2.1.1 SDK, For Alfresco 5.1 development, use the 2.2.0 SDK.',
+            'http://docs.alfresco.com/community/concepts/alfresco-sdk-compatibility.html');
+          return true;
+        }.bind(this),
         default: this.config.get(constants.PROP_SDK_VERSION),
+        message: 'Which SDK version would you like to use?',
         choices: _.keys(this.sdkVersions),
       },
       {
@@ -312,19 +318,23 @@ module.exports = yeoman.Base.extend({
       // copy template folders
       [constants.FOLDER_AMPS, constants.FOLDER_AMPS_SHARE, constants.FOLDER_CUSTOMIZATIONS,
        constants.FOLDER_MODULES, constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS].forEach(
-          function(folderName) {
-            this.out.info('Copying ' + folderName);
-            this.fs.copyTpl(
-              this.templatePath(folderName),
-              this.destinationPath(folderName),
-              tplContext
-              );
-          }.bind(this)
+        function(folderName) {
+          this.out.info('Copying ' + folderName);
+          this.fs.copyTpl(
+            this.templatePath(folderName),
+            this.destinationPath(folderName),
+            tplContext
+          );
+        }.bind(this)
       );
-      // copy run.sh to top level folder
-      this.fs.copy(
-        this.destinationPath(path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH)),
-        this.destinationPath(constants.FILE_RUN_SH)
+      // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
+      [constants.FILE_RUN_SH, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
+        function(fileName) {
+          this.fs.copy(
+            this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
+            this.destinationPath(fileName)
+          );
+        }.bind(this)
       );
       // enterprise specific stuff
       if (isEnterprise) {
@@ -392,11 +402,11 @@ module.exports = yeoman.Base.extend({
       if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
         if (this.sdk.removeRepoSamples) {
           // TODO(bwavell): 'repo-amp' should be generalized
-          this.sdk.removeRepoSamples.call(this, 'repo-amp');
+          this.sdk.removeRepoSamples.call(this, this.sdk.sdkVersionPrefix.call(this) + 'repo-amp');
         }
         if (this.sdk.removeShareSamples) {
           // TODO(bwavell): 'share-amp' should be generalized
-          this.sdk.removeShareSamples.call(this, 'share-amp');
+          this.sdk.removeShareSamples.call(this, this.sdk.sdkVersionPrefix.call(this) + 'share-amp');
         }
       }
     }

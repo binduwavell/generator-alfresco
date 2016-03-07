@@ -1,7 +1,9 @@
 'use strict';
 
 module.exports = {
+  FILE_DEBUG_SH: 'debug.sh',
   FILE_RUN_SH: 'run.sh',
+  FILE_RUN_WITHOUT_SPRINGLOADED_SH: 'run-without-springloaded.sh',
   FILE_CONTEXT_REPO_XML: 'context-repo.xml',
   FILE_CONTEXT_SHARE_XML: 'context-share.xml',
 
