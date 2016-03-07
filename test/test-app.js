@@ -422,6 +422,7 @@ describe('generator-alfresco:app', function () {
     this.timeout(1000);
 
     before(function (done) {
+      this.bail = false;
       if (process.env.JAVA_HOME) {
         var javaHome = process.env.JAVA_HOME;
         process.env.JAVA_HOME = 'asdfASDF';
@@ -433,12 +434,17 @@ describe('generator-alfresco:app', function () {
               done();
             });
       } else {
-        console.log("WARNING: Skipping test because JAVA_HOME is not set");
+        console.log("WARNING: Skipping tests because JAVA_HOME is not set");
+        this.bail = true;
         done();
       }
     });
 
     it('does not generate a project', function () {
+      if (this.bail) {
+        console.log("WARNING: Skipping test");
+        return;
+      }
       assert.noFile([
         '.editorconfig',
         '.gitignore',
