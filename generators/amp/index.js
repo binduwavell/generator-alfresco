@@ -2,7 +2,6 @@
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
-var process = require('process');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var constants = require('../app/constants.js');
