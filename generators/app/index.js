@@ -301,6 +301,7 @@ module.exports = yeoman.Base.extend({
         projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
         projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
         projectVersion: this.config.get(constants.PROP_PROJECT_VERSION),
+        sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
       };
       this.fs.copy(
         this.templatePath('editorconfig'),
