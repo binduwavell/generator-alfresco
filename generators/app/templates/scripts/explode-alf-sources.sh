@@ -5,10 +5,12 @@ DIR=$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )
 CWD=$( pwd )
 cd "$DIR"
 
-cd ../repo-amp
+cd ../source_templates/<%= sdkVersionPrefix %>repo-amp
 mvn dependency:unpack-dependencies <%= enterpriseFlag %> -Dclassifier=sources -DoutputDirectory=../exploded
+rm -rf target
 
-cd ../share-amp
+cd ../source_templates/<%= sdkVersionPrefix %>share-amp
 mvn dependency:unpack-dependencies <%= enterpriseFlag %> -Dclassifier=sources -DoutputDirectory=../exploded
+rm -rf target
 
 cd "$CWD"
