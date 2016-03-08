@@ -1,5 +1,5 @@
-amps_share
-==========
+amps\_share
+===========
 Place pre-packaged share amps in here and then use:
 
     yo alfresco:amp (NOT IMPLEMENTED YET)
