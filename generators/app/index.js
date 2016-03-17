@@ -11,25 +11,31 @@ var yosay = require('yosay');
 var _ = require('lodash');
 
 module.exports = yeoman.Base.extend({
+  _getConfigValue: function(key) {
+    if(!_.isNil(key)) {
+      if(!_.isNil(this.config.get(key))) {
+        return this.config.get(key);
+      } else if (this.defaultConfig) {
+        return this.defaultConfig[key];
+      }
+    }
+    return undefined;
+  },
   initializing: function () {
     this.out = require('./app-output.js')(this);
 
     this.pkg = require('../../package.json');
-    if (!this.config.get('originalGeneratorVersion')) {
-      this.config.set('originalGeneratorVersion', this.pkg.version);
-    }
-    this.config.set('generatorVersion', this.pkg.version);
     this.sdkVersions = require('./sdk-versions.js');
-    this.config.defaults({
+    this.defaultConfig = {
       sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
-      projectArtifactId: 'demo',
+      projectArtifactId: path.basename(process.cwd()),
       projectVersion: '1.0.0-SNAPSHOT',
       projectPackage: 'org.alfresco',
       communityOrEnterprise: 'Community',
       removeDefaultSourceAmps: false,
       removeDefaultSourceSamples: false,
-    });
+    };
     this.bail = false;
     try {
       this.javaVersion = versions.getJavaVersion();
@@ -55,15 +61,41 @@ module.exports = yeoman.Base.extend({
 
     var prompts = [
       {
+        type: 'confirm',
+        name: constants.PROP_ABORT_EXISTING_PROJECT,
+        when: function(props) {
+          if(this.bail) return false;
+          // If we find the .yo-rc.json file, show the warning
+          if(fs.existsSync(this.config.path)) {
+            this.out.warn(
+              'You are running the command within an existing project '
+              + chalk.green('"'+this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID) + '"')
+              + ' located at ' + chalk.green('"'+path.dirname(this.config.path)+'"')+'.'
+              + ' Aborting will exit the generator. If you choose not to abort,'
+              + ' the generator will continue with its interview questions.'
+            );
+            return true;
+          } else {
+            return false;
+          }
+        }.bind(this),
+        default: true,
+        message: 'Do you want to abort?',
+      },
+      {
         type: 'list',
         name: constants.PROP_SDK_VERSION,
         when: function(props) {
+          if(props[constants.PROP_ABORT_EXISTING_PROJECT]) {
+            this.bail = true;
+          }
+          if(this.bail) return false;
           this.out.docs(
             'For Alfresco 5.0 development we suggest using the 2.1.1 SDK, For Alfresco 5.1 development, use the 2.2.0 SDK.',
             'http://docs.alfresco.com/community/concepts/alfresco-sdk-compatibility.html');
           return true;
         }.bind(this),
-        default: this.config.get(constants.PROP_SDK_VERSION),
+        default: this._getConfigValue(constants.PROP_SDK_VERSION),
         message: 'Which SDK version would you like to use?',
         choices: _.keys(this.sdkVersions),
       },
@@ -72,11 +104,12 @@ module.exports = yeoman.Base.extend({
         name: constants.PROP_ARCHETYPE_VERSION,
         message: 'Archetype version?',
         default: function(props) {
-          var savedArchetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
+          var savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
           if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
         }.bind(this),
         when: function(props) {
+          if(this.bail) return false;
           this.sdk = this.sdkVersions[props.sdkVersion];
           if (this.sdk.promptForArchetypeVersion) {
             return true;
@@ -91,19 +124,67 @@ module.exports = yeoman.Base.extend({
         type: 'input',
         name: constants.PROP_PROJECT_GROUP_ID,
         message: 'Project groupId?',
-        default: this.config.get(constants.PROP_PROJECT_GROUP_ID),
+        default: this._getConfigValue(constants.PROP_PROJECT_GROUP_ID),
+        when: function(props) {
+          if(this.bail) return false;
+          return true;
+        }.bind(this),
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID,
+        when: function(props) {
+          if(this.bail) return false;
+          return true;
+        }.bind(this),
+        default: this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID),
         message: 'Project artifactId?',
-        default: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+      },
+      {
+        // When run inside a existing project
+        type: 'confirm',
+        name: constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE,
+        when: function(props) {
+          if(this.bail) return false;
+          if(fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+            return true;
+          }
+          return false;
+        }.bind(this),
+        default: true,
+        message: 'Updating the artifactId can lead to unexpected issues. Do you want to abort?',
+      },
+      {
+        // When run inside a non-existing project
+        type: 'confirm',
+        name: constants.PROP_CREATE_SUB_FOLDER,
+        when: function(props) {
+          if(props[constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE]) {
+            this.bail = true;
+          }
+          if(this.bail) return false;
+          if(!fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+            this.out.warn('The artifactId must match the name of the artifact folder. As such, we are going to create a sub-folder in the existing folder named: "'
+              +props[constants.PROP_PROJECT_ARTIFACT_ID]+'".')
+            return true;
+          }
+          return false;
+        }.bind(this),
+        default: true,
+        message: 'Do you want to proceed?',
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_VERSION,
+        when: function(props) {
+          if(!_.isNil(props[constants.PROP_CREATE_SUB_FOLDER]) && !props[constants.PROP_CREATE_SUB_FOLDER]) {
+            this.bail = true;
+          }
+          if(this.bail) return false;
+          return true;
+        }.bind(this),
+        default: this._getConfigValue(constants.PROP_PROJECT_VERSION),
         message: 'Project version?',
-        default: this.config.get(constants.PROP_PROJECT_VERSION),
       },
       {
         type: 'input',
@@ -113,6 +194,7 @@ module.exports = yeoman.Base.extend({
           return props.projectGroupId
         }.bind(this),
         when: function(props) {
+          if(this.bail) return false;
           this.sdk = this.sdkVersions[props.sdkVersion];
           return this.sdk.promptForProjectPackage;
         }.bind(this),
@@ -121,15 +203,20 @@ module.exports = yeoman.Base.extend({
         type: 'list',
         name: constants.PROP_COMMUNITY_OR_ENTERPRISE,
         message: 'Would you like to use Community or Enterprise?',
-        default: this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE),
+        default: this._getConfigValue(constants.PROP_COMMUNITY_OR_ENTERPRISE),
         choices: ['Community', 'Enterprise'],
+        when: function(props) {
+          if(this.bail) return false;
+          return true;
+        }.bind(this),
       },
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
         message: 'Should we remove the default source amps?',
-        default: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
+        default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         when: function(props) {
+          if(this.bail) return false;
           this.sdk = this.sdkVersions[props.sdkVersion];
           props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS] = (true && this.sdk.removeDefaultModules);
           return props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS];
@@ -139,8 +226,9 @@ module.exports = yeoman.Base.extend({
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
         message: 'Should we remove samples from the default source amps?',
-        default: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
+        default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
         when: function(props) {
+          if(this.bail) return false;
           if (props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]) {
             props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = false;
           } else {
@@ -155,20 +243,46 @@ module.exports = yeoman.Base.extend({
 
     var donePrompting = this.async();
     this.prompt(prompts, function (props) {
-      this.sdk = this.sdkVersions[props.sdkVersion];
-      this._saveProps([
-        constants.PROP_SDK_VERSION,
-        constants.PROP_ARCHETYPE_VERSION,
-        constants.PROP_PROJECT_GROUP_ID,
-        constants.PROP_PROJECT_ARTIFACT_ID,
-        constants.PROP_PROJECT_VERSION,
-        constants.PROP_PROJECT_PACKAGE,
-        constants.PROP_COMMUNITY_OR_ENTERPRISE,
-        constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
-        constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
-      ], props);
-      // can only setup module registry/manager once we have other variables setup
-      this.moduleManager = require('./alfresco-module-manager.js')(this);
+      // The below 2 if conditions are here because the prompts used in testing
+      // are not injected into the prompts
+      if(!_.isNil(props[constants.PROP_ABORT_EXISTING_PROJECT]) && props[constants.PROP_ABORT_EXISTING_PROJECT]) {
+        this.bail = true;
+      }
+      if(!_.isNil(props[constants.PROP_CREATE_SUB_FOLDER]) && !props[constants.PROP_CREATE_SUB_FOLDER]) {
+        this.bail = true;
+      }
+      if(!this.bail) {
+        props.generatorVersion = this.pkg.version;
+        if (!this.config.get(constants.PROP_ORIGINAL_GENERATOR_VERSION)) {
+          props[constants.PROP_ORIGINAL_GENERATOR_VERSION] = this.pkg.version;
+        }
+        if(!fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+          var projectPath = path.join(process.cwd(),props[constants.PROP_PROJECT_ARTIFACT_ID]);
+          if(!_.isNil(projectPath) && !_.isEqual(process.cwd(), projectPath)) {
+            if (!fs.existsSync(projectPath)) {
+              fs.mkdirSync(projectPath);
+            }
+            process.chdir(projectPath);
+            this.destinationRoot(projectPath);
+          }
+        }
+        this.sdk = this.sdkVersions[props.sdkVersion];
+        this._saveProps([
+          constants.PROP_ORIGINAL_GENERATOR_VERSION,
+          constants.PROP_GENERATOR_VERSION,
+          constants.PROP_SDK_VERSION,
+          constants.PROP_ARCHETYPE_VERSION,
+          constants.PROP_PROJECT_GROUP_ID,
+          constants.PROP_PROJECT_ARTIFACT_ID,
+          constants.PROP_PROJECT_VERSION,
+          constants.PROP_PROJECT_PACKAGE,
+          constants.PROP_COMMUNITY_OR_ENTERPRISE,
+          constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
+          constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
+        ], props);
+        // can only setup module registry/manager once we have other variables setup
+        this.moduleManager = require('./alfresco-module-manager.js')(this);
+      }
       donePrompting();
     }.bind(this));
   },

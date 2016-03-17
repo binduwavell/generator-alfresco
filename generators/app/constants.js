@@ -20,9 +20,13 @@ module.exports = {
   FOLDER_SOURCE_TEMPLATES: 'source_templates',
   FOLDER_TOMCAT: 'tomcat',
 
+  PROP_ORIGINAL_GENERATOR_VERSION: 'originalGeneratorVersion',
+  PROP_GENERATOR_VERSION: 'generatorVersion',
   PROP_ARCHETYPE_VERSION: 'archetypeVersion',
   PROP_COMMUNITY_OR_ENTERPRISE: 'communityOrEnterprise',
   PROP_PROJECT_ARTIFACT_ID: 'projectArtifactId',
+  PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE: 'abortProjectArtifactIdUpdate',
+  PROP_CREATE_SUB_FOLDER: 'createSubFolder',
   PROP_PROJECT_ARTIFACT_ID_PREFIX: 'projectArtifactIdPrefix',
   PROP_PROJECT_GROUP_ID: 'projectGroupId',
   PROP_PROJECT_PACKAGE: 'projectPackage',
@@ -31,6 +35,7 @@ module.exports = {
   PROP_REMOVE_DEFAULT_SOURCE_SAMPLES: 'removeDefaultSourceSamples',
   PROP_SDK_VERSION: 'sdkVersion',
   PROP_WAR: 'war',
+  PROP_ABORT_EXISTING_PROJECT: 'abortExistingProject',
 
   VAR_PROJECT_GROUPID: '${project.groupId}',
   VAR_PROJECT_ARTIFACTID: '${project.artifactId}',
