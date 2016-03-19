@@ -8,21 +8,39 @@ var os = require('os');
 var path = require('path');
 
 
-describe('generator-alfresco:app', function () {
+describe('generator-alfresco:app-local', function () {
 
-  describe('default prompts', function () {
+  describe('default prompts with local SDK, twice', function () {
 
     this.timeout(60000);
 
     before(function (done) {
+      var tmpdir = path.join(os.tmpdir(), './temp-test');
       helpers.run(path.join(__dirname, '../generators/app'))
-        .inDir(path.join(os.tmpdir(), './temp-test'))
-        .withOptions({ 'skip-install': true })
-        .on('end', done);
+        .inDir(tmpdir)
+        .withOptions({ 'skip-install': false })
+        .withPrompts({
+          sdkVersion: 'local',
+          archetypeVersion: '2.1.1',
+        })
+        .on('end', function() {
+          helpers.run(path.join(__dirname, '../generators/app'))
+            .inDir(tmpdir, function(dir) {
+              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES) );
+              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp') );
+              fs.writeFileSync( path.join( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml') ), '' );
+            })
+            .withLocalConfig({ 'archetypeVersion': '2.1.0' })
+            .withOptions({ 'skip-install': false })
+            .withPrompts({
+              sdkVersion: 'local',
+              archetypeVersion: '2.1.1',
+            })
+            .on('end', done);
+        });
     });
 
     it('creates files', function () {
-      // TODO(bwavell): add more tests
       assert.file([
         '.editorconfig',
         '.gitignore',
@@ -42,7 +60,6 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.FOLDER_CUSTOMIZATIONS + '/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
         constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
@@ -53,19 +70,8 @@ describe('generator-alfresco:app', function () {
         'share-amp/pom.xml',
         'solr-config/pom.xml',
         'TODO.md',
+        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/README.md',
       ]);
-    });
-    it('adds amps_source to modules in top pom', function() {
-      assert.fileContent(
-        'pom.xml',
-        /<module>customizations<\/module>/
-      );
-    });
-    it('debug.sh does not reference springloaded', function () {
-      assert.noFileContent(
-        'scripts/debug.sh',
-        /springloaded/
-      );
     });
     it('adds generic include for generated beans', function () {
       assert.fileContent(
