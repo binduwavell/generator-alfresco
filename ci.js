@@ -4,10 +4,10 @@ require('shelljs/global');
 var nodeVersion = '' + process.argv[2];
 var cmd;
 
-if (0 === nodeVersion.indexOf('0')) {
-  cmd = 'npm run test:color';
-} else {
+if ('5.1' === nodeVersion) {
   cmd = 'npm run cover:color';
+} else {
+  cmd = 'npm run test:color';
 }
 
 var proc = exec(cmd, {stdin: 'inherit'});
