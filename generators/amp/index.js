@@ -22,6 +22,11 @@ module.exports = yeoman.Base.extend({
         'Adding source amp(s) to ' + chalk.green(this.config.get(constants.PROP_PROJECT_ARTIFACT_ID)) + ' project!'
       ));
 
+      this.out.info([
+        'This sub-generator will update existing POM's and context files.',
+        'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
+        'Type "h" when prompted to get details about your resolution choices.'].join(' '));
+
       var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
       var defArtifactIdPrefix = this.config.get(constants.PROP_PROJECT_ARTIFACT_ID);
       var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
