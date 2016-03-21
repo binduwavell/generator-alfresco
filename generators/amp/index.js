@@ -23,7 +23,7 @@ module.exports = yeoman.Base.extend({
       ));
 
       this.out.info([
-        'This sub-generator will update existing POM's and context files.',
+        'This sub-generator will update existing POM\'s and context files.',
         'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
         'Type "h" when prompted to get details about your resolution choices.'].join(' '));
 
