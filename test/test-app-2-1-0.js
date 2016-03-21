@@ -8,9 +8,9 @@ var os = require('os');
 var path = require('path');
 
 
-describe('generator-alfresco:app', function () {
+describe('generator-alfresco:app-2-1-0', function () {
 
-  describe('default prompts', function () {
+  describe('default prompts with SDK 2.1.0', function () {
 
     this.timeout(60000);
 
@@ -18,6 +18,9 @@ describe('generator-alfresco:app', function () {
       helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
+        .withPrompts({
+          sdkVersion: '2.1.0',
+        })
         .on('end', done);
     });
 
@@ -42,7 +45,6 @@ describe('generator-alfresco:app', function () {
         'amps/README.md',
         'amps_share/README.md',
         constants.FOLDER_CUSTOMIZATIONS + '/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
         constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
@@ -54,18 +56,6 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
       ]);
-    });
-    it('adds amps_source to modules in top pom', function() {
-      assert.fileContent(
-        'pom.xml',
-        /<module>customizations<\/module>/
-      );
-    });
-    it('debug.sh does not reference springloaded', function () {
-      assert.noFileContent(
-        'scripts/debug.sh',
-        /springloaded/
-      );
     });
     it('adds generic include for generated beans', function () {
       assert.fileContent(
