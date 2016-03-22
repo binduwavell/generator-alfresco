@@ -502,6 +502,8 @@ module.exports = SourceSelectingSubGenerator.extend({
             this.out.info("Using transaction buffer size from command line: " + chalk.reset.dim.cyan(props.transactionBuffersize));
             return false;
           }
+          var disp = ('none' !== props.transaction);
+          if (disp) {
           this.out.docs(
             ['Specifies the buffer size in bytes. Integer value.',
               'Sets the size in bytes of the transactional buffer the webscript will allocate to guard against the potential rollback of a transaction during the webscript processing. If a rollback occurs and the buffer has not been filled, then it is able to rollback without any output from the webscript being committed to the container output stream. This means error responses can be returned instead of partially formed responses with an error embedded into them.',
@@ -509,7 +511,10 @@ module.exports = SourceSelectingSubGenerator.extend({
               'For some webscripts, a buffer is not appropriate and would actually be detrimental to performance - the webscript might require direct access to the output stream not a wrapped buffer object - the remoteadm webscripts are such an example.',
             ].join('\n\n'),
             'http://docs.alfresco.com/5.1/references/api-wsdl-transaction.html');
-          return ('none' !== props.transaction);
+          } else {
+            props.transactionBuffersize = undefined;
+          }
+          return disp;
         }.bind(this),
         message: 'What  <transaction ' + chalk.yellow('@buffersize') + '> should be allocated?',
         validate: function(input) {
