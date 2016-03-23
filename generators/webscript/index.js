@@ -7,7 +7,7 @@ var process = require('process');
 var yosay = require('yosay');
 var constants = require('../app/constants.js');
 var filters = require('../app/prompt-filters.js');
-var SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
+var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
 const METHODS = ['get', 'post', 'put', 'delete'];
 const LANGUAGES = ['Java', 'JavaScript', 'Both Java & JavaScript'];
@@ -67,8 +67,9 @@ module.exports = SourceSelectingSubGenerator.extend({
           }
         },
         when: function(props) {
-          if (undefined !== this.options.package) {
-            props.package = packageFilter(this.options.package);
+          var p = packageFilter(this.options.package);
+          if (undefined !== p) {
+            props.package = p;
             this.out.info("Using webscript package from command line: " + chalk.reset.dim.cyan(props.package));
             return false;
           }
