@@ -8,14 +8,31 @@ var SubGenerator = require('./subgenerator.js');
  * An extension of our regular subgenerator base class that
  * adds common code for propting for a source module to perform
  * the subgenerator actions upon.
+ * A sub-class may force targeting of a specific war by adding
+ * code like the following before calling "super" in the 
+ * constructor:
+ * 
+ * arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_SHARE;
+ * 
  */
 module.exports = SubGenerator.extend({
 
   constructor: function () {
+    
     SubGenerator.apply(this, arguments);
 
-    this.modules = this.moduleRegistry.getNamedModules();
-    
+    // Only source modules
+    this.modules = this.modules.filter(function(mod) {
+      return ('source' === mod.module.location);
+    });
+    // If a war target is passed in further restrict our list
+    var targetWar = arguments[1][constants.PROP_WAR];
+    if (targetWar) {
+      this.modules = this.modules.filter(function(mod) {
+        return (targetWar === mod.module.war)
+      });
+    }
+
     this.sourcePrompts = [
       {
         type: 'list',
@@ -30,15 +47,30 @@ module.exports = SubGenerator.extend({
         },
         when: function(props) {
           var module = undefined;
+          // Handle converting a module path provided from the command line into
+          // a war type and a named module
           if (this.options['module-path']) {
             this.modules.forEach(function(mod) {
-              if (this.options['module-path'] === mod.module.path) module = module || mod; // first match
+              if (this.options['module-path'] === mod.module.path) module = module || mod;
             }.bind(this));
           }
           if (module) {
             this.out.info('Using source module from command line: ' + chalk.reset.dim.cyan(module.name));
             props[constants.PROP_WAR] = module.module.war;
             props.targetModule = module;
+            return false;
+          }
+          // If there is only one module we can select it without prompting
+          if (1 === this.modules.length) {
+            module = this.modules[0];
+            this.out.info('Using only available source module: ' + chalk.reset.dim.cyan(module.name));
+            props[constants.PROP_WAR] = module.module.war;
+            props.targetModule = module;
+            return false;
+          }
+          // If a target war is provided don't bother prompting for the war type
+          if (targetWar) {
+            props[constants.PROP_WAR] = targetWar;
             return false;
           }
           return true;
@@ -50,13 +82,22 @@ module.exports = SubGenerator.extend({
         type: 'list',
         name: 'targetModule',
         when: function(props) {
+          // Reduce module options based on which war type was selected
+          this.modules = this.modules
+            .filter(function(mod) {
+              return (props[constants.PROP_WAR] === mod.module.war);
+            });
+          // If there is only one module we can select it without prompting
+          if (1 === this.modules.length) {
+            var module = this.modules[0];
+            this.out.info('Using only available source module: ' + chalk.reset.dim.cyan(module.name));
+            props.targetModule = module;
+            return false;
+          }
           return (!props.targetModule);
         }.bind(this),
         choices: function(props) {
           return this.modules
-            .filter(function(module) {
-              return ('source' === module.module.location && props[constants.PROP_WAR] === module.module.war);
-            })
             .map(function(module) {
               return module.name;
             })

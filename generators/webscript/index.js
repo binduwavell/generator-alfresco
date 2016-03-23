@@ -21,6 +21,7 @@ const LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api',
 
 module.exports = SourceSelectingSubGenerator.extend({
   constructor: function() {
+
     SourceSelectingSubGenerator.apply(this, arguments);
 
     this.prompts = [
@@ -856,7 +857,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           var jsControllerPath = path.join(descPath, jsControllerName);
           this.out.info('Generating ' + jsControllerName + ' in ' + descPath);
           this.fs.copyTpl(jsSrcPath, jsControllerPath, props);
-          
+
           //if('repo' === props.war) {
             var configName = props.id + '.' + method + '.config.xml';
             var configPath = path.join(descPath, configName);

@@ -13,22 +13,23 @@ var constants = require('./app/constants.js');
  * This class provides some common things like the bail flag, our output
  * handling module, the SDK version for the main project and the module
  * registry.
- * 
+ *
  * In contrast to a regular sub/generator we expect the prompts to be
  * defined in the constructor. For the setupArgumentsAndOptions method to
  * be called in the constructor (if you want option or argument handling)
- * and for the prompting to use this.subgeneratorPrompt() instead of 
+ * and for the prompting to use this.subgeneratorPrompt() instead of
  * this.prompt() in the prompting lifecycle function.
- * 
+ *
  * You may add an argument and/or option property to each prompt
  * definitions. The setupArgumentsAndOptions function pulls these out
- * and registers them appropriately. The value for each of these 
+ * and registers them appropriately. The value for each of these
  * properties is { name: 'name', config: { } }. The name is passed as
- * the first argument to this.argument()/this.option() respectively 
+ * the first argument to this.argument()/this.option() respectively
  * and the config object is passed as the second argument.
  */
 module.exports = yeoman.Base.extend({
   constructor: function () {
+
     yeoman.Base.apply(this, arguments);
 
     this.bail = false;
@@ -36,6 +37,7 @@ module.exports = yeoman.Base.extend({
     this.sdkVersions = require('./app/sdk-versions.js');
     this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
     this.moduleRegistry = require('./app/alfresco-module-registry.js')(this);
+    this.modules = this.moduleRegistry.getNamedModules();
   },
 
   setupArgumentsAndOptions: function(prompts) {
