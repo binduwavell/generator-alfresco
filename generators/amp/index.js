@@ -5,141 +5,336 @@ var path = require('path');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var constants = require('../app/constants.js');
+var filters = require('../app/prompt-filters.js');
+var SubGenerator = require('../subgenerator.js');
 
-module.exports = yeoman.Base.extend({
+const WAR_TYPE_BOTH = 'Both repo & share';
+const WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+
+module.exports = SubGenerator.extend({
+
+  constructor: function() {
+    SubGenerator.apply(this, arguments);
+
+    var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
+    var defArtifactIdPrefix = this.config.get(constants.PROP_PROJECT_ARTIFACT_ID);
+    var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
+
+    this.prompts = [
+      {
+        type: 'list',
+        name: constants.PROP_WAR,
+        option: {
+          name: 'war',
+          config: {
+            desc: 'War to target: repo, share or both',
+            alias:'w',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var w = warFilter(this.options.war);
+          if (undefined !== w) {
+            props[constants.PROP_WAR] = w;
+            this.out.info("Using war from command line: " + chalk.reset.dim.cyan(w));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        choices: WAR_TYPES,
+        message: 'Which war would you like to customize?',
+      },
+      {
+        type: 'input',
+        name: constants.PROP_PROJECT_GROUP_ID,
+        option: {
+          name: 'project-group-id',
+          config: {
+            desc: 'groupId for project',
+            alias:'g',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var g = projectGroupIdFilter(this.options['project-group-id']);
+          if (undefined !== g) {
+            props[constants.PROP_PROJECT_GROUP_ID] = g;
+            this.out.info("Using project groupId from command line: " + chalk.reset.dim.cyan(g));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        default: defGroupId,
+        message: 'Project groupId?',
+        validate: function(input) {
+          return (undefined !== input && '' !== input ? true : 'The ' + chalk.yellow('project groupId') + ' is required');
+        },
+        filter: projectGroupIdFilter,
+      },
+      {
+        type: 'input',
+        name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
+        option: {
+          name: 'project-artifact-id',
+          config: {
+            desc: 'artifactId prefix for project',
+            alias:'a',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var a = projectArtifactIdPrefixFilter(this.options['project-artifact-id']);
+          if (undefined !== a) {
+            props[constants.PROP_PROJECT_ARTIFACT_ID_PREFIX] = a;
+            this.out.info("Using project artifactId prefix from command line: " + chalk.reset.dim.cyan(a));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        default: defArtifactIdPrefix,
+        message: 'Project artifactId prefix?',
+        validate: function(input) {
+          return (undefined !== input && '' !== input ? true : 'The ' + chalk.yellow('project artifactId prefix') + ' is required');
+        },
+        filter: projectArtifactIdPrefixFilter,
+      },
+      {
+        type: 'input',
+        name: constants.PROP_PROJECT_VERSION,
+        option: {
+          name: 'project-version',
+          config: {
+            desc: 'version for project',
+            alias:'v',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var v = projectVersionFilter(this.options['project-version']);
+          if (undefined !== v) {
+            props[constants.PROP_PROJECT_VERSION] = v;
+            this.out.info("Using project version from command line: " + chalk.reset.dim.cyan(v));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        default: defVersion,
+        message: 'Project version?',
+        validate: function(input) {
+          return (undefined !== input && '' !== input ? true : 'The ' + chalk.yellow('project version') + ' is required');
+        },
+        filter: projectVersionFilter,
+      },
+      {
+        type: 'confirm',
+        name: 'createParent',
+        option: {
+          name: 'create-parent',
+          config: {
+            desc: 'create parent folder for amps',
+            alias:'p',
+            type: Boolean,
+          }
+        },
+        when: function(props) {
+          var warType = props[constants.PROP_WAR];
+          var show = (WAR_TYPE_BOTH === warType);
+          var p = createParentFilter(this.options['create-parent']);
+          if (undefined !== p) {
+            props.createParent = p;
+            if (show) {
+              this.out.info("Using create parent from command line: " + chalk.reset.dim.cyan(p));
+            }
+            return false;
+          } else {
+            if (!show) {
+              this.createParent = false;
+            }
+          }
+          return show;
+        }.bind(this),
+        default: false,
+        message: 'Would you like to create a parent folder to contain both of your amps?',
+      },
+      {
+        type: 'input',
+        name: 'parentName',
+        option: {
+          name: 'parent-name',
+          config: {
+            desc: 'name for parent pom',
+            alias:'N',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var n = nameFilter(this.options['parent-name']);
+          if (undefined !== n) {
+            props.parentName = n;
+            this.out.info("Using parent name from command line: " + chalk.reset.dim.cyan(n));
+            return false;
+          }
+          return props.createParent;
+        }.bind(this),
+        message: 'Name for parent pom?',
+        filter: nameFilter,
+      },
+      {
+        type: 'input',
+        name: 'parentDescription',
+        option: {
+          name: 'parent-description',
+          config: {
+            desc: 'description for parent pom',
+            alias:'D',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var d = descriptionFilter(this.options['parent-description']);
+          if (undefined !== d) {
+            props.parentDescription = d;
+            this.out.info("Using parent description from command line: " + chalk.reset.dim.cyan(d));
+            return false;
+          }
+          return props.createParent;
+        }.bind(this),
+        message: 'Description for parent pom?',
+        filter: descriptionFilter,
+      },
+      {
+        type: 'input',
+        name: 'repoName',
+        option: {
+          name: 'repo-name',
+          config: {
+            desc: 'name for repo pom',
+            alias:'n',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var warType = props[constants.PROP_WAR];
+          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
+          var n = nameFilter(this.options['repo-name']);
+          if (undefined !== n) {
+            props.repoName = n;
+            if (show) {
+              this.out.info("Using repo name from command line: " + chalk.reset.dim.cyan(n));
+            }
+            return false;
+          }
+          return show;
+        }.bind(this),
+        message: 'Name for repo amp?',
+        filter: nameFilter,
+      },
+      {
+        type: 'input',
+        name: 'repoDescription',
+        option: {
+          name: 'repo-description',
+          config: {
+            desc: 'description for repo pom',
+            alias:'d',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var warType = props[constants.PROP_WAR];
+          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
+          var d = descriptionFilter(this.options['repo-description']);
+          if (undefined !== d) {
+            props.repoDescription = d;
+            this.out.info("Using repo description from command line: " + chalk.reset.dim.cyan(d));
+            return false;
+          }
+          return show;
+        }.bind(this),
+        message: 'Description for repo amp?',
+        filter: descriptionFilter,
+      },
+      {
+        type: 'input',
+        name: 'shareName',
+        option: {
+          name: 'share-name',
+          config: {
+            desc: 'name for share pom',
+            alias:'m',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var warType = props[constants.PROP_WAR];
+          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
+          var n = nameFilter(this.options['share-name']);
+          if (undefined !== n) {
+            props.shareName = n;
+            if (show) {
+              this.out.info("Using share name from command line: " + chalk.reset.dim.cyan(n));
+            }
+            return false;
+          }
+          return show;
+        }.bind(this),
+        message: 'Name for share amp?',
+        filter: nameFilter,
+      },
+      {
+        type: 'input',
+        name: 'shareDescription',
+        option: {
+          name: 'share-description',
+          config: {
+            desc: 'description for share pom',
+            alias:'s',
+            type: String,
+          }
+        },
+        when: function(props) {
+          var warType = props[constants.PROP_WAR];
+          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
+          var d = descriptionFilter(this.options['share-description']);
+          if (undefined !== d) {
+            props.shareDescription = d;
+            this.out.info("Using share description from command line: " + chalk.reset.dim.cyan(d));
+            return false;
+          }
+          return show;
+        }.bind(this),
+        message: 'Description for share amp?',
+        filter: descriptionFilter,
+      },
+    ];
+
+    this.setupArgumentsAndOptions(this.prompts);
+  },
+
   prompting: function () {
-    this.bail = false;
-    this.out = require('../app/app-output.js')(this);
 
-    // ==== GUARD AGAINST SUB-GENERATOR BEING RUN STAND-ALONE ====
-    try { var configJSON = this.fs.readJSON('.yo-rc.json'); } catch (err) { /* ignore */ }
-    if(!configJSON || !configJSON['generator-alfresco']) {
-      this.out.error('The ' + chalk.blue('alfresco:amp') + ' sub-generator must be run in a project created using ' + chalk.green('yo alfresco'));
-      this.bail = true;
-    } else {
+    this.out.info([
+      'This sub-generator will update existing POM\'s and context files.',
+      'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
+      'Type "h" when prompted to get details about your resolution choices.'].join(' '));
 
-      this.log(yosay(
-        'Adding source amp(s) to ' + chalk.green(this.config.get(constants.PROP_PROJECT_ARTIFACT_ID)) + ' project!'
-      ));
+    var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
+    var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
 
-      this.out.info([
-        'This sub-generator will update existing POM\'s and context files.',
-        'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
-        'Type "h" when prompted to get details about your resolution choices.'].join(' '));
-
-      var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
-      var defArtifactIdPrefix = this.config.get(constants.PROP_PROJECT_ARTIFACT_ID);
-      var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
-      var prompts = [
-        {
-          type: 'list',
-          name: constants.PROP_WAR,
-          message: 'Which war would you like to customize?',
-          choices: ['repo & share', constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE],
-        },
-        {
-          type: 'input',
-          name: constants.PROP_PROJECT_GROUP_ID,
-          message: 'Project groupId?',
-          default: defGroupId,
-        },
-        {
-          type: 'input',
-          name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
-          message: 'Project artifactId prefix?',
-          default: defArtifactIdPrefix,
-        },
-        {
-          type: 'input',
-          name: constants.PROP_PROJECT_VERSION,
-          message: 'Project version?',
-          default: defVersion,
-        },
-        {
-          type: 'confirm',
-          name: 'createParent',
-          message: 'Would you like to create a parent folder to contain both of your amps?',
-          default: false,
-          when: function(props) {
-            var warType = props[constants.PROP_WAR];
-            return ('repo & share' === warType);
-          }
-        },
-        {
-          type: 'input',
-          name: 'parentName',
-          message: 'Name for parent pom?',
-          when: function(props) {
-            return props.createParent;
-          }
-        },
-        {
-          type: 'input',
-          name: 'parentDescription',
-          message: 'Description for parent pom?',
-          when: function(props) {
-            return props.createParent;
-          }
-        },
-        {
-          type: 'input',
-          name: 'repoName',
-          message: 'Name for repo amp?',
-          when: function(props) {
-            var warType = props[constants.PROP_WAR];
-            return ('repo & share' === warType || constants.WAR_TYPE_REPO === warType);
-          }
-        },
-        {
-          type: 'input',
-          name: 'repoDescription',
-          message: 'Description for repo amp?',
-          when: function(props) {
-            var warType = props[constants.PROP_WAR];
-            return ('repo & share' === warType || constants.WAR_TYPE_REPO === warType);
-          }
-        },
-        {
-          type: 'input',
-          name: 'shareName',
-          message: 'Name for share amp?',
-          when: function(props) {
-            var warType = props[constants.PROP_WAR];
-            return ('repo & share' === warType || constants.WAR_TYPE_SHARE === warType);
-          }
-        },
-        {
-          type: 'input',
-          name: 'shareDescription',
-          message: 'Description for share amp?',
-          when: function(props) {
-            var warType = props[constants.PROP_WAR];
-            return ('repo & share' === warType || constants.WAR_TYPE_SHARE === warType);
-          }
-        },
-      ];
-
-      var donePrompting = this.async();
-      this.prompt(prompts, function (props) {
-        this.props = props;
-        if (defGroupId === props[constants.PROP_PROJECT_GROUP_ID]) {
-          props[constants.PROP_PROJECT_GROUP_ID] = constants.VAR_PROJECT_GROUPID;
-        }
-        if (defVersion === props[constants.PROP_PROJECT_VERSION]) {
-          props[constants.PROP_PROJECT_VERSION] = constants.VAR_PROJECT_VERSION;
-        }
-        if ('repo & share' === props[constants.PROP_WAR]) {
-          this.props[constants.PROP_WAR] = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
-        } else {
-          this.props[constants.PROP_WAR] = [this.props[constants.PROP_WAR]];
-        }
-        this.sdkVersions = require('../app/sdk-versions.js');
-        this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
-        this.moduleManager = require('../app/alfresco-module-manager.js')(this);
-        donePrompting();
-      }.bind(this));
-
-    }
+    this.subgeneratorPrompt(this.prompts, function (props) {
+      this.props = props;
+      if (defGroupId === props[constants.PROP_PROJECT_GROUP_ID]) {
+        props[constants.PROP_PROJECT_GROUP_ID] = constants.VAR_PROJECT_GROUPID;
+      }
+      if (defVersion === props[constants.PROP_PROJECT_VERSION]) {
+        props[constants.PROP_PROJECT_VERSION] = constants.VAR_PROJECT_VERSION;
+      }
+      if (WAR_TYPE_BOTH === props[constants.PROP_WAR]) {
+        this.props[constants.PROP_WAR] = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+      } else {
+        this.props[constants.PROP_WAR] = [this.props[constants.PROP_WAR]];
+      }
+    }.bind(this));
   },
 
   writing: function () {
@@ -231,5 +426,38 @@ module.exports = yeoman.Base.extend({
     if (this.bail) return;
   }
 });
+
+function warFilter(war) {
+  if (undefined === war || '' === war) return undefined;
+  var w = war.toLocaleLowerCase();
+  if ('repo'  === w) return constants.WAR_TYPE_REPO;
+  if ('share' === w) return constants.WAR_TYPE_SHARE;
+  if ('both'  === w) return WAR_TYPE_BOTH;
+  return undefined;
+}
+
+function projectGroupIdFilter(projectGroupId) {
+  return filters.requiredTextFilter(projectGroupId);
+}
+
+function projectArtifactIdPrefixFilter(projectArtifactIdPrefix) {
+  return filters.requiredTextFilter(projectArtifactIdPrefix);
+}
+
+function projectVersionFilter(projectVersion) {
+  return filters.requiredTextFilter(projectVersion);
+}
+
+function createParentFilter(createParent) {
+  return filters.booleanFilter(createParent);
+}
+
+function nameFilter(name) {
+  return filters.optionalTextFilter(name);
+}
+
+function descriptionFilter(description) {
+  return filters.optionalTextFilter(description);
+}
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

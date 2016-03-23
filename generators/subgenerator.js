@@ -38,6 +38,7 @@ module.exports = yeoman.Base.extend({
     this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
     this.moduleRegistry = require('./app/alfresco-module-registry.js')(this);
     this.modules = this.moduleRegistry.getNamedModules();
+    this.moduleManager = require('./app/alfresco-module-manager.js')(this);
   },
 
   setupArgumentsAndOptions: function(prompts) {
