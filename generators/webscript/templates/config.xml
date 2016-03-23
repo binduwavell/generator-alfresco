@@ -1,0 +1,10 @@
+<yourRoot>
+  <!--
+    See http://docs.alfresco.com/5.1/references/api-ws-obj-config.html
+    for details on the config root scoped object that can be used to
+    access this data from javascript.
+  -->
+  <item>Webscript .config.xml files can contain arbitrary xml</item>
+  <warning>Do not specify an xml declaration in this file</warning>
+  <warning>Do not put comments outside of the root element</warning>
+</yourRoot>

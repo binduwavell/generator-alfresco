@@ -1,0 +1,60 @@
+<%
+function optionalAttribute(prop, attrName) {
+  if(prop) {
+    %> <%- attrName %>="<%- prop %>"<%
+  }
+}
+-%>
+<%
+function isEmpty(value) {
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
+}
+-%>
+<webscript<% optionalAttribute(kind, 'kind') %>>
+  <shortname><%- shortname %></shortname>
+  <description><%- description %></description>
+<% urlTemplates.forEach(function(url) { -%>
+  <url><%- url %></url>
+<% }) -%>
+  <format<% optionalAttribute(formatDefault, 'default') %>><%- formatSelector %></format>
+  <authentication<% optionalAttribute(authenticationRunas, 'runas') %>><%- authentication %></authentication>
+  <transaction<% optionalAttribute(transactionAllow, 'allow') %><% optionalAttribute(transactionBuffersize, 'buffersize') %>><%- transaction %></transaction>
+<% families.forEach(function(family) { -%>
+  <family><%- family %></family>
+<% }) -%>
+  <cache>
+    <never><%- cacheNever %></never>
+    <public><%- cachePublic %></public>
+    <mustrevalidate><%- cacheMustrevalidate %></mustrevalidate>
+  </cache>
+<% for (var format in negotiations) { if (negotiations.hasOwnProperty(format)) { -%>
+  <negotiate accept="<%- negotiations[format] %>"><%- format %></negotiate>
+<% } } -%>
+  <lifecycle><%- lifecycle %></lifecycle>
+  <formdata multipart-processing="<%- formdataMultipartProcessing %>" />
+<% if(args && !isEmpty(args)) { -%>
+  <args>
+<% for (var argName in args) { if (args.hasOwnProperty(argName)) { -%>
+    <arg>
+      <name><%- argName %></name>
+      <description><%- args[argName] %></description>
+    </arg>
+<% } } -%>
+  </args>
+<% } -%>
+  <requests>
+<% requests.forEach(function(request) { -%>
+    <request type="<%- request %>" />
+<% }) -%>
+  </requests>
+  <responses>
+<% responses.forEach(function(response) { -%>
+    <response type="<%- response %>" />
+<% }) -%>
+  </responses>
+</webscript>
