@@ -64,7 +64,7 @@ yo alfresco --help
 ```
 
 Will print out information about cli arguments and options. It will also list the
-sub-generators we have produced.
+sub-generators we have completed.
 
 ```bash
 yo alfresco:amp
@@ -81,10 +81,10 @@ yo alfresco:webscript
 ```
 
 This will ask you a bunch of questions and then produce appropriate repo/share files
-for a your WebScript. If you choose multiple methods you can in fact scaffold multiple
+for your WebScript. If you choose multiple methods you can in fact scaffold multiple
 webscripts with one pass through this sub-generator.
 
-We are planning to add many more sub-generators for things like: content modesl,
+We are planning to add many more sub-generators for things like: content models,
 repo actions, behaviors, jobs, workflows, etc.
 
 ### Try The Project / Contribute
