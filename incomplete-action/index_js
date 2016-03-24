@@ -2,7 +2,7 @@
 var yeoman = require('yeoman-generator');
 var xml2js = require('xml2js');
 
-module.exports = yeoman.generators.Base.extend({
+//module.exports = yeoman.generators.Base.extend({
   initializing: function () {
 	/*
     this.argument('name', {
@@ -114,7 +114,7 @@ module.exports = yeoman.generators.Base.extend({
     }
     */
     /*
-    // The below code is used to run over a file containing 
+    // The below code is used to run over a file containing
     // multiple bean definitions to delete 'abstract' attribute
     var xml = null;
     parser.parseString(fileData.substring(0, fileData.length), function (err, result) {
@@ -143,4 +143,4 @@ module.exports = yeoman.generators.Base.extend({
       }
     );
   }
-});
+//});

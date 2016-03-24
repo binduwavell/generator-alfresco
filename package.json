@@ -14,8 +14,10 @@
     "node": ">=0.10.0"
   },
   "files": [
+    "generators",
     "generators/app",
-    "generators/amp"
+    "generators/amp",
+    "generators/webscript"
   ],
   "keywords": [
     "yeoman-generator"

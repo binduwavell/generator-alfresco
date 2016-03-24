@@ -1,0 +1,3 @@
+Sub-generators:
+    yo alfresco:amp -- can scaffold additional source amps into your existing project
+    yo alfresco:webapp -- can scaffold webscripts into existing source modules

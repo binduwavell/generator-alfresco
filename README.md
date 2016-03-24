@@ -59,11 +59,33 @@ yo alfresco
 This will ask you a number of questions and then generate a project based on your
 answers.
 
-We are currently in the process of finalising the code that is needed for brining
-new: local, remote and source modules into projects created with the generator.
-Once that is done we will add sub-generators for creating things like webscripts, repo
-actions, behaviors, workflows, etc.
+```bash
+yo alfresco --help
+```
 
+Will print out information about cli arguments and options. It will also list the
+sub-generators we have produced.
+
+```bash
+yo alfresco:amp
+```
+
+This will ask a few questions and then create additional repo/share source AMPs
+and plug them into your project infrastructure.
+
+We still need to add the ability to integrate pre-packaged AMPs from the /amps
+and /amps_share folders and from remote maven repositories to this sub-generator.
+
+```bash
+yo alfresco:webscript
+```
+
+This will ask you a bunch of questions and then produce appropriate repo/share files
+for a your WebScript. If you choose multiple methods you can in fact scaffold multiple
+webscripts with one pass through this sub-generator.
+
+We are planning to add many more sub-generators for things like: content modesl,
+repo actions, behaviors, jobs, workflows, etc.
 
 ### Try The Project / Contribute
 
