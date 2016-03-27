@@ -128,6 +128,28 @@ module.exports = SubGenerator.extend({
       },
       {
         type: 'confirm',
+        name: 'removeDefaultSourceSamples',
+        option: {
+          name: 'remove-default-source-samples',
+          config: {
+            desc: 'remove sample code from new amp(s)',
+            alias: 'r',
+            type: Boolean,
+          }
+        },
+        when: function(props) {
+          var r = removeDefaultSourceSamplesFilter(this.options['remove-default-source-samples'])
+          if (undefined !== r) {
+            props.removeDefaultSourceSamples = r;
+            this.out.info("Using remove sample code value from command line: " + chalk.reset.dim.cyan(r));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        message: 'Should we remove the default samples?',
+      },
+      {
+        type: 'confirm',
         name: 'createParent',
         option: {
           name: 'create-parent',
@@ -401,6 +423,17 @@ module.exports = SubGenerator.extend({
             this.fs.write(pomPath, pom.getPOMString());
           }.bind(this));
         }
+        if (this.props.removeDefaultSourceSamples) {
+          this.moduleManager.pushOp(
+            function() {
+              this.sdk.removeRepoSamples.call(this, 
+                modulePath,
+                this.config.get(constants.PROP_PROJECT_PACKAGE),
+                prefix
+              );
+            }.bind(this)
+          );
+        }
       }
       if (constants.WAR_TYPE_SHARE === war) {
         // We are creating a new module so we need to set it up
@@ -416,6 +449,17 @@ module.exports = SubGenerator.extend({
             if (this.props.shareDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.shareDescription);
             this.fs.write(pomPath, pom.getPOMString());
           }.bind(this));
+        }
+        if (this.props.removeDefaultSourceSamples) {
+          this.moduleManager.pushOp(
+            function() {
+              this.sdk.removeShareSamples.call(this, 
+                modulePath,
+                this.config.get(constants.PROP_PROJECT_PACKAGE),
+                prefix
+              );
+            }.bind(this)
+          );
         }
       }
     }.bind(this));
@@ -447,6 +491,10 @@ function projectArtifactIdPrefixFilter(projectArtifactIdPrefix) {
 
 function projectVersionFilter(projectVersion) {
   return filters.requiredTextFilter(projectVersion);
+}
+
+function removeDefaultSourceSamplesFilter(removeDefaultSourceSamples) {
+  return filters.booleanFilter(removeDefaultSourceSamples);
 }
 
 function createParentFilter(createParent) {
