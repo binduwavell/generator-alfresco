@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
@@ -428,7 +429,7 @@ module.exports = SubGenerator.extend({
 });
 
 function warFilter(war) {
-  if (!_isString(war) || _.isEmpty(war)) return undefined;
+  if (!_.isString(war) || _.isEmpty(war)) return undefined;
   var w = war.toLocaleLowerCase();
   if ('repo'  === w) return constants.WAR_TYPE_REPO;
   if ('share' === w) return constants.WAR_TYPE_SHARE;
