@@ -27,7 +27,7 @@
     "cross-spawn": "2.1.5",
     "deasync": "0.1.4",
     "eyes": "0.1.8",
-    "lodash": "4.6.0",
+    "lodash": "4.6.1",
     "pretty-data": "0.40.0",
     "rmdir": "1.2.0",
     "semver": "5.1.0",
@@ -41,14 +41,14 @@
     "yosay": "1.1.0"
   },
   "devDependencies": {
-    "coveralls": "2.11.8",
+    "coveralls": "2.11.9",
     "fixme": "0.3.0",
     "istanbul": "0.4.2",
     "mem-fs": "1.1.2",
     "mem-fs-editor": "2.2.0",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
-    "npm-check-updates": "2.5.8",
+    "npm-check-updates": "2.6.1",
     "shelljs": "0.5.0",
     "yeoman-assert": "2.1.1",
     "yeoman-test": "1.1.0"
