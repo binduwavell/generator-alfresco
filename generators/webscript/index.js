@@ -919,15 +919,15 @@ module.exports = SourceSelectingSubGenerator.extend({
 // =======================================
 
 function idFilter(id) {
-  if (undefined === id) return undefined;
+  if (!_.isString(id)) return undefined;
   var retv = _.kebabCase(id);
   // if after kebabbing our id we don't have anything left treat as undefined
-  if ('' === retv) return undefined
+  if (_.isEmpty(retv)) return undefined
   return retv;
 }
 
 function packageFilter(pkg) {
-  if (undefined === pkg || '' === pkg) return undefined;
+  if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
   // To begin with, if package is provided in dot notation replace dots with slashes
   // also, treat spaces like path separators
   var output = pkg.replace(/[\.\s]/g, '/');
@@ -945,7 +945,7 @@ function packageFilter(pkg) {
 }
 
 function languageFilter(lang) {
-  if (undefined === lang || '' === lang) return undefined;
+  if (!_.isString(lang) || _.isEmpty(lang)) return undefined;
   var l = lang.toLocaleLowerCase();
   if ('java' === l) return 'Java';
   if ('javascript' === l) return 'JavaScript';
@@ -1024,7 +1024,7 @@ function transactionAllowanceFilter(transactionAllow) {
 // value is provided for this Number option, so
 // we return the empty string for that too.
 function transactionBuffersizeFilter(buffersize) {
-  if (undefined === buffersize) return undefined;
+  if (undefined === buffersize || null === buffersize) return undefined;
   if (true === buffersize) return '';
   if (isNaN(buffersize)) return '';
   if (_.isNumber(buffersize)) return parseInt(buffersize);
@@ -1050,7 +1050,7 @@ function cacheMustRevalidateFilter(cache) {
 
 function negotiationsFilter(negotiations) {
   if (true === negotiations) return '';
-  if (_.isEmpty(negotiations)) return undefined;
+  if (!_.isString(negotiations) || _.isEmpty(negotiations)) return undefined;
   var negotiationList = negotiations.split(/\s*\|\s*/);
   var valSet = false;
   var retv = negotiationList.reduce(function(negotiations, negotiation) {

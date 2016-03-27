@@ -428,7 +428,7 @@ module.exports = SubGenerator.extend({
 });
 
 function warFilter(war) {
-  if (undefined === war || '' === war) return undefined;
+  if (!_isString(war) || _.isEmpty(war)) return undefined;
   var w = war.toLocaleLowerCase();
   if ('repo'  === w) return constants.WAR_TYPE_REPO;
   if ('share' === w) return constants.WAR_TYPE_SHARE;
