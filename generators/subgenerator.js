@@ -69,7 +69,62 @@ module.exports = yeoman.Base.extend({
       }
 
       var donePrompting = this.async();
-      this.prompt(prompts, function (props) {
+      /**
+       * If a prompt defines a property named commonFilter with a function for the value,
+       * we'll use that for the filter parameter. If an option is defined, we'll also use
+       * the commonFilter in the when function to skip the prompt if the option is provided
+       * and valid. Finally, if there is no validate function, we'll produce one. A
+       * invalidMessage property may be specified. If commonFilter for our input returns
+       * undefined we'll use invalidMessage to control the error reported to the user if
+       * it is provided. invalidMessage may be a string or a function that takes the user
+       * input as the only argument. If invalidMessage is not provided then a basic
+       * message will be generated.
+       */
+      var self = this;
+      var processedPrompts = prompts.map(function(prompt) {
+        if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter)) {
+          var newPrompt = _.assign({}, prompt);
+          if (!prompt.hasOwnProperty('filter')) {
+            newPrompt.filter = prompt.commonFilter;
+          }
+          if (prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name') && prompt.hasOwnProperty('name')) {
+            var oldWhen = prompt.when;
+            newPrompt.when = function(props) {
+              var v = prompt.commonFilter.call(self, self.options[prompt.option.name]);
+              if (undefined !== v) {
+                props[prompt.name] = v;
+                self.out.info('Value for ' + prompt.option.name + ' set from command line: ' + chalk.reset.dim.cyan(v));
+                return false;
+              }
+              if (_.isBoolean(oldWhen)) {
+                return oldWhen;
+              }
+              if (_.isFunction(oldWhen)) {
+                return oldWhen.call(self, props);
+              }
+              return true;
+            }.bind(self);
+          }
+          if(!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
+            newPrompt.validate = function(input) {
+              var msg = 'The ' + chalk.yellow(prompt.name) + ' value is invalid';
+              if (prompt.hasOwnProperty('invalidMessage')) {
+                if (_.isFunction(prompt.invalidMessage)) {
+                  msg = prompt.invalidMessage.call(self, input);
+                }
+                if (_.isString(prompt.invalidMessage)) {
+                  msg = prompt.invalidMessage;
+                }
+              }
+              return (undefined !== prompt.commonFilter.call(self, input) ? true : msg);
+            }.bind(self);
+          }
+          return newPrompt;
+        } else {
+          return prompt;
+        }
+      });
+      this.prompt(processedPrompts, function (props) {
         if (donePromptingFunc) {
           donePromptingFunc.call(this, props);
         }

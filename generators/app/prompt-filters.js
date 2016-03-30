@@ -6,6 +6,11 @@ var _ = require('lodash');
  * a non-undefined value must be returned. They are also used to process user
  * input in the form. If we return undefined that means that the value was
  * invalid.
+ * 
+ * For filter functions that take more than one argument we provide a Factory
+ * alternative that takes all of the arguments except the input and returns
+ * a function that takes the input and in order to call the original filter 
+ * with the input and the captured arguments.
  */
 
 module.exports = {
@@ -70,6 +75,11 @@ module.exports = {
     }
     return retv;
   },
+  chooseOneFilterFactory: function (list) {
+    return function(input) {
+      return module.exports.chooseOneFilter(input, list);
+    }
+  },
 
   /**
    * Check if any items in the list start with the input in a case insensitive
@@ -98,6 +108,11 @@ module.exports = {
       });
     }
     return retv;
+  },
+  chooseOneStartsWithFilterFactory: function(list) {
+    return function(input) {
+      return module.exports.chooseOneStartsWithFilter(input, list);
+    }
   },
 
   /**
@@ -144,6 +159,10 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   requiredTextListFilter: function(input, sep, choices) {
+    // if we already have a list, just return it. We may
+    // want to add validation that the items are in the
+    // choices list
+    if (_.isArray(input)) return input;
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
@@ -164,6 +183,11 @@ module.exports = {
     if (_.isEmpty(retv)) return undefined;
     return retv;
   },
+  requiredTextListFilterFactory: function(sep, choices) {
+    return function(input) {
+      return module.exports.requiredTextListFilter(input, sep, choices);
+    }
+  },
 
   /**
    * Given some input text, a separator and an optional list of
@@ -183,6 +207,10 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   textListFilter: function(input, sep, choices) {
+    // if we already have a list, just return it. We may
+    // want to add validation that the items are in the
+    // choices list
+    if (_.isArray(input)) return input;
     if (true === input) return [];
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
@@ -202,7 +230,12 @@ module.exports = {
       });
     }
     return retv;
-  }
+  },
+  textListFilterFactory: function(sep, choices) {
+    return function(input) {
+      return module.exports.textListFilter(input, sep, choices);
+    }
+  },
 
 };
 

@@ -43,7 +43,11 @@ module.exports = function(yo) {
 
   module.docs = function(text, link) {
     if (text) {
-      yo.log(wrap(chalk.dim.yellow(text), size.width));
+      var t = text;
+      if (_.isArray(text)) {
+        t = text.join('\n\n');
+      }
+      yo.log(wrap(chalk.dim.yellow(t), size.width));
     }
     if (link) {
       yo.log(chalk.dim.green('See: ') + chalk.blue.underline(link));
