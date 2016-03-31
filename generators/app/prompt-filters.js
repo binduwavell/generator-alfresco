@@ -56,17 +56,17 @@ module.exports = {
    * @param {(string|boolean|undefined|null)} input
    * @param {string[]} list
    * @returns {(string|undefined)}
-     */
+   */
   chooseOneFilter: function (input, list) {
     if (true === input) return undefined;
     var retv = undefined;
     if (_.isString(input)) {
-      if ('' === input) return undefined;
-      var i = input.toLocaleLowerCase();
-      list.forEach(function(item) {
-        var ilc = item.toLocaleLowerCase();
-        if (ilc === i) retv = item;
-      });
+      if (_.isEmpty(input)) return undefined;
+      var ilc = input.toLocaleLowerCase();
+      for (var idx = 0; idx < list.length; idx++) {
+        var item = list[idx];
+        if (item.toLocaleLowerCase() === ilc) return item;
+      }
     }
     return retv;
   },
@@ -135,7 +135,7 @@ module.exports = {
    * match the choices in a case insensitive way and we return
    * in the order provided in the choices list and using the
    * case provided in the choices list.
-   * 
+   *
    * An empty list is not allowed (undefined will be returned.)
    *
    * @param input
@@ -144,7 +144,7 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   requiredTextListFilter: function(input, sep, choices) {
-    if (undefined === input || null === input || true == input) return undefined;
+    if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
     retv = retv.filter(function(r) {
@@ -161,7 +161,7 @@ module.exports = {
         return (lcretv.indexOf(c.toLocaleLowerCase()) > -1)
       });
     }
-    if (0 === retv.length) retv = undefined;
+    if (_.isEmpty(retv)) return undefined;
     return retv;
   },
 
@@ -174,7 +174,7 @@ module.exports = {
    * match the choices in a case insensitive way and we return
    * in the order provided in the choices list and using the
    * case provided in the choices list.
-   * 
+   *
    * An empty list is possible
    *
    * @param input
@@ -183,8 +183,8 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   textListFilter: function(input, sep, choices) {
-    if (undefined === input || null === input) return undefined;
     if (true === input) return [];
+    if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
     retv = retv.filter(function(r) {

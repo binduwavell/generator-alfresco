@@ -76,12 +76,13 @@ module.exports = SubGenerator.extend({
           return true;
         }.bind(this),
         choices: [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE],
-        message: 'Which type of module would you like to add a webscript to?',
+        message: 'Which type of source module would you like to add to?',
       },
       {
         type: 'list',
         name: 'targetModule',
         when: function(props) {
+          if (props.targetModule) return false;
           // Reduce module options based on which war type was selected
           this.modules = this.modules
             .filter(function(mod) {

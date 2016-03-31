@@ -517,11 +517,17 @@ module.exports = yeoman.Base.extend({
       if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
         if (this.sdk.removeRepoSamples) {
           // TODO(bwavell): 'repo-amp' should be generalized
-          this.sdk.removeRepoSamples.call(this, this.sdk.sdkVersionPrefix.call(this) + 'repo-amp');
+          this.sdk.removeRepoSamples.call(this, 
+            this.sdk.sdkVersionPrefix.call(this) + 'repo-amp',
+            this.projectPackage
+          );
         }
         if (this.sdk.removeShareSamples) {
           // TODO(bwavell): 'share-amp' should be generalized
-          this.sdk.removeShareSamples.call(this, this.sdk.sdkVersionPrefix.call(this) + 'share-amp');
+          this.sdk.removeShareSamples.call(this, 
+            this.sdk.sdkVersionPrefix.call(this) + 'share-amp',
+            this.projectPackage
+          );
         }
       }
     }

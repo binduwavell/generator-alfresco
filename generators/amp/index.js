@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
@@ -124,6 +125,28 @@ module.exports = SubGenerator.extend({
           return (undefined !== input && '' !== input ? true : 'The ' + chalk.yellow('project version') + ' is required');
         },
         filter: projectVersionFilter,
+      },
+      {
+        type: 'confirm',
+        name: 'removeDefaultSourceSamples',
+        option: {
+          name: 'remove-default-source-samples',
+          config: {
+            desc: 'remove sample code from new amp(s)',
+            alias: 'r',
+            type: Boolean,
+          }
+        },
+        when: function(props) {
+          var r = removeDefaultSourceSamplesFilter(this.options['remove-default-source-samples'])
+          if (undefined !== r) {
+            props.removeDefaultSourceSamples = r;
+            this.out.info("Using remove sample code value from command line: " + chalk.reset.dim.cyan(r));
+            return false;
+          }
+          return true;
+        }.bind(this),
+        message: 'Should we remove the default samples?',
       },
       {
         type: 'confirm',
@@ -400,6 +423,17 @@ module.exports = SubGenerator.extend({
             this.fs.write(pomPath, pom.getPOMString());
           }.bind(this));
         }
+        if (this.props.removeDefaultSourceSamples) {
+          this.moduleManager.pushOp(
+            function() {
+              this.sdk.removeRepoSamples.call(this, 
+                modulePath,
+                this.config.get(constants.PROP_PROJECT_PACKAGE),
+                prefix
+              );
+            }.bind(this)
+          );
+        }
       }
       if (constants.WAR_TYPE_SHARE === war) {
         // We are creating a new module so we need to set it up
@@ -416,6 +450,17 @@ module.exports = SubGenerator.extend({
             this.fs.write(pomPath, pom.getPOMString());
           }.bind(this));
         }
+        if (this.props.removeDefaultSourceSamples) {
+          this.moduleManager.pushOp(
+            function() {
+              this.sdk.removeShareSamples.call(this, 
+                modulePath,
+                this.config.get(constants.PROP_PROJECT_PACKAGE),
+                prefix
+              );
+            }.bind(this)
+          );
+        }
       }
     }.bind(this));
     // complete all scheduled activities
@@ -428,7 +473,7 @@ module.exports = SubGenerator.extend({
 });
 
 function warFilter(war) {
-  if (undefined === war || '' === war) return undefined;
+  if (!_.isString(war) || _.isEmpty(war)) return undefined;
   var w = war.toLocaleLowerCase();
   if ('repo'  === w) return constants.WAR_TYPE_REPO;
   if ('share' === w) return constants.WAR_TYPE_SHARE;
@@ -446,6 +491,10 @@ function projectArtifactIdPrefixFilter(projectArtifactIdPrefix) {
 
 function projectVersionFilter(projectVersion) {
   return filters.requiredTextFilter(projectVersion);
+}
+
+function removeDefaultSourceSamplesFilter(removeDefaultSourceSamples) {
+  return filters.booleanFilter(removeDefaultSourceSamples);
 }
 
 function createParentFilter(createParent) {

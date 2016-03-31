@@ -260,9 +260,9 @@ function removeAmps() {
   }
 }
 
-function removeRepoSamples(pathPrefix) {
-  var prefix = sdkVersionPrefix.call(this);
-  var projectPackagePath = this.projectPackage.replace(/\./g, '/');
+function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+  var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
+  var projectPackagePath = projectPackage.replace(/\./g, '/');
   [
     pathPrefix + '/src/main/amp/web/css/demoamp.css',
     pathPrefix + '/src/main/amp/web/jsp/demoamp.jsp',
@@ -312,9 +312,9 @@ function removeRepoSamples(pathPrefix) {
   this.fs.write(moduleContextPath, contextDocNew);
 }
 
-function removeShareSamples(pathPrefix) {
-  var prefix = sdkVersionPrefix.call(this);
-  var projectPackagePath = this.projectPackage.replace(/\./g, '/');
+function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+  var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
+  var projectPackagePath = projectPackage.replace(/\./g, '/');
   [
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/' + prefix + 'share-amp.properties',
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/' + prefix + 'share-amp-example-widgets.xml',
@@ -346,8 +346,8 @@ function removeShareSamples(pathPrefix) {
   var slingshotContextFile = 'custom-slingshot-application-context.xml';
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
     if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.1.1")) {
-      slingshotContextFile = prefix + 'share-amp-slingshot-application-context.xml';
-
+      var versionPrefix = sdkVersionPrefix.call(this);
+      slingshotContextFile = versionPrefix + 'share-amp-slingshot-application-context.xml';
     }
   }
   [
