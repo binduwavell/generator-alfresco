@@ -1,4 +1,4 @@
-# generator-alfresco [![Build Status](https://secure.travis-ci.org/binduwavell/generator-alfresco.png?branch=master)](https://travis-ci.org/binduwavell/generator-alfresco) [![Coverage Status](https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github)](https://coveralls.io/github/binduwavell/generator-alfresco?branch=master) [![Join the chat at https://gitter.im/binduwavell/generator-alfresco](https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg)](https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![create project on Codenvy](https://img.shields.io/badge/codenvy-clone-blue.svg)](https://codenvy.com/factory?id=zmv24wynr689af6f) 
+# generator-alfresco [![Build Status](https://secure.travis-ci.org/binduwavell/generator-alfresco.png?branch=master)](https://travis-ci.org/binduwavell/generator-alfresco) [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status](https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github)](https://coveralls.io/github/binduwavell/generator-alfresco?branch=master) [![Join the chat at https://gitter.im/binduwavell/generator-alfresco](https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg)](https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![create project on Codenvy](https://img.shields.io/badge/codenvy-clone-blue.svg)](https://codenvy.com/factory?id=zmv24wynr689af6f) 
 
 ## Getting Started
 
@@ -126,3 +126,6 @@ If you find a bug or something is confusing, you can review [existing](https://g
 ## License
 
 Apache 2.0
+
+[daviddm-image]: https://david-dm.org/binduwavell/generator-alfresco.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/binduwavell/generator-alfresco
