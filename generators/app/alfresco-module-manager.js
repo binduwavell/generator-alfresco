@@ -1,4 +1,5 @@
 'use strict';
+var debug = require('debug')('generator-alfresco:alfresco-module-manager');
 var path = require('path');
 var constants = require('./constants.js');
 var domutils = require('./xml-dom-utils.js');
@@ -24,6 +25,7 @@ module.exports = function(yo) {
   module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
 
   module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // console.log("Existing module: " + JSON.stringify(mod));
     if (!mod) {

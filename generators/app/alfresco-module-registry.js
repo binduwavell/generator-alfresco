@@ -1,4 +1,5 @@
 'use strict';
+var debug = require('debug')('generator-alfresco:alfresco-module-registry');
 var constants = require('./constants.js');
 
 /**
@@ -77,6 +78,7 @@ module.exports = function(yo) {
   }
 
   module.normalizeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    debug('attempting to normalize: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // first argument is always required
     if (undefined !== modOrGroupId) {
       // if the first argument is the only argument, make sure it provides all
