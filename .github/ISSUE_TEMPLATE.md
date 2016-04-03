@@ -36,4 +36,5 @@ would like guidance from the core team let us know.
 Are you willing/able to test any work we do towards your request?
 
 If you plan to contribute to the project and you are not familiar with out current
-[contribution](../CONTRIBUTING.md) policy, please make sure you have read that document.
+contribution policy, please make sure you have read that document (HINT: there is
+a link at the top of the page when you are creating an issue.)
