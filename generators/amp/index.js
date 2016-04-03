@@ -9,8 +9,8 @@ var constants = require('../app/constants.js');
 var filters = require('../app/prompt-filters.js');
 var SubGenerator = require('../subgenerator.js');
 
-const WAR_TYPE_BOTH = 'Both repo & share';
-const WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+var WAR_TYPE_BOTH = 'Both repo & share';
+var WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
 module.exports = SubGenerator.extend({
 
@@ -426,7 +426,7 @@ module.exports = SubGenerator.extend({
         if (this.props.removeDefaultSourceSamples) {
           this.moduleManager.pushOp(
             function() {
-              this.sdk.removeRepoSamples.call(this, 
+              this.sdk.removeRepoSamples.call(this,
                 modulePath,
                 this.config.get(constants.PROP_PROJECT_PACKAGE),
                 prefix
@@ -453,7 +453,7 @@ module.exports = SubGenerator.extend({
         if (this.props.removeDefaultSourceSamples) {
           this.moduleManager.pushOp(
             function() {
-              this.sdk.removeShareSamples.call(this, 
+              this.sdk.removeShareSamples.call(this,
                 modulePath,
                 this.config.get(constants.PROP_PROJECT_PACKAGE),
                 prefix

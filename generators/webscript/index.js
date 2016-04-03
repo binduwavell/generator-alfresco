@@ -9,15 +9,15 @@ var constants = require('../app/constants.js');
 var filters = require('../app/prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
-const METHODS = ['get', 'post', 'put', 'delete'];
-const LANGUAGES = ['Java', 'JavaScript', 'Both Java & JavaScript'];
-const JAVA_BASE_CLASSES = ['DeclarativeWebScript', 'AbstractWebScript'];
-const TEMPLATE_FORMATS = ['html', 'json', 'xml', 'csv', 'atom', 'rss'];
-const FORMAT_SELECTORS = ['any', 'argument', 'extension'];
-const AUTHENTICATIONS = ['none', 'guest', 'user', 'admin'];
-const TRANSACTIONS = ['none', 'required', 'requiresnew'];
-const TRANSACTION_ALLOWANCES = ['readonly', 'readwrite'];
-const LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api', 'deprecated', 'internal'];
+var METHODS = ['get', 'post', 'put', 'delete'];
+var LANGUAGES = ['Java', 'JavaScript', 'Both Java & JavaScript'];
+var JAVA_BASE_CLASSES = ['DeclarativeWebScript', 'AbstractWebScript'];
+var TEMPLATE_FORMATS = ['html', 'json', 'xml', 'csv', 'atom', 'rss'];
+var FORMAT_SELECTORS = ['any', 'argument', 'extension'];
+var AUTHENTICATIONS = ['none', 'guest', 'user', 'admin'];
+var TRANSACTIONS = ['none', 'required', 'requiresnew'];
+var TRANSACTION_ALLOWANCES = ['readonly', 'readwrite'];
+var LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api', 'deprecated', 'internal'];
 
 module.exports = SourceSelectingSubGenerator.extend({
   constructor: function() {
