@@ -69,6 +69,39 @@ describe('generator-alfresco:app-output', function () {
     assert.equal(chalk.stripColor(this.logmock.get()), 'example: this is an example.');
   });
 
+  it('can produce a color banner', function() {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    assert.equal(chalk.stripColor(out.bannerText()), out.rawBannerText());
+  });
+
+  /*
+  it('display banners', function() {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    console.log(out.rawBannerText());
+    console.log(out.fancyBannerText());
+  });
+  */
+
+  it('can produce a fancy banner', function() {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    out.banner('    ', 120);
+    assert.equal(chalk.stripColor(this.logmock.get()), out.rawBannerText());
+  });
+
+  /*
+  it('display logos', function() {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    console.log(out.rawLogoText());
+    console.log(out.fancyLogoText());
+  });
+  */
+
+  it('can produce a fancy logo', function() {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    out.banner('    ', 100);
+    assert.equal(chalk.stripColor(this.logmock.get()), out.rawLogoText());
+  });
+
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

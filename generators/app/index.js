@@ -54,10 +54,9 @@ module.exports = yeoman.Base.extend({
 
   prompting: function () {
     if (this.bail) return;
-    // Have Yeoman greet the user.
-    this.log(yosay(
-      'Welcome to the ' + chalk.green('Alfresco') + ' generator!'
-    ));
+    
+    // Display banner/logo
+    this.out.banner();
 
     var prompts = [
       {
