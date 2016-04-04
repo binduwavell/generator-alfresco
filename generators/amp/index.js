@@ -84,7 +84,7 @@ module.exports = SubGenerator.extend({
         default: false,
         message: 'Would you like to create a parent folder to contain both of your amps?',
         commonFilter: filters.booleanFilter,
-        valueRequired: true,
+        valueRequired: false,
       },
       {
         type: 'input',
