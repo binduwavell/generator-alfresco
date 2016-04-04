@@ -9,7 +9,7 @@ var path = require('path');
 
 describe('generator-alfresco:amp', function () {
 
-  this.timeout(20000);
+  this.timeout(30000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
