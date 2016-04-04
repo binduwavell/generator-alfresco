@@ -4,7 +4,6 @@ var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:subgenerator');
 var fs = require('fs');
 var path = require('path');
-var process = require('process');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var constants = require('./app/constants.js');

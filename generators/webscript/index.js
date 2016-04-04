@@ -3,7 +3,6 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
-var process = require('process');
 var yosay = require('yosay');
 var constants = require('../app/constants.js');
 var filters = require('../app/prompt-filters.js');
