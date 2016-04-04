@@ -9,7 +9,7 @@ var path = require('path');
 
 describe('generator-alfresco:webscript', function () {
 
-  this.timeout(10000);
+  this.timeout(20000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
