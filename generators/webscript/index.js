@@ -39,6 +39,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'What ' + chalk.yellow('webscript id') + ' should we use?',
         invalidMessage : 'The ' + chalk.yellow('webscript id') + ' value is required',
         commonFilter: idFilter,
+        valueRequired: true,
       },
       {
         // TODO(bwavell): Save package name for re-use the next time a webscript is scaffolded
@@ -54,6 +55,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Provide a ' + chalk.green('/') + ' separated ' + chalk.yellow('package') + ' for your webscript(s)',
         invalidMessage: 'The ' + chalk.yellow('package') + ' is required',
         commonFilter: packageFilter,
+        valueRequired: true,
       },
 
       {
@@ -62,14 +64,16 @@ module.exports = SourceSelectingSubGenerator.extend({
         option: { name: 'language', config: { alias:'l', desc: 'Language for webscript: java, javascript or both', type: 'String', } },
         choices: LANGUAGES,
         message: 'Which language would you like to develop your script in?',
-        commonFilter: languageFilter,
+        commonFilter: filters.chooseOneMapStartsWithFilterFactory({java: 'Java', javascript: 'JavaScript', both: 'Both Java & JavaScript'}),
+        valueRequired: true,
       },
       {
         type: 'list',
         name: 'javaBaseClass',
         option: { name: 'java-base-class', config: { alias:'c', desc: 'Java webscripts base class: DeclarativeWebScript or AbstractWebScript', type: 'String', } },
         when: function(props) {
-          if('Java' === props.language || 'Both Java & JavaScript' === props.language) {
+          var show = ('Java' === props.language || 'Both Java & JavaScript' === props.language);
+          if(show) {
             this.out.docs(
               ['The Web Script Framework provides two Java classes that implement the difficult parts of the org.alfresco.web.scripts.WebScript interface, which you can extend as a starting point. The simplest helper Java class is named as follows: org.alfresco.web.scripts.AbstractWebScript',
                'This helper provides an implementation of getDescription() but does not provide any execution assistance, which it delegates to its derived class. This allows a Java-backed web script to take full control of the execution process, including how output is rendered to the response.',
@@ -78,14 +82,13 @@ module.exports = SourceSelectingSubGenerator.extend({
                '*  Locate an associated controller script written in JavaScript and, if found, execute it.\n*  Locate an associated response template for the requested format and execute it, passing the model populated by the controller script.',
                'By default, all web scripts implemented through scripting alone are backed by the DeclarativeWebScript Java class. There is one special hook point that makes this a useful class for your own Java-backed web scripts to extend. Prior to controller script execution, DeclarativeWebScript invokes the template method executeImpl(), which it expects the derived Java classes to implement.',
               ], 'http://docs.alfresco.com/5.1/concepts/ws-and-Java.html');
-            return true;
-          } else {
-            return false;
           }
+          return show;
         }.bind(this),
         choices: JAVA_BASE_CLASSES,
         message: 'Which base class would you like to use for your Java backed webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(JAVA_BASE_CLASSES),
+        valueRequired: false,
       },
       {
         type: 'checkbox',
@@ -100,19 +103,25 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Which HTTP methods would you like to support?',
         invalidMessage: 'You must specify at least one method',
         commonFilter: filters.requiredTextListFilterFactory(',', METHODS),
+        valueRequired: true,
       },
       {
         type: 'checkbox',
         name: 'templateFormats',
         option: { name: 'template-formats', config: { alias:'t', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: 'String', } },
         when: function(props) {
-          return ('AbstractWebScript' !== props.javaBaseClass);
+          var show = ('AbstractWebScript' !== props.javaBaseClass);
+          if (!show) {
+            props.templateFormats = [];
+          }
+          return show;
         }.bind(this),
         choices: TEMPLATE_FORMATS,
         default: ['html'],
         message: 'Which response formats would you like to support?',
         invalidMessage: 'You must specify at least one template format',
         commonFilter: filters.requiredTextListFilterFactory(',', TEMPLATE_FORMATS),
+        valueRequired: false,
       },
 
 
@@ -128,6 +137,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'What <webscript ' + chalk.yellow('@kind') + '> would you like to create?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -142,6 +152,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'What ' + chalk.yellow('<shortname>') + ' should we use?',
         invalidMessage: 'The ' + chalk.yellow('shortname') + ' element is required',
         commonFilter: filters.requiredTextFilter,
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -155,6 +166,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'What ' + chalk.yellow('<description>') + ' should we use?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -173,6 +185,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('<url>') + ' values',
         invalidMessage: 'At least one ' + chalk.yellow('url') + ' is required',
         commonFilter: urlTemplatesFilter,
+        valueRequired: true,
       },
       {
         type: 'list',
@@ -189,27 +202,35 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: FORMAT_SELECTORS,
         message: 'How will the ' + chalk.yellow('<format>') + ' be specified?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(FORMAT_SELECTORS),
+        valueRequired: true,
       },
       {
         type: 'list',
         name: 'formatDefault',
         option: { name: 'format-default', config: { alias:'F', desc: 'Default format to use if no selection is made', type:'String', } },
         when: function(props) {
-          var f = filters.chooseOneStartsWithFilter(this.options['format-default'], props.templateFormats);
-          if (undefined != f) {
-            props.formatDefault = f;
-            this.out.info("Using default format from command line: " + chalk.reset.dim.cyan(props.formatDefault));
-            return false;
+          if (this.bail) return;
+          var show = (props.templateFormats && props.templateFormats.length > 0);
+          if (show) {
+            var f = filters.chooseOneStartsWithFilter(this.options['format-default'], props.templateFormats);
+            if (undefined != f) {
+              props.formatDefault = f;
+              this.out.info("Using default format from command line: " + chalk.reset.dim.cyan(props.formatDefault));
+              return false;
+            }
+            this.out.docs(
+              'If the caller does not specify a required content-type at all, the default content-type is taken from the default attribute of the format element. By default, if not set, the html format is assumed. In some cases, a URI might decide upon a response content-type at runtime. For these URIs, specify an empty format, for example format default="".',
+              'http://docs.alfresco.com/5.1/references/api-wsdl-format.html');
+          } else {
+            props.formatDefault = '';
           }
-          this.out.docs(
-            'If the caller does not specify a required content-type at all, the default content-type is taken from the default attribute of the format element. By default, if not set, the html format is assumed. In some cases, a URI might decide upon a response content-type at runtime. For these URIs, specify an empty format, for example format default="".',
-            'http://docs.alfresco.com/5.1/references/api-wsdl-format.html');
-          return true;
+          return show;
         }.bind(this),
         choices: function(props) {
-          return props.templateFormats
+          return props.templateFormats;
         },
         message: 'Which <format ' + chalk.yellow('@default') + '> should we use?',
+        valueRequired: false,
         // We can't use commonFilter here because it requires an extra input (the list of values)
       },
       {
@@ -228,6 +249,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: AUTHENTICATIONS,
         message: 'What level of ' + chalk.yellow('<authentication>') + ' is required to run the webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(AUTHENTICATIONS),
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -243,6 +265,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'Which user should the webscript <authentication ' + chalk.yellow('@runas') + '>? (leave empty for the calling user)',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'list',
@@ -264,6 +287,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'What type of ' + chalk.yellow('<transaction>') + ' is required to run the webscript?',
         commonFilter: filters.chooseOneFilterFactory(TRANSACTIONS),
+        valueRequired: true,
       },
       {
         // TODO(bwavell): What happens if no value is specified?
@@ -280,6 +304,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: TRANSACTION_ALLOWANCES,
         message: 'What type of data transfer do we want to <transaction ' + chalk.yellow('@allow') + '>?',
         commonFilter: filters.chooseOneFilterFactory(TRANSACTION_ALLOWANCES),
+        valueRequired: true,
       },
       {
         // TODO(bwavell): figure out what the default is and document that
@@ -303,6 +328,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'What  <transaction ' + chalk.yellow('@buffersize') + '> should be allocated?',
         invalidMessage: 'Leave empty to accept default or specify an integer representing the desired size in bytes.',
         commonFilter: transactionBuffersizeFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -317,6 +343,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('<family>') + ' values',
         invalidMessage: 'Don\'t use ' + chalk.green('.') + ' in family names. E.g. my' + chalk.green('.') + 'family would cause an error if using the family name to navigate to the script.',
         commonFilter: familiesFilter,
+        valueRequired: false,
       },
       {
         type: 'list',
@@ -333,6 +360,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: ['true', 'false'],
         message: 'Should we disable all response caching?',
         commonFilter: filters.booleanTextFilter,
+        valueRequired: true,
       },
       {
         // TODO(bwavell): validate that the default is false as the docs are inconsistent
@@ -354,6 +382,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: ['false', 'true'],
         message: 'Should we allow caching of authenticated responses in public caches?',
         commonFilter: filters.booleanTextFilter,
+        valueRequired: true,
       },
       {
         // TODO(bwavell): validate that the default is false as the docs are inconsistent
@@ -375,6 +404,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: ['true', 'false'],
         message: 'Should caches be required to revalidate?',
         commonFilter: filters.booleanTextFilter,
+        valueRequired: true,
       },
       {
         // TODO(bwavell): figure out if there is a fixed list of formats/mimetypes
@@ -390,6 +420,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('format') + chalk.green('=') + chalk.yellow('mimetype') + ' negotiation values',
         invalidMessage: 'Invalid format, try something like ' + chalk.green('html=text/html|xml=text/xml'),
         commonFilter: negotiationsFilter,
+        valueRequired: true,
       },
       {
         type: 'list',
@@ -410,6 +441,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: LIFECYCLES,
         message: 'What is the ' + chalk.yellow('<lifecycle>') + ' state of the webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(LIFECYCLES),
+        valueRequired: true,
       },
       {
         // TODO(bwavell): figure out what the default is
@@ -426,6 +458,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         choices: ['false', 'true'],
         message: 'Should we enable <formdata ' + chalk.yellow('@multipart-processing') + '> for the the webscript?',
         commonFilter: filters.booleanTextFilter,
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -440,6 +473,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('name') + chalk.green('=') + chalk.yellow('description') + ' values',
         invalidMessage: 'Invalid format, try ' + chalk.green('application=Name of the audit application|fromTime=Time in ms of the oldest audit entry'),
         commonFilter: argsFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -453,6 +487,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'Provide a ' + chalk.green('|') + ' separated list of <request ' + chalk.yellow('@type') + '> values',
         commonFilter: filters.textListFilterFactory('|'),
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -466,6 +501,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         }.bind(this),
         message: 'Provide a ' + chalk.green('|') + ' separated list of <response ' + chalk.yellow('@type') + '> values',
         commonFilter: filters.textListFilterFactory('|'),
+        valueRequired: false,
       },
     ];
 
@@ -532,6 +568,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.info('Generating ' + contextName + ' in ' + genPath);
           this.fs.copyTpl(wsSrcPath, contextPath, props);
         }
+        // NOTE: for an AbstractWebScript, we won't have any freemarker templates
         props.templateFormats.forEach(function(format) {
           var fmtPath = this.templatePath(format + '.ftl');
           var tplName = props.id + '.' + method + '.' + format + '.ftl'
@@ -566,6 +603,8 @@ module.exports = SourceSelectingSubGenerator.extend({
 // CUSTOM FILTER FUNCTIONS FOR GENERATOR
 // =======================================
 
+// TODO(bwavell): move prompts to webscript-prompt-filters module and add tests
+
 function idFilter(id) {
   if (!_.isString(id)) return undefined;
   var retv = _.kebabCase(id);
@@ -590,15 +629,6 @@ function packageFilter(pkg) {
   // if after cleanup all we have is a / then treat as undefined
   if ('/' === output) return undefined;
   return output;
-}
-
-function languageFilter(lang) {
-  if (!_.isString(lang) || _.isEmpty(lang)) return undefined;
-  var l = lang.toLocaleLowerCase();
-  if ('java' === l) return 'Java';
-  if ('javascript' === l) return 'JavaScript';
-  if ('both' === l) return 'Both Java & JavaScript';
-  return undefined;
 }
 
 function urlTemplatesFilter(templates) {

@@ -60,6 +60,13 @@ module.exports = SubGenerator.extend({
             props.targetModule = module;
             return false;
           }
+          // Error out if there are no matching modules
+          if (0 === this.modules.length) {
+            this.out.error('No source modules available matching your criteria. Try creating a source module with ' + chalk.bold.green('"yo alfresco:amp"') + ' before using this sub-generator.');
+            props.targetModule = true;
+            this.bail = true;
+            return false;
+          }
           // If there is only one module we can select it without prompting
           if (1 === this.modules.length) {
             module = this.modules[0];
@@ -88,6 +95,12 @@ module.exports = SubGenerator.extend({
             .filter(function(mod) {
               return (props[constants.PROP_WAR] === mod.module.war);
             });
+          // Error out if there are no matching modules
+          if (0 === this.modules.length) {
+            this.out.error('No source modules available matching your criteria. Try creating a source module with ' + chalk.bold.green('"yo alfresco:amp"') + ' before using this sub-generator.');
+            this.bail = true;
+            return false;
+          }
           // If there is only one module we can select it without prompting
           if (1 === this.modules.length) {
             var module = this.modules[0];

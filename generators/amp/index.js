@@ -30,6 +30,7 @@ module.exports = SubGenerator.extend({
         choices: WAR_TYPES,
         message: 'Which war would you like to customize?',
         commonFilter: filters.chooseOneMapStartsWithFilterFactory({ 'repo': constants.WAR_TYPE_REPO, 'share': constants.WAR_TYPE_SHARE, 'both': WAR_TYPE_BOTH }),
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -37,17 +38,19 @@ module.exports = SubGenerator.extend({
         option: { name: 'project-group-id', config: { alias:'g', desc: 'groupId for project', type: String, } },
         default: defGroupId,
         message: 'Project groupId?',
-        invalidMessage: 'The ' + chalk.yellow('project groupId') + ' is required',
         commonFilter: filters.requiredTextFilter,
+        invalidMessage: 'The ' + chalk.yellow('project groupId') + ' is required',
+        valueRequired: true,
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
-        option: { name: 'project-artifact-id', config: { alias:'a', desc: 'artifactId prefix for project', type: String, } },
+        option: { name: 'project-artifact-id', config: { alias:'a', desc: 'prefix for project artifactId', type: String, } },
         default: defArtifactIdPrefix,
         message: 'Project artifactId prefix?',
-        invalidMessage: 'The ' + chalk.yellow('project artifactId prefix') + ' is required',
         commonFilter: filters.requiredTextFilter,
+        invalidMessage: 'The ' + chalk.yellow('project artifactId prefix') + ' is required',
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -55,15 +58,18 @@ module.exports = SubGenerator.extend({
         option: { name: 'project-version', config: { alias:'v', desc: 'version for project', type: String, } },
         default: defVersion,
         message: 'Project version?',
-        invalidMessage: 'The ' + chalk.yellow('project version') + ' is required',
         commonFilter: filters.requiredTextFilter,
+        invalidMessage: 'The ' + chalk.yellow('project version') + ' is required',
+        valueRequired: true,
       },
       {
         type: 'confirm',
         name: 'removeDefaultSourceSamples',
         option: { name: 'remove-default-source-samples', config: { alias: 'R', desc: 'Remove sample code from new amp(s)', type: Boolean, } },
+        default: true,
         message: 'Should we remove the default samples?',
         commonFilter: filters.booleanFilter,
+        valueRequired: true,
       },
       {
         type: 'confirm',
@@ -78,6 +84,7 @@ module.exports = SubGenerator.extend({
         default: false,
         message: 'Would you like to create a parent folder to contain both of your amps?',
         commonFilter: filters.booleanFilter,
+        valueRequired: true,
       },
       {
         type: 'input',
@@ -88,6 +95,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Name for parent pom?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -98,6 +106,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Description for parent pom?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -110,6 +119,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Name for repo amp?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -122,6 +132,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Description for repo amp?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -134,6 +145,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Name for share amp?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
       {
         type: 'input',
@@ -146,6 +158,7 @@ module.exports = SubGenerator.extend({
         },
         message: 'Description for share amp?',
         commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
       },
     ];
 
@@ -224,16 +237,16 @@ module.exports = SubGenerator.extend({
         }
       }
       var modulePath = path.join(parentPath, artifactId);
-      // register and do initial setup for our module(s)
+      debug('register and do initial setup for our module(s)');
       this.moduleManager.addModule(groupId, artifactId, version, 'amp', war, 'source', modulePath);
-      // schedule setup activities for our module(s)
+      debug('schedule setup activities for our module(s)');
       if (constants.WAR_TYPE_REPO === war) {
-        // We are creating a new module so we need to set it up
+        debug('We are creating a new module so we need to schedule it to be setup');
         this.moduleManager.pushOp(function() {this.sdk.setupNewRepoModule.call(this, modulePath)}.bind(this));
-        // If we have a custom name or description then get that info into the pom
+        debug('If we have a custom name or description then arrange to get that info into the pom');
         if (this.props.repoName || this.props.repoDescription) {
           this.moduleManager.pushOp(function() {
-            console.log('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
+            this.out.info('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
             var pom = require('../app/maven-pom.js')(pomStr);
@@ -243,6 +256,7 @@ module.exports = SubGenerator.extend({
           }.bind(this));
         }
         if (this.props.removeDefaultSourceSamples) {
+          debug('scheduling sample source code/config removal');
           this.moduleManager.pushOp(
             function() {
               this.sdk.removeRepoSamples.call(this,
@@ -252,6 +266,8 @@ module.exports = SubGenerator.extend({
               );
             }.bind(this)
           );
+        } else {
+          debug('NOT scheduling sample source code/config removal');
         }
       }
       if (constants.WAR_TYPE_SHARE === war) {
