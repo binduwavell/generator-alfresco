@@ -110,7 +110,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         name: 'templateFormats',
         option: { name: 'template-formats', config: { alias:'t', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: 'String', } },
         when: function(props) {
-          var show = ('AbstractWebScript' !== props.javaBaseClass);
+          var show = ('AbstractWebScript' !== props.javaBaseClass || props.language.indexOf('JavaScript') > -1);
           if (!show) {
             props.templateFormats = [];
           }
@@ -569,6 +569,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.fs.copyTpl(wsSrcPath, contextPath, props);
         }
         // NOTE: for an AbstractWebScript, we won't have any freemarker templates
+        // if the language is only Java.
         props.templateFormats.forEach(function(format) {
           var fmtPath = this.templatePath(format + '.ftl');
           var tplName = props.id + '.' + method + '.' + format + '.ftl'
