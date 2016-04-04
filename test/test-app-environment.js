@@ -12,7 +12,7 @@ describe('generator-alfresco:app-environment', function () {
 
   describe('detects invalid JAVA_HOME quickly', function () {
 
-    this.timeout(1000);
+    this.timeout(4000);
 
     before(function (done) {
       this.bail = false;
@@ -73,7 +73,7 @@ describe('generator-alfresco:app-environment', function () {
 
   describe('detects invalid M2_HOME quickly', function () {
 
-    this.timeout(1000);
+    this.timeout(4000);
 
     before(function (done) {
       var m2Home = process.env.M2_HOME;

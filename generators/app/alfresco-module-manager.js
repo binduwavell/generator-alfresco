@@ -1,4 +1,5 @@
 'use strict';
+var debug = require('debug')('generator-alfresco:alfresco-module-manager');
 var path = require('path');
 var constants = require('./constants.js');
 var domutils = require('./xml-dom-utils.js');
@@ -24,6 +25,7 @@ module.exports = function(yo) {
   module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
 
   module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // console.log("Existing module: " + JSON.stringify(mod));
     if (!mod) {
@@ -48,9 +50,11 @@ module.exports = function(yo) {
     ops.push(function() { updateProjectPom(mod) } );
     ops.push(function() { addModuleToWarWrapper(mod) } );
     // TODO: what else do we need to do when we remove a module?
+    debug('addModule() finished');
   };
 
   function copyTemplateForModule(mod) {
+    debug('copyTemplateForModule()');
     var toPath = yo.destinationPath(mod.path);
     // console.log('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
@@ -68,10 +72,11 @@ module.exports = function(yo) {
     } else {
       yo.out.warn('Not copying module as target path already exists: ' + toPath);
     }
+    debug('copyTemplateForModule() finished');
   }
 
   function renamePathElementsForModule(mod) {
-    // get default repo module artifactId
+    debug('renamePathElementsForModule() - start by getting default repo module artifactId');
     var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function(mod) {
       return ('source' === mod.location && constants.WAR_TYPE_REPO === mod.war);
     });
@@ -101,6 +106,7 @@ module.exports = function(yo) {
         }
       }
     }
+    debug('renamePathElementsForModule() finished');
   }
 
   function addFailsafeConfigToRunner(mod) {
@@ -167,6 +173,7 @@ module.exports = function(yo) {
         yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
       }
     }
+    debug('addFailsafeConfigToRunner() finished');
   }
 
   function addModuleToParentPom(mod) {
@@ -179,6 +186,7 @@ module.exports = function(yo) {
       pom.addModule(mod.artifactId, true);
       yo.fs.write(parentPomPath, pom.getPOMString());
     }
+    debug('addModuleToParentPom() finished');
   }
 
   // TODO(bwavell): Add tests for this
@@ -211,6 +219,7 @@ module.exports = function(yo) {
         yo.fs.write(ctxPath, ctx.getContextString());
       }
     }
+    debug('addModuleToTomcatContext() finished');
   }
 
   function updateProjectPom(mod) {
@@ -252,6 +261,7 @@ module.exports = function(yo) {
     }
     pom.setParentGAV(parentGroupId, parentArtifactId, parentVersion);
     yo.fs.write(projectPomPath, pom.getPOMString());
+    debug('updateProjectPom() finished');
   }
 
   function addModuleToWarWrapper(mod) {
@@ -290,13 +300,14 @@ module.exports = function(yo) {
     var overlay = pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
     // console.log(pom.getPOMString());
     yo.fs.write(wrapperPomPath, pom.getPOMString());
+    debug('addModuleToWarWrapper() finished');
   }
 
   module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    // console.log("SEARCHING FOR MODULE: " + modOrGroupId.artifactId);
+    debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
-      // console.log("REMOVING MODULE: " + mod.artifactId);
+      debug('removing module: %s', mod.artifactId);
       this.moduleRegistry.removeModule(mod);
       if ('source' === mod.location) {
         ops.push(function() { removeModuleFiles(mod) } );
@@ -309,6 +320,7 @@ module.exports = function(yo) {
         // TODO: what else do we need to do when we remove a module?
       }
     }
+    debug('removeModule() finished');
   };
 
   function removeModuleFiles(mod) {
@@ -325,6 +337,7 @@ module.exports = function(yo) {
         yo.fs.delete(file.path);
       }
     });
+    debug('removeModuleFiles() finished');
   }
 
   function removeModuleFromParentPom(mod) {
@@ -336,6 +349,7 @@ module.exports = function(yo) {
       pom.removeModule(mod.artifactId);
       yo.fs.write(parentPomPath, pom.getPOMString());
     }
+    debug('removeModuleFromParentPom() finished');
   }
 
   function removeModuleFromWarWrapper(mod) {
@@ -348,6 +362,7 @@ module.exports = function(yo) {
       pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging );
       yo.fs.write(wrapperPomPath, pom.getPOMString());
     }
+    debug('removeModuleFromWarWrapper() finished');
   }
 
   function removeFailsafeConfigFromRunner(mod) {
@@ -370,6 +385,7 @@ module.exports = function(yo) {
       }
       yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
     }
+    debug('removeFailsafeConfigFromRunner() finished');
   }
 
   // TODO(bwavell): Add tests for this
@@ -396,15 +412,17 @@ module.exports = function(yo) {
         yo.fs.write(ctxPath, ctx.getContextString());
       }
     }
+    debug('removeModuleFromTomcatContext() finished');
   }
 
   module.save = function() {
-    // console.log('Saving module registry and performing scheduled tasks');
+    debug('saving module registry and performing scheduled tasks');
     this.moduleRegistry.save();
     ops.forEach(function(op) {
       op.call(this);
     });
     ops = [];
+    debug('save() finished');
   };
 
   return module;

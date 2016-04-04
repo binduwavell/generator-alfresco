@@ -1,6 +1,13 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
+// Following debugger does not conform to the default naming
+// we use everywhere else. The reason is we typically only
+// want this during testing, as we expect this output to
+// already be displayed under normal usage and we don't want
+// to add a ton of debugging when people look at
+// generator-alfresco:*
+var debug = require('debug')('generator-alfresco-testing');
 var size = require('window-size');
 var wrap = require('wrap-ansi');
 
@@ -31,19 +38,26 @@ module.exports = function(yo) {
   module.size = require('window-size');
   module.info = function(message) {
     yo.log(wrap(chalk.bold(chalk.green('INFO:  ') + message), size.width));
-  };
+    debug('INFO:  ' + message);
+  }
 
   module.warn = function(message) {
     yo.log(wrap(chalk.bold(chalk.yellow('WARN:  ') + message), size.width));
-  };
+    debug('WARN:  ' + message);
+  }
 
   module.error = function(message) {
     yo.log(wrap(chalk.bold(chalk.red('ERROR: ') + message), size.width));
-  };
+    debug('ERROR :  ' + message);
+  }
 
   module.docs = function(text, link) {
     if (text) {
-      yo.log(wrap(chalk.dim.yellow(text), size.width));
+      var t = text;
+      if (_.isArray(text)) {
+        t = text.join('\n\n');
+      }
+      yo.log(wrap(chalk.dim.yellow(t), size.width));
     }
     if (link) {
       yo.log(chalk.dim.green('See: ') + chalk.blue.underline(link));
@@ -150,7 +164,7 @@ module.exports = function(yo) {
             ].join('\n');
     return banner;
   };
-  
+
   module.fancyLogoText = function(leftPadding) {
     var LEFT_PAD = leftPadding || '    ';
     var banner = [
@@ -174,7 +188,7 @@ module.exports = function(yo) {
             ].join('\n');
     return banner;
   };
-  
+
   module.rawBanner = function(leftPadding, width) {
     var p = leftPadding || '    ';
     var w = width || size.width;

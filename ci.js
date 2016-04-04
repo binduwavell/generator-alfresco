@@ -10,4 +10,11 @@ if (0 === nodeVersion.indexOf('0')) {
   cmd = 'npm run cover:color';
 }
 
-exec(cmd, {stdin: 'inherit'});
+var proc = exec(cmd, {stdin: 'inherit'});
+if (undefined === proc || null === proc) {
+  echo('ERROR: unable to execute tests');
+  exit(1);
+} else if (0 !== proc.code) {
+  echo('ERROR: unable to execute tests');
+  exit(proc.code);
+}

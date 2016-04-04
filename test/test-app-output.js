@@ -62,6 +62,12 @@ describe('generator-alfresco:app-output', function () {
     out.docs("useful info", "link");
     assert.equal(chalk.stripColor(this.logmock.get()), 'useful info\nSee: link');
   });
+  
+  it('can display multi-line documentation', function () {
+    var out = require('../generators/app/app-output.js')(this.logmock);
+    out.docs(["useful", "info"]);
+    assert.equal(chalk.stripColor(this.logmock.get()), 'useful\n\ninfo');
+  });
 
   it('can provide a definition', function () {
     var out = require('../generators/app/app-output.js')(this.logmock);

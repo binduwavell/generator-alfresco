@@ -1,11 +1,17 @@
 'use strict';
 var _ = require('lodash');
+var debug = require('debug')('generator-alfresco:prompt-filters');
 
 /**
  * These filters are used to check if an option has been provided, in which case
  * a non-undefined value must be returned. They are also used to process user
  * input in the form. If we return undefined that means that the value was
  * invalid.
+ *
+ * For filter functions that take more than one argument we provide a Factory
+ * alternative that takes all of the arguments except the input and returns
+ * a function that takes the input and in order to call the original filter
+ * with the input and the captured arguments.
  */
 
 module.exports = {
@@ -20,6 +26,7 @@ module.exports = {
    * @returns {(true|false|undefined)}
    */
   booleanFilter: function(input) {
+    debug('booleanFilter(%s)', input);
     if (_.isBoolean(input)) return input;
     if (_.isString(input)) {
       var lc = input.toLocaleLowerCase();
@@ -37,7 +44,8 @@ module.exports = {
    * @returns {('true'|'false'|undefined)}
      */
   booleanTextFilter: function(input) {
-    var retv = this.booleanFilter(input);
+    debug('booleanTextFilter(%s)', input);
+    var retv = module.exports.booleanFilter(input);
     return (undefined === retv
            ? undefined
            : (false === retv
@@ -58,8 +66,8 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   chooseOneFilter: function (input, list) {
+    debug('chooseOneFilter(%s, %s)', input, JSON.stringify(list));
     if (true === input) return undefined;
-    var retv = undefined;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
       var ilc = input.toLocaleLowerCase();
@@ -68,7 +76,12 @@ module.exports = {
         if (item.toLocaleLowerCase() === ilc) return item;
       }
     }
-    return retv;
+    return undefined;
+  },
+  chooseOneFilterFactory: function (list) {
+    return function(input) {
+      return module.exports.chooseOneFilter(input, list);
+    }
   },
 
   /**
@@ -86,19 +99,104 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   chooseOneStartsWithFilter: function (input, list) {
+    debug('chooseOneStartsWithFilter(%s, %s)', input, JSON.stringify(list));
     if (true === input) return undefined;
     var retv = undefined;
     if (_.isString(input)) {
       if ('' === input) return undefined;
-      var i = input.toLocaleLowerCase();
+      var ilc = input.toLocaleLowerCase();
       list.forEach(function(item) {
-        var ilc = item.toLocaleLowerCase();
-        if (_.startsWith(ilc, i)) retv = retv || item;
-        if (ilc === i) retv = item;
+        var it = item.toLocaleLowerCase();
+        if (_.startsWith(it, ilc)) retv = retv || item;
+        if (it === ilc) retv = item;
       });
     }
     return retv;
   },
+  chooseOneStartsWithFilterFactory: function(list) {
+    return function(input) {
+      return module.exports.chooseOneStartsWithFilter(input, list);
+    }
+  },
+
+  /**
+   * Check if input exists as a key or value in a map in a case insensitive
+   * manner. Will return the value from value from the map rather than the
+   * user input so the values in the map can control the final case.
+   *
+   * NOTE 1: The map may not contain, undefined, null or the empty string.
+   * NOTE 2: If there are multiple matches, the first one wins.
+   *
+   * @param {(string|boolean|undefined|null)} input
+   * @param {Object.<string, string>} map
+   * @returns {(string|undefined)}
+   */
+  chooseOneMapFilter: function(input, map) {
+    // TODO(bwavell): write tests
+    debug('chooseOneMapFilter(%s, %s)', input, JSON.stringify(map));
+    if (true === input) return undefined;
+    if (_.isString(input)) {
+      if (_.isEmpty(input)) return undefined;
+      var ilc = input.toLocaleLowerCase();
+      _.forOwn(map, function(value, key) {
+        var kit = key.toLocaleLowerCase();
+        var vit = value.toLocaleLowerCase();
+        if (kit === ilc) return value;
+        if (vit === ilc) return value;
+      });
+    }
+    return undefined;
+  },
+  chooseOneMapFilterFactory: function(map) {
+    // TODO(bwavell): write tests
+    return function(input) {
+      return module.exports.chooseOneMapFilter(input, map);
+    }
+  },
+
+  /**
+   * Check if any keys in the map start with the input in a case insensitive
+   * manner. Will return the value from the map rather than the user input so
+   * the map can control the final case. If there is an exact case insensitive
+   * match to a value, the value will be returned.
+   *
+   * NOTE 1: The map may not contain, undefined, null or the empty string.
+   * NOTE 2: If there are multiple partial matches, the first one wins.
+   * NOTE 3: If there is an exact match, it will be returned even if there is
+   *         a prior partial match.
+   * NOTE 4: If there are multiple exact matches (e.g. duplicate values) then
+   *         the last exact match will be returned.
+   *
+   * @param {(string|boolean|undefined|null)} input
+   * @param {string[]} list
+   * @returns {(string|undefined)}
+   */
+  chooseOneMapStartsWithFilter: function (input, map) {
+    // TODO(bwavell): write tests
+    debug('chooseOneMapStartsWithFilter(%s, %s)', input, JSON.stringify(map));
+    if (true === input) return undefined;
+    var retv = undefined;
+    if (_.isString(input)) {
+      if ('' === input) return undefined;
+      var ilc = input.toLocaleLowerCase();
+      _.forOwn(map, function(value, key) {
+        var kit = key.toLocaleLowerCase();
+        var vit = value.toLocaleLowerCase();
+        if (_.startsWith(kit, ilc)) retv = retv || value;
+        if (kit === ilc) retv = value;
+        if (vit === ilc) retv = value;
+      });
+    }
+    return retv;
+  },
+  chooseOneMapStartsWithFilterFactory: function(map) {
+    // TODO(bwavell): write tests
+    return function(input) {
+      return module.exports.chooseOneMapStartsWithFilter(input, map);
+    }
+  },
+
+
 
   /**
    * Given some text or the empty string return it.
@@ -109,6 +207,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   optionalTextFilter: function(input) {
+    debug('optionalTextFilter(%s)', input);
     if (_.isString(input)) return input;
     if (_.isBoolean(input)) return (input ? '' : undefined);
     return undefined;
@@ -122,6 +221,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   requiredTextFilter: function(input) {
+    debug('requiredTextFilter(%s)', input);
     if (_.isString(input) && !_.isEmpty(input)) return input;
     return undefined;
   },
@@ -144,6 +244,11 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   requiredTextListFilter: function(input, sep, choices) {
+    debug('requiredTextListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
+    // if we already have a list, just return it. We may
+    // want to add validation that the items are in the
+    // choices list
+    if (_.isArray(input) && input.length > 0) return input;
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
@@ -164,6 +269,11 @@ module.exports = {
     if (_.isEmpty(retv)) return undefined;
     return retv;
   },
+  requiredTextListFilterFactory: function(sep, choices) {
+    return function(input) {
+      return module.exports.requiredTextListFilter(input, sep, choices);
+    }
+  },
 
   /**
    * Given some input text, a separator and an optional list of
@@ -183,6 +293,11 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   textListFilter: function(input, sep, choices) {
+    debug('textListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
+    // if we already have a list, just return it. We may
+    // want to add validation that the items are in the
+    // choices list
+    if (_.isArray(input)) return input;
     if (true === input) return [];
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
@@ -202,7 +317,12 @@ module.exports = {
       });
     }
     return retv;
-  }
+  },
+  textListFilterFactory: function(sep, choices) {
+    return function(input) {
+      return module.exports.textListFilter(input, sep, choices);
+    }
+  },
 
 };
 
