@@ -24,8 +24,10 @@ npm install -g yo
 
 ### Installing and using the generator
 
-You have a couple of options for installing Alfresco generator for Yeoman. Your choice will 
+You have a couple of options for installing the Alfresco generator for Yeoman. Your choice will 
 depend on if you plan to extend the generator or if you simply want to use it.
+
+> _Checkout the next section for what to do if you plan to work on the generator code._
 
 We have not pushed a version of the Alfresco generator to npmjs.org yet, so if you don't 
 plan to make changes to the generator itself, run:
@@ -37,20 +39,11 @@ npm install -g binduwavell/generator-alfresco
 WARNING: you will likely need to update this occasionally as the project is under active 
 development.
 
-Checkout the next section for what to do instead of this, if you plan to work on the 
-generator code.
-
-<!--
-```bash
-npm install -g generator-alfresco
-```
--->
-
 Now, assuming you have all of the pre-requisites installed (including appropriate
 versions of node, npm, yeoman, this generator, Java and Maven.) You can create an 
 Alfresco extension project using this generator. First of all you should create a 
-new folder for your project and change into the new folder. Then run the 
-following command:
+new folder for your project and change into the new folder. Then run the following 
+command:
 
 ```bash
 yo alfresco
@@ -71,7 +64,7 @@ yo alfresco:amp
 ```
 
 This will ask a few questions and then create additional repo/share source AMPs
-and plug them into your project infrastructure.
+and plug them into your project files (including maven and  spring/tomcat contexts.)
 
 We still need to add the ability to integrate pre-packaged AMPs from the /amps
 and /amps_share folders and from remote maven repositories to this sub-generator.
@@ -102,9 +95,10 @@ This is essentially the same as the ```npm install -g binduwavell/generator-alfr
 command above, but you'll have a project directory where you can tweak things, and
 push updates back to GitHub.
 
-Pull requests are very welcome! Please make sure to add/update tests appropriately.
+We have a dedicated page with information about [contributing here](./CONTRIBUTING.md#readme) 
+another outlining the projects [code of conduct](./CODE_OF_CONDUCT.md#readme).
 
-Click the following link to open a clone of this project in Codenvy (a cloud IDE): 
+If you'd like to quickly open a clone of this project in Codenvy (a cloud IDE), use this badge: 
 [![create project on Codenvy](https://img.shields.io/badge/codenvy-clone-blue.svg)](https://codenvy.com/factory?id=zmv24wynr689af6f). 
 
 Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
