@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var debug = require('debug')('generator-alfresco:prompt-filters');
 
 /**
  * These filters are used to check if an option has been provided, in which case
@@ -25,6 +26,7 @@ module.exports = {
    * @returns {(true|false|undefined)}
    */
   booleanFilter: function(input) {
+    debug('booleanFilter(%s)', input);
     if (_.isBoolean(input)) return input;
     if (_.isString(input)) {
       var lc = input.toLocaleLowerCase();
@@ -42,7 +44,8 @@ module.exports = {
    * @returns {('true'|'false'|undefined)}
      */
   booleanTextFilter: function(input) {
-    var retv = this.booleanFilter(input);
+    debug('booleanTextFilter(%s)', input);
+    var retv = module.exports.booleanFilter(input);
     return (undefined === retv
            ? undefined
            : (false === retv
@@ -63,6 +66,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   chooseOneFilter: function (input, list) {
+    debug('chooseOneFilter(%s, %s)', input, JSON.stringify(list));
     if (true === input) return undefined;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
@@ -95,6 +99,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   chooseOneStartsWithFilter: function (input, list) {
+    debug('chooseOneStartsWithFilter(%s, %s)', input, JSON.stringify(list));
     if (true === input) return undefined;
     var retv = undefined;
     if (_.isString(input)) {
@@ -128,6 +133,7 @@ module.exports = {
    */
   chooseOneMapFilter: function(input, map) {
     // TODO(bwavell): write tests
+    debug('chooseOneMapFilter(%s, %s)', input, JSON.stringify(map));
     if (true === input) return undefined;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
@@ -167,6 +173,7 @@ module.exports = {
    */
   chooseOneMapStartsWithFilter: function (input, map) {
     // TODO(bwavell): write tests
+    debug('chooseOneMapStartsWithFilter(%s, %s)', input, JSON.stringify(map));
     if (true === input) return undefined;
     var retv = undefined;
     if (_.isString(input)) {
@@ -200,6 +207,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   optionalTextFilter: function(input) {
+    debug('optionalTextFilter(%s)', input);
     if (_.isString(input)) return input;
     if (_.isBoolean(input)) return (input ? '' : undefined);
     return undefined;
@@ -213,6 +221,7 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   requiredTextFilter: function(input) {
+    debug('requiredTextFilter(%s)', input);
     if (_.isString(input) && !_.isEmpty(input)) return input;
     return undefined;
   },
@@ -235,10 +244,11 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   requiredTextListFilter: function(input, sep, choices) {
+    debug('requiredTextListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
     // if we already have a list, just return it. We may
     // want to add validation that the items are in the
     // choices list
-    if (_.isArray(input)) return input;
+    if (_.isArray(input) && input.length > 0) return input;
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
@@ -283,6 +293,7 @@ module.exports = {
    * @returns {(string[]|undefined)}
    */
   textListFilter: function(input, sep, choices) {
+    debug('textListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
     // if we already have a list, just return it. We may
     // want to add validation that the items are in the
     // choices list

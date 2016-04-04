@@ -1,5 +1,6 @@
 'use strict';
 
+var debug = require('debug')('generator-alfresco:sdk-versions');
 var path = require('path');
 var semver = require('semver');
 var constants = require('./constants.js');
@@ -105,10 +106,10 @@ module.exports = {
  * @returns {string} empty string if sdk >= 2.2.0-SNAPSHOT
  */
 function sdkVersionPrefix() {
-  // console.log("CHECKING PREFIX FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
+  debug("checking prefix for archetype version: %s", this.config.get('archetypeVersion'));
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
     if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
-      // console.log("SETTING PREFIX FOR ARTIFACT ID");
+      debug("setting prefix for artifactId");
       return this.config.get(constants.PROP_PROJECT_ARTIFACT_ID) + '-';
     }
   }
@@ -124,12 +125,12 @@ function sdkVersionPrefix() {
  * @returns {string} 'amp' if sdk >= 2.2.0-SNAPSHOT otherwise basename
  */
 function targetFolderName(basename) {
-  // console.log("CHECKING TARGET FOLDER NAME FOR ARCHETYPE VERSION: " + this.config.get('archetypeVersion'));
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
     if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
       return 'amp';
     }
   }
+  debug('target folder name for archetype version: %s is: %s', this.config.get('archetypeVersion'), basename);
   return basename;
 }
 
@@ -178,6 +179,7 @@ function ampModuleRegistry() {
  * in the 3.0 SDK.
  */
 function registerDefaultModules() {
+  debug('registering default modules');
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
     if (defaultModules && defaultModules.length > 0) {
@@ -187,6 +189,7 @@ function registerDefaultModules() {
       this.moduleManager.save();
     }
   }
+  debug('registerDefaultModules() finished');
 }
 
 /**
@@ -202,16 +205,16 @@ function setupNewRepoAmp(pathPrefix) {
 
   var moduleContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/module-context.xml';
   var importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
-  // console.log('EDITING: ' + this.destinationPath(moduleContextPath));
-  // console.log(memFsUtils.dumpFileNames(this.fs));
+  debug('Editing: %s', this.destinationPath(moduleContextPath));
+  // debug(memFsUtils.dumpFileNames(this.fs));
   var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
-  // console.log(contextDocOrig);
+  // debug(contextDocOrig);
   var context = require('./spring-context.js')(contextDocOrig);
   if (!context.hasImport(importPath)) {
     context.addImport(importPath);
     var contextDocNew = context.getContextString();
-    // console.log('WRITING: ' + this.destinationPath(moduleContextPath));
-    // console.log(contextDocNew);
+    debug('Writing: %s', this.destinationPath(moduleContextPath));
+    // debug(contextDocNew);
     this.fs.write(this.destinationPath(moduleContextPath), contextDocNew);
   }
 
@@ -223,6 +226,7 @@ function setupNewRepoAmp(pathPrefix) {
   if (moduleIdProp) {
     var valueAttr = moduleIdProp.getAttribute('value');
     if (valueAttr) {
+      debug('Updating moduleId in: %s', serviceContextPath);
       moduleIdProp.setAttribute('value', constants.VAR_PROJECT_ARTIFACTID);
       var serviceContextDocNew = domutils.prettyPrint(doc);
       // console.log(serviceContextDocNew);
@@ -232,10 +236,12 @@ function setupNewRepoAmp(pathPrefix) {
 
   var templatePath = path.resolve(this.sourceRoot(), '../../app/templates/generated-README.md');
   var generatedReadmePath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/generated/README.md';
+  debug('Adding: %s', generatedReadmePath);
   this.fs.copyTpl(
     templatePath,
     this.destinationPath(generatedReadmePath)
   );
+  debug('setupNewRepoAmp() finished');
 }
 
 /**
@@ -246,9 +252,11 @@ function setupNewRepoAmp(pathPrefix) {
  */
 function setupNewShareAmp(pathPrefix) {
   this.out.info('Setting up new share amp: ' + pathPrefix);
+  debug('setupNewShareAmp() finished');
 }
 
 function removeAmps() {
+  this.out.info('Removing default amps');
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
     if (defaultModules && defaultModules.length > 0) {
@@ -258,9 +266,11 @@ function removeAmps() {
       this.moduleManager.save();
     }
   }
+  debug('removeAmps() finished');
 }
 
 function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+  this.out.info('Removing repository sample code/config');
   var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   var projectPackagePath = projectPackage.replace(/\./g, '/');
   [
@@ -310,9 +320,11 @@ function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
   }.bind(this));
   var contextDocNew = context.getContextString();
   this.fs.write(moduleContextPath, contextDocNew);
+  debug('removeRepoSamples() finished');
 }
 
 function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+  this.out.info('Removing share sample code/config');
   var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   var projectPackagePath = projectPackage.replace(/\./g, '/');
   [
@@ -356,6 +368,7 @@ function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     this.out.info("Renaming share-amp file to *.sample: " + file);
     this.fs.move(file, file + '.sample');
   }.bind(this));
+  debug('removeShareSamples() finished');
 }
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
