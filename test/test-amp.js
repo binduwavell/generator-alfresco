@@ -9,8 +9,8 @@ var path = require('path');
 
 describe('generator-alfresco:amp', function () {
 
-  this.timeout(10000);
-  
+  this.timeout(20000);
+
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   // We need a test project setup before we begin
@@ -59,9 +59,9 @@ describe('generator-alfresco:amp', function () {
         path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
       ]);
     });
-    
+
   });
-  
+
   describe('after creating repo amp', function () {
 
     before(function (done) {
@@ -92,13 +92,13 @@ describe('generator-alfresco:amp', function () {
     it('repo amp files exist in project', function() {
       assert.file(path.join(osTempDir, 'customizations/repo-customizations-repo-amp/pom.xml'));
     });
-    
+
     it('share amp files do NOT exist in project', function() {
       assert.noFile(path.join(osTempDir, 'customizations/repo-customizations-share-amp/pom.xml'));
     });
 
   });
-  
+
   describe('after creating share amp', function () {
 
     before(function (done) {
@@ -135,7 +135,7 @@ describe('generator-alfresco:amp', function () {
     });
 
   });
-  
+
   describe('after creating both repo and share amps in parent folder', function () {
 
     before(function (done) {
@@ -170,11 +170,11 @@ describe('generator-alfresco:amp', function () {
         path.join(osTempDir, 'customizations/both-parent-parent/both-parent-share-amp/pom.xml'),
       ]);
     });
-    
+
   });
 
   describe('when creating amp with invalid war type', function() {
-    
+
     before(function(done) {
       helpers.run(path.join(__dirname, '../generators/amp'))
         // generator will create a temp directory and make sure it's empty
@@ -201,5 +201,5 @@ describe('generator-alfresco:amp', function () {
     });
 
   });
-  
+
 });
