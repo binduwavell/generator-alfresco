@@ -40,6 +40,8 @@ describe('generator-alfresco:model', function () {
       .on('end', function() {
         var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
         var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        console.log('MODEL FOLDER: '+fs.readdirSync(path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated')));
+        console.log('CONTEXT FOLDER: '+fs.readdirSync(path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated')));
         console.log("OUTPUT FOR MODEL FILE: "+modelFile);
         fs.readFile(modelFile, 'utf-8', function (err, data) {
           if (err) throw err;
