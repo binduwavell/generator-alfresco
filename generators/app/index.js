@@ -547,13 +547,8 @@ module.exports = yeoman.Base.extend({
         path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
       ];
       scripts.forEach(function(scriptName) {
-        fs.chmod(cwd + '/' + scriptName, '0755', function(err) {
-          if (err) {
-            this.out.error(err);
-          } else {
-            this.out.info('Marking ' + scriptName + ' as executable');
-          }
-        }.bind(this));
+        this.out.info('Marking ' + scriptName + ' as executable');
+        fs.chmodSync(cwd + '/' + scriptName, '0755');
       }.bind(this));
       if (this.removeDefaultSourceAmps) {
         this.out.warn('Sine you chose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
