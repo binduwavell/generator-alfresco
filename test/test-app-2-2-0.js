@@ -21,6 +21,8 @@ describe('generator-alfresco:app', function () {
         .withPrompts({
           sdkVersion: '2.2.0',
           projectArtifactId: 'test-artifact',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
         })
         .on('end', done);
     });

@@ -22,6 +22,10 @@ describe('generator-alfresco:app-environment', function () {
         helpers.run(path.join(__dirname, '../generators/app'))
           .inDir(path.join(os.tmpdir(), './temp-test'))
           .withOptions({ 'skip-install': false })
+          .withPrompts({
+            removeDefaultSourceAmps: false,
+            removeDefaultSourceSamples: false,
+          })
           .on('end', function() {
               process.env.JAVA_HOME = javaHome;
               done();
@@ -81,6 +85,10 @@ describe('generator-alfresco:app-environment', function () {
       helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': false })
+        .withPrompts({
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
+        })
         .on('end', function() {
             if (m2Home) {
               process.env.M2_HOME = m2Home;

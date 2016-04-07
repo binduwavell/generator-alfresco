@@ -18,6 +18,11 @@ describe('generator-alfresco:app', function () {
       helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
+        .withPrompts({
+          sdkVersion: '2.1.0',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
+        })
         .on('end', done);
     });
 

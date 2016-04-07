@@ -22,6 +22,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
         .withPrompts({
           sdkVersion: '2.1.1',
           projectArtifactId: 'test-artifact',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
         })
         .on('end', done);
     }.bind(this));
@@ -88,6 +90,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
         .withPrompts({
           sdkVersion: '2.1.1',
           projectArtifactId: 'demo',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
         })
         .on('end', done);
     }.bind(this));
@@ -123,6 +127,10 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
       helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(this.osTempDir)
         .withOptions({ 'skip-install': true })
+        .withPrompts({
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
+        })
         .on('end', done);
     }.bind(this));
     it('there is a .json-config in the current working directory', function () {

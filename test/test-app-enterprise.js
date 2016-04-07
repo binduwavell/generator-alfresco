@@ -14,7 +14,9 @@ describe('generator-alfresco:app:enterprise', function () {
       .inDir(path.join(os.tmpdir(), './temp-test'))
       .withOptions({ 'skip-install': true })
       .withPrompts({
-        communityOrEnterprise: 'Enterprise'
+        communityOrEnterprise: 'Enterprise',
+        removeDefaultSourceAmps: false,
+        removeDefaultSourceSamples: false,
       })
       .on('end', done);
   });

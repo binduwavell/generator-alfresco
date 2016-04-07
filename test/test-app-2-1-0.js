@@ -20,6 +20,8 @@ describe('generator-alfresco:app-2-1-0', function () {
         .withOptions({ 'skip-install': true })
         .withPrompts({
           sdkVersion: '2.1.0',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
         })
         .on('end', done);
     });

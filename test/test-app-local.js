@@ -22,6 +22,8 @@ describe('generator-alfresco:app-local', function () {
         .withPrompts({
           sdkVersion: 'local',
           archetypeVersion: '2.1.1',
+          removeDefaultSourceAmps: false,
+          removeDefaultSourceSamples: false,
         })
         .on('end', function() {
           helpers.run(path.join(__dirname, '../generators/app'))
@@ -35,6 +37,8 @@ describe('generator-alfresco:app-local', function () {
             .withPrompts({
               sdkVersion: 'local',
               archetypeVersion: '2.1.1',
+              removeDefaultSourceAmps: false,
+              removeDefaultSourceSamples: false,
             })
             .on('end', done);
         });
