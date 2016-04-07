@@ -33,8 +33,8 @@ module.exports = yeoman.Base.extend({
       projectVersion: '1.0.0-SNAPSHOT',
       projectPackage: 'org.alfresco',
       communityOrEnterprise: 'Community',
-      removeDefaultSourceAmps: false,
-      removeDefaultSourceSamples: false,
+      removeDefaultSourceAmps: true,
+      removeDefaultSourceSamples: true,
     };
     this.bail = false;
     try {
@@ -54,7 +54,7 @@ module.exports = yeoman.Base.extend({
 
   prompting: function () {
     if (this.bail) return;
-    
+
     // Display banner/logo
     this.out.banner();
 
@@ -555,6 +555,9 @@ module.exports = yeoman.Base.extend({
           }
         }.bind(this));
       }.bind(this));
+      if (this.removeDefaultSourceAmps) {
+        this.out.warn('Sine you chose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+      }
     }
   },
 
