@@ -110,32 +110,7 @@ describe('generator-alfresco:model', function () {
         done();
       });
   });
-
-  it('handle integer version', function(done) {
-    helpers.run(path.join(__dirname, '../generators/model'))
-      // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function() {
-        // we want our test to run inside the previously generated directory
-        // and we don't want it to be empty, so this is a hack for that.
-        //process.chdir(path.join(this.osTempDir, 'temp-test'));
-        process.chdir(osTempDir);
-      })
-      .withOptions({
-        "model-name": "numericVersionModel",
-        "model-description": "test desc",
-        "model-author": "test author",
-        "model-version": 1,
-        "namespace-prefix": "zz",
-      })
-      .on('end', function() {
-        assert.file([
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/numericversionModel.xml'),
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/numericversion-model-context.xml'),
-        ]);
-        done();
-      });
-  });
-
+  
   it('name only invalid characters for coverage', function(done) {
     helpers.run(path.join(__dirname, '../generators/model'))
       // generator will create a temp directory and make sure it's empty
