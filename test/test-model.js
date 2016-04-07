@@ -38,36 +38,48 @@ describe('generator-alfresco:model', function () {
         "namespace-prefix": "zz",
       })
       .on('end', function() {
+        var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+        var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        console.log("OUTPUT FOR MODEL FILE: "+modelFile);
+        fs.readFile(modelFile, 'utf-8', function (err, data) {
+          if (err) throw err;
+          console.log(data);
+        });
+        console.log("OUTPUT FOR CONTEXT FILE: "+contextFile);
+        fs.readFile(contextFile, 'utf-8', function (err, data) {
+          if (err) throw err;
+          console.log(data);
+        });
         assert.file([
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml'),
+          modelFile,
+          contextFile,
         ]);
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
+          modelFile,
           /<model name="zz:test"/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
+          modelFile,
           /<version>1.0<\/version>/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
+          modelFile,
           /<author>test author<\/author>/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
+          modelFile,
           /<description>test desc<\/description>/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml'),
+          modelFile,
           /<namespace uri="http:\/\/www.test.com\/model\/content\/1.0" prefix="zz"\/>/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml'),
+          contextFile,
           /<bean id="test.dictionaryBootstrap"/
         );
         assert.fileContent(
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml'),
+          contextFile,
           /<value>alfresco\/module\/\${project.artifactId}\/model\/generated\/testModel.xml<\/value>/
         );
         done();
