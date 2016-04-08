@@ -15,7 +15,7 @@ var wrap = require('wrap-ansi');
  *
  * Usage:
  * ... inside generator code
- * this.out = require('./app-output.js')(this);
+ * this.out = require('./generator-output.js')(this);
  * this.out.info('Something amazing');
  * this.out.warn('Something alarming');
  * this.out.error('Something abominable');

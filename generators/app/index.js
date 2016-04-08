@@ -21,7 +21,7 @@ module.exports = yeoman.Base.extend({
     return undefined;
   },
   initializing: function () {
-    this.out = require('./../common/app-output.js')(this);
+    this.out = require('./../common/generator-output.js')(this);
 
     this.pkg = require('../../package.json');
     this.sdkVersions = require('./../common/sdk-versions.js');

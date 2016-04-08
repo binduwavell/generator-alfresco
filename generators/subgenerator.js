@@ -65,7 +65,7 @@ module.exports = yeoman.Base.extend({
     yeoman.Base.apply(this, arguments);
 
     this.bail = false;
-    this.out = require('./common/app-output.js')(this);
+    this.out = require('./common/generator-output.js')(this);
     this.sdkVersions = require('./common/sdk-versions.js');
     this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
     this.moduleRegistry = require('./common/alfresco-module-registry.js')(this);
