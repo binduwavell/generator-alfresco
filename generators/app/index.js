@@ -441,7 +441,7 @@ module.exports = yeoman.Base.extend({
         }.bind(this)
       );
       // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
-      [constants.FILE_RUN_SH, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
+      [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
         function(fileName) {
           this.fs.copy(
             this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
@@ -537,12 +537,14 @@ module.exports = yeoman.Base.extend({
       var cwd = process.cwd();
       var scripts = [
         constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
         path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
         path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
         path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
         path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
         path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
         path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
         path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
       ];
       scripts.forEach(function(scriptName) {
@@ -550,7 +552,14 @@ module.exports = yeoman.Base.extend({
         fs.chmodSync(cwd + '/' + scriptName, '0755');
       }.bind(this));
       if (this.removeDefaultSourceAmps) {
-        this.out.warn('Sine you chose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+        this.out.warn('Since you choose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+      }
+    },
+
+    beforeExit: function () {
+      if(this.bail) return;
+      if(this.sdk.beforeExit) {
+        this.sdk.beforeExit.call(this);
       }
     }
   },
