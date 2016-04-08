@@ -1,7 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
-var constants = require('./app/constants.js');
+var constants = require('./common/constants.js');
 var SubGenerator = require('./subgenerator.js');
 
 /**

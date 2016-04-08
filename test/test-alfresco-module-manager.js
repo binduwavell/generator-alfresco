@@ -5,7 +5,7 @@ var memFs = require('mem-fs');
 var FileEditor = require('mem-fs-editor');
 var os = require('os');
 var path = require('path');
-var constants = require('../generators/app/constants.js');
+var constants = require('../generators/common/constants.js');
 
 describe('generator-alfresco:alfresco-module-manager', function () {
 
@@ -25,15 +25,15 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     projectArtifactId: 'test',
     projectPackaging: 'pom',
     projectVersion: '1.0',
-    sdkVersions: require('../generators/app/sdk-versions.js'),
-    sdk: require('../generators/app/sdk-versions.js')['2.1.1']
+    sdkVersions: require('../generators/common/sdk-versions.js'),
+    sdk: require('../generators/common/sdk-versions.js')['2.1.1']
   };
 
   describe('.addModule()', function() {
 
     beforeEach(function () {
       yomock.fs = FileEditor.create(memFs.create());
-      yomock.moduleManager = require('../generators/app/alfresco-module-manager.js')(yomock);
+      yomock.moduleManager = require('../generators/common/alfresco-module-manager.js')(yomock);
       yomock.topPomPath = yomock.destinationPath('pom.xml');
       yomock.fs.write(yomock.topPomPath, "");
       yomock.wrapperPomPath = yomock.destinationPath('repo/pom.xml');
@@ -60,14 +60,14 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('copies the module template', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.templatePomPath)
       );
       assert.ok( pom.getPOMString() );
     });
 
     it('updates the project pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.projectPomPath)
       );
       // console.log(pom.getPOMString());
@@ -89,7 +89,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('adds a module to the top pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.topPomPath)
       );
       var mod = pom.findModule('artifactId');
@@ -98,7 +98,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('adds a dependency to the war pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
       var dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
@@ -107,7 +107,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('adds an overlay to the war pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
       var overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');
@@ -122,7 +122,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       // no module.
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');
       yomock.moduleManager.save();
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.topPomPath)
       );
       pom.removeModule('artifactId');
@@ -136,7 +136,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
 
     beforeEach(function () {
       yomock.fs = FileEditor.create(memFs.create());
-      yomock.moduleManager = require('../generators/app/alfresco-module-manager.js')(yomock);
+      yomock.moduleManager = require('../generators/common/alfresco-module-manager.js')(yomock);
       yomock.topPomPath = yomock.destinationPath('pom.xml');
       yomock.fs.write(yomock.topPomPath, "");
       yomock.wrapperPomPath = yomock.destinationPath('war/pom.xml');
@@ -159,7 +159,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes module from the top pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.topPomPath)
       );
       var mod = pom.findModule('artifactId');
@@ -167,7 +167,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes dependency from the war wrapper pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
       var dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
@@ -175,7 +175,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes overlay from the war wrapper pom', function () {
-      var pom = require('../generators/app/maven-pom.js')(
+      var pom = require('../generators/common/maven-pom.js')(
         yomock.fs.read(yomock.wrapperPomPath)
       );
       var overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');

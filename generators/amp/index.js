@@ -5,9 +5,8 @@ var debug = require('debug')('generator-alfresco:amp');
 var fs = require('fs');
 var path = require('path');
 var yeoman = require('yeoman-generator');
-var yosay = require('yosay');
-var constants = require('../app/constants.js');
-var filters = require('../app/prompt-filters.js');
+var constants = require('../common/constants.js');
+var filters = require('../common/prompt-filters.js');
 var SubGenerator = require('../subgenerator.js');
 
 var WAR_TYPE_BOTH = 'Both repo & share';
@@ -220,7 +219,7 @@ module.exports = SubGenerator.extend({
         if (this.fs.exists(parentPomPath)) {
           parentPomStr = this.fs.read(parentPomPath);
         }
-        var parentPom = require('../app/maven-pom.js')(parentPomStr);
+        var parentPom = require('../common/maven-pom.js')(parentPomStr);
         parentPom.setProjectGAV(parentGroupId, parentArtifactId, parentVersion, 'pom');
         if (this.props.parentName) parentPom.setTopLevelElementTextContent('pom', 'name', this.props.parentName);
         if (this.props.parentDescription) parentPom.setTopLevelElementTextContent('pom', 'description', this.props.parentDescription);
@@ -230,7 +229,7 @@ module.exports = SubGenerator.extend({
         var customizationsPomPath = this.destinationPath(path.join(constants.FOLDER_CUSTOMIZATIONS, 'pom.xml'));
         this.out.info('Adding ' + parentArtifactId + ' to customizations module ' + customizationsPomPath);
         var customizationsPomStr = this.fs.read(customizationsPomPath);
-        var customizationsPom = require('../app/maven-pom.js')(customizationsPomStr);
+        var customizationsPom = require('../common/maven-pom.js')(customizationsPomStr);
         if (!customizationsPom.findModule(parentArtifactId)) {
           customizationsPom.addModule(parentArtifactId, true);
           this.fs.write(customizationsPomPath, customizationsPom.getPOMString());
@@ -249,7 +248,7 @@ module.exports = SubGenerator.extend({
             this.out.info('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
-            var pom = require('../app/maven-pom.js')(pomStr);
+            var pom = require('../common/maven-pom.js')(pomStr);
             if (this.props.repoName) pom.setTopLevelElementTextContent('pom', 'name', this.props.repoName);
             if (this.props.repoDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.repoDescription);
             this.fs.write(pomPath, pom.getPOMString());
@@ -279,7 +278,7 @@ module.exports = SubGenerator.extend({
             console.log('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
-            var pom = require('../app/maven-pom.js')(pomStr);
+            var pom = require('../common/maven-pom.js')(pomStr);
             if (this.props.shareName) pom.setTopLevelElementTextContent('pom', 'name', this.props.shareName);
             if (this.props.shareDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.shareDescription);
             this.fs.write(pomPath, pom.getPOMString());

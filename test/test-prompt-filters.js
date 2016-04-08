@@ -2,7 +2,7 @@
 
 var assert = require('assert');
 var _ = require('lodash');
-var filters = require('../generators/app/prompt-filters.js')
+var filters = require('../generators/common/prompt-filters.js')
 
 describe('generator-alfresco:prompt-filters', function () {
 

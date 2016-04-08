@@ -1,14 +1,13 @@
 'use strict';
 var yeoman = require('yeoman-generator');
+var _ = require('lodash');
 var chalk = require('chalk');
-var constants = require('./constants.js');
 var fs = require('fs');
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
-var versions = require('./dependency-versions.js');
-var yosay = require('yosay');
-var _ = require('lodash');
+var constants = require('./../common/constants.js');
+var versions = require('./../common/dependency-versions.js');
 
 module.exports = yeoman.Base.extend({
   _getConfigValue: function(key) {
@@ -22,10 +21,10 @@ module.exports = yeoman.Base.extend({
     return undefined;
   },
   initializing: function () {
-    this.out = require('./app-output.js')(this);
+    this.out = require('./../common/app-output.js')(this);
 
     this.pkg = require('../../package.json');
-    this.sdkVersions = require('./sdk-versions.js');
+    this.sdkVersions = require('./../common/sdk-versions.js');
     this.defaultConfig = {
       sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
@@ -280,7 +279,7 @@ module.exports = yeoman.Base.extend({
           constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
         ], props);
         // can only setup module registry/manager once we have other variables setup
-        this.moduleManager = require('./alfresco-module-manager.js')(this);
+        this.moduleManager = require('./../common/alfresco-module-manager.js')(this);
       }
       donePrompting();
     }.bind(this));
@@ -501,7 +500,7 @@ module.exports = yeoman.Base.extend({
       // Make sure customizations/pom.xml is included in the top pom
       var topPomPath = this.destinationPath('pom.xml');
       var topPomContent = this.fs.read(topPomPath);
-      var topPom = require('./maven-pom.js')(topPomContent);
+      var topPom = require('./../common/maven-pom.js')(topPomContent);
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
     },

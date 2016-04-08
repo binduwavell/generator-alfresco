@@ -3,7 +3,7 @@
 var assert = require('assert');
 var memFs = require('mem-fs');
 var editor = require('mem-fs-editor');
-var memFsUtils = require('../generators/app/mem-fs-utils.js');
+var memFsUtils = require('../generators/common/mem-fs-utils.js');
 
 describe('generator-alfresco:mem-fs-utils', function () {
 

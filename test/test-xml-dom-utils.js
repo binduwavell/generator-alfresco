@@ -5,7 +5,7 @@ var chalk = require('chalk');
 var inspect = require('eyes').inspector({maxLength: false});
 var pd = require('pretty-data').pd;
 var xmldom = require('xmldom');
-var domutils = require('../generators/app/xml-dom-utils.js');
+var domutils = require('../generators/common/xml-dom-utils.js');
 
 describe('generator-alfresco:xml-dom-utils', function () {
 

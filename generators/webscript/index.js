@@ -3,9 +3,8 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
-var yosay = require('yosay');
-var constants = require('../app/constants.js');
-var filters = require('../app/prompt-filters.js');
+var constants = require('../common/constants.js');
+var filters = require('../common/prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
 var METHODS = ['get', 'post', 'put', 'delete'];

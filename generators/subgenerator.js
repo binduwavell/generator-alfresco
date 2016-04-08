@@ -6,7 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
-var constants = require('./app/constants.js');
+var constants = require('./common/constants.js');
 
 /**
  * Base class for a yeoman sub-generator in the generator-alfresco project. This
@@ -65,12 +65,12 @@ module.exports = yeoman.Base.extend({
     yeoman.Base.apply(this, arguments);
 
     this.bail = false;
-    this.out = require('./app/app-output.js')(this);
-    this.sdkVersions = require('./app/sdk-versions.js');
+    this.out = require('./common/app-output.js')(this);
+    this.sdkVersions = require('./common/sdk-versions.js');
     this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
-    this.moduleRegistry = require('./app/alfresco-module-registry.js')(this);
+    this.moduleRegistry = require('./common/alfresco-module-registry.js')(this);
     this.modules = this.moduleRegistry.getNamedModules();
-    this.moduleManager = require('./app/alfresco-module-manager.js')(this);
+    this.moduleManager = require('./common/alfresco-module-manager.js')(this);
   },
 
   setupArgumentsAndOptions: function(prompts) {

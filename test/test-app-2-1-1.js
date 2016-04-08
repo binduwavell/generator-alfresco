@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('yeoman-assert');
-var constants = require('../generators/app/constants.js');
+var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
 var fs = require('fs');
 var os = require('os');
