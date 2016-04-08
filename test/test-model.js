@@ -17,7 +17,7 @@ describe('generator-alfresco:model', function () {
       .withPrompts({
         sdkVersion: '2.1.1',
         projectArtifactId: 'temp-test',
-        removeDefaultSourceAmps: true,
+        removeDefaultSourceAmps: false,
         removeDefaultSourceSamples: false,
       })
       .on('end', done);
