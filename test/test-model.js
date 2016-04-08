@@ -17,6 +17,8 @@ describe('generator-alfresco:model', function () {
       .withPrompts({
         sdkVersion: '2.1.1',
         projectArtifactId: 'temp-test',
+        removeDefaultSourceAmps: true,
+        removeDefaultSourceSamples: false,
       })
       .on('end', done);
   });
@@ -110,7 +112,7 @@ describe('generator-alfresco:model', function () {
         done();
       });
   });
-  
+
   it('name only invalid characters for coverage', function(done) {
     helpers.run(path.join(__dirname, '../generators/model'))
       // generator will create a temp directory and make sure it's empty

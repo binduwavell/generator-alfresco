@@ -46,15 +46,6 @@
   </namespaces>
 
   <!--
-  <data-types>
-    <data-type name="<%-namespacePrefix%>:myCustomDataType">
-      <default-analyser-class>org.alfresco.repo.search.impl.lucene.analysis.AlfrescoStandardAnalyser</default-analyser-class>
-      <java-class>my.custom.JavaClass</java-class>
-    </data-type>
-  </data-types>
-  -->
-
-  <!--
     More details on Constraints can be found at the below links
     https://docs.alfresco.com/5.1/concepts/metadata-model-contraints.html
   -->
@@ -155,15 +146,15 @@
     <type name="<%-namespacePrefix%>:completeDoc">
       <title>Complete Doc</title>
       <description>Description for complete doc</description>
-      <parent>cm:content</parent>
+      <parent><%-namespacePrefix%>:doc</parent>
       <archive>true</archive>
       <includedInSuperTypeQuery>true</includedInSuperTypeQuery>
       <properties>
         <property name="<%-namespacePrefix%>:product">
           <type>d:text</type>
           <protected>false</protected>
-          <mandatory enforced='true'>true</mandatory>
-          <multiple>true</multiple>
+          <mandatory enforced='false'>false</mandatory>
+          <multiple>false</multiple>
           <default>Foobar Widget</default>
           <index enabled="true">
             <atomic>true</atomic>
