@@ -3,7 +3,7 @@
 var assert = require('assert');
 var chalk = require('chalk');
 
-describe('generator-alfresco:app-output', function () {
+describe('generator-alfresco:generator-output', function () {
 
 
   beforeEach(function() {
