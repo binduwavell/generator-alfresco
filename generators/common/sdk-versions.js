@@ -372,9 +372,9 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   debug('removeShareSamples() finished');
 }
 
-function beforeExit() {
+function beforeExit () {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
       fs.unlinkSync(this.destinationPath(constants.FILE_RUN_SH));
       fs.unlinkSync(this.destinationPath(path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH)));
     }
