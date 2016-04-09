@@ -35,6 +35,7 @@ describe('generator-alfresco:app', function () {
         'pom.xml',
         'debug.sh',
         'run.sh',
+        'run.bat',
         'run-without-springloaded.sh',
         'scripts/debug.sh',
         'scripts/env.sh',
@@ -43,6 +44,7 @@ describe('generator-alfresco:app', function () {
         'scripts/grep-exploded.sh',
         'scripts/package-to-exploded.sh',
         'scripts/run.sh',
+        'scripts/run.bat',
         'scripts/run-without-springloaded.sh',
         'amps/README.md',
         'amps_share/README.md',
@@ -87,9 +89,11 @@ describe('generator-alfresco:app', function () {
       assert.noFileContent([
         ['debug.sh', /-Penterprise/],
         ['run.sh', /-Penterprise/],
+        ['run.bat', /-Penterprise/],
         ['run-without-springloaded.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
+        ['scripts/run.bat', /-Penterprise/],
         ['scripts/run-without-springloaded.sh', /-Penterprise/]
       ]);
     });
