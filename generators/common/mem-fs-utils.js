@@ -12,11 +12,11 @@ module.exports = {
    * @param {!Store|!EditionInterface} storeOrEditor
    * @param {string} file path or folder path
    */
-  existsInMemory: function(storeOrEditor, path) {
+  existsInMemory: function (storeOrEditor, path) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
     var retv = false;
-    store.each(function(file) {
-      if (0 === file.path.indexOf(path) && file.contents !== null && file.state !== 'deleted') {
+    store.each(function (file) {
+      if (file.path.indexOf(path) === 0 && file.contents !== null && file.state !== 'deleted') {
         retv = true;
       }
     });
@@ -31,12 +31,12 @@ module.exports = {
    * @param {string} from - file path or folder path
    * @param {string} to - folder path
    */
-  inMemoryCopy: function(storeOrEditor, from, to) {
+  inMemoryCopy: function (storeOrEditor, from, to) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
     var fromLen = from.length;
-    store.each(function(file) {
+    store.each(function (file) {
       var idx = file.path.indexOf(from);
-      if (0 === idx && file.contents !== null && file.state !== 'deleted') {
+      if (idx === 0 && file.contents !== null && file.state !== 'deleted') {
         var absTo = path.join(to, file.path.substr(fromLen));
         // exact match so we are copying a single file and not a folder
         if (fromLen === file.path.length) {
@@ -58,20 +58,20 @@ module.exports = {
    * @param {string} from - file path or folder path
    * @param {string} to - folder path
    */
-  inMemoryMove: function(storeOrEditor, from, to) {
+  inMemoryMove: function (storeOrEditor, from, to) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
     var memFsEditor = require('mem-fs-editor').create(store);
     var fromLen = from.length;
-    store.each(function(file) {
+    store.each(function (file) {
       var idx = file.path.indexOf(from);
-      if (0 === idx && file.contents !== null && file.state !== 'deleted') {
+      if (idx === 0 && file.contents !== null && file.state !== 'deleted') {
         var absTo = path.join(to, file.path.substr(fromLen));
         // exact match so we are copying a single file and not a folder
         if (fromLen === file.path.length) {
           absTo = path.join(to, path.basename(file.path));
         }
         // console.log("MOVING FROM: " + file.path + " TO: " + absTo);
-        memFsEditor.move(file.path, absTo)
+        memFsEditor.move(file.path, absTo);
       }
     });
   },
@@ -81,13 +81,13 @@ module.exports = {
    * @param {!Store|!EditionInterface} storeOrEditor
    * @param {(Function|undefined)} logFn
    */
-  dumpFileNames: function(storeOrEditor, logFn) {
+  dumpFileNames: function (storeOrEditor, logFn) {
     var store = (storeOrEditor && storeOrEditor.store ? storeOrEditor.store : storeOrEditor);
     var fn = logFn || console.log;
-    store.each(function(file) {
+    store.each(function (file) {
       fn.call(this, file.path + ' [STATE:' + file.state + ']');
       /*
-      fn.call(this, JSON.stringify(file, function(k, v) {
+      fn.call(this, JSON.stringify(file, function (k, v) {
         if (k === '_contents') {
           if (undefined !== v) {
             return 'data';
@@ -97,7 +97,7 @@ module.exports = {
       }));
       */
     });
-  }
+  },
 
 };
 

@@ -44,6 +44,6 @@ module.exports = {
 
   WAR_TYPE_REPO: 'repo',
   WAR_TYPE_SHARE: 'share',
-}
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

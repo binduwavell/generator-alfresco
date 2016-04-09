@@ -13,18 +13,18 @@ var memFsUtils = require('./mem-fs-utils.js');
  * add/remove files and even update references in poms/context-files, etc.
  */
 
-module.exports = function(yo) {
+module.exports = function (yo) {
   var module = {};
 
   var ops = [];
 
-  module.pushOp = function(fn) {
+  module.pushOp = function (fn) {
     ops.push(fn);
-  }
+  };
 
   module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
 
-  module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+  module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // console.log("Existing module: " + JSON.stringify(mod));
@@ -36,35 +36,35 @@ module.exports = function(yo) {
     this.moduleRegistry.addModule(mod);
 
     // Stuff we only need to do for source amps
-    if ('source' === mod.location) {
+    if (mod.location === 'source') {
       // console.log('Scheduling ops for ' + mod.artifactId);
-      ops.push(function() { copyTemplateForModule(mod) } );
-      ops.push(function() { renamePathElementsForModule(mod) } );
-      ops.push(function() { addModuleToParentPom(mod) } );
-      if (constants.WAR_TYPE_SHARE == mod.war) {
-        ops.push(function() { addFailsafeConfigToRunner(mod) } )
+      ops.push(function () { copyTemplateForModule(mod) });
+      ops.push(function () { renamePathElementsForModule(mod) });
+      ops.push(function () { addModuleToParentPom(mod) });
+      if (mod.war === constants.WAR_TYPE_SHARE) {
+        ops.push(function () { addFailsafeConfigToRunner(mod) });
       }
-      ops.push(function() { addModuleToTomcatContext(mod) } );
+      ops.push(function () { addModuleToTomcatContext(mod) });
     }
 
-    ops.push(function() { updateProjectPom(mod) } );
-    ops.push(function() { addModuleToWarWrapper(mod) } );
+    ops.push(function () { updateProjectPom(mod) });
+    ops.push(function () { addModuleToWarWrapper(mod) });
     // TODO: what else do we need to do when we remove a module?
     debug('addModule() finished');
   };
 
-  function copyTemplateForModule(mod) {
+  function copyTemplateForModule (mod) {
     debug('copyTemplateForModule()');
     var toPath = yo.destinationPath(mod.path);
     // console.log('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
       var prefix = yo.sdk.sdkVersionPrefix.call(yo);
-      yo.config.get('artifactId')
+      yo.config.get('artifactId');
       var fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         // console.log('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
-        memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath)
+        memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath);
       } else {
         // console.log('PHYSICAL COPY: ' + fromPath + '/** to: ' + toPath);
         yo.fs.copy(path.join(fromPath, '/**'), toPath);
@@ -75,13 +75,13 @@ module.exports = function(yo) {
     debug('copyTemplateForModule() finished');
   }
 
-  function renamePathElementsForModule(mod) {
+  function renamePathElementsForModule (mod) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
-    var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function(mod) {
-      return ('source' === mod.location && constants.WAR_TYPE_REPO === mod.war);
+    var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
+      return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
     });
     if (defaultMods && defaultMods.length > 0) {
-      if (defaultMods[0].artifactId != mod.artifactId) {
+      if (mod.artifactId !== defaultMods[0].artifactId) {
         // <path>/src/main/amp/config/alfresco/module/<artifactId>
         var fromPath = path.join(
           yo.destinationPath(),
@@ -99,17 +99,17 @@ module.exports = function(yo) {
         // console.log("MOVING FROM: " + fromPath + " to: " + toPath);
         if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
           // console.log('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
-          memFsUtils.inMemoryMove(yo.fs, fromPath, toPath)
+          memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
         } else {
           // console.log('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
-          yo.fs.move(fromPath + "/**", toPath);
+          yo.fs.move(fromPath + '/**', toPath);
         }
       }
     }
     debug('renamePathElementsForModule() finished');
   }
 
-  function addFailsafeConfigToRunner(mod) {
+  function addFailsafeConfigToRunner (mod) {
     var runnerPomPath = yo.destinationPath('runner/pom.xml');
     yo.out.info('Configuring failsafe entries for ' + mod.artifactId + ' in ' + runnerPomPath);
     var runnerPom = yo.fs.read(runnerPomPath);
@@ -135,37 +135,37 @@ module.exports = function(yo) {
         }
         // now add module specific instances
         var ftx = [
-            '<execution>',
-            '    <id>functional-tests-' + mod.artifactId + '</id>',
-            '    <phase>integration-test</phase>',
-            '    <goals>',
-            '      <goal>integration-test</goal>',
-            '    </goals>',
-            '    <configuration>',
-            '        <suiteXmlFiles>',
-            '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
-            '        </suiteXmlFiles>',
-            '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
-            '    </configuration>',
-            '</execution>',
+          '<execution>',
+          '    <id>functional-tests-' + mod.artifactId + '</id>',
+          '    <phase>integration-test</phase>',
+          '    <goals>',
+          '      <goal>integration-test</goal>',
+          '    </goals>',
+          '    <configuration>',
+          '        <suiteXmlFiles>',
+          '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
+          '        </suiteXmlFiles>',
+          '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
+          '    </configuration>',
+          '</execution>',
         ].join('\n');
         var ftdoc = domutils.parseFromString(ftx);
         var ftn = pomDoc.importNode(ftdoc.documentElement, true);
         pluginExs.appendChild(ftn);
         var vtx = [
-            '<execution>',
-            '    <id>verify-tests-' + mod.artifactId + '</id>',
-            '    <phase>verify</phase>',
-            '    <goals>',
-            '        <goal>verify</goal>',
-            '    </goals>',
-            '    <configuration>',
-            '        <suiteXmlFiles>',
-            '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
-            '        </suiteXmlFiles>',
-            '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
-            '    </configuration>',
-            '</execution>',
+          '<execution>',
+          '    <id>verify-tests-' + mod.artifactId + '</id>',
+          '    <phase>verify</phase>',
+          '    <goals>',
+          '        <goal>verify</goal>',
+          '    </goals>',
+          '    <configuration>',
+          '        <suiteXmlFiles>',
+          '            <suiteXmlFile>${project.parent.basedir}/' + mod.path + '/target/test-classes/testng.xml</suiteXmlFile>',
+          '        </suiteXmlFiles>',
+          '        <testClassesDirectory>${project.parent.basedir}/' + mod.path + '/target/test-classes</testClassesDirectory>',
+          '    </configuration>',
+          '</execution>',
         ].join('\n');
         var vtdoc = domutils.parseFromString(vtx);
         var vtn = pomDoc.importNode(vtdoc.documentElement, true);
@@ -176,7 +176,7 @@ module.exports = function(yo) {
     debug('addFailsafeConfigToRunner() finished');
   }
 
-  function addModuleToParentPom(mod) {
+  function addModuleToParentPom (mod) {
     // TODO: if intermediate source modules are not included, include them too (customizations for example.)
     var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + parentPomPath);
@@ -190,7 +190,7 @@ module.exports = function(yo) {
   }
 
   // TODO(bwavell): Add tests for this
-  function addModuleToTomcatContext(mod) {
+  function addModuleToTomcatContext (mod) {
     yo.out.info('Adding path elements for ' + mod.artifactId + ' tomcat context file');
     var warType = mod.war;
     var modPath = mod.path;
@@ -222,7 +222,7 @@ module.exports = function(yo) {
     debug('addModuleToTomcatContext() finished');
   }
 
-  function updateProjectPom(mod) {
+  function updateProjectPom (mod) {
     var projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
     yo.out.info('Setting project/parent GAVs for ' + mod.artifactId + ' in ' + projectPomPath);
 
@@ -237,7 +237,6 @@ module.exports = function(yo) {
     var parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROJECT_GROUP_ID));
     var parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
     var parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
-
 
     // console.log("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
     var projectPom = yo.fs.read(projectPomPath);
@@ -264,7 +263,7 @@ module.exports = function(yo) {
     debug('updateProjectPom() finished');
   }
 
-  function addModuleToWarWrapper(mod) {
+  function addModuleToWarWrapper (mod) {
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
     var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
     var wrapperPom = yo.fs.read(wrapperPomPath);
@@ -283,7 +282,7 @@ module.exports = function(yo) {
       var artifactId = domutils.getOrCreateChild(plugin, 'pom', 'artifactId');
       artifactIdText = artifactId.textContent;
       if (artifactIdText) {
-        if ('maven-war-plugin' !== artifactIdText) {
+        if (artifactIdText !== 'maven-war-plugin') {
           plugin = domutils.getNextElementSibling(plugin);
           // exhausted existing plugins, so we need to add one
           if (undefined === plugin) {
@@ -294,36 +293,36 @@ module.exports = function(yo) {
         artifactIdText = 'maven-war-plugin';
         artifactId.textContent = artifactIdText;
       }
-    } while ('maven-war-plugin' !== artifactIdText)
+    } while (artifactIdText !== 'maven-war-plugin');
     var configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
-    var overlays = domutils.getOrCreateChild(configuration, 'pom', 'overlays');
-    var overlay = pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
+    domutils.getOrCreateChild(configuration, 'pom', 'overlays');
+    pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
     // console.log(pom.getPOMString());
     yo.fs.write(wrapperPomPath, pom.getPOMString());
     debug('addModuleToWarWrapper() finished');
   }
 
-  module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+  module.removeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
       debug('removing module: %s', mod.artifactId);
       this.moduleRegistry.removeModule(mod);
-      if ('source' === mod.location) {
-        ops.push(function() { removeModuleFiles(mod) } );
-        ops.push(function() { removeModuleFromParentPom(mod) } );
-        ops.push(function() { removeModuleFromWarWrapper(mod) } );
-        if (constants.WAR_TYPE_SHARE == mod.war) {
+      if (mod.location === 'source') {
+        ops.push(function () { removeModuleFiles(mod) });
+        ops.push(function () { removeModuleFromParentPom(mod) });
+        ops.push(function () { removeModuleFromWarWrapper(mod) });
+        if (mod.war === constants.WAR_TYPE_SHARE) {
           ops.push(function () { removeFailsafeConfigFromRunner(mod) });
         }
-        ops.push(function() { removeModuleFromTomcatContext(mod) } );
+        ops.push(function () { removeModuleFromTomcatContext(mod) });
         // TODO: what else do we need to do when we remove a module?
       }
     }
     debug('removeModule() finished');
   };
 
-  function removeModuleFiles(mod) {
+  function removeModuleFiles (mod) {
     // remove the actual files
     yo.out.warn('Deleting source module: ' + mod.path);
     var absPath = yo.destinationPath(mod.path);
@@ -331,8 +330,8 @@ module.exports = function(yo) {
     // console.log("DELETING EXISTING FILES FROM: " + absPath);
     yo.fs.delete(absPath);
     // if we have files in mem-fs, this should get those
-    yo.fs.store.each(function(file, idx) {
-      if (file.path.indexOf(absPath) == 0) {
+    yo.fs.store.each(function (file, idx) {
+      if (file.path.indexOf(absPath) === 0) {
         // console.log("DELETING: " + file.path);
         yo.fs.delete(file.path);
       }
@@ -340,7 +339,7 @@ module.exports = function(yo) {
     debug('removeModuleFiles() finished');
   }
 
-  function removeModuleFromParentPom(mod) {
+  function removeModuleFromParentPom (mod) {
     var parentPomPath = yo.destinationPath('pom.xml');
     yo.out.warn('Removing ' + mod.artifactId + ' module from ' + parentPomPath);
     var parentPom = yo.fs.read(parentPomPath);
@@ -352,20 +351,20 @@ module.exports = function(yo) {
     debug('removeModuleFromParentPom() finished');
   }
 
-  function removeModuleFromWarWrapper(mod) {
+  function removeModuleFromWarWrapper (mod) {
     yo.out.info('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
     var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
     var wrapperPom = yo.fs.read(wrapperPomPath);
     var pom = require('./maven-pom.js')(wrapperPom);
     if (pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
       pom.removeDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
-      pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging );
+      pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging);
       yo.fs.write(wrapperPomPath, pom.getPOMString());
     }
     debug('removeModuleFromWarWrapper() finished');
   }
 
-  function removeFailsafeConfigFromRunner(mod) {
+  function removeFailsafeConfigFromRunner (mod) {
     var runnerPomPath = yo.destinationPath('runner/pom.xml');
     yo.out.info('Removing failsafe entries for ' + mod.artifactId + ' from ' + runnerPomPath);
     var runnerPom = yo.fs.read(runnerPomPath);
@@ -375,12 +374,12 @@ module.exports = function(yo) {
       // now if we find executions for this module remove them too
       var mft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests-' + mod.artifactId + '"]', pluginExs);
       if (mft) {
-        console.log("Removing functional-tests-" + mod.artifactId)
+        console.log('Removing functional-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mft);
       }
       var mvt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests-' + mod.artifactId + '"]', pluginExs);
       if (mvt) {
-        console.log("Removing verify-tests-" + mod.artifactId)
+        console.log('Removing verify-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mvt);
       }
       yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
@@ -389,7 +388,7 @@ module.exports = function(yo) {
   }
 
   // TODO(bwavell): Add tests for this
-  function removeModuleFromTomcatContext(mod) {
+  function removeModuleFromTomcatContext (mod) {
     yo.out.info('Removing path elements for ' + mod.artifactId + ' from tomcat context file');
     var warType = mod.war;
     var modPath = mod.path;
@@ -415,10 +414,10 @@ module.exports = function(yo) {
     debug('removeModuleFromTomcatContext() finished');
   }
 
-  module.save = function() {
+  module.save = function () {
     debug('saving module registry and performing scheduled tasks');
     this.moduleRegistry.save();
-    ops.forEach(function(op) {
+    ops.forEach(function (op) {
       op.call(this);
     });
     ops = [];
