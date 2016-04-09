@@ -1,6 +1,7 @@
 'use strict';
 
 var debug = require('debug')('generator-alfresco:sdk-versions');
+var fs = require('fs');
 var path = require('path');
 var semver = require('semver');
 var constants = require('./constants.js');
@@ -23,6 +24,7 @@ module.exports = {
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
     targetFolderName: targetFolderName,
+    beforeExit: beforeExit,
   },
   '2.1.1': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -368,6 +370,15 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
     this.fs.move(file, file + '.sample');
   }.bind(this));
   debug('removeShareSamples() finished');
+}
+
+function beforeExit() {
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
+      fs.unlinkSync(this.destinationPath(constants.FILE_RUN_SH));
+      fs.unlinkSync(this.destinationPath(path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH)));
+    }
+  }
 }
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
