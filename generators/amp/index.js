@@ -1,10 +1,7 @@
 'use strict';
-var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:amp');
-var fs = require('fs');
 var path = require('path');
-var yeoman = require('yeoman-generator');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
 var SubGenerator = require('../subgenerator.js');
@@ -14,7 +11,7 @@ var WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHAR
 
 module.exports = SubGenerator.extend({
 
-  constructor: function() {
+  constructor: function () {
     SubGenerator.apply(this, arguments);
 
     var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
@@ -25,7 +22,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: constants.PROP_WAR,
-        option: { name: 'war', config: { alias:'w', desc: 'War to target: repo, share or both', type: String, } },
+        option: { name: 'war', config: { alias: 'w', desc: 'War to target: repo, share or both', type: String } },
         choices: WAR_TYPES,
         message: 'Which war would you like to customize?',
         commonFilter: filters.chooseOneMapStartsWithFilterFactory({ 'repo': constants.WAR_TYPE_REPO, 'share': constants.WAR_TYPE_SHARE, 'both': WAR_TYPE_BOTH }),
@@ -34,7 +31,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: constants.PROP_PROJECT_GROUP_ID,
-        option: { name: 'project-group-id', config: { alias:'g', desc: 'groupId for project', type: String, } },
+        option: { name: 'project-group-id', config: { alias: 'g', desc: 'groupId for project', type: String } },
         default: defGroupId,
         message: 'Project groupId?',
         commonFilter: filters.requiredTextFilter,
@@ -44,7 +41,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
-        option: { name: 'project-artifact-id', config: { alias:'a', desc: 'prefix for project artifactId', type: String, } },
+        option: { name: 'project-artifact-id', config: { alias: 'a', desc: 'prefix for project artifactId', type: String } },
         default: defArtifactIdPrefix,
         message: 'Project artifactId prefix?',
         commonFilter: filters.requiredTextFilter,
@@ -54,7 +51,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: constants.PROP_PROJECT_VERSION,
-        option: { name: 'project-version', config: { alias:'v', desc: 'version for project', type: String, } },
+        option: { name: 'project-version', config: { alias: 'v', desc: 'version for project', type: String } },
         default: defVersion,
         message: 'Project version?',
         commonFilter: filters.requiredTextFilter,
@@ -64,7 +61,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'confirm',
         name: 'removeDefaultSourceSamples',
-        option: { name: 'remove-default-source-samples', config: { alias: 'R', desc: 'Remove sample code from new amp(s)', type: Boolean, } },
+        option: { name: 'remove-default-source-samples', config: { alias: 'R', desc: 'Remove sample code from new amp(s)', type: Boolean } },
         default: true,
         message: 'Should we remove the default samples?',
         commonFilter: filters.booleanFilter,
@@ -73,8 +70,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'confirm',
         name: 'createParent',
-        option: { name: 'create-parent', config: { alias:'p', desc: 'Create parent folder for amps', type: Boolean, } },
-        when: function(props) {
+        option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean } },
+        when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType);
           if (!show) this.createParent = false;
@@ -88,8 +85,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'parentName',
-        option: { name: 'parent-name', config: { alias:'m', desc: 'Name for parent pom', type: String, } },
-        when: function(props) {
+        option: { name: 'parent-name', config: { alias: 'm', desc: 'Name for parent pom', type: String } },
+        when: function (props) {
           return props.createParent;
         },
         message: 'Name for parent pom?',
@@ -99,8 +96,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'parentDescription',
-        option: { name: 'parent-description', config: { alias:'s', desc: 'Description for parent pom', type: String, } },
-        when: function(props) {
+        option: { name: 'parent-description', config: { alias: 's', desc: 'Description for parent pom', type: String } },
+        when: function (props) {
           return props.createParent;
         },
         message: 'Description for parent pom?',
@@ -110,8 +107,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'repoName',
-        option: { name: 'repo-name', config: { alias:'n', desc: 'Name for repo pom', type: String, } },
-        when: function(props) {
+        option: { name: 'repo-name', config: { alias: 'n', desc: 'Name for repo pom', type: String } },
+        when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
           return show;
@@ -123,8 +120,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'repoDescription',
-        option: { name: 'repo-description', config: { alias:'d', desc: 'Description for repo pom', type: String, } },
-        when: function(props) {
+        option: { name: 'repo-description', config: { alias: 'd', desc: 'Description for repo pom', type: String } },
+        when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
           return show;
@@ -136,8 +133,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'shareName',
-        option: { name: 'share-name', config: { alias:'N', desc: 'Name for share pom', type: String, } },
-        when: function(props) {
+        option: { name: 'share-name', config: { alias: 'N', desc: 'Name for share pom', type: String } },
+        when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
           return show;
@@ -149,8 +146,8 @@ module.exports = SubGenerator.extend({
       {
         type: 'input',
         name: 'shareDescription',
-        option: { name: 'share-description', config: { alias:'D', desc: 'Description for share pom', type: String, } },
-        when: function(props) {
+        option: { name: 'share-description', config: { alias: 'D', desc: 'Description for share pom', type: String } },
+        when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
           return show;
@@ -165,7 +162,6 @@ module.exports = SubGenerator.extend({
   },
 
   prompting: function () {
-
     this.out.info([
       'This sub-generator will update existing POM\'s and context files.',
       'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
@@ -195,7 +191,7 @@ module.exports = SubGenerator.extend({
 
     // Do regular module instantiation stuff
     debug('writing %s', this.props[constants.PROP_WAR]);
-    this.props[constants.PROP_WAR].forEach(function(war) {
+    this.props[constants.PROP_WAR].forEach(function (war) {
       var prefix = this.props[constants.PROP_PROJECT_ARTIFACT_ID_PREFIX];
       var artifactId = prefix + '-' + war + '-amp';
       var groupId = this.props[constants.PROP_PROJECT_GROUP_ID];
@@ -215,7 +211,7 @@ module.exports = SubGenerator.extend({
         }
         parentPath = path.join(parentPath, parentArtifactId);
         var parentPomPath = path.join(parentPath, 'pom.xml');
-        var parentPomStr = undefined;
+        var parentPomStr;
         if (this.fs.exists(parentPomPath)) {
           parentPomStr = this.fs.read(parentPomPath);
         }
@@ -241,10 +237,10 @@ module.exports = SubGenerator.extend({
       debug('schedule setup activities for our module(s)');
       if (constants.WAR_TYPE_REPO === war) {
         debug('We are creating a new module so we need to schedule it to be setup');
-        this.moduleManager.pushOp(function() {this.sdk.setupNewRepoModule.call(this, modulePath)}.bind(this));
+        this.moduleManager.pushOp(function () { this.sdk.setupNewRepoModule.call(this, modulePath) }.bind(this));
         debug('If we have a custom name or description then arrange to get that info into the pom');
         if (this.props.repoName || this.props.repoDescription) {
-          this.moduleManager.pushOp(function() {
+          this.moduleManager.pushOp(function () {
             this.out.info('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
@@ -257,7 +253,7 @@ module.exports = SubGenerator.extend({
         if (this.props.removeDefaultSourceSamples) {
           debug('scheduling sample source code/config removal');
           this.moduleManager.pushOp(
-            function() {
+            function () {
               this.sdk.removeRepoSamples.call(this,
                 modulePath,
                 this.config.get(constants.PROP_PROJECT_PACKAGE),
@@ -271,10 +267,10 @@ module.exports = SubGenerator.extend({
       }
       if (constants.WAR_TYPE_SHARE === war) {
         // We are creating a new module so we need to set it up
-        this.moduleManager.pushOp(function() {this.sdk.setupNewShareModule.call(this, modulePath)}.bind(this));
+        this.moduleManager.pushOp(function () { this.sdk.setupNewShareModule.call(this, modulePath) }.bind(this));
         // If we have a custom name or description then get that info into the pom
         if (this.props.shareName || this.props.shareDescription) {
-          this.moduleManager.pushOp(function() {
+          this.moduleManager.pushOp(function () {
             console.log('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
@@ -286,7 +282,7 @@ module.exports = SubGenerator.extend({
         }
         if (this.props.removeDefaultSourceSamples) {
           this.moduleManager.pushOp(
-            function() {
+            function () {
               this.sdk.removeShareSamples.call(this,
                 modulePath,
                 this.config.get(constants.PROP_PROJECT_PACKAGE),
@@ -303,7 +299,7 @@ module.exports = SubGenerator.extend({
 
   install: function () {
     if (this.bail) return;
-  }
+  },
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

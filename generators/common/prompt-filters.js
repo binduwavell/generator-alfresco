@@ -25,7 +25,7 @@ module.exports = {
    * @param {(boolean|string|undefined|null)} input
    * @returns {(true|false|undefined)}
    */
-  booleanFilter: function(input) {
+  booleanFilter: function (input) {
     debug('booleanFilter(%s)', input);
     if (_.isBoolean(input)) return input;
     if (_.isString(input)) {
@@ -43,14 +43,14 @@ module.exports = {
    * @param {(boolean|string|undefined|null)} input
    * @returns {('true'|'false'|undefined)}
      */
-  booleanTextFilter: function(input) {
+  booleanTextFilter: function (input) {
     debug('booleanTextFilter(%s)', input);
     var retv = module.exports.booleanFilter(input);
-    return (undefined === retv
+    return (retv === undefined
            ? undefined
-           : (false === retv
+           : (retv === false
              ? 'false'
-             : 'true'))
+             : 'true'));
   },
 
   /**
@@ -67,7 +67,7 @@ module.exports = {
    */
   chooseOneFilter: function (input, list) {
     debug('chooseOneFilter(%s, %s)', input, JSON.stringify(list));
-    if (true === input) return undefined;
+    if (input === true) return undefined;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
       var ilc = input.toLocaleLowerCase();
@@ -79,9 +79,9 @@ module.exports = {
     return undefined;
   },
   chooseOneFilterFactory: function (list) {
-    return function(input) {
+    return function (input) {
       return module.exports.chooseOneFilter(input, list);
-    }
+    };
   },
 
   /**
@@ -100,12 +100,12 @@ module.exports = {
    */
   chooseOneStartsWithFilter: function (input, list) {
     debug('chooseOneStartsWithFilter(%s, %s)', input, JSON.stringify(list));
-    if (true === input) return undefined;
-    var retv = undefined;
+    if (input === true) return undefined;
+    var retv;
     if (_.isString(input)) {
-      if ('' === input) return undefined;
+      if (input === '') return undefined;
       var ilc = input.toLocaleLowerCase();
-      list.forEach(function(item) {
+      list.forEach(function (item) {
         var it = item.toLocaleLowerCase();
         if (_.startsWith(it, ilc)) retv = retv || item;
         if (it === ilc) retv = item;
@@ -113,10 +113,10 @@ module.exports = {
     }
     return retv;
   },
-  chooseOneStartsWithFilterFactory: function(list) {
-    return function(input) {
+  chooseOneStartsWithFilterFactory: function (list) {
+    return function (input) {
       return module.exports.chooseOneStartsWithFilter(input, list);
-    }
+    };
   },
 
   /**
@@ -131,14 +131,14 @@ module.exports = {
    * @param {Object.<string, string>} map
    * @returns {(string|undefined)}
    */
-  chooseOneMapFilter: function(input, map) {
+  chooseOneMapFilter: function (input, map) {
     // TODO(bwavell): write tests
     debug('chooseOneMapFilter(%s, %s)', input, JSON.stringify(map));
-    if (true === input) return undefined;
+    if (input === true) return undefined;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
       var ilc = input.toLocaleLowerCase();
-      _.forOwn(map, function(value, key) {
+      _.forOwn(map, function (value, key) {
         var kit = key.toLocaleLowerCase();
         var vit = value.toLocaleLowerCase();
         if (kit === ilc) return value;
@@ -147,11 +147,11 @@ module.exports = {
     }
     return undefined;
   },
-  chooseOneMapFilterFactory: function(map) {
+  chooseOneMapFilterFactory: function (map) {
     // TODO(bwavell): write tests
-    return function(input) {
+    return function (input) {
       return module.exports.chooseOneMapFilter(input, map);
-    }
+    };
   },
 
   /**
@@ -174,12 +174,12 @@ module.exports = {
   chooseOneMapStartsWithFilter: function (input, map) {
     // TODO(bwavell): write tests
     debug('chooseOneMapStartsWithFilter(%s, %s)', input, JSON.stringify(map));
-    if (true === input) return undefined;
-    var retv = undefined;
+    if (input === true) return undefined;
+    var retv;
     if (_.isString(input)) {
-      if ('' === input) return undefined;
+      if (input === '') return undefined;
       var ilc = input.toLocaleLowerCase();
-      _.forOwn(map, function(value, key) {
+      _.forOwn(map, function (value, key) {
         var kit = key.toLocaleLowerCase();
         var vit = value.toLocaleLowerCase();
         if (_.startsWith(kit, ilc)) retv = retv || value;
@@ -189,14 +189,12 @@ module.exports = {
     }
     return retv;
   },
-  chooseOneMapStartsWithFilterFactory: function(map) {
+  chooseOneMapStartsWithFilterFactory: function (map) {
     // TODO(bwavell): write tests
-    return function(input) {
+    return function (input) {
       return module.exports.chooseOneMapStartsWithFilter(input, map);
-    }
+    };
   },
-
-
 
   /**
    * Given some text or the empty string return it.
@@ -206,7 +204,7 @@ module.exports = {
    * @param {(string|boolean|undefined|null)} input
    * @returns {(string|undefined)}
    */
-  optionalTextFilter: function(input) {
+  optionalTextFilter: function (input) {
     debug('optionalTextFilter(%s)', input);
     if (_.isString(input)) return input;
     if (_.isBoolean(input)) return (input ? '' : undefined);
@@ -220,7 +218,7 @@ module.exports = {
    * @param {(string|boolean|undefined|null)} input
    * @returns {(string|undefined)}
    */
-  requiredTextFilter: function(input) {
+  requiredTextFilter: function (input) {
     debug('requiredTextFilter(%s)', input);
     if (_.isString(input) && !_.isEmpty(input)) return input;
     return undefined;
@@ -243,7 +241,7 @@ module.exports = {
    * @param choices
    * @returns {(string[]|undefined)}
    */
-  requiredTextListFilter: function(input, sep, choices) {
+  requiredTextListFilter: function (input, sep, choices) {
     debug('requiredTextListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
     // if we already have a list, just return it. We may
     // want to add validation that the items are in the
@@ -252,27 +250,27 @@ module.exports = {
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
-    retv = retv.filter(function(r) {
+    retv = retv.filter(function (r) {
       return (!_.isEmpty(r));
     });
     // If a choice list is provided we will return only items
     // that match the choice in a case insensitive way, using
     // whatever case is provided in the choice list.
-    if (undefined != choices) {
-      var lcretv = retv.map(function(lc) {
+    if (choices !== undefined) {
+      var lcretv = retv.map(function (lc) {
         return lc.toLocaleLowerCase();
       });
-      retv = choices.filter(function(c) {
-        return (lcretv.indexOf(c.toLocaleLowerCase()) > -1)
+      retv = choices.filter(function (c) {
+        return (lcretv.indexOf(c.toLocaleLowerCase()) > -1);
       });
     }
     if (_.isEmpty(retv)) return undefined;
     return retv;
   },
-  requiredTextListFilterFactory: function(sep, choices) {
-    return function(input) {
+  requiredTextListFilterFactory: function (sep, choices) {
+    return function (input) {
       return module.exports.requiredTextListFilter(input, sep, choices);
-    }
+    };
   },
 
   /**
@@ -292,36 +290,36 @@ module.exports = {
    * @param choices
    * @returns {(string[]|undefined)}
    */
-  textListFilter: function(input, sep, choices) {
+  textListFilter: function (input, sep, choices) {
     debug('textListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
     // if we already have a list, just return it. We may
     // want to add validation that the items are in the
     // choices list
     if (_.isArray(input)) return input;
-    if (true === input) return [];
+    if (input === true) return [];
     if (!_.isString(input)) return undefined;
     var retv = input.split(new RegExp('s*\\' + sep + '\\s*'));
     // remove any empty input items
-    retv = retv.filter(function(r) {
+    retv = retv.filter(function (r) {
       return (!_.isEmpty(r));
     });
     // If a choice list is provided we will return only items
     // that match the choice in a case insensitive way, using
     // whatever case is provided in the choice list.
-    if (undefined != choices) {
-      var lcretv = retv.map(function(lc) {
+    if (choices !== undefined) {
+      var lcretv = retv.map(function (lc) {
         return lc.toLocaleLowerCase();
       });
-      retv = choices.filter(function(c) {
-        return (lcretv.indexOf(c.toLocaleLowerCase()) > -1)
+      retv = choices.filter(function (c) {
+        return (lcretv.indexOf(c.toLocaleLowerCase()) > -1);
       });
     }
     return retv;
   },
-  textListFilterFactory: function(sep, choices) {
-    return function(input) {
+  textListFilterFactory: function (sep, choices) {
+    return function (input) {
       return module.exports.textListFilter(input, sep, choices);
-    }
+    };
   },
 
 };

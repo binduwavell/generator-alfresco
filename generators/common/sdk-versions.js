@@ -5,10 +5,9 @@ var path = require('path');
 var semver = require('semver');
 var constants = require('./constants.js');
 var domutils = require('./xml-dom-utils.js');
-var memFsUtils = require('./mem-fs-utils.js');
 
 module.exports = {
-  "2.2.0": {
+  '2.2.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.2.0',
@@ -25,7 +24,7 @@ module.exports = {
     removeShareSamples: removeShareSamples,
     targetFolderName: targetFolderName,
   },
-  "2.1.1": {
+  '2.1.1': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.1.1',
@@ -42,7 +41,7 @@ module.exports = {
     removeShareSamples: removeShareSamples,
     targetFolderName: targetFolderName,
   },
-  "2.1.0": {
+  '2.1.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.1.0',
@@ -59,7 +58,7 @@ module.exports = {
     removeShareSamples: removeShareSamples,
     targetFolderName: targetFolderName,
   },
-  "2.0.0": {
+  '2.0.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.0.0',
@@ -74,10 +73,10 @@ module.exports = {
     removeDefaultModules: removeAmps,
     targetFolderName: targetFolderName,
   },
-  "local": {
-    archetypeGroupId: "org.alfresco.maven.archetype",
-    archetypeArtifactId: "alfresco-allinone-archetype",
-    archetypeVersion: "2.2.0-SNAPSHOT",
+  'local': {
+    archetypeGroupId: 'org.alfresco.maven.archetype',
+    archetypeArtifactId: 'alfresco-allinone-archetype',
+    archetypeVersion: '2.2.0-SNAPSHOT',
     archetypeCatalog: 'local',
     promptForArchetypeVersion: true,
     promptForProjectPackage: true,
@@ -105,11 +104,11 @@ module.exports = {
  *
  * @returns {string} empty string if sdk >= 2.2.0-SNAPSHOT
  */
-function sdkVersionPrefix() {
-  debug("checking prefix for archetype version: %s", this.config.get('archetypeVersion'));
+function sdkVersionPrefix () {
+  debug('checking prefix for archetype version: %s', this.config.get('archetypeVersion'));
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
-      debug("setting prefix for artifactId");
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
+      debug('setting prefix for artifactId');
       return this.config.get(constants.PROP_PROJECT_ARTIFACT_ID) + '-';
     }
   }
@@ -124,9 +123,9 @@ function sdkVersionPrefix() {
  * @param basename
  * @returns {string} 'amp' if sdk >= 2.2.0-SNAPSHOT otherwise basename
  */
-function targetFolderName(basename) {
+function targetFolderName (basename) {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.2.0-SNAPSHOT")) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
       return 'amp';
     }
   }
@@ -145,27 +144,27 @@ function targetFolderName(basename) {
  *   what is provided when the archetype has stamped
  *   a project out.
  */
-function ampModuleRegistry() {
+function ampModuleRegistry () {
   var prefix = sdkVersionPrefix.call(this);
   return [
     {
-      "groupId": '${project.groupId}',
-      "artifactId": prefix + 'repo-amp',
-      "version": '${project.version}',
-      "packaging": 'amp',
-      "war": constants.WAR_TYPE_REPO,
-      "location": 'source',
-      "path": prefix + 'repo-amp',
+      'groupId': '${project.groupId}',
+      'artifactId': prefix + 'repo-amp',
+      'version': '${project.version}',
+      'packaging': 'amp',
+      'war': constants.WAR_TYPE_REPO,
+      'location': 'source',
+      'path': prefix + 'repo-amp',
     },
     {
-      "groupId": '${project.groupId}',
-      "artifactId": prefix + 'share-amp',
-      "version": '${project.version}',
-      "packaging": 'amp',
-      "war": constants.WAR_TYPE_SHARE,
-      "location": 'source',
-      "path": prefix + 'share-amp',
-    }
+      'groupId': '${project.groupId}',
+      'artifactId': prefix + 'share-amp',
+      'version': '${project.version}',
+      'packaging': 'amp',
+      'war': constants.WAR_TYPE_SHARE,
+      'location': 'source',
+      'path': prefix + 'share-amp',
+    },
   ];
 }
 
@@ -178,7 +177,7 @@ function ampModuleRegistry() {
  * out in case it helps once we get multiple module types
  * in the 3.0 SDK.
  */
-function registerDefaultModules() {
+function registerDefaultModules () {
   debug('registering default modules');
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
@@ -199,7 +198,7 @@ function registerDefaultModules() {
  *
  * @param pathPrefix
  */
-function setupNewRepoAmp(pathPrefix) {
+function setupNewRepoAmp (pathPrefix) {
   this.out.info('Setting up new repository amp: ' + pathPrefix);
   var basename = path.basename(pathPrefix);
 
@@ -250,12 +249,12 @@ function setupNewRepoAmp(pathPrefix) {
  *
  * @param pathPrefix
  */
-function setupNewShareAmp(pathPrefix) {
+function setupNewShareAmp (pathPrefix) {
   this.out.info('Setting up new share amp: ' + pathPrefix);
   debug('setupNewShareAmp() finished');
 }
 
-function removeAmps() {
+function removeAmps () {
   this.out.info('Removing default amps');
   if (this.sdk.defaultModuleRegistry) {
     var defaultModules = this.sdk.defaultModuleRegistry.call(this);
@@ -269,7 +268,7 @@ function removeAmps() {
   debug('removeAmps() finished');
 }
 
-function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+function removeRepoSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   this.out.info('Removing repository sample code/config');
   var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   var projectPackagePath = projectPackage.replace(/\./g, '/');
@@ -292,8 +291,8 @@ function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     pathPrefix + '/src/main/java/' + projectPackagePath + '/demoamp',
     pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/test/DemoComponentTest.java',
     pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp',
-  ].forEach(function(file) {
-    this.out.info("Removing repo-amp sample file created by maven archetype: " + file);
+  ].forEach(function (file) {
+    this.out.info('Removing repo-amp sample file created by maven archetype: ' + file);
     this.fs.delete(file, {globOptions: {strict: true}});
   }.bind(this));
 
@@ -302,8 +301,8 @@ function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     pathPrefix + '/src/main/amp/config/alfresco/module/' + prefix + 'repo-amp/model/EMPTY.txt',
     pathPrefix + '/src/main/java/EMPTY.txt',
     pathPrefix + '/src/test/java/EMPTY.txt',
-  ].forEach(function(empty) {
-    this.out.info("Creating empty file to protect important repo-amp folder: " + empty);
+  ].forEach(function (empty) {
+    this.out.info('Creating empty file to protect important repo-amp folder: ' + empty);
     this.fs.write(empty, '<EMPTY/>\n');
   }.bind(this));
 
@@ -314,8 +313,8 @@ function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     'classpath:alfresco/module/${project.artifactId}/context/service-context.xml',
     'classpath:alfresco/module/${project.artifactId}/context/bootstrap-context.xml',
     'classpath:alfresco/module/${project.artifactId}/context/webscript-context.xml',
-  ].forEach(function(resource) {
-    this.out.info("Removing import from repo-amp module-context.xml: " + resource);
+  ].forEach(function (resource) {
+    this.out.info('Removing import from repo-amp module-context.xml: ' + resource);
     context.removeImport(resource);
   }.bind(this));
   var contextDocNew = context.getContextString();
@@ -323,7 +322,7 @@ function removeRepoSamples(pathPrefix, projectPackage, artifactIdPrefix) {
   debug('removeRepoSamples() finished');
 }
 
-function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
+function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   this.out.info('Removing share sample code/config');
   var prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   var projectPackagePath = projectPackage.replace(/\./g, '/');
@@ -340,8 +339,8 @@ function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
     pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
     pathPrefix + '/src/test/resources/testng.xml',
-  ].forEach(function(file) {
-    this.out.info("Removing share-amp sample file created by maven archetype: " + file);
+  ].forEach(function (file) {
+    this.out.info('Removing share-amp sample file created by maven archetype: ' + file);
     this.fs.delete(file, {globOptions: {strict: true}});
   }.bind(this));
 
@@ -350,22 +349,22 @@ function removeShareSamples(pathPrefix, projectPackage, artifactIdPrefix) {
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
     pathPrefix + '/src/main/amp/web/js/EMPTY.txt',
     pathPrefix + '/src/test/java/EMPTY.txt',
-  ].forEach(function(empty) {
-    this.out.info("Creating empty file to protect important share-amp folder: " + empty);
+  ].forEach(function (empty) {
+    this.out.info('Creating empty file to protect important share-amp folder: ' + empty);
     this.fs.write(empty, '<EMPTY/>\n');
   }.bind(this));
 
   var slingshotContextFile = 'custom-slingshot-application-context.xml';
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), ">=2.1.1")) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.1.1')) {
       var versionPrefix = sdkVersionPrefix.call(this);
       slingshotContextFile = versionPrefix + 'share-amp-slingshot-application-context.xml';
     }
   }
   [
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/' + slingshotContextFile,
-  ].forEach(function(file) {
-    this.out.info("Renaming share-amp file to *.sample: " + file);
+  ].forEach(function (file) {
+    this.out.info('Renaming share-amp file to *.sample: ' + file);
     this.fs.move(file, file + '.sample');
   }.bind(this));
   debug('removeShareSamples() finished');
