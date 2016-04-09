@@ -4,6 +4,8 @@ module.exports = {
         "standard"
     ],
     "rules": {
-        "semi": ["error", "always", { "omitLastInOneLineBlock": true}]
+        "comma-dangle": ["error", "always-multiline"],
+        "operator-linebreak": ["error", "before"],
+        "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
     }
 };

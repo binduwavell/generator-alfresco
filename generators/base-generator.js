@@ -2,15 +2,11 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:base-generator');
-var fs = require('fs');
-var path = require('path');
 var yeoman = require('yeoman-generator');
-var yosay = require('yosay');
-var constants = require('./common/constants.js');
 
 /**
  * Base class for a yeoman generator in the generator-alfresco project. This
- * class provides some common things like the our output handling module, 
+ * class provides some common things like the our output handling module,
  * the SDK version for the main project and the module registry and manager.
  *
  * We will create / wrap a when function in order to perform bail checking.
@@ -60,7 +56,6 @@ var constants = require('./common/constants.js');
  */
 module.exports = yeoman.Base.extend({
   constructor: function () {
-
     yeoman.Base.apply(this, arguments);
 
     this.bail = false;
@@ -72,8 +67,8 @@ module.exports = yeoman.Base.extend({
     this.moduleManager = require('./common/alfresco-module-manager.js')(this);
   },
 
-  setupArgumentsAndOptions: function(prompts) {
-    prompts.forEach(function(prompt) {
+  setupArgumentsAndOptions: function (prompts) {
+    prompts.forEach(function (prompt) {
       if (prompt.hasOwnProperty('argument')) {
         this.argument(prompt.argument.name, prompt.argument.config);
       }
@@ -83,21 +78,18 @@ module.exports = yeoman.Base.extend({
     }.bind(this));
   },
 
-  subgeneratorPrompt: function(prompts, desc, donePromptingFunc) {
-    
+  subgeneratorPrompt: function (prompts, desc, donePromptingFunc) {
     // ==== PROMPT EXTENSIONS ====
-    var processedPrompts = prompts.map(function(prompt) {
+    var processedPrompts = prompts.map(function (prompt) {
       var newPrompt = _.assign({}, prompt);
       var oldWhen = prompt.when;
-      newPrompt.when = function(props) {
+      newPrompt.when = function (props) {
         if (this.bail) return false;
-        if (
-          prompt.hasOwnProperty('commonFilter') &&
-          _.isFunction(prompt.commonFilter) &&
-          prompt.hasOwnProperty('option') &&
-          prompt.option.hasOwnProperty('name') &&
-          prompt.hasOwnProperty('name'))
-        {
+        if (prompt.hasOwnProperty('commonFilter')
+          && _.isFunction(prompt.commonFilter)
+          && prompt.hasOwnProperty('option')
+          && prompt.option.hasOwnProperty('name')
+          && prompt.hasOwnProperty('name')) {
           var v = prompt.commonFilter.call(this, this.options[prompt.option.name]);
           if (undefined !== v) {
             props[prompt.name] = v;
@@ -117,11 +109,11 @@ module.exports = yeoman.Base.extend({
         if (!prompt.hasOwnProperty('filter')) {
           newPrompt.filter = prompt.commonFilter;
         }
-        if(!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
-          newPrompt.validate = function(input) {
+        if (!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
+          newPrompt.validate = function (input) {
             var required = prompt.valueRequired;
-            var msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value ' +
-              (required ? 'is missing or invalid' : 'is invalid');
+            var msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value '
+              + (required ? 'is missing or invalid' : 'is invalid');
             if (prompt.hasOwnProperty('invalidMessage')) {
               if (_.isFunction(prompt.invalidMessage)) {
                 msg = prompt.invalidMessage.call(this, input);

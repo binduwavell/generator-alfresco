@@ -11,7 +11,7 @@ var constants = require('./constants.js');
  * this.out = require('./spring-context.js')(text-of-context-file);
  */
 
-module.exports = function(pomString) {
+module.exports = function (pomString) {
   var module = {};
 
   var defaultPOMString = [
@@ -58,43 +58,41 @@ module.exports = function(pomString) {
     '  <prerequisites></prerequisites>',
     '  <distributionManagement></distributionManagement>',
     '',
-    '</project>'
+    '</project>',
   ].join('\n');
 
   var doc = domutils.parseFromString(pomString || defaultPOMString);
   var project = doc.documentElement;
 
-  module.getTopLevelElement = function(ns, tag) {
+  module.getTopLevelElement = function (ns, tag) {
     return domutils.getChild(project, ns, tag);
-  }
+  };
 
-  module.getOrCreateTopLevelElement = function(ns, tag) {
-    var element = undefined;
+  module.getOrCreateTopLevelElement = function (ns, tag) {
     var xp = '/pom:project/' + ns + ':' + tag;
     var element = domutils.getFirstNodeMatchingXPath(xp, doc);
     if (!element) {
       element = doc.createElementNS(domutils.resolver.lookupNamespaceURI(ns), tag);
       project.appendChild(element);
-
     }
     return element;
-  }
+  };
 
-  module.setTopLevelElementTextContent = function(ns, tag, value) {
+  module.setTopLevelElementTextContent = function (ns, tag, value) {
     var element = module.getOrCreateTopLevelElement(ns, tag);
     if (element) {
       element.textContent = value;
     }
-  }
+  };
 
-  module.setProjectGAV = function(groupId, artifactId, version, packaging) {
+  module.setProjectGAV = function (groupId, artifactId, version, packaging) {
     domutils.setOrClearChildText(project, 'pom', 'groupId', groupId, constants.VAR_PROJECT_GROUPID);
     domutils.setOrClearChildText(project, 'pom', 'artifactId', artifactId, undefined);
     domutils.setOrClearChildText(project, 'pom', 'version', version, constants.VAR_PROJECT_VERSION);
     domutils.setOrClearChildText(project, 'pom', 'packaging', packaging, undefined);
-  }
+  };
 
-  module.setParentGAV = function(groupId, artifactId, version) {
+  module.setParentGAV = function (groupId, artifactId, version) {
     var parent = module.getOrCreateTopLevelElement('pom', 'parent');
     if (parent) {
       var groupIdNode = domutils.getOrCreateChild(parent, 'pom', 'groupId');
@@ -106,14 +104,14 @@ module.exports = function(pomString) {
         versionNode.textContent = version;
       }
     }
-  }
+  };
 
-  module.findDependency = function(groupId, artifactId, version, type, scope) {
+  module.findDependency = function (groupId, artifactId, version, type, scope) {
     var dependencies = domutils.selectMatchingXPath('/pom:project/pom:dependencies/pom:dependency', doc);
     // Only process if group and artifact Ids are specified and we have dependencies to process
     if (groupId && artifactId && dependencies) {
       var len = dependencies.length;
-      for(var i = 0; i < len; i++) {
+      for (var i = 0; i < len; i++) {
         var dependency = dependencies[i];
 
         var groupIdNode = domutils.getChild(dependency, 'pom', 'groupId');
@@ -128,34 +126,33 @@ module.exports = function(pomString) {
         var typeContent = (typeNode ? typeNode.textContent : undefined);
         var scopeContent = (scopeNode ? scopeNode.textContent : undefined);
 
-
         // Don't bother matching things that don't at least match group and artifact Ids
-        if (groupId == groupIdContent && artifactId == artifactIdContent) {
+        if (groupId === groupIdContent && artifactId === artifactIdContent) {
           if (version && type && scope) {
-            if (version == versionContent && type == typeContent && scope == scopeContent) {
+            if (version === versionContent && type === typeContent && scope === scopeContent) {
               return dependency;
             }
             return;
           } else if (version && type) {
-            if (version == versionContent && type == typeContent) {
+            if (version === versionContent && type === typeContent) {
               return dependency;
             }
             return;
           } else if (version && scope) {
-            if (version == versionContent && scope == scopeContent) {
+            if (version === versionContent && scope === scopeContent) {
               return dependency;
             }
             return;
           } else if (type && scope) {
-            if (type == typeContent && scope == scopeContent) {
+            if (type === typeContent && scope === scopeContent) {
               return dependency;
             }
             return;
-          } else if (version && version == versionContent) {
+          } else if (version && version === versionContent) {
             return dependency;
-          } else if (type && type == typeContent) {
+          } else if (type && type === typeContent) {
             return dependency;
-          } else if (scope && scope == scopeContent) {
+          } else if (scope && scope === scopeContent) {
             return dependency;
           } else if (!version && !type && !scope) {
             return dependency;
@@ -163,12 +160,12 @@ module.exports = function(pomString) {
         }
       }
     }
-  }
+  };
 
-  module.addDependency = function(groupId, artifactId, version, type, scope) {
+  module.addDependency = function (groupId, artifactId, version, type, scope) {
     var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (!dependency) {
-      dependency = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency')
+      dependency = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency');
     }
     var groupIdNode = domutils.getOrCreateChild(dependency, 'pom', 'groupId');
     var artifactIdNode = domutils.getOrCreateChild(dependency, 'pom', 'artifactId');
@@ -202,9 +199,9 @@ module.exports = function(pomString) {
       }
     }
     return dependency;
-  }
+  };
 
-  module.removeDependency = function(groupId, artifactId, version, type, scope) {
+  module.removeDependency = function (groupId, artifactId, version, type, scope) {
     var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (dependency) {
       var parent = dependency.parentNode;
@@ -212,36 +209,36 @@ module.exports = function(pomString) {
         parent.removeChild(dependency);
       }
     }
-  }
+  };
 
-  module.findModule = function(moduleName) {
+  module.findModule = function (moduleName) {
     var moduleNodes = domutils.selectMatchingXPath('/pom:project/pom:modules/pom:module', doc);
     // Only process if module name is specified and we have modules to process
     if (moduleName && moduleNodes) {
       var len = moduleNodes.length;
-      for(var i = 0; i < len; i++) {
+      for (var i = 0; i < len; i++) {
         var moduleNode = moduleNodes[i];
 
         var moduleContent = (moduleNode ? moduleNode.textContent : undefined);
 
-        if (moduleName == moduleContent) {
-            return moduleNode;
+        if (moduleName === moduleContent) {
+          return moduleNode;
         }
       }
     }
-  }
+  };
 
-  module.addModule = function(mod, addToTop) {
+  module.addModule = function (mod, addToTop) {
     var toTop = addToTop || false;
     var moduleNode = module.findModule(mod);
     if (!moduleNode) {
-      moduleNode = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module', addToTop)
+      moduleNode = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'modules'), 'pom', 'module', toTop);
     }
     moduleNode.textContent = mod;
     return moduleNode;
-  }
+  };
 
-  module.removeModule = function(mod) {
+  module.removeModule = function (mod) {
     var moduleNode = module.findModule(mod);
     if (moduleNode) {
       var parent = moduleNode.parentNode;
@@ -249,19 +246,19 @@ module.exports = function(pomString) {
         parent.removeChild(moduleNode);
       }
     }
-  }
+  };
 
-  module.findPlugin = function(first, second) {
+  module.findPlugin = function (first, second) {
     // Either provide groupId, artifactId for first, second
     // Or just provide artifactId and we'll ignore groupId.
     var groupId = (second ? first : undefined);
-    var artifactId = (second ? second : first);
+    var artifactId = second || first;
 
     var plugins = domutils.selectMatchingXPath('/pom:project/pom:build/pom:plugins/pom:plugin', doc);
     // Only process if group and artifact Ids are specified and we have plugins to process
     if (artifactId && plugins) {
       var len = plugins.length;
-      for(var i = 0; i < len; i++) {
+      for (var i = 0; i < len; i++) {
         var plugin = plugins[i];
 
         var groupIdNode = domutils.getChild(plugin, 'pom', 'groupId');
@@ -271,8 +268,8 @@ module.exports = function(pomString) {
         var artifactIdContent = (artifactIdNode ? artifactIdNode.textContent : undefined);
 
         // Don't bother matching things that don't at least match artifact Ids
-        if (artifactId == artifactIdContent) {
-          if (groupId && groupId == groupIdContent) {
+        if (artifactId === artifactIdContent) {
+          if (groupId && groupId === groupIdContent) {
             return plugin;
           } else {
             return plugin;
@@ -280,15 +277,15 @@ module.exports = function(pomString) {
         }
       }
     }
-  }
+  };
 
-  module.findOverlay = function(groupId, artifactId, type) {
+  module.findOverlay = function (groupId, artifactId, type) {
     var overlays = domutils.selectMatchingXPath(
         '/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays/pom:overlay', doc);
     // Only process if group and artifact Ids are specified and we have overlays to process
     if (groupId && artifactId && overlays) {
       var len = overlays.length;
-      for(var i = 0; i < len; i++) {
+      for (var i = 0; i < len; i++) {
         var overlay = overlays[i];
 
         var groupIdNode = domutils.getChild(overlay, 'pom', 'groupId');
@@ -300,8 +297,8 @@ module.exports = function(pomString) {
         var typeContent = (typeNode ? typeNode.textContent : undefined);
 
         // Don't bother matching things that don't at least match group and artifact Ids
-        if (groupId == groupIdContent && artifactId == artifactIdContent) {
-          if (type && type == typeContent) {
+        if (groupId === groupIdContent && artifactId === artifactIdContent) {
+          if (type && type === typeContent) {
             return overlay;
           } else {
             return overlay;
@@ -309,9 +306,9 @@ module.exports = function(pomString) {
         }
       }
     }
-  }
+  };
 
-  module.addOverlay = function(groupId, artifactId, type) {
+  module.addOverlay = function (groupId, artifactId, type) {
     var overlay = module.findOverlay(groupId, artifactId, type);
     if (!overlay) {
       var overlays = domutils.getFirstNodeMatchingXPath('/pom:project/pom:build/pom:plugins/pom:plugin/pom:configuration/pom:overlays', doc);
@@ -328,9 +325,9 @@ module.exports = function(pomString) {
       typeNode.textContent = type;
     }
     return overlay;
-  }
+  };
 
-  module.removeOverlay = function(groupId, artifactId, scope) {
+  module.removeOverlay = function (groupId, artifactId, scope) {
     var overlay = module.findOverlay(groupId, artifactId, scope);
     if (overlay) {
       var parent = overlay.parentNode;
@@ -338,19 +335,19 @@ module.exports = function(pomString) {
         parent.removeChild(overlay);
       }
     }
-  }
+  };
 
-  module.setProperty = function(tag, value) {
+  module.setProperty = function (tag, value) {
     var propElement = domutils.getOrCreateChild(domutils.getOrCreateChild(project, 'pom', 'properties'), 'pom', tag);
     propElement.textContent = value;
     return propElement;
-  }
+  };
 
-  module.getPOMString = function() {
+  module.getPOMString = function () {
     return domutils.prettyPrint(doc);
-  }
+  };
 
   return module;
-}
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

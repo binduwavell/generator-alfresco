@@ -47,91 +47,86 @@ var constants = require('./constants.js');
  * coded as indicated to make them stand out.
  */
 
-module.exports = function(yo) {
+module.exports = function (yo) {
   var module = {};
   var modules = yo.config.get('moduleRegistry') || [];
 
-  module.getModules = function() {
+  module.getModules = function () {
     return modules;
-  }
+  };
 
-  module.getNamedModules = function() {
-    return modules.map(function(mod) {
+  module.getNamedModules = function () {
+    return modules.map(function (mod) {
       return {
-        "name" : module._getModuleName(mod),
-        "module" : mod
+        'name': module._getModuleName(mod),
+        'module': mod,
       };
     });
-  }
+  };
 
-  module._getModuleName = function(mod) {
+  module._getModuleName = function (mod) {
     var groupId = mod.groupId;
-    if ('${project.groupId}' === groupId) {
+    if (groupId === '${project.groupId}') {
       groupId = yo.config.get(constants.PROP_PROJECT_GROUP_ID) || yo[constants.PROP_PROJECT_GROUP_ID];
     }
     var ver = mod['version'];
-    if ('${project.version}' === ver) {
+    if (ver === '${project.version}') {
       ver = yo.config.get(constants.PROP_PROJECT_VERSION) || yo[constants.PROP_PROJECT_VERSION];
     }
-    return groupId + ':' + mod.artifactId + ':' + ver + ':' +
-           mod.packaging + ':' + mod.war + ':' + mod['location'];
-  }
+    return groupId + ':' + mod.artifactId + ':' + ver + ':'
+      + mod.packaging + ':' + mod.war + ':' + mod['location'];
+  };
 
-  module.normalizeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+  module.normalizeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to normalize: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // first argument is always required
     if (undefined !== modOrGroupId) {
       // if the first argument is the only argument, make sure it provides all
       // properties for a module, if so add the module
       if (!artifactId && !ver && !packaging && !war && !loc && !path) {
-        if (modOrGroupId.groupId && modOrGroupId.artifactId &&
-          modOrGroupId['version'] && modOrGroupId.packaging &&
-          modOrGroupId.war && modOrGroupId['location'] && modOrGroupId.path
-        ) {
+        if (modOrGroupId.groupId && modOrGroupId.artifactId
+          && modOrGroupId['version'] && modOrGroupId.packaging
+          && modOrGroupId.war && modOrGroupId['location'] && modOrGroupId.path) {
           return modOrGroupId;
+        } else {
+          // one or more module properties is missing
+          return undefined;
         }
-        // one or more module properties is missing
-        else {
-          return undefined
-        }
-      }
-      // as we are not dealing with a single argument, make sure all arguments
-      // are provided.
-      else if (!artifactId || !ver || !packaging || !war || !loc || !path) {
+      } else if (!artifactId || !ver || !packaging || !war || !loc || !path) {
+        // as we are not dealing with a single argument, make sure all arguments
+        // are provided.
         return undefined;
-      }
-      // we appear to have all arguments so construct a module and add it
-      else {
+      } else {
+        // we appear to have all arguments so construct a module and add it
         return {
-          "groupId": modOrGroupId,
-          "artifactId": artifactId,
-          "version": ver,
-          "packaging": packaging,
-          "war": war,
-          "location": loc,
-          "path": path
+          'groupId': modOrGroupId,
+          'artifactId': artifactId,
+          'version': ver,
+          'packaging': packaging,
+          'war': war,
+          'location': loc,
+          'path': path,
         };
       }
     }
-  }
+  };
 
-  module.findModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    var found = undefined;
+  module.findModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+    var found;
     var moduleToFind = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (undefined !== moduleToFind) {
-      modules.forEach(function(mod) {
-        if (moduleToFind.groupId === mod.groupId && moduleToFind.artifactId === mod.artifactId &&
-            moduleToFind['version'] === mod['version'] && moduleToFind.packaging === mod.packaging &&
-            moduleToFind.war === mod.war && moduleToFind['location'] === mod['location'] && moduleToFind.path === mod.path
-        ) {
+      modules.forEach(function (mod) {
+        if (moduleToFind.groupId === mod.groupId && moduleToFind.artifactId === mod.artifactId
+          && moduleToFind['version'] === mod['version'] && moduleToFind.packaging === mod.packaging
+          && moduleToFind.war === mod.war && moduleToFind['location'] === mod['location'] && moduleToFind.path === mod.path) {
           found = mod;
         }
       });
     }
     return found;
-  }
+  };
 
-  module.addModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+  module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (undefined !== mod) {
       var foundMod = module.findModule(mod);
@@ -139,12 +134,12 @@ module.exports = function(yo) {
         modules.push(mod);
       }
     } else {
-      throw new Error('All components of the module are required: ' +
-        'groupId, artifactId, version, packaging, war, location and path.');
+      throw new Error('All components of the module are required: '
+        + 'groupId, artifactId, version, packaging, war, location and path.');
     }
-  }
+  };
 
-  module.removeModule = function(modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+  module.removeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (undefined !== mod) {
       var foundMod = module.findModule(mod);
@@ -155,16 +150,16 @@ module.exports = function(yo) {
         throw new Error('You may only remove a module that has already been registered');
       }
     } else {
-      throw new Error('All components of the module are required: ' +
-        'groupId, artifactId, version, packaging, war, location and path.');
+      throw new Error('All components of the module are required: '
+        + 'groupId, artifactId, version, packaging, war, location and path.');
     }
-  }
+  };
 
-  module.save = function() {
+  module.save = function () {
     // update poms for war wrappers
     // update tomcat context files
     yo.config.set('moduleRegistry', modules);
-  }
+  };
 
   return module;
 };

@@ -1,9 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
-var fs = require('fs');
 var path = require('path');
-var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
@@ -18,8 +16,7 @@ var TRANSACTION_ALLOWANCES = ['readonly', 'readwrite'];
 var LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api', 'deprecated', 'internal'];
 
 module.exports = SourceSelectingSubGenerator.extend({
-  constructor: function() {
-
+  constructor: function () {
     SourceSelectingSubGenerator.apply(this, arguments);
 
     this.prompts = [
@@ -27,15 +24,15 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'id',
-        option: { name: 'id', config: { alias:'i', desc: 'Webscript id', type: 'String', } },
-        when: function(props) {
+        option: { name: 'id', config: { alias: 'i', desc: 'Webscript id', type: String } },
+        when: function (props) {
           this.out.docs(
             'The webscript id identifies the web script and must be unique within a web script package.',
             'http://docs.alfresco.com/5.1/concepts/ws-component-name.html');
           return true;
         },
         message: 'What ' + chalk.yellow('webscript id') + ' should we use?',
-        invalidMessage : 'The ' + chalk.yellow('webscript id') + ' value is required',
+        invalidMessage: 'The ' + chalk.yellow('webscript id') + ' value is required',
         commonFilter: idFilter,
         valueRequired: true,
       },
@@ -43,8 +40,8 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): Save package name for re-use the next time a webscript is scaffolded
         type: 'input',
         name: 'package',
-        option: { name: 'package', config: { alias:'p', desc: 'Webscript package', type: 'String', } },
-        when: function(props) {
+        option: { name: 'package', config: { alias: 'p', desc: 'Webscript package', type: String } },
+        when: function (props) {
           this.out.docs(
             'A web script is uniquely identified by its web script package and web script ID.',
             'http://docs.alfresco.com/5.1/concepts/ws-component-name.html');
@@ -59,7 +56,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'language',
-        option: { name: 'language', config: { alias:'l', desc: 'Language for webscript: java, javascript or both', type: 'String', } },
+        option: { name: 'language', config: { alias: 'l', desc: 'Language for webscript: java, javascript or both', type: String } },
         choices: LANGUAGES,
         message: 'Which language would you like to develop your script in?',
         commonFilter: filters.chooseOneMapStartsWithFilterFactory({java: 'Java', javascript: 'JavaScript', both: 'Both Java & JavaScript'}),
@@ -68,10 +65,10 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'javaBaseClass',
-        option: { name: 'java-base-class', config: { alias:'c', desc: 'Java webscripts base class: DeclarativeWebScript or AbstractWebScript', type: 'String', } },
-        when: function(props) {
-          var show = ('Java' === props.language || 'Both Java & JavaScript' === props.language);
-          if(show) {
+        option: { name: 'java-base-class', config: { alias: 'c', desc: 'Java webscripts base class: DeclarativeWebScript or AbstractWebScript', type: String } },
+        when: function (props) {
+          var show = (props.language === 'Java' || props.language === 'Both Java & JavaScript');
+          if (show) {
             this.out.docs(
               ['The Web Script Framework provides two Java classes that implement the difficult parts of the org.alfresco.web.scripts.WebScript interface, which you can extend as a starting point. The simplest helper Java class is named as follows: org.alfresco.web.scripts.AbstractWebScript',
                'This helper provides an implementation of getDescription() but does not provide any execution assistance, which it delegates to its derived class. This allows a Java-backed web script to take full control of the execution process, including how output is rendered to the response.',
@@ -91,8 +88,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'checkbox',
         name: 'methods',
-        option: { name: 'methods', config: { alias:'M', desc: 'A comma separated list of: get, put, post and/or delete', type: 'String', } },
-        when: function(props) {
+        option: { name: 'methods', config: { alias: 'M', desc: 'A comma separated list of: get, put, post and/or delete', type: String } },
+        when: function (props) {
           this.out.docs('As a convenience, you may specify more than one method here. However, if you do select multiple methods, be ' + chalk.underline('WARNED') + ' that we only go through this interview once so answers will be placed into all .desc.xml files. You can easily go update these files appropriately. Alternatively you can use this sub-generator once for each method in order to produce method specific .desc.xml files.');
           return true;
         }.bind(this),
@@ -106,14 +103,14 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'checkbox',
         name: 'templateFormats',
-        option: { name: 'template-formats', config: { alias:'t', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: 'String', } },
-        when: function(props) {
-          var show = ('AbstractWebScript' !== props.javaBaseClass || props.language.indexOf('JavaScript') > -1);
+        option: { name: 'template-formats', config: { alias: 't', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: String } },
+        when: function (props) {
+          var show = (props.javaBaseClass !== 'AbstractWebScript' || props.language.indexOf('JavaScript') > -1);
           if (!show) {
             props.templateFormats = [];
           }
           return show;
-        }.bind(this),
+        },
         choices: TEMPLATE_FORMATS,
         default: ['html'],
         message: 'Which response formats would you like to support?',
@@ -122,12 +119,11 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: false,
       },
 
-
       {
         type: 'input',
         name: 'kind',
-        option: { name: 'kind', config: { alias:'k', desc: 'Fully qualified kind for webscript', type:'String', } },
-        when: function(props) {
+        option: { name: 'kind', config: { alias: 'k', desc: 'Fully qualified kind for webscript', type: String } },
+        when: function (props) {
           this.out.docs(
             'Different kinds of web scripts can be created. When this attribute is specified it allows a web script kind other than the default to be specified. An example kind is org.alfresco.repository.content.stream. This kind of web script returns a binary stream from the repository back to the client. This might be useful for returning a thumbnail binary to the client for example. It is also possible to create additional web script kinds according to your needs.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-webscript.html');
@@ -140,8 +136,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'shortname',
-        option: { name: 'shortname', config: { alias:'s', desc: 'Shortname for webscript', type:'String', } },
-        when: function(props) {
+        option: { name: 'shortname', config: { alias: 's', desc: 'Shortname for webscript', type: String } },
+        when: function (props) {
           this.out.docs(
             'The shortname element in a web descriptor file provides a human readable name for the web script. The shortname element is required.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-shortname.html');
@@ -155,8 +151,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'description',
-        option: { name: 'description', config: { alias:'d', desc: 'Description for webscript', type:'String', } },
-        when: function(props) {
+        option: { name: 'description', config: { alias: 'd', desc: 'Description for webscript', type: String } },
+        when: function (props) {
           this.out.docs(
             'The description element in a web descriptor file provides documentation for the web script. The description element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-description.html');
@@ -169,8 +165,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'urlTemplates',
-        option: { name: 'url-templates', config: { alias:'u', desc: 'Vertical bar \'|\' separated list of url templates', type:'String', } },
-        when: function(props) {
+        option: { name: 'url-templates', config: { alias: 'u', desc: 'Vertical bar \'|\' separated list of url templates', type: String } },
+        when: function (props) {
           this.out.docs(
             'The url element represents a URI template to which the web script is bound. Variants of the URI template which specify a format do not need to be registered, however, specifying them is useful for documentation purposes. There must be at least one url element, but there can be several.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-url.html');
@@ -188,11 +184,11 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'formatSelector',
-        option: { name: 'format-selector', config: { alias:'f', desc: 'Format selection technique: any, argument or extension', type:'String', } },
-        when: function(props) {
+        option: { name: 'format-selector', config: { alias: 'f', desc: 'Format selection technique: any, argument or extension', type: String } },
+        when: function (props) {
           this.out.docs('The format element controls how the content-type of the response can be specified by using the URI. The format element is optional.');
           this.out.definition('any', 'Either argument or extension can be used. This is the default where none is specified.');
-          this.out.definition('argument','The content-type is specified by using the format query string parameter, for example /helloworld?to=dave&format=xml.')
+          this.out.definition('argument', 'The content-type is specified by using the format query string parameter, for example /helloworld?to=dave&format=xml.');
           this.out.definition('extension', 'The content-type is specified by using the URI extension, for example /hello/world.xml?to=dave.');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-format.html');
           return true;
@@ -205,15 +201,15 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'formatDefault',
-        option: { name: 'format-default', config: { alias:'F', desc: 'Default format to use if no selection is made', type:'String', } },
-        when: function(props) {
+        option: { name: 'format-default', config: { alias: 'F', desc: 'Default format to use if no selection is made', type: String } },
+        when: function (props) {
           if (this.bail) return;
           var show = (props.templateFormats && props.templateFormats.length > 0);
           if (show) {
             var f = filters.chooseOneStartsWithFilter(this.options['format-default'], props.templateFormats);
-            if (undefined != f) {
+            if (f !== undefined) {
               props.formatDefault = f;
-              this.out.info("Using default format from command line: " + chalk.reset.dim.cyan(props.formatDefault));
+              this.out.info('Using default format from command line: ' + chalk.reset.dim.cyan(props.formatDefault));
               return false;
             }
             this.out.docs(
@@ -224,7 +220,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           }
           return show;
         }.bind(this),
-        choices: function(props) {
+        choices: function (props) {
           return props.templateFormats;
         },
         message: 'Which <format ' + chalk.yellow('@default') + '> should we use?',
@@ -234,8 +230,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'authentication',
-        option: { name: 'authentication', config: { alias:'a', desc: 'Type of authentication required: none, guest, user or admin', type:'String', } },
-        when: function(props) {
+        option: { name: 'authentication', config: { alias: 'a', desc: 'Type of authentication required: none, guest, user or admin', type: String } },
+        when: function (props) {
           this.out.docs('The authentication element specifies the level of authentication required to run the web script. The authentication element is optional.');
           this.out.definition('none', 'Specifies that no authentication is required to run the web script. This is the default value if the authentication level is not explicitly specified.');
           this.out.definition('guest', 'Specifies that at least guest level access is required to run the web script.');
@@ -252,8 +248,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'authenticationRunas',
-        option: { name: 'authentication-runas', config: { alias:'r', desc: 'User webscript should run as', type:'String', } },
-        when: function(props) {
+        option: { name: 'authentication-runas', config: { alias: 'r', desc: 'User webscript should run as', type: String } },
+        when: function (props) {
           this.out.docs(
             ['The runas attribute allows a web script developer to state that the execution of a web script must run as a particular Alfresco content repository user, regardless of who initiated the web script.',
              'This is useful where the behavior of the web script requires specific permissions to succeed. Due to security concerns, the runas attribute is only available for web script implementations placed into the Java classpath.',
@@ -268,8 +264,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'transaction',
-        option: { name: 'transaction', config: { alias:'T', desc: 'Transaction requirement: none, required or requiresnew', type:'String', } },
-        when: function(props) {
+        option: { name: 'transaction', config: { alias: 'T', desc: 'Transaction requirement: none, required or requiresnew', type: String } },
+        when: function (props) {
           this.out.docs('The transaction element specifies the transaction level required to run the web script. The transaction element is optional.');
           this.out.definition('none', 'Specifies that no transaction is required to run the web script. This is the default value if the transaction level is not explicitly specified, and the authentication level is none. If the authentication level is not none then the default value is required.');
           this.out.definition('required', 'Specifies that a transaction is required (and will inherit an existing transaction, if open).');
@@ -278,11 +274,11 @@ module.exports = SourceSelectingSubGenerator.extend({
           return true;
         }.bind(this),
         choices: TRANSACTIONS,
-        default: function(props) {
-          return ( 'none' === props.authentication
+        default: function (props) {
+          return (props.authentication === 'none'
             ? 'none'
-            : 'required' );
-        }.bind(this),
+            : 'required');
+        },
         message: 'What type of ' + chalk.yellow('<transaction>') + ' is required to run the webscript?',
         commonFilter: filters.chooseOneFilterFactory(TRANSACTIONS),
         valueRequired: true,
@@ -291,8 +287,8 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): What happens if no value is specified?
         type: 'list',
         name: 'transactionAllow',
-        option: { name: 'transaction-allow', config: { alias:'A', desc: 'Transaction allowance requirement: readonly, readwrite', type:'String', } },
-        when: function(props) {
+        option: { name: 'transaction-allow', config: { alias: 'A', desc: 'Transaction allowance requirement: readonly, readwrite', type: String } },
+        when: function (props) {
           this.out.docs('Specifies the type of data transfer allowed. Valid values, which are optional/required, are as follows');
           this.out.definition('readonly', 'read only transfers allowed');
           this.out.definition('readwrite', 'read and write transfers allowed');
@@ -308,9 +304,9 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): figure out what the default is and document that
         type: 'input',
         name: 'transactionBuffersize',
-        option: { name: 'transaction-buffersize', config: { alias:'B', desc: 'Transactional buffer size in bytes', type:'Number', } },
-        when: function(props) {
-          var disp = ('none' !== props.transaction);
+        option: { name: 'transaction-buffersize', config: { alias: 'B', desc: 'Transactional buffer size in bytes', type: Number } },
+        when: function (props) {
+          var disp = (props.transaction !== 'none');
           if (disp) {
             this.out.docs(
               ['Specifies the buffer size in bytes. Integer value.',
@@ -331,8 +327,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'families',
-        option: { name: 'families', config: { alias:'I', desc: 'Vertical bar \'|\' separated list of webscript families', type:'String', } },
-        when: function(props) {
+        option: { name: 'families', config: { alias: 'I', desc: 'Vertical bar \'|\' separated list of webscript families', type: String } },
+        when: function (props) {
           this.out.docs(
             'The family element allows a web script developer to categorize their web scripts. Any value can be assigned to family and any number of families can be assigned to the web script, providing a freeform tagging mechanism. The web script index provides views for navigating web scripts by family. The family tag can be repeated if the script belongs to multiple families. The family element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-family.html');
@@ -346,8 +342,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'cacheNever',
-        option: { name: 'cache-never', config: { alias:'C', desc: 'Disable caching, pass false to enable caching', type:'Boolean', } },
-        when: function(props) {
+        option: { name: 'cache-never', config: { alias: 'C', desc: 'Disable caching, pass false to enable caching', type: Boolean } },
+        when: function (props) {
           this.out.docs('Specifies whether caching should be applied at all. Valid values, which are optional, are as follows:');
           this.out.definition('true', '(default) specifies the web script response should never be cached.');
           this.out.definition('false', 'specifies the web script response can be cached.');
@@ -364,9 +360,9 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): validate that the default is false as the docs are inconsistent
         type: 'list',
         name: 'cachePublic',
-        option: { name: 'cache-public', config: { alias:'P', desc: 'Allow public caching', type:'Boolean', } },
-        when: function(props) {
-          if ('false' === props.cacheNever) {
+        option: { name: 'cache-public', config: { alias: 'P', desc: 'Allow public caching', type: Boolean } },
+        when: function (props) {
+          if (props.cacheNever === 'false') {
             this.out.docs('Specifies whether authneticated responses should be cached in the public cache. Valid values, which are optional, are as follows:');
             this.out.definition('false', '(default) specifies the web script authenticated response cannot be cached in a public cache.');
             this.out.definition('true', 'specifies the web script authenticated response can be cached in a public cache.');
@@ -386,9 +382,9 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): validate that the default is false as the docs are inconsistent
         type: 'list',
         name: 'cacheMustrevalidate',
-        option: { name: 'cache-must-revalidate', config: { alias:'R', desc: 'Force revalidation', type:'Boolean', } },
-        when: function(props) {
-          if ('false' === props.cacheNever) {
+        option: { name: 'cache-must-revalidate', config: { alias: 'R', desc: 'Force revalidation', type: Boolean } },
+        when: function (props) {
+          if (props.cacheNever === 'false') {
             this.out.docs('Specifies whether a cache must revalidate its version of the web script response in order to ensure freshness. Valid values, which are optional, are as follows:');
             this.out.definition('true', '(default) specifies that validation must occur.');
             this.out.definition('false', 'specifies that validation can occur.');
@@ -408,8 +404,8 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): figure out if there is a fixed list of formats/mimetypes
         type: 'input',
         name: 'negotiations',
-        option: { name: 'negotiations', config: { alias:'n', desc: 'Vertical bar \'|\' separated list of format=mimetype values', type:'String', } },
-        when: function(props) {
+        option: { name: 'negotiations', config: { alias: 'n', desc: 'Vertical bar \'|\' separated list of format=mimetype values', type: String } },
+        when: function (props) {
           this.out.docs(
             'The negotiate element associates an Accept header MIME type to a specific web script format of response. The mandatory value specifies the format while the mandatory attribute, accept, specifies the MIME type. Content Negotiation is enabled with the definition of at least one negotiate element. The negotiate element can be specified zero or more times.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-negotiate.html');
@@ -423,8 +419,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'list',
         name: 'lifecycle',
-        option: { name: 'lifecycle', config: { alias:'L', desc: 'Webscript lifecycle: none, sample, draft, public_api, draft_public_api, deprecated or internal', type:'String', } },
-        when: function(props) {
+        option: { name: 'lifecycle', config: { alias: 'L', desc: 'Webscript lifecycle: none, sample, draft, public_api, draft_public_api, deprecated or internal', type: String } },
+        when: function (props) {
           this.out.docs('The lifecycle element allows a web script developer to indicate the development status of a web script. Typically, web scripts start out in a draft state while being developed or tested, are promoted to production quality for widespread use, and finally retired at the end of their life. The lifecycle element is optional.');
           this.out.definition('none', 'Indicates this web script is not part of a lifecycle');
           this.out.definition('sample', 'Indicates this web script is a sample and is not intended for production use');
@@ -445,8 +441,8 @@ module.exports = SourceSelectingSubGenerator.extend({
         // TODO(bwavell): figure out what the default is
         type: 'list',
         name: 'formdataMultipartProcessing',
-        option: { name: 'multipart', config: { alias:'U', desc: 'Enable multipart form data processing', type:'Boolean', } },
-        when: function(props) {
+        option: { name: 'multipart', config: { alias: 'U', desc: 'Enable multipart form data processing', type: Boolean } },
+        when: function (props) {
           this.out.docs('Specifies whether multi-part processing should be on or off. Valid values, which are optional, are as follows:');
           this.out.definition('false', 'turns off multi-part form data processing.');
           this.out.definition('true', 'turns on multi-part form data processing.');
@@ -461,8 +457,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'args',
-        option: { name: 'args', config: { alias:'g', desc: 'Vertical bar \'|\' separated list of name=description values', type:'String', } },
-        when: function(props) {
+        option: { name: 'args', config: { alias: 'g', desc: 'Vertical bar \'|\' separated list of name=description values', type: String } },
+        when: function (props) {
           this.out.docs(
             'The args element represents a list of arguments passed to the web script. This are listed for documentation purposes. The args element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-args.html');
@@ -476,8 +472,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'requests',
-        option: { name: 'requests', config: { alias:'q', desc: 'Vertical bar \'|\' separated list of request types', type:'String', } },
-        when: function(props) {
+        option: { name: 'requests', config: { alias: 'q', desc: 'Vertical bar \'|\' separated list of request types', type: String } },
+        when: function (props) {
           this.out.docs(
             'The requests element represents a collection of request types for the web script. The requests element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-requests.html');
@@ -490,8 +486,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'responses',
-        option: { name: 'responses', config: { alias:'S', desc: 'Vertical bar \'|\' separated list of response types', type:'String', } },
-        when: function(props) {
+        option: { name: 'responses', config: { alias: 'S', desc: 'Vertical bar \'|\' separated list of response types', type: String } },
+        when: function (props) {
           this.out.docs(
             'The responses element represents a collection of response types for the web script. The responses element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-responses.html');
@@ -507,21 +503,19 @@ module.exports = SourceSelectingSubGenerator.extend({
   },
 
   prompting: function () {
-    this.subgeneratorPrompt(this.prompts, function(props) {
+    this.subgeneratorPrompt(this.prompts, function (props) {
       props.negotiations = (props.negotiations ? JSON.parse(props.negotiations) : {});
       props.args = (props.args ? JSON.parse(props.args) : {});
       this.props = props;
 
       var targetModule = props.targetModule.module;
       var modulePath = this.destinationPath(targetModule.path);
-      var wsRoot = ('repo' === targetModule.war ?
-        'src/main/amp/config/alfresco/extension/templates/webscripts' :
-        'src/main/amp/config/alfresco/web-extension/site-webscripts'
-      );
-      var genRoot = ('repo' === targetModule.war ?
-        'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated' :
-        'src/main/amp/config/alfresco/web-extension'
-      );
+      var wsRoot = (targetModule.war === 'repo'
+          ? 'src/main/amp/config/alfresco/extension/templates/webscripts'
+          : 'src/main/amp/config/alfresco/web-extension/site-webscripts');
+      var genRoot = (targetModule.war === 'repo'
+          ? 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated'
+          : 'src/main/amp/config/alfresco/web-extension');
       var configSrcPath = this.templatePath('config.xml');
       var descSrcPath = this.templatePath('desc.xml.ejs');
       var javaSrcPath = this.templatePath(props.javaBaseClass + '.java');
@@ -529,27 +523,25 @@ module.exports = SourceSelectingSubGenerator.extend({
       var wsSrcPath = this.templatePath('webscript-context.xml');
       var descPath = path.join(modulePath, wsRoot, props.package);
       var genPath = path.join(modulePath, genRoot);
-      props.methods.forEach(function(method) {
+      props.methods.forEach(function (method) {
         var descName = props.id + '.' + method + '.desc.xml';
-        var destPath = path.join(descPath, descName)
+        var destPath = path.join(descPath, descName);
         this.out.info('Generating ' + descName + ' in ' + descPath);
         this.fs.copyTpl(descSrcPath, destPath, props);
         // JavaScript || Both Java & JavaScript
-        if ('Java' !== props.language) {
+        if (props.language !== 'Java') {
           var jsControllerName = props.id + '.' + method + '.js';
           var jsControllerPath = path.join(descPath, jsControllerName);
           this.out.info('Generating ' + jsControllerName + ' in ' + descPath);
           this.fs.copyTpl(jsSrcPath, jsControllerPath, props);
 
-          //if('repo' === props.war) {
-            var configName = props.id + '.' + method + '.config.xml';
-            var configPath = path.join(descPath, configName);
-            this.out.info('Generating ' + configName + ' in ' + descPath);
-            this.fs.copyTpl(configSrcPath, configPath, props);
-          //}
+          var configName = props.id + '.' + method + '.config.xml';
+          var configPath = path.join(descPath, configName);
+          this.out.info('Generating ' + configName + ' in ' + descPath);
+          this.fs.copyTpl(configSrcPath, configPath, props);
         }
         // Java || Both Java & JavaSctip
-        if ('JavaScript' !== props.language) {
+        if (props.language !== 'JavaScript') {
           var pkg = props.package.replace(/\//g, '.').substring(1);
           props.classPackage = pkg + '.webscripts';
           props.className = _.upperFirst(_.camelCase(props.id)) + _.upperFirst(method) + 'Webscript';
@@ -568,18 +560,18 @@ module.exports = SourceSelectingSubGenerator.extend({
         }
         // NOTE: for an AbstractWebScript, we won't have any freemarker templates
         // if the language is only Java.
-        props.templateFormats.forEach(function(format) {
+        props.templateFormats.forEach(function (format) {
           var fmtPath = this.templatePath(format + '.ftl');
-          var tplName = props.id + '.' + method + '.' + format + '.ftl'
+          var tplName = props.id + '.' + method + '.' + format + '.ftl';
           var tplPath = path.join(descPath, tplName);
           this.out.info('Generating ' + tplName + ' in ' + descPath);
           this.fs.copyTpl(fmtPath, tplPath, props);
         }.bind(this));
         // NOTE: consider prompting for supported locales. Realizing there are a large number of them
         // and we likely won't have sample data for all locales.
-        ['de', 'en', 'es', 'fr'].forEach(function(locale) {
+        ['de', 'en', 'es', 'fr'].forEach(function (locale) {
           var propPath = this.templatePath(locale + '.properties');
-          var localeName = props.id + '.' + method + ('en' == locale ? '' : '.' + locale) + '.properties';
+          var localeName = props.id + '.' + method + (locale === 'en' ? '' : '.' + locale) + '.properties';
           var localePath = path.join(descPath, localeName);
           this.out.info('Generating ' + localeName + ' in ' + descPath);
           this.fs.copyTpl(propPath, localePath, props);
@@ -594,8 +586,7 @@ module.exports = SourceSelectingSubGenerator.extend({
 
   install: function () {
     if (this.bail) return;
-  }
-
+  },
 });
 
 // =======================================
@@ -604,15 +595,15 @@ module.exports = SourceSelectingSubGenerator.extend({
 
 // TODO(bwavell): move prompts to webscript-prompt-filters module and add tests
 
-function idFilter(id) {
+function idFilter (id) {
   if (!_.isString(id)) return undefined;
   var retv = _.kebabCase(id);
   // if after kebabbing our id we don't have anything left treat as undefined
-  if (_.isEmpty(retv)) return undefined
+  if (_.isEmpty(retv)) return undefined;
   return retv;
 }
 
-function packageFilter(pkg) {
+function packageFilter (pkg) {
   if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
   // To begin with, if package is provided in dot notation replace dots with slashes
   // also, treat spaces like path separators
@@ -626,17 +617,17 @@ function packageFilter(pkg) {
   // package/path should be all lower case
   output = output.toLocaleLowerCase();
   // if after cleanup all we have is a / then treat as undefined
-  if ('/' === output) return undefined;
+  if (output === '/') return undefined;
   return output;
 }
 
-function urlTemplatesFilter(templates) {
+function urlTemplatesFilter (templates) {
   var urls = filters.requiredTextListFilter(templates, '|');
   if (urls) {
-    return urls.map(function(url) {
+    return urls.map(function (url) {
       return (_.startsWith(url, '/')
        ? url
-       : '/' + url)
+       : '/' + url);
     });
   }
   return urls;
@@ -652,42 +643,42 @@ function urlTemplatesFilter(templates) {
 // framework will provide a NaN if a non numeric
 // value is provided for this Number option, so
 // we return the empty string for that too.
-function transactionBuffersizeFilter(buffersize) {
-  if (undefined === buffersize || null === buffersize) return undefined;
-  if (true === buffersize) return '';
+function transactionBuffersizeFilter (buffersize) {
+  if (buffersize === undefined || buffersize === null) return undefined;
+  if (buffersize === true) return '';
   if (isNaN(buffersize)) return '';
   if (_.isNumber(buffersize)) return parseInt(buffersize);
   if (_.isEmpty(buffersize)) return '';
   return parseInt(buffersize);
 }
 
-function familiesFilter(families) {
+function familiesFilter (families) {
   if (_.isString(families) && families.indexOf('.') > -1) return undefined;
   return filters.textListFilter(families, '|');
 }
 
-function negotiationsFilter(negotiations) {
-  if (true === negotiations) return '';
+function negotiationsFilter (negotiations) {
+  if (negotiations === true) return '';
   if (!_.isString(negotiations) || _.isEmpty(negotiations)) return undefined;
   var negotiationList = negotiations.split(/\s*\|\s*/);
   var valSet = false;
-  var retv = negotiationList.reduce(function(negotiations, negotiation) {
-      var negotiationItems = negotiation.split(/\s*=\s*/);
-      if (negotiationItems.length >= 2) {
-        negotiations[negotiationItems[0]] = negotiationItems[1];
-        valSet = true;
-      }
-      return negotiations;
-    }, {});
+  var retv = negotiationList.reduce(function (negotiations, negotiation) {
+    var negotiationItems = negotiation.split(/\s*=\s*/);
+    if (negotiationItems.length >= 2) {
+      negotiations[negotiationItems[0]] = negotiationItems[1];
+      valSet = true;
+    }
+    return negotiations;
+  }, {});
   if (valSet) return JSON.stringify(retv);
   return undefined;
 }
 
-function argsFilter(args) {
-  if (undefined === args || null === args) return undefined;
+function argsFilter (args) {
+  if (args === undefined || args === null) return undefined;
   if (!_.isString(args) || _.isEmpty(args)) return '{}';
   var argsList = args.split(/\s*\|\s*/);
-  return JSON.stringify(argsList.reduce(function(args, arg) {
+  return JSON.stringify(argsList.reduce(function (args, arg) {
     var argItems = arg.split(/\s*=\s*/);
     if (argItems.length >= 2) {
       args[argItems[0]] = argItems[1];

@@ -7,13 +7,13 @@ module.exports = {
 
   resolver: {
     mappings: {
-      "ns": "http://www.example.com/",
-      "pom": "http://maven.apache.org/POM/4.0.0",
-      "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+      'ns': 'http://www.example.com/',
+      'pom': 'http://maven.apache.org/POM/4.0.0',
+      'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
     },
-    lookupNamespaceURI: function(prefix) {
+    lookupNamespaceURI: function (prefix) {
       return this.mappings[prefix];
-    }
+    },
   },
 
   /**
@@ -23,7 +23,7 @@ module.exports = {
    * @param {string} xmlString
    * @returns {Document} the parsed xml document
    */
-  parseFromString: function(xmlString) {
+  parseFromString: function (xmlString) {
     var doc = new xmldom.DOMParser().parseFromString(xmlString, 'text/xml');
     return doc;
   },
@@ -37,7 +37,7 @@ module.exports = {
    * @param {boolean} addFirstChild - default to false
    * @returns {Element}
      */
-  createChild: function(node, ns, tag, addFirstChild) {
+  createChild: function (node, ns, tag, addFirstChild) {
     var addFirst = addFirstChild || false;
     var doc = node.ownerDocument;
     var child = doc.createElementNS(this.resolver.lookupNamespaceURI(ns), tag);
@@ -57,8 +57,8 @@ module.exports = {
    * @param {string} tag
    * @returns {(Element|undefined)}
    */
-  getChild: function(node, ns, tag) {
-    if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getChild() are required");
+  getChild: function (node, ns, tag) {
+    if (!node || !ns || !tag) throw new Error('All parameters to xml-dom-utils:getChild() are required');
     var child = this.getFirstNodeMatchingXPath(ns + ':' + tag, node);
     return child;
   },
@@ -72,8 +72,8 @@ module.exports = {
    * @param {string} tag
    * @returns {undefined}
    */
-  removeChild: function(node, ns, tag) {
-    var child = this.getChild(node, ns, tag)
+  removeChild: function (node, ns, tag) {
+    var child = this.getChild(node, ns, tag);
     if (child) {
       var parent = child.parentNode;
       if (parent) {
@@ -89,8 +89,8 @@ module.exports = {
    * @param {!Node} child
    * @returns {undefined}
    */
-  removeParentsChild: function(parent, child) {
-    if (parent && child && parent == child.parentNode) {
+  removeParentsChild: function (parent, child) {
+    if (parent && child && parent === child.parentNode) {
       parent.removeChild(child);
     }
   },
@@ -103,8 +103,8 @@ module.exports = {
    * @param {string} tag
    * @returns {Element}
    */
-  getOrCreateChild: function(node, ns, tag) {
-    if (!node || !ns || !tag) throw new Error("All parameters to xml-dom-utils:getOrCreateChild() are required");
+  getOrCreateChild: function (node, ns, tag) {
+    if (!node || !ns || !tag) throw new Error('All parameters to xml-dom-utils:getOrCreateChild() are required');
     var child = this.getFirstNodeMatchingXPath(ns + ':' + tag, node);
     if (!child) {
       var doc = node.ownerDocument;
@@ -125,9 +125,9 @@ module.exports = {
    * @param {(string|undefined)} contraIndicatedText
    * @returns {undefined}
    */
-  setOrClearChildText: function(node, ns, tag, text, contraIndicatedText) {
-    // console.log("setOrClearChildText(" + (node ? "node" : "undefined") + "," + ns + ":" + tag + ")");
-    if (!node || !ns || !tag) throw new Error("All parameters except text and contraIndicatedText to xml-dom-utils:setOrClearChildText() are required");
+  setOrClearChildText: function (node, ns, tag, text, contraIndicatedText) {
+    // console.log('setOrClearChildText(' + (node ? 'node' : 'undefined') + ',' + ns + ':' + tag + ')');
+    if (!node || !ns || !tag) throw new Error('All parameters except text and contraIndicatedText to xml-dom-utils:setOrClearChildText() are required');
     if (text && text !== contraIndicatedText) {
       var child = this.getChild(node, ns, tag);
       if (!child) {
@@ -145,7 +145,7 @@ module.exports = {
    * @param {!Node} node
    * @returns {(Node|undefined)}
    */
-  getNextElementSibling: function(node) {
+  getNextElementSibling: function (node) {
     if (!node) return undefined;
     var next = node;
     do {
@@ -162,7 +162,7 @@ module.exports = {
    * @param {!(Document|Element)} docOrElement
    * @returns {?*}
    */
-  getFirstNodeMatchingXPath: function(expression, docOrElement) {
+  getFirstNodeMatchingXPath: function (expression, docOrElement) {
     var match = xpath.selectWithResolver(expression, docOrElement, this.resolver, true);
     return match;
   },
@@ -175,7 +175,7 @@ module.exports = {
    * @param {!(Document|Element)} docOrElement
    * @returns {?*}
    */
-  selectMatchingXPath: function(expression, docOrElement) {
+  selectMatchingXPath: function (expression, docOrElement) {
     var matches = xpath.selectWithResolver(expression, docOrElement, this.resolver, false);
     return matches;
   },
@@ -186,7 +186,7 @@ module.exports = {
    * @param {!Document} doc
    * @returns {(string|undefined}}
      */
-  prettyPrint: function(doc) {
+  prettyPrint: function (doc) {
     return pd.xml(new xmldom.XMLSerializer().serializeToString(doc));
   },
 
@@ -200,14 +200,14 @@ module.exports = {
    * @returns {undefined}
    */
   // TODO(bwavell): add tests for this
-  appendToAttributeValueList: function(attr, value, sep) {
-      var val = attr.value;
-      if (val && val.length > 0) {
-        val = val + sep + value;
-      } else {
-        val = value;
-      }
-      attr.value = val;
+  appendToAttributeValueList: function (attr, value, sep) {
+    var val = attr.value;
+    if (val && val.length > 0) {
+      val = val + sep + value;
+    } else {
+      val = value;
+    }
+    attr.value = val;
   },
 
   /**
@@ -221,7 +221,7 @@ module.exports = {
    * @returns {undefined}
    */
   // TODO(bwavell): add tests for this
-  removeFromAttributeValueList: function(attr, value, sep) {
+  removeFromAttributeValueList: function (attr, value, sep) {
     var re = new RegExp('\\s*' + sep + '\\s*');
     var list = attr.value.split(re);
     var idx = list.indexOf(value);
@@ -229,7 +229,7 @@ module.exports = {
       list.splice(idx, 1);
     }
     attr.value = list.join(sep);
-  }
+  },
 
 };
 
