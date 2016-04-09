@@ -140,17 +140,19 @@ module.exports = yeoman.Base.extend({
     // ==== NOW DO THE ACTUAL PROMPTING ====
     var donePrompting = this.async();
     this.prompt(processedPrompts, function (props) {
-      processedPrompts.forEach(function(promptItem) {
-        var name = promptItem.name;
-        var required = promptItem.valueRequired;
-        if (name && required) {
-          debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), props[name]);
-          if (undefined === props[name]) {
-            this.out.error('At least one required properties not set: ' + name);
-            this.bail = true;
+      if (!this.bail) {
+        processedPrompts.forEach(function (promptItem) {
+          var name = promptItem.name;
+          var required = promptItem.valueRequired;
+          if (name && required) {
+            debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), props[name]);
+            if (undefined === props[name]) {
+              this.out.error('At least one required properties not set: ' + name);
+              this.bail = true;
+            }
           }
-        }
-      }.bind(this));
+        }.bind(this));
+      }
       if (!this.bail && donePromptingFunc) {
         debug('calling user supplied done prompting function');
         donePromptingFunc.call(this, props);
