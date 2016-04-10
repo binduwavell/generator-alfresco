@@ -1,14 +1,13 @@
 'use strict';
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
 describe('generator-alfresco:webscript', function () {
-
   this.timeout(30000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -27,51 +26,50 @@ describe('generator-alfresco:webscript', function () {
   });
 
   describe('after creating java webscripts', function () {
-
     before(function (done) {
       helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function() {
+        .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
           // directory and we don't want it to be empty, so this is a hack
           // for that.
           process.chdir(osTempDir);
-        }.bind(this))
+        })
         .withOptions({
-          "force": true, // tests can't handle conflicts
-          "module-path": 'repo-amp',
-          "id": 'java',
-          "package": 'org.alfresco',
-          "language": 'java',
-          "java-base-class": 'abstract',
-          "methods": 'get,put,post,delete',
-          "templateFormats": [],
-          "kind": '',
-          "shortname": 'java shortname',
-          "description": 'java description',
-          "url-templates": 'java1|java2',
-          "format-selector": 'any',
-          "format-default": '',
-          "authentication": 'user',
-          "authentication-runas": 'bevis',
-          "transaction": 'required',
-          "transaction-allow": 'readwrite',
-          "transaction-buffersize": 1024,
-          "families": '',
-          "cache-never": 'false',
-          "cache-public": 'true',
-          "cache-must-revalidate": 'true',
-          "negotiations": 'html=text/html',
-          "lifecycle": 'sample',
-          "multipart": 'false',
-          "args": 'one=two|three=four',
-          "requests": '',
-          "responses": '',
+          'force': true, // tests can't handle conflicts
+          'module-path': 'repo-amp',
+          'id': 'java',
+          'package': 'org.alfresco',
+          'language': 'java',
+          'java-base-class': 'abstract',
+          'methods': 'get,put,post,delete',
+          'template-formats': '',
+          'kind': '',
+          'shortname': 'java shortname',
+          'description': 'java description',
+          'url-templates': 'java1|java2',
+          'format-selector': 'any',
+          'format-default': '',
+          'authentication': 'user',
+          'authentication-runas': 'bevis',
+          'transaction': 'required',
+          'transaction-allow': 'readwrite',
+          'transaction-buffersize': 1024,
+          'families': '',
+          'cache-never': 'false',
+          'cache-public': 'true',
+          'cache-must-revalidate': 'true',
+          'negotiations': 'html=text/html',
+          'lifecycle': 'sample',
+          'multipart': 'false',
+          'args': 'one=two|three=four',
+          'requests': '',
+          'responses': '',
         })
         .on('end', done);
     });
 
-    it('amp files exist in project', function() {
+    it('amp files exist in project', function () {
       assert.file([
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.get.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/JavaGetWebscript.java'),
@@ -80,7 +78,7 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.get.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.get.es.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.get.fr.properties'),
-        
+
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.post.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/JavaPostWebscript.java'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-java-post-context.xml'),
@@ -88,7 +86,7 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.post.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.post.es.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.post.fr.properties'),
-        
+
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.put.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/JavaPutWebscript.java'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-java-put-context.xml'),
@@ -96,7 +94,7 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.put.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.put.es.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.put.fr.properties'),
-        
+
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.delete.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/JavaDeleteWebscript.java'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-java-delete-context.xml'),
@@ -106,55 +104,53 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/java.delete.fr.properties'),
       ]);
     });
-
   });
-  
-  describe('after creating javascript webscripts', function () {
 
+  describe('after creating javascript webscripts', function () {
     before(function (done) {
       helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function() {
+        .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
           // directory and we don't want it to be empty, so this is a hack
           // for that.
           process.chdir(osTempDir);
-        }.bind(this))
+        })
         .withOptions({
-          "force": true, // tests can't handle conflicts
-          "module-path": 'repo-amp',
-          "id": 'javascript',
-          "package": 'org.alfresco',
-          "language": 'javascript',
-          "java-base-class": '',
-          "methods": 'get,put,post,delete',
-          "templateFormats": ['html','json', 'xml', 'csv', 'atom', 'rss'],
-          "kind": '',
-          "shortname": 'javascript shortname',
-          "description": 'javascript description',
-          "url-templates": 'javascript1|javascript2',
-          "format-selector": 'any',
-          "format-default": 'html',
-          "authentication": 'user',
-          "authentication-runas": 'bevis',
-          "transaction": 'required',
-          "transaction-allow": 'readwrite',
-          "transaction-buffersize": 1024,
-          "families": '',
-          "cache-never": 'false',
-          "cache-public": 'true',
-          "cache-must-revalidate": 'true',
-          "negotiations": 'html=text/html',
-          "lifecycle": 'sample',
-          "multipart": 'false',
-          "args": 'one=two|three=four',
-          "requests": '',
-          "responses": '',
+          'force': true, // tests can't handle conflicts
+          'module-path': 'repo-amp',
+          'id': 'javascript',
+          'package': 'org.alfresco',
+          'language': 'javascript',
+          'java-base-class': '',
+          'methods': 'get,put,post,delete',
+          'template-formats': 'html,json,xml,csv,atom,rss',
+          'kind': '',
+          'shortname': 'javascript shortname',
+          'description': 'javascript description',
+          'url-templates': 'javascript1|javascript2',
+          'format-selector': 'any',
+          'format-default': 'html',
+          'authentication': 'user',
+          'authentication-runas': 'bevis',
+          'transaction': 'required',
+          'transaction-allow': 'readwrite',
+          'transaction-buffersize': 1024,
+          'families': '',
+          'cache-never': 'false',
+          'cache-public': 'true',
+          'cache-must-revalidate': 'true',
+          'negotiations': 'html=text/html',
+          'lifecycle': 'sample',
+          'multipart': 'false',
+          'args': 'one=two|three=four',
+          'requests': '',
+          'responses': '',
         })
         .on('end', done);
     });
 
-    it('amp files exist in project', function() {
+    it('amp files exist in project', function () {
       assert.file([
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/javascript.get.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/javascript.get.js'),
@@ -213,55 +209,53 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/javascript.delete.fr.properties'),
       ]);
     });
-
   });
-  
-  describe('after creating combined java and javascript webscripts', function () {
 
+  describe('after creating combined java and javascript webscripts', function () {
     before(function (done) {
       helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function() {
+        .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
           // directory and we don't want it to be empty, so this is a hack
           // for that.
           process.chdir(osTempDir);
-        }.bind(this))
+        })
         .withOptions({
-          "force": true, // tests can't handle conflicts
-          "module-path": 'repo-amp',
-          "id": 'both',
-          "package": 'org.alfresco',
-          "language": 'both',
-          "java-base-class": 'declarative',
-          "methods": 'get,put,post,delete',
-          "templateFormats": ['html','json', 'xml', 'csv', 'atom', 'rss'],
-          "kind": '',
-          "shortname": 'both shortname',
-          "description": 'both description',
-          "url-templates": 'both1|both2',
-          "format-selector": 'any',
-          "format-default": 'html',
-          "authentication": 'user',
-          "authentication-runas": 'bevis',
-          "transaction": 'required',
-          "transaction-allow": 'readwrite',
-          "transaction-buffersize": 1024,
-          "families": '',
-          "cache-never": 'false',
-          "cache-public": 'true',
-          "cache-must-revalidate": 'true',
-          "negotiations": 'html=text/html',
-          "lifecycle": 'sample',
-          "multipart": 'false',
-          "args": 'one=two|three=four',
-          "requests": '',
-          "responses": '',
+          'force': true, // tests can't handle conflicts
+          'module-path': 'repo-amp',
+          'id': 'both',
+          'package': 'org.alfresco',
+          'language': 'both',
+          'java-base-class': 'declarative',
+          'methods': 'get,put,post,delete',
+          'template-formats': 'html,json,xml,csv,atom,rss',
+          'kind': '',
+          'shortname': 'both shortname',
+          'description': 'both description',
+          'url-templates': 'both1|both2',
+          'format-selector': 'any',
+          'format-default': 'html',
+          'authentication': 'user',
+          'authentication-runas': 'bevis',
+          'transaction': 'required',
+          'transaction-allow': 'readwrite',
+          'transaction-buffersize': 1024,
+          'families': '',
+          'cache-never': 'false',
+          'cache-public': 'true',
+          'cache-must-revalidate': 'true',
+          'negotiations': 'html=text/html',
+          'lifecycle': 'sample',
+          'multipart': 'false',
+          'args': 'one=two|three=four',
+          'requests': '',
+          'responses': '',
         })
         .on('end', done);
     });
 
-    it('amp files exist in project', function() {
+    it('amp files exist in project', function () {
       assert.file([
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.get.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/BothGetWebscript.java'),
@@ -294,7 +288,7 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.post.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.post.es.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.post.fr.properties'),
-        
+
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.put.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/BothPutWebscript.java'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-both-put-context.xml'),
@@ -310,7 +304,7 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.put.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.put.es.properties'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.put.fr.properties'),
-        
+
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.delete.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/BothDeleteWebscript.java'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-both-delete-context.xml'),
@@ -328,8 +322,120 @@ describe('generator-alfresco:webscript', function () {
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/both.delete.fr.properties'),
       ]);
     });
-
   });
 
-});
+  describe('after creating combined java and javascript webscripts via prompts', function () {
+    before(function (done) {
+      helpers.run(path.join(__dirname, '../generators/webscript'))
+        // generator will create a temp directory and make sure it's empty
+        .inTmpDir(function () {
+          // HACK: we want our test to run inside the previously generated
+          // directory and we don't want it to be empty, so this is a hack
+          // for that.
+          process.chdir(osTempDir);
+        })
+        .withOptions({
+          'force': true,
+          'module-path': 'repo-amp',
+        })
+        .withPrompts({
+          'id': 'prompt',
+          'package': '/org/alfresco',
+          'language': 'Both Java & JavaScript',
+          'javaBaseClass': 'DeclarativeWebScript',
+          'methods': ['get', 'put', 'post', 'delete'],
+          'templateFormats': ['html', 'json', 'xml', 'csv', 'atom', 'rss'],
+          'kind': '',
+          'shortname': 'prompt shortname',
+          'description': 'prompt description',
+          'urlTemplates': ['prompt1', 'prompt2'],
+          'formatSelector': 'any',
+          'formatDefault': 'html',
+          'authentication': 'user',
+          'authenticationRunas': 'bevis',
+          'transaction': 'required',
+          'transactionAllow': 'readwrite',
+          'transactionBuffersize': 1024,
+          'families': [],
+          'cacheNever': 'false',
+          'cachePublic': 'true',
+          'cacheMustrevalidate': 'true',
+          'negotiations': '{"html":"text/html"}',
+          'lifecycle': 'sample',
+          'formdataMultipartProcessing': 'false',
+          'args': '{"one":"two","three":"four"}',
+          'requests': [],
+          'responses': [],
+        })
+        .on('end', done);
+    });
 
+    it('amp files exist in project', function () {
+      assert.file([
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.desc.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/PromptGetWebscript.java'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-prompt-get-context.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.js'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.config.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.html.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.json.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.xml.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.csv.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.atom.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.rss.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.de.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.es.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.get.fr.properties'),
+
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.desc.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/PromptPostWebscript.java'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-prompt-post-context.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.js'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.config.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.html.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.json.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.xml.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.csv.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.atom.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.rss.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.de.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.es.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.post.fr.properties'),
+
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.desc.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/PromptPutWebscript.java'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-prompt-put-context.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.js'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.config.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.html.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.json.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.xml.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.csv.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.atom.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.rss.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.de.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.es.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.put.fr.properties'),
+
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.desc.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/webscripts/PromptDeleteWebscript.java'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/webscript-prompt-delete-context.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.js'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.config.xml'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.html.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.json.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.xml.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.csv.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.atom.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.rss.ftl'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.de.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.es.properties'),
+        path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/prompt.delete.fr.properties'),
+      ]);
+    });
+  });
+});

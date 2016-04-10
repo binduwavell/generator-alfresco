@@ -84,12 +84,14 @@ module.exports = yeoman.Base.extend({
       var newPrompt = _.assign({}, prompt);
       var oldWhen = prompt.when;
       newPrompt.when = function (props) {
+        debug('Synthetic when() logic');
         if (this.bail) return false;
         if (prompt.hasOwnProperty('commonFilter')
           && _.isFunction(prompt.commonFilter)
           && prompt.hasOwnProperty('option')
           && prompt.option.hasOwnProperty('name')
           && prompt.hasOwnProperty('name')) {
+          debug('Calling commonFilter(%s) for option: %s', this.options[prompt.option.name], prompt.option.name);
           var v = prompt.commonFilter.call(this, this.options[prompt.option.name]);
           if (undefined !== v) {
             props[prompt.name] = v;
@@ -98,19 +100,26 @@ module.exports = yeoman.Base.extend({
           }
         }
         if (_.isBoolean(oldWhen)) {
+          debug('Returning when=%s via value provided in prompt %s', oldWhen, prompt.name);
           return oldWhen;
         }
         if (_.isFunction(oldWhen)) {
-          return oldWhen.call(this, props);
+          var retv = oldWhen.call(this, props);
+          debug('Returning when(%s)=%s via function provided in prompt: %s', JSON.stringify(props), retv, prompt.name);
+          return retv;
         }
         return true;
       }.bind(this);
       if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter)) {
         if (!prompt.hasOwnProperty('filter')) {
-          newPrompt.filter = prompt.commonFilter;
+          newPrompt.filter = function (input) {
+            debug('Using commonFilter(%s) for filter', input);
+            return prompt.commonFilter.call(this, input);
+          }.bind(this);
         }
         if (!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
           newPrompt.validate = function (input) {
+            debug('Using commonFilter(%s) for validate', input);
             var required = prompt.valueRequired;
             var msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value '
               + (required ? 'is missing or invalid' : 'is invalid');

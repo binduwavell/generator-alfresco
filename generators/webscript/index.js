@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
+var debug = require('debug')('generator-alfresco:webscript');
 var path = require('path');
 var filters = require('../common/prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
@@ -518,6 +519,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           : 'src/main/amp/config/alfresco/web-extension');
       var configSrcPath = this.templatePath('config.xml');
       var descSrcPath = this.templatePath('desc.xml.ejs');
+      debug('javaBaseClass: %s', props.javaBaseClas);
       var javaSrcPath = this.templatePath(props.javaBaseClass + '.java');
       var jsSrcPath = this.templatePath('controller.js');
       var wsSrcPath = this.templatePath('webscript-context.xml');
