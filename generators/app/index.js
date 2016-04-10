@@ -440,7 +440,7 @@ module.exports = yeoman.Base.extend({
       );
       // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
       [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
-        function(fileName) {
+        function (fileName) {
           this.fs.copy(
             this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
             this.destinationPath(fileName)
@@ -556,8 +556,8 @@ module.exports = yeoman.Base.extend({
     },
 
     beforeExit: function () {
-      if(this.bail) return;
-      if(this.sdk.beforeExit) {
+      if (this.bail) return;
+      if (this.sdk.beforeExit) {
         this.sdk.beforeExit.call(this);
       }
     },
