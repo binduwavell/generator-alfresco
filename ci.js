@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-# eslint-env node
+/* eslint-env node */
 require('shelljs/global');
 
 var nodeVersion = '' + process.argv[2];
