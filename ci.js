@@ -1,20 +1,21 @@
 #!/usr/bin/env node
+# eslint-env node
 require('shelljs/global');
 
 var nodeVersion = '' + process.argv[2];
 var cmd;
 
-if ('5.1' === nodeVersion) {
+if (nodeVersion === '5.1') {
   cmd = 'npm run cover:color';
 } else {
   cmd = 'npm run test:color';
 }
 
 var proc = exec(cmd, {stdin: 'inherit'});
-if (undefined === proc || null === proc) {
+if (proc === undefined || proc === null) {
   echo('ERROR: unable to execute tests');
   exit(1);
-} else if (0 !== proc.code) {
+} else if (proc.code !== 0) {
   echo('ERROR: unable to execute tests');
   exit(proc.code);
 }
