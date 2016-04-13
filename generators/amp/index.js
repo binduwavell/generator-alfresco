@@ -108,11 +108,7 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'repoName',
         option: { name: 'repo-name', config: { alias: 'n', desc: 'Name for repo pom', type: String } },
-        when: function (props) {
-          var warType = props[constants.PROP_WAR];
-          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
-          return show;
-        },
+        when: whenRepoWar,
         message: 'Name for repo amp?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -121,11 +117,7 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'repoDescription',
         option: { name: 'repo-description', config: { alias: 'd', desc: 'Description for repo pom', type: String } },
-        when: function (props) {
-          var warType = props[constants.PROP_WAR];
-          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
-          return show;
-        },
+        when: whenRepoWar,
         message: 'Description for repo amp?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -134,11 +126,7 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'shareName',
         option: { name: 'share-name', config: { alias: 'N', desc: 'Name for share pom', type: String } },
-        when: function (props) {
-          var warType = props[constants.PROP_WAR];
-          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
-          return show;
-        },
+        when: whenShareWar,
         message: 'Name for share amp?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -147,11 +135,7 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'shareDescription',
         option: { name: 'share-description', config: { alias: 'D', desc: 'Description for share pom', type: String } },
-        when: function (props) {
-          var warType = props[constants.PROP_WAR];
-          var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
-          return show;
-        },
+        when: whenShareWar,
         message: 'Description for share amp?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -303,5 +287,17 @@ module.exports = SubGenerator.extend({
   },
   */
 });
+
+function whenRepoWar (props) {
+  var warType = props[constants.PROP_WAR];
+  var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
+  return show;
+}
+
+function whenShareWar (props) {
+  var warType = props[constants.PROP_WAR];
+  var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
+  return show;
+}
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
