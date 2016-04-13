@@ -1,6 +1,6 @@
 {
   "name": "generator-alfresco",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "Yeoman generator",
   "license": "Apache-2.0",
   "main": "app/index.js",
