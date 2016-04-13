@@ -135,6 +135,7 @@ module.exports = SourceSelectingSubGenerator.extend({
     debug('prompting finished');
   },
 
+  /*
   writing: function () {
     if (this.bail) return;
   },
@@ -142,6 +143,7 @@ module.exports = SourceSelectingSubGenerator.extend({
   install: function () {
     if (this.bail) return;
   },
+  */
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
