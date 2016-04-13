@@ -1,17 +1,13 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
-
 describe('generator-alfresco:app', function () {
-
   describe('default prompts', function () {
-
     this.timeout(60000);
 
     before(function (done) {
@@ -62,7 +58,7 @@ describe('generator-alfresco:app', function () {
         'TODO.md',
       ]);
     });
-    it('adds amps_source to modules in top pom', function() {
+    it('adds amps_source to modules in top pom', function () {
       assert.fileContent(
         'pom.xml',
         /<module>customizations<\/module>/
@@ -94,11 +90,10 @@ describe('generator-alfresco:app', function () {
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
         ['scripts/run.bat', /-Penterprise/],
-        ['scripts/run-without-springloaded.sh', /-Penterprise/]
+        ['scripts/run-without-springloaded.sh', /-Penterprise/],
       ]);
     });
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -1,15 +1,10 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('assert');
-var chalk = require('chalk');
-var inspect = require('eyes').inspector({maxLength: false});
-var pd = require('pretty-data').pd;
 var dependencyVersions = require('../generators/common/dependency-versions.js');
 
 describe('generator-alfresco:dependency-versions', function () {
-
-  describe('.getJavaVersion()', function() {
-
+  describe('.getJavaVersion()', function () {
     this.timeout(5000);
 
     it('gets a java version with JAVA_HOME', function () {
@@ -38,11 +33,9 @@ describe('generator-alfresco:dependency-versions', function () {
       var ver = dependencyVersions.getJavaVersion('asdfASDF');
       assert.equal(ver, undefined);
     });
-
   });
 
-  describe('.getMavenVersion()', function() {
-
+  describe('.getMavenVersion()', function () {
     it('gets a maven version with default mvn', function () {
       var ver = dependencyVersions.getMavenVersion();
       assert.ok(ver);
@@ -69,11 +62,9 @@ describe('generator-alfresco:dependency-versions', function () {
       }
       assert.equal(ver, undefined);
     });
-
   });
 
-  describe('.getRegExpMatchFromProcessOutput()', function() {
-
+  describe('.getRegExpMatchFromProcessOutput()', function () {
     // Assumes /bin/bash is installed on the test system
     it('gets a bash version', function () {
       // GNU bash, version 3.2.57(1)-release (x86_64-apple-darwin15)
@@ -106,9 +97,7 @@ describe('generator-alfresco:dependency-versions', function () {
       );
       assert.equal(match, undefined);
     });
-
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -1,17 +1,13 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
-
 describe('generator-alfresco:app', function () {
-
   describe('SDK 2.2.0', function () {
-
     this.timeout(60000);
 
     before(function (done) {
@@ -61,7 +57,7 @@ describe('generator-alfresco:app', function () {
         'TODO.md',
       ]);
     });
-    it('adds amps_source to modules in top pom', function() {
+    it('adds amps_source to modules in top pom', function () {
       assert.fileContent(
         'pom.xml',
         /<module>customizations<\/module>/
@@ -91,15 +87,15 @@ describe('generator-alfresco:app', function () {
         ['run-without-springloaded.sh', /-Penterprise/],
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.bat', /-Penterprise/],
-        ['scripts/run-without-springloaded.sh', /-Penterprise/]
+        ['scripts/run-without-springloaded.sh', /-Penterprise/],
       ]);
     });
-    it('uses correct folder names for exploding sources', function() {
+    it('uses correct folder names for exploding sources', function () {
       assert.fileContent([
         ['scripts/explode-alf-sources.sh',
         /test-artifact-repo-amp/],
         ['scripts/explode-alf-sources.sh',
-        /test-artifact-share-amp/]
+        /test-artifact-share-amp/],
       ]);
     });
   });

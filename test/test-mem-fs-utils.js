@@ -1,19 +1,17 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('assert');
 var memFs = require('mem-fs');
 var editor = require('mem-fs-editor');
 var memFsUtils = require('../generators/common/mem-fs-utils.js');
 
 describe('generator-alfresco:mem-fs-utils', function () {
-
   beforeEach(function () {
     this.store = memFs.create();
     this.fs = editor.create(this.store);
   });
 
-  describe('.existsInMemory()', function() {
-
+  describe('.existsInMemory()', function () {
     it('finds an file in a store', function () {
       this.fs.write('/asdf/fdsa/file.txt', 'some content');
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/fdsa/file.txt'), true);
@@ -58,11 +56,9 @@ describe('generator-alfresco:mem-fs-utils', function () {
       this.fs.delete('/asdf/fdsa/file2.txt');
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf'), false);
     });
-
   });
 
-  describe('.inMemoryCopy()', function() {
-
+  describe('.inMemoryCopy()', function () {
     it('copies files from a folder', function () {
       this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
       this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
@@ -82,11 +78,9 @@ describe('generator-alfresco:mem-fs-utils', function () {
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file1.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file2.txt'), false);
     });
-
   });
 
-  describe('.inMemoryMove()', function() {
-
+  describe('.inMemoryMove()', function () {
     it('moves files from a folder', function () {
       this.fs.write('/asdf/fdsa/file1.txt', 'some content 1');
       this.fs.write('/asdf/fdsa/file2.txt', 'some content 2');
@@ -106,14 +100,12 @@ describe('generator-alfresco:mem-fs-utils', function () {
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file1.txt'), true);
       assert.equal(memFsUtils.existsInMemory(this.store, '/asdf/asdf/file2.txt'), false);
     });
-
   });
 
-  describe('.dumpFileNames()', function() {
-
+  describe('.dumpFileNames()', function () {
     beforeEach(function () {
       this.names = [];
-      this.capture = function(msg) {
+      this.capture = function (msg) {
         this.names.push(msg);
       }.bind(this);
     });
@@ -148,7 +140,6 @@ describe('generator-alfresco:mem-fs-utils', function () {
       assert.equal(this.names[1], '/asdf/fdsa/file2.txt [STATE:modified]');
     });
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

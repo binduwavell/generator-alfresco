@@ -1,10 +1,9 @@
 'use strict';
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 var os = require('os');
 var path = require('path');
-
 
 describe('generator-alfresco:model', function () {
   this.timeout(60000);
@@ -23,23 +22,23 @@ describe('generator-alfresco:model', function () {
       .on('end', done);
   });
 
-  it('create model files in existing project', function(done) {
+  it('create model files in existing project', function (done) {
     helpers.run(path.join(__dirname, '../generators/model'))
       // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function() {
+      .inTmpDir(function () {
         // we want our test to run inside the previously generated directory
         // and we don't want it to be empty, so this is a hack for that.
-        //process.chdir(path.join(this.osTempDir, 'temp-test'));
+        // process.chdir(path.join(this.osTempDir, 'temp-test'));
         process.chdir(osTempDir);
       })
       .withOptions({
-        "model-name": "testModel",
-        "model-description": "test desc",
-        "model-author": "test author",
-        "model-version": "1.0",
-        "namespace-prefix": "zz",
+        'model-name': 'testModel',
+        'model-description': 'test desc',
+        'model-author': 'test author',
+        'model-version': '1.0',
+        'namespace-prefix': 'zz',
       })
-      .on('end', function() {
+      .on('end', function () {
         var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
         var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
         assert.file([
@@ -78,21 +77,21 @@ describe('generator-alfresco:model', function () {
       });
   });
 
-  it('create with invalid version', function(done) {
+  it('create with invalid version', function (done) {
     helpers.run(path.join(__dirname, '../generators/model'))
       // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function() {
+      .inTmpDir(function () {
         // we want our test to run inside the previously generated directory
         // and we don't want it to be empty, so this is a hack for that.
-        //process.chdir(path.join(this.osTempDir, 'temp-test'));
+        // process.chdir(path.join(this.osTempDir, 'temp-test'));
         process.chdir(osTempDir);
       })
       .withOptions({
-        "model-name": "invalidVersionModel",
-        "model-version": "asd",
+        'model-name': 'invalidVersionModel',
+        'model-version': 'asd',
       })
-      .on('end', function() {
-        //console.log(fs.readdirSync(path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated')));
+      .on('end', function () {
+        // console.log(fs.readdirSync(path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated')));
         assert.noFile([
           path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/invalidVersionModel.xml'),
           path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/invalidversion-model-context.xml'),
@@ -101,23 +100,24 @@ describe('generator-alfresco:model', function () {
       });
   });
 
-  it('name only invalid characters for coverage', function(done) {
+  it('name only invalid characters for coverage', function (done) {
     helpers.run(path.join(__dirname, '../generators/model'))
       // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function() {
+      .inTmpDir(function () {
         // we want our test to run inside the previously generated directory
         // and we don't want it to be empty, so this is a hack for that.
-        //process.chdir(path.join(this.osTempDir, 'temp-test'));
+        // process.chdir(path.join(this.osTempDir, 'temp-test'));
         process.chdir(osTempDir);
       })
       .withOptions({
-        "model-name": "......",
-        "model-description": "test desc",
-        "model-author": "test author",
-        "model-version": 1,
-        "namespace-prefix": "zz",
+        'model-name': '......',
+        'model-description': 'test desc',
+        'model-author': 'test author',
+        'model-version': 1,
+        'namespace-prefix': 'zz',
       })
       .on('end', done);
   });
-
 });
+
+// vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

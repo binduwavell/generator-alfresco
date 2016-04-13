@@ -1,17 +1,13 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
-
 describe('generator-alfresco:app-environment', function () {
-
   describe('detects invalid JAVA_HOME quickly', function () {
-
     this.timeout(4000);
 
     before(function (done) {
@@ -26,12 +22,12 @@ describe('generator-alfresco:app-environment', function () {
             removeDefaultSourceAmps: false,
             removeDefaultSourceSamples: false,
           })
-          .on('end', function() {
-              process.env.JAVA_HOME = javaHome;
-              done();
-            });
+          .on('end', function () {
+            process.env.JAVA_HOME = javaHome;
+            done();
+          });
       } else {
-        console.log("WARNING: Skipping tests because JAVA_HOME is not set");
+        console.log('WARNING: Skipping tests because JAVA_HOME is not set');
         this.bail = true;
         done();
       }
@@ -39,7 +35,7 @@ describe('generator-alfresco:app-environment', function () {
 
     it('does not generate a project', function () {
       if (this.bail) {
-        console.log("WARNING: Skipping test");
+        console.log('WARNING: Skipping test');
         return;
       }
       assert.noFile([
@@ -78,7 +74,6 @@ describe('generator-alfresco:app-environment', function () {
   });
 
   describe('detects invalid M2_HOME quickly', function () {
-
     this.timeout(4000);
 
     before(function (done) {
@@ -91,14 +86,14 @@ describe('generator-alfresco:app-environment', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', function() {
-            if (m2Home) {
-              process.env.M2_HOME = m2Home;
-            } else {
-              delete process.env.M2_HOME;
-            }
-            done();
-          });
+        .on('end', function () {
+          if (m2Home) {
+            process.env.M2_HOME = m2Home;
+          } else {
+            delete process.env.M2_HOME;
+          }
+          done();
+        });
     });
 
     it('does not generate a project', function () {
@@ -136,7 +131,6 @@ describe('generator-alfresco:app-environment', function () {
       ]);
     });
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -1,13 +1,10 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('assert');
-var _ = require('lodash');
-var filters = require('../generators/common/prompt-filters.js')
+var filters = require('../generators/common/prompt-filters.js');
 
 describe('generator-alfresco:prompt-filters', function () {
-
-  describe('.booleanFilter()', function() {
-
+  describe('.booleanFilter()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.booleanFilter(undefined), undefined);
       assert.equal(filters.booleanFilter(null), undefined);
@@ -23,11 +20,9 @@ describe('generator-alfresco:prompt-filters', function () {
       assert.equal(filters.booleanFilter(true), true);
       assert.equal(filters.booleanFilter('true'), true);
     });
-
   });
 
-  describe('.booleanTextFilter()', function() {
-
+  describe('.booleanTextFilter()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.booleanTextFilter(undefined), undefined);
       assert.equal(filters.booleanTextFilter(null), undefined);
@@ -44,11 +39,9 @@ describe('generator-alfresco:prompt-filters', function () {
       assert.equal(filters.booleanTextFilter(true), 'true');
       assert.equal(filters.booleanTextFilter('true'), 'true');
     });
-
   });
 
-  describe('.chooseOneFilter()', function() {
-
+  describe('.chooseOneFilter()', function () {
     it('detects invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.chooseOneFilter(undefined, choices), undefined);
@@ -78,11 +71,9 @@ describe('generator-alfresco:prompt-filters', function () {
       assert.equal(filters.chooseOneFilter('three', choices), 'threE');
       assert.equal(filters.chooseOneFilter('threE', choices), 'threE');
     });
-
   });
-  
-  describe('.chooseOneFilterFactory()', function() {
 
+  describe('.chooseOneFilterFactory()', function () {
     it('detects invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.chooseOneFilterFactory(choices)(undefined), undefined);
@@ -112,11 +103,9 @@ describe('generator-alfresco:prompt-filters', function () {
       assert.equal(filters.chooseOneFilterFactory(choices)('three'), 'threE');
       assert.equal(filters.chooseOneFilterFactory(choices)('threE'), 'threE');
     });
-
   });
 
-  describe('.chooseOneStartsWithFilter()', function() {
-
+  describe('.chooseOneStartsWithFilter()', function () {
     it('detects invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.chooseOneStartsWithFilter(undefined, choices), undefined);
@@ -144,11 +133,9 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'twobyfour', 'three', 'two'];
       assert.equal(filters.chooseOneStartsWithFilter('Two', choices), 'two');
     });
-
   });
-  
-  describe('.chooseOneStartsWithFilterFactory()', function() {
 
+  describe('.chooseOneStartsWithFilterFactory()', function () {
     it('detects invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.chooseOneStartsWithFilterFactory(choices)(undefined), undefined);
@@ -176,11 +163,9 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'twobyfour', 'three', 'two'];
       assert.equal(filters.chooseOneStartsWithFilterFactory(choices)('Two'), 'two');
     });
-
   });
 
-  describe('.optionalTextFilter()', function() {
-
+  describe('.optionalTextFilter()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.optionalTextFilter(undefined), undefined);
       assert.equal(filters.optionalTextFilter(null), undefined);
@@ -194,11 +179,9 @@ describe('generator-alfresco:prompt-filters', function () {
     it('handles textual input', function () {
       assert.equal(filters.optionalTextFilter('asdf'), 'asdf');
     });
-
   });
 
-  describe('.requiredTextFilter()', function() {
-
+  describe('.requiredTextFilter()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.requiredTextFilter(undefined), undefined);
       assert.equal(filters.requiredTextFilter(null), undefined);
@@ -209,11 +192,9 @@ describe('generator-alfresco:prompt-filters', function () {
     it('handles textual input', function () {
       assert.equal(filters.requiredTextFilter('asdf'), 'asdf');
     });
-
   });
 
-  describe('.requiredTextListFilter()', function() {
-
+  describe('.requiredTextListFilter()', function () {
     it('handles invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.requiredTextListFilter(undefined, '^'), undefined);
@@ -224,17 +205,17 @@ describe('generator-alfresco:prompt-filters', function () {
     });
 
     it('can handle arbitrary data when no choices are provided', function () {
-      assert.deepEqual(filters.requiredTextListFilter('one^two^Three', '^'), ['one','two','Three']);
+      assert.deepEqual(filters.requiredTextListFilter('one^two^Three', '^'), ['one', 'two', 'Three']);
     });
 
     it('can handle multipe inputs and filter based on choices', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.requiredTextListFilter('Three^tWo^one', '^', choices), ['one','two','threE']);
+      assert.deepEqual(filters.requiredTextListFilter('Three^tWo^one', '^', choices), ['one', 'two', 'threE']);
     });
 
     it('filters out values not included in the choices list', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.requiredTextListFilter('four^Three^tWo^two and a half^one^zerO', '^', choices), ['one','two','threE']);
+      assert.deepEqual(filters.requiredTextListFilter('four^Three^tWo^two and a half^one^zerO', '^', choices), ['one', 'two', 'threE']);
     });
 
     it('handles first match in a case insensitive way', function () {
@@ -251,11 +232,9 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.requiredTextListFilter('threE', '^', choices), ['Three']);
     });
-
   });
-  
-  describe('.requiredTextListFilterFactory()', function() {
 
+  describe('.requiredTextListFilterFactory()', function () {
     it('handles invalid input', function () {
       var choices = ['one', 'two', 'three'];
       assert.equal(filters.requiredTextListFilterFactory('^')(undefined), undefined);
@@ -266,17 +245,17 @@ describe('generator-alfresco:prompt-filters', function () {
     });
 
     it('can handle arbitrary data when no choices are provided', function () {
-      assert.deepEqual(filters.requiredTextListFilterFactory('^')('one^two^Three'), ['one','two','Three']);
+      assert.deepEqual(filters.requiredTextListFilterFactory('^')('one^two^Three'), ['one', 'two', 'Three']);
     });
 
     it('can handle multipe inputs and filter based on choices', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('Three^tWo^one'), ['one','two','threE']);
+      assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('Three^tWo^one'), ['one', 'two', 'threE']);
     });
 
     it('filters out values not included in the choices list', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('four^Three^tWo^two and a half^one^zerO'), ['one','two','threE']);
+      assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('four^Three^tWo^two and a half^one^zerO'), ['one', 'two', 'threE']);
     });
 
     it('handles first match in a case insensitive way', function () {
@@ -293,11 +272,9 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('threE'), ['Three']);
     });
-
   });
 
-  describe('.textListFilter()', function() {
-
+  describe('.textListFilter()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.textListFilter(undefined, '^'), undefined);
       assert.equal(filters.textListFilter(null, '^'), undefined);
@@ -311,17 +288,17 @@ describe('generator-alfresco:prompt-filters', function () {
     });
 
     it('can handle arbitrary data when no choices are provided', function () {
-      assert.deepEqual(filters.textListFilter('one^two^Three', '^'), ['one','two','Three']);
+      assert.deepEqual(filters.textListFilter('one^two^Three', '^'), ['one', 'two', 'Three']);
     });
 
     it('can handle multipe inputs and filter based on choices', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.textListFilter('Three^tWo^one', '^', choices), ['one','two','threE']);
+      assert.deepEqual(filters.textListFilter('Three^tWo^one', '^', choices), ['one', 'two', 'threE']);
     });
 
     it('filters out values not included in the choices list and return in choice list order', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.textListFilter('four^Three^tWo^two and a half^one^zerO', '^', choices), ['one','two','threE']);
+      assert.deepEqual(filters.textListFilter('four^Three^tWo^two and a half^one^zerO', '^', choices), ['one', 'two', 'threE']);
     });
 
     it('handles first match in a case insensitive way', function () {
@@ -338,11 +315,9 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.textListFilter('threE', '^', choices), ['Three']);
     });
-
   });
-  
-  describe('.textListFilterFactory()', function() {
 
+  describe('.textListFilterFactory()', function () {
     it('handles invalid input', function () {
       assert.equal(filters.textListFilterFactory('^')(undefined), undefined);
       assert.equal(filters.textListFilterFactory('^')(null), undefined);
@@ -356,17 +331,17 @@ describe('generator-alfresco:prompt-filters', function () {
     });
 
     it('can handle arbitrary data when no choices are provided', function () {
-      assert.deepEqual(filters.textListFilterFactory('^')('one^two^Three'), ['one','two','Three']);
+      assert.deepEqual(filters.textListFilterFactory('^')('one^two^Three'), ['one', 'two', 'Three']);
     });
 
     it('can handle multipe inputs and filter based on choices', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.textListFilterFactory('^', choices)('Three^tWo^one'), ['one','two','threE']);
+      assert.deepEqual(filters.textListFilterFactory('^', choices)('Three^tWo^one'), ['one', 'two', 'threE']);
     });
 
     it('filters out values not included in the choices list and return in choice list order', function () {
       var choices = ['one', 'two', 'threE'];
-      assert.deepEqual(filters.textListFilterFactory('^', choices)('four^Three^tWo^two and a half^one^zerO'), ['one','two','threE']);
+      assert.deepEqual(filters.textListFilterFactory('^', choices)('four^Three^tWo^two and a half^one^zerO'), ['one', 'two', 'threE']);
     });
 
     it('handles first match in a case insensitive way', function () {
@@ -383,9 +358,7 @@ describe('generator-alfresco:prompt-filters', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.textListFilterFactory('^', choices)('threE'), ['Three']);
     });
-
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

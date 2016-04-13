@@ -1,12 +1,9 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('assert');
-var chalk = require('chalk');
 
 describe('generator-alfresco:spring-context', function () {
-
-  describe('.hasImport()', function() {
-
+  describe('.hasImport()', function () {
     it('can determine if an import does not exist when there are no imports', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -81,11 +78,9 @@ describe('generator-alfresco:spring-context', function () {
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), true);
     });
-
   });
 
-  describe('.addImport()', function() {
-
+  describe('.addImport()', function () {
     it('can add an import where there is nothing', function () {
       var context = require('../generators/common/spring-context.js')();
       assert.equal(context.hasImport('asdf'), false);
@@ -102,7 +97,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -110,11 +105,11 @@ describe('generator-alfresco:spring-context', function () {
       var contextString = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<!-- Stuff -->',
-        '<beans/>'
+        '<beans/>',
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -128,7 +123,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -142,7 +137,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
 
@@ -157,18 +152,16 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.addImport('asdf')
+      context.addImport('asdf');
       assert.equal(context.hasImport('asdf'), true);
     });
-
   });
 
-  describe('.removeImport()', function() {
-
+  describe('.removeImport()', function () {
     it('can remove an import where there is nothing', function () {
       var context = require('../generators/common/spring-context.js')();
       assert.equal(context.hasImport('asdf'), false);
-      context.removeImport('asdf')
+      context.removeImport('asdf');
       assert.equal(context.hasImport('asdf'), false);
     });
 
@@ -181,7 +174,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.removeImport('asdf')
+      context.removeImport('asdf');
       assert.equal(context.hasImport('asdf'), false);
     });
 
@@ -195,7 +188,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('asdf'), false);
-      context.removeImport('asdf')
+      context.removeImport('asdf');
       assert.equal(context.hasImport('asdf'), false);
     });
 
@@ -209,7 +202,7 @@ describe('generator-alfresco:spring-context', function () {
       ].join('\n');
       var context = require('../generators/common/spring-context.js')(contextString);
       assert.equal(context.hasImport('fdsa'), true);
-      context.removeImport('fdsa')
+      context.removeImport('fdsa');
       assert.equal(context.hasImport('fdsa'), false);
     });
 
@@ -229,7 +222,7 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), true);
-      context.removeImport('asdf')
+      context.removeImport('asdf');
       assert.equal(context.hasImport('asdf'), false);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
@@ -252,7 +245,7 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), true);
-      context.removeImport('fdsa')
+      context.removeImport('fdsa');
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), false);
       assert.equal(context.hasImport('aaff'), true);
@@ -275,7 +268,7 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), true);
-      context.removeImport('ffaa')
+      context.removeImport('ffaa');
       assert.equal(context.hasImport('asdf'), true);
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
@@ -298,18 +291,16 @@ describe('generator-alfresco:spring-context', function () {
       assert.equal(context.hasImport('fdsa'), true);
       assert.equal(context.hasImport('aaff'), true);
       assert.equal(context.hasImport('ffaa'), true);
-      context.removeImport('asdf')
-      context.removeImport('fdsa')
-      context.removeImport('aaff')
-      context.removeImport('ffaa')
+      context.removeImport('asdf');
+      context.removeImport('fdsa');
+      context.removeImport('aaff');
+      context.removeImport('ffaa');
       assert.equal(context.hasImport('asdf'), false);
       assert.equal(context.hasImport('fdsa'), false);
       assert.equal(context.hasImport('aaff'), false);
       assert.equal(context.hasImport('ffaa'), false);
     });
-
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

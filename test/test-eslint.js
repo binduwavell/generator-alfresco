@@ -1,9 +1,11 @@
 'use strict';
+/* eslint-env node, mocha */
 var lint = require('mocha-eslint');
 
 var paths = [
   'generators/*.js',
   'generators/*/*.js',
+  'test/*.js',
 ];
 
 var options = {

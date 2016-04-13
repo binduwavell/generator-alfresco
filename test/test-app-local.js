@@ -1,5 +1,5 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
@@ -7,11 +7,8 @@ var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
-
 describe('generator-alfresco:app-local', function () {
-
   describe('default prompts with local SDK, twice', function () {
-
     this.timeout(60000);
 
     before(function (done) {
@@ -25,12 +22,12 @@ describe('generator-alfresco:app-local', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', function() {
+        .on('end', function () {
           helpers.run(path.join(__dirname, '../generators/app'))
-            .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES) );
-              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml') ), '' );
+            .inDir(tmpdir, function (dir) {
+              fs.mkdirSync(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES));
+              fs.mkdirSync(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp'));
+              fs.writeFileSync(path.join(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml')), '');
             })
             .withLocalConfig({ 'archetypeVersion': '2.1.0' })
             .withOptions({ 'skip-install': false })
@@ -99,11 +96,10 @@ describe('generator-alfresco:app-local', function () {
         ['scripts/debug.sh', /-Penterprise/],
         ['scripts/run.sh', /-Penterprise/],
         ['scripts/run.bat', /-Penterprise/],
-        ['scripts/run-without-springloaded.sh', /-Penterprise/]
+        ['scripts/run-without-springloaded.sh', /-Penterprise/],
       ]);
     });
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

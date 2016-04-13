@@ -1,5 +1,5 @@
 'use strict';
-
+/* eslint-env node, mocha */
 var assert = require('yeoman-assert');
 var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
@@ -7,11 +7,8 @@ var fs = require('fs');
 var os = require('os');
 var path = require('path');
 
-
 describe('generator-alfresco:app-remove-sample-modules', function () {
-
   describe('remove sdk samples', function () {
-
     this.timeout(60000);
 
     before(function (done) {
@@ -34,7 +31,6 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
   });
 
   describe('remove sdk sample modules, twice', function () {
-
     this.timeout(60000);
 
     before(function (done) {
@@ -46,12 +42,12 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
           removeDefaultSourceAmps: true,
           removeDefaultSourceSamples: false,
         })
-        .on('end', function() {
+        .on('end', function () {
           helpers.run(path.join(__dirname, '../generators/app'))
-            .inDir(tmpdir, function(dir) {
-              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES) );
-              fs.mkdirSync( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp') );
-              fs.writeFileSync( path.join( path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml') ), '' );
+            .inDir(tmpdir, function (dir) {
+              fs.mkdirSync(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES));
+              fs.mkdirSync(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp'));
+              fs.writeFileSync(path.join(path.join(dir, constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml')), '');
             })
             .withLocalConfig({
               removeDefaultSourceAmps: true,
@@ -69,7 +65,6 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
       ]);
     });
   });
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
