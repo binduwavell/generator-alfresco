@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Content Model - Defining and Deploying
+  https://docs.alfresco.com/5.1/references/dev-extension-points-content-model-define-and-deploy.html
+
+  You can validate that your model has been deployed by using the webscript
+  http://localhost:8080/alfresco/service/api/classes?nsp=<%-namespacePrefix%>
+
+  The model file format follows modelSchema.xsd in the below link
+  https://svn.alfresco.com/repos/alfresco-open-mirror/alfresco/HEAD/root/projects/repository/config/alfresco/model/modelSchema.xsd
+-->
+
+<!-- The important part here is the name - Note: the use of the <%-namespacePrefix%>: namespace
+     which is defined further on in the document -->
+<model name="<%-namespacePrefix%>:<%-modelName%>" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+  <!-- Optional meta-data about the model -->
+  <description><%-modelDescription%></description>
+  <author><%-modelAuthor%></author>
+  <version><%-modelVersion%></version>
+  <!--
+  <published>2016-01-01</published>
+  -->
+
+  <!-- Imports are required to allow references to definitions in other models -->
+  <imports>
+    <!-- 
+      All available namespaces are found at the below link
+      http://dev.alfresco.com/resource/AlfrescoOne/5.0/PublicAPI/constant-values.html#org.alfresco.service.namespace
+    -->
+    <!-- Import Alfresco Dictionary Definitions -->
+    <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+    <!-- Import Alfresco Content Domain Model Definitions -->
+    <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+    <!-- Commonly used namespaces -->
+    <!--
+    <import uri="http://www.alfresco.org/model/workflow/1.0" prefix="wf"/>
+    <import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
+    -->
+  </imports>
+
+  <!-- Introduction of new namespaces defined by this model -->
+  <namespaces>
+    <namespace uri="<%-namespaceUri%>" prefix="<%-namespacePrefix%>"/>
+  </namespaces>
+
+  <!--
+    More details on Constraints can be found at the below links
+    https://docs.alfresco.com/5.1/concepts/metadata-model-contraints.html
+  -->
+  <constraints>
+    <!-- Example LIST Constraint -->
+    <!--
+    <constraint name="<%-namespacePrefix%>:productListConstraint" type="LIST">
+      <parameter name="allowedValues">
+        <list>
+          <value>Foobar Widget</value>
+          <value>Flux Capacitor</value>
+          <value>Big Bold App</value>
+        </list>
+      </parameter>
+    </constraint>
+    -->
+
+    <!-- 
+      Example REGEX Constraint that matches 2 capital letters.
+      The default value for 'requiresMatch' is true. Hence, it need not
+      be mentioned in the below example
+    -->
+    <!--
+      <constraint name="<%-namespacePrefix%>:twoCapitalLetterConstraint" type="REGEX">
+        <parameter name="expression">
+          <value>^[A-Z]{2}$</value>
+        </parameter>
+        <parameter name="requiresMatch">
+          <value>true</value>
+        </parameter>
+      </constraint>
+    -->
+
+    <!-- Example MINMAX constraint -->
+    <!--
+      <constraint name="<%-namespacePrefix%>:monthConstraint" type="MINMAX">
+        <parameter name="minValue">
+          <value>1</value>
+        </parameter>
+        <parameter name="maxValue">
+          <value>12</value>
+        </parameter>
+     </constraint>
+    -->
+
+    <!-- Example LENGTH constraint -->
+    <!--
+      <constraint name="<%-namespacePrefix%>:descriptionConstraint" type="LENGTH">
+        <parameter name="minLength">
+          <value>16</value>
+        </parameter>
+        <parameter name="maxLength">
+          <value>256</value>
+        </parameter>
+     </constraint>
+    -->
+
+    <!-- Example Dynamic Constraint -->
+    <!--
+      <constraint name="cm:userNameConstraint" type="org.alfresco.repo.dictionary.constraint.UserNameConstraint" />
+    -->
+  </constraints>
+
+  <!--
+    Dont forget to add the custom types in Share configuration to expose these types in Share.
+    https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-share-config.html
+
+    Details on Custom Content Model type can be viewed in the below link
+    https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html 
+  -->
+  <types>
+    <!--  Enterprise-wide generic document type -->
+    <!--
+    <type name="<%-namespacePrefix%>:doc">
+      <title>MyCompany Generic Document</title>
+      <parent>cm:content</parent>
+      <properties>
+        <property name="<%-namespacePrefix%>:overridableProp">
+          <type>d:text</type>
+          <mandatory enforced='false'>false</mandatory>
+          <default>Test Value 2</default>
+          <constraints>
+            <constraint type="LIST">
+              <parameter name="allowedValues">
+                <list>
+                  <value>Test Value 1</value>
+                  <value>Test Value 2</value>
+                </list>
+              </parameter>
+            </constraint>
+          </constraints>
+        </property>
+      </properties>
+    </type>
+    -->
+
+    <!--
+    <type name="<%-namespacePrefix%>:completeDoc">
+      <title>Complete Doc</title>
+      <description>Description for complete doc</description>
+      <parent><%-namespacePrefix%>:doc</parent>
+      <archive>true</archive>
+      <includedInSuperTypeQuery>true</includedInSuperTypeQuery>
+      <properties>
+        <property name="<%-namespacePrefix%>:product">
+          <type>d:text</type>
+          <protected>false</protected>
+          <mandatory enforced='false'>false</mandatory>
+          <multiple>false</multiple>
+          <default>Foobar Widget</default>
+          <index enabled="true">
+            <atomic>true</atomic>
+            <stored>false</stored>
+            <tokenised>true</tokenised>
+            <facetable>true</facetable>
+          </index>
+          <constraints>
+            <constraint ref="<%-namespacePrefix%>:productListConstraint"/>
+          </constraints>
+          <encrypted>false</encrypted>
+        </property>
+      </properties>
+      <associations>
+        <association name="<%-namespacePrefix%>:relatedDocuments">
+          <title>Related Documents</title>
+          <source>
+            <role><%-namespacePrefix%>:relatedFrom</role>
+            <mandatory>false</mandatory>
+            <many>true</many>
+          </source>
+          <target>
+            <class><%-namespacePrefix%>:doc</class>
+            <role><%-namespacePrefix%>:relatedTo</role>
+            <mandatory>false</mandatory>
+            <many>true</many>
+          </target>
+        </association>
+        <child-association name="<%-namespacePrefix%>:projectMember">
+          <source>
+            <role><%-namespacePrefix%>:memberOf</role>
+            <mandatory>false</mandatory>
+            <many>true</many>
+          </source>
+          <target>
+            <role><%-namespacePrefix%>:hasMembership</role>
+            <class>cm:person</class>
+            <mandatory>false</mandatory>
+            <many>true</many>
+          </target>
+          <duplicate>false</duplicate>
+          <propagateTimestamps>false</propagateTimestamps>
+      </child-association>
+      </associations>
+      <overrides>
+        <overide>
+          <property name="<%-namespacePrefix%>:overridableProp">
+            <mandatory enforced='false'>true</mandatory>
+            <default>Foobar Widget</default>
+            <constraints>
+              <constraint ref="<%-namespacePrefix%>:productListConstraint"/>
+            </constraints>
+          </property>
+        </override>
+      </overrides>
+      <mandatory-aspects>
+        <aspect>cm:generalclassifiable</aspect>
+      </mandatory-aspects>
+    </type>
+    -->
+  </types>
+
+  <!--
+    Dont forget to add the custom aspects in Share configuration to expose these aspects in Share.
+    https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-add-aspect.html
+  -->
+  <aspects>
+    <!-- Example Aspect -->
+    <!--
+    <aspect name="<%-namespacePrefix%>:publishedToSite">
+      <title>Published to Website</title>
+      <properties>
+        <property name="<%-namespacePrefix%>:isActive">
+          <type>d:boolean</type>
+          <default>false</default>
+        </property>
+      </properties>
+    </aspect>
+    -->
+
+    <!--
+      Aspects can essentially have the same structure as a type. See above for a complete 'type' example
+    -->
+  </aspects>
+</model>
