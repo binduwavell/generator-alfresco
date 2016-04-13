@@ -1,4 +1,4 @@
-# generator-alfresco [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
+# generator-alfresco [![Build Status][travis-image]][travis-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
 
 ## Getting Started
 
@@ -128,6 +128,8 @@ Apache 2.0
 
 [travis-image]: https://img.shields.io/travis/binduwavell/generator-alfresco/master.svg
 [travis-url]: https://travis-ci.org/binduwavell/generator-alfresco
+[bithound-dep-image]: https://www.bithound.io/github/binduwavell/generator-alfresco/badges/dependencies.svg
+[bithound-dep-url]: https://www.bithound.io/github/binduwavell/generator-alfresco/master/dependencies/npm
 [daviddm-image]: https://david-dm.org/binduwavell/generator-alfresco.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/binduwavell/generator-alfresco
 [coveralls-image]: https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github
