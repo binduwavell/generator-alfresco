@@ -1,10 +1,10 @@
 'use strict';
+var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:action');
 var path = require('path');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
-var modelFilters = require('./model-prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
 module.exports = SourceSelectingSubGenerator.extend({
@@ -13,98 +13,35 @@ module.exports = SourceSelectingSubGenerator.extend({
     arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_REPO;
     SourceSelectingSubGenerator.apply(this, arguments);
 
+    var defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
+
     this.prompts = [
       {
         type: 'input',
-        name: 'modelName',
-        option: { name: 'model-name', config: { alias: 'n', desc: 'Model Name', type: 'String' } },
+        name: 'name',
+        option: { name: 'name', config: { alias: 'n', desc: 'Action name', type: 'String' } },
         when: function (props) {
-          this.out.docs(
-            'The model name identifies the model.',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
+          this.out.docs('The action name will be used to construct the bean id and class name for the action.');
           return true;
         },
-        message: 'What ' + chalk.yellow('model name') + ' should we use?',
-        commonFilter: modelFilters.modelNameFilter,
-        valueRequired: true,
-      },
-      {
-        type: 'input',
-        name: 'modelDescription',
-        option: { name: 'model-description', config: { alias: 'd', desc: 'Model Description', type: 'String' } },
-        when: function (props) {
-          this.out.docs(
-            'The model description describes the model.',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
-          return true;
-        },
-        message: 'What ' + chalk.yellow('model description') + ' should we use?',
+        message: 'What is the ' + chalk.yellow('name') + ' of your action?',
         commonFilter: filters.requiredTextFilter,
         valueRequired: true,
       },
       {
         type: 'input',
-        name: 'modelAuthor',
-        option: { name: 'model-author', config: { alias: 'a', desc: 'Model Author', type: 'String' } },
+        name: 'package',
+        option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: 'String' } },
         when: function (props) {
-          this.out.docs(
-            'The model author is the creator of the model.',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
+          this.out.docs('The java package that your action class must be placed into.');
           return true;
         },
-        message: 'What ' + chalk.yellow('model author') + ' should we use?',
-        commonFilter: filters.requiredTextFilter,
+        default: defPackage,
+        message: 'What ' + chalk.yellow('java package') + ' should we use?',
+        commonFilter: packageFilter,
+        invalidMessage: 'Package is required and must be a valid java package',
         valueRequired: true,
       },
-      {
-        type: 'input',
-        name: 'modelVersion',
-        option: { name: 'model-version', config: { alias: 'v', desc: 'Model Version', type: String } },
-        when: function (props) {
-          this.out.docs(
-            'The model version is the version of the model. It should be of format 1.0',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
-          return true;
-        },
-        message: 'What ' + chalk.yellow('model version') + ' should we use?',
-        invalidMessage: 'The ' + chalk.yellow('model version') + ' is required and should be in the format 1.0',
-        commonFilter: modelFilters.versionNumberFilter,
-        valueRequired: true,
-      },
-      {
-        type: 'input',
-        name: 'namespaceUri',
-        option: { name: 'namespace-uri', config: { alias: 'u', desc: 'Namespace URI', type: 'String' } },
-        when: function (props) {
-          this.out.docs(
-            'The model uri is needed for the model. It should be a url path',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
-          return true;
-        },
-        default: function (props) {
-          this.defaultUri = 'http://www.' + props.modelName + '.com/model/content/' + props.modelVersion;
-          return this.defaultUri;
-        }.bind(this),
-        message: 'What ' + chalk.yellow('model uri') + ' should we use?',
-        invalidMessage: 'The ' + chalk.yellow('model uri') + ' is required and should have a valid URI format like: http://host/optional-path',
-        commonFilter: modelFilters.requiredRegexFilterFactory("^(?:([a-z0-9+.-]+:\\/\\/)((?:(?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(:(?:\\d*))?(\\/(?:[a-z0-9-._~!$&'()*+,;=:@\\/]|%[0-9A-F]{2})*)?|([a-z0-9+.-]+:)(\\/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@\\/]|%[0-9A-F]{2})*)?)(\\?(?:[a-z0-9-._~!$&'()*+,;=:\\/?@]|%[0-9A-F]{2})*)?(#(?:[a-z0-9-._~!$&'()*+,;=:\\/?@]|%[0-9A-F]{2})*)?$"),
-        valueRequired: true,
-      },
-      {
-        type: 'input',
-        name: 'namespacePrefix',
-        option: { name: 'namespace-prefix', config: { alias: 'p', desc: 'Namespace Prefix', type: 'String' } },
-        when: function (props) {
-          this.out.docs(
-            'The model prefix is needed for the model.',
-            'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
-          return true;
-        },
-        message: 'What ' + chalk.yellow('model prefix') + ' should we use?',
-        commonFilter: filters.requiredTextFilter,
-        valueRequired: true,
-      },
-
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
@@ -116,20 +53,35 @@ module.exports = SourceSelectingSubGenerator.extend({
     this.subgeneratorPrompt(this.prompts, function (props) {
       debug('prompting done function');
       this.props = props;
-      var modelFileName = props.modelName + 'Model.xml';
-      var contextFileName = props.modelName + '-model-context.xml';
+
+      // figure stuff out about our environment
       var targetModule = props.targetModule.module;
-      var modulePath = this.destinationPath(targetModule.path);
-      var contextGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
-      var modelGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/model/generated';
-      var templateModelPath = this.templatePath('customModel.xml');
-      var templateContextPath = this.templatePath('custom-model-context.xml');
-      var contextGenPath = path.join(modulePath, contextGenRoot, contextFileName);
-      this.out.info('Generating context file in: ' + contextGenPath);
-      this.fs.copyTpl(templateContextPath, contextGenPath, props);
-      var modelGenPath = path.join(modulePath, modelGenRoot, modelFileName);
-      this.out.info('Generating model file in: ' + modelGenPath);
-      this.fs.copyTpl(templateModelPath, modelGenPath, props);
+      var moduleRoot = this.destinationPath(targetModule.path);
+      var genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+
+      // get information from prompts
+      var actionId = _.kebabCase(props.name);
+      var className = _.upperFirst(_.camelCase(props.name)) + 'ActionExecuter';
+      var packageName = props.package;
+      if (!_.endsWith(packageName, '.actions')) {
+        packageName += '.actions';
+      }
+      var templateContext = {
+        actionId: actionId,
+        className: className,
+        packageName: packageName,
+      };
+
+      var classSrc = this.templatePath('ActionExecuter.java');
+      var contextSrc = this.templatePath('action-context.xml');
+
+      var packagePath = _.replace(packageName, /\./g, '/');
+      var classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
+      var contextDst = path.join(moduleRoot, genRoot, 'action-' + actionId + '-context.xml');
+
+      this.fs.copyTpl(classSrc, classDst, templateContext);
+      this.fs.copyTpl(contextSrc, contextDst, templateContext);
+
       debug('prompting done function finished');
     }.bind(this));
     debug('prompting finished');
@@ -145,5 +97,21 @@ module.exports = SourceSelectingSubGenerator.extend({
   },
   */
 });
+
+function packageFilter (pkg) {
+  if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
+  var output = pkg;
+  // To begin with, if package is provided in path notation replace
+  // slashes with dots also, treat spaces like path separators
+  output = _.replace(output, /[\/\s]/g, '.');
+  // package should not start with any dots
+  output = _.replace(output, /^\.*/, '');
+  // package should not end with any dots
+  output = _.replace(output, /\.*$/, '');
+  // package should be all lower case
+  output = output.toLocaleLowerCase();
+  if (_.isEmpty(output)) return undefined;
+  return output;
+}
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

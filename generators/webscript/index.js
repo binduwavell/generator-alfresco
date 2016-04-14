@@ -3,6 +3,7 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:webscript');
 var path = require('path');
+var constants = require('../common/constants');
 var filters = require('../common/prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
@@ -19,6 +20,8 @@ var LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api', '
 module.exports = SourceSelectingSubGenerator.extend({
   constructor: function () {
     SourceSelectingSubGenerator.apply(this, arguments);
+
+    var defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [
 
@@ -47,7 +50,8 @@ module.exports = SourceSelectingSubGenerator.extend({
             'A web script is uniquely identified by its web script package and web script ID.',
             'http://docs.alfresco.com/5.1/concepts/ws-component-name.html');
           return true;
-        }.bind(this),
+        },
+        default: defPackage,
         message: 'Provide a ' + chalk.green('/') + ' separated ' + chalk.yellow('package') + ' for your webscript(s)',
         invalidMessage: 'The ' + chalk.yellow('package') + ' is required',
         commonFilter: packageFilter,
@@ -80,7 +84,7 @@ module.exports = SourceSelectingSubGenerator.extend({
               ], 'http://docs.alfresco.com/5.1/concepts/ws-and-Java.html');
           }
           return show;
-        }.bind(this),
+        },
         choices: JAVA_BASE_CLASSES,
         message: 'Which base class would you like to use for your Java backed webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(JAVA_BASE_CLASSES),
@@ -93,7 +97,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         when: function (props) {
           this.out.docs('As a convenience, you may specify more than one method here. However, if you do select multiple methods, be ' + chalk.underline('WARNED') + ' that we only go through this interview once so answers will be placed into all .desc.xml files. You can easily go update these files appropriately. Alternatively you can use this sub-generator once for each method in order to produce method specific .desc.xml files.');
           return true;
-        }.bind(this),
+        },
         choices: METHODS,
         default: ['get'],
         message: 'Which HTTP methods would you like to support?',
@@ -129,7 +133,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'Different kinds of web scripts can be created. When this attribute is specified it allows a web script kind other than the default to be specified. An example kind is org.alfresco.repository.content.stream. This kind of web script returns a binary stream from the repository back to the client. This might be useful for returning a thumbnail binary to the client for example. It is also possible to create additional web script kinds according to your needs.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-webscript.html');
           return true;
-        }.bind(this),
+        },
         message: 'What <webscript ' + chalk.yellow('@kind') + '> would you like to create?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -143,7 +147,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The shortname element in a web descriptor file provides a human readable name for the web script. The shortname element is required.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-shortname.html');
           return true;
-        }.bind(this),
+        },
         message: 'What ' + chalk.yellow('<shortname>') + ' should we use?',
         invalidMessage: 'The ' + chalk.yellow('shortname') + ' element is required',
         commonFilter: filters.requiredTextFilter,
@@ -158,7 +162,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The description element in a web descriptor file provides documentation for the web script. The description element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-description.html');
           return true;
-        }.bind(this),
+        },
         message: 'What ' + chalk.yellow('<description>') + ' should we use?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -176,7 +180,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.docs(undefined,
             'http://docs.alfresco.com/5.1/concepts/ws-uri-template.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('<url>') + ' values',
         invalidMessage: 'At least one ' + chalk.yellow('url') + ' is required',
         commonFilter: urlTemplatesFilter,
@@ -193,7 +197,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('extension', 'The content-type is specified by using the URI extension, for example /hello/world.xml?to=dave.');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-format.html');
           return true;
-        }.bind(this),
+        },
         choices: FORMAT_SELECTORS,
         message: 'How will the ' + chalk.yellow('<format>') + ' be specified?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(FORMAT_SELECTORS),
@@ -240,7 +244,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('admin', 'Specifies that at least an adminstrator account is required to run the web script.');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-authentication.html');
           return true;
-        }.bind(this),
+        },
         choices: AUTHENTICATIONS,
         message: 'What level of ' + chalk.yellow('<authentication>') + ' is required to run the webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(AUTHENTICATIONS),
@@ -257,7 +261,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             ].join('\n\n'),
             'http://docs.alfresco.com/5.1/references/api-wsdl-authentication.html');
           return true;
-        }.bind(this),
+        },
         message: 'Which user should the webscript <authentication ' + chalk.yellow('@runas') + '>? (leave empty for the calling user)',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
@@ -273,7 +277,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('requiresnew', 'Specifies that a new transaction is required.');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-transaction.html');
           return true;
-        }.bind(this),
+        },
         choices: TRANSACTIONS,
         default: function (props) {
           return (props.authentication === 'none'
@@ -295,7 +299,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('readwrite', 'read and write transfers allowed');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-transaction.html');
           return true;
-        }.bind(this),
+        },
         choices: TRANSACTION_ALLOWANCES,
         message: 'What type of data transfer do we want to <transaction ' + chalk.yellow('@allow') + '>?',
         commonFilter: filters.chooseOneFilterFactory(TRANSACTION_ALLOWANCES),
@@ -319,7 +323,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             props.transactionBuffersize = undefined;
           }
           return disp;
-        }.bind(this),
+        },
         message: 'What  <transaction ' + chalk.yellow('@buffersize') + '> should be allocated?',
         invalidMessage: 'Leave empty to accept default or specify an integer representing the desired size in bytes.',
         commonFilter: transactionBuffersizeFilter,
@@ -334,7 +338,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The family element allows a web script developer to categorize their web scripts. Any value can be assigned to family and any number of families can be assigned to the web script, providing a freeform tagging mechanism. The web script index provides views for navigating web scripts by family. The family tag can be repeated if the script belongs to multiple families. The family element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-family.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('<family>') + ' values',
         invalidMessage: 'Don\'t use ' + chalk.green('.') + ' in family names. E.g. my' + chalk.green('.') + 'family would cause an error if using the family name to navigate to the script.',
         commonFilter: familiesFilter,
@@ -351,7 +355,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-cache.html');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/concepts/ws-caching-about.html');
           return true;
-        }.bind(this),
+        },
         choices: ['true', 'false'],
         message: 'Should we disable all response caching?',
         commonFilter: filters.booleanTextFilter,
@@ -373,7 +377,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             props.cachePublic = 'false';
           }
           return false;
-        }.bind(this),
+        },
         choices: ['false', 'true'],
         message: 'Should we allow caching of authenticated responses in public caches?',
         commonFilter: filters.booleanTextFilter,
@@ -395,7 +399,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             props.cacheMustrevalidate = 'true';
           }
           return false;
-        }.bind(this),
+        },
         choices: ['true', 'false'],
         message: 'Should caches be required to revalidate?',
         commonFilter: filters.booleanTextFilter,
@@ -411,7 +415,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The negotiate element associates an Accept header MIME type to a specific web script format of response. The mandatory value specifies the format while the mandatory attribute, accept, specifies the MIME type. Content Negotiation is enabled with the definition of at least one negotiate element. The negotiate element can be specified zero or more times.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-negotiate.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('format') + chalk.green('=') + chalk.yellow('mimetype') + ' negotiation values',
         invalidMessage: 'Invalid format, try something like ' + chalk.green('html=text/html|xml=text/xml'),
         commonFilter: negotiationsFilter,
@@ -432,7 +436,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('internal', 'Indicates this web script is for Alfresco use only; it should not be relied upon between versions and is likely to change');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-lifecycle.html');
           return true;
-        }.bind(this),
+        },
         choices: LIFECYCLES,
         message: 'What is the ' + chalk.yellow('<lifecycle>') + ' state of the webscript?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(LIFECYCLES),
@@ -449,7 +453,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           this.out.definition('true', 'turns on multi-part form data processing.');
           this.out.docs(undefined, 'http://docs.alfresco.com/5.1/references/api-wsdl-formdata.html');
           return true;
-        }.bind(this),
+        },
         choices: ['false', 'true'],
         message: 'Should we enable <formdata ' + chalk.yellow('@multipart-processing') + '> for the the webscript?',
         commonFilter: filters.booleanTextFilter,
@@ -464,7 +468,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The args element represents a list of arguments passed to the web script. This are listed for documentation purposes. The args element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-args.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of ' + chalk.yellow('name') + chalk.green('=') + chalk.yellow('description') + ' values',
         invalidMessage: 'Invalid format, try ' + chalk.green('application=Name of the audit application|fromTime=Time in ms of the oldest audit entry'),
         commonFilter: argsFilter,
@@ -479,7 +483,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The requests element represents a collection of request types for the web script. The requests element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-requests.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of <request ' + chalk.yellow('@type') + '> values',
         commonFilter: filters.textListFilterFactory('|'),
         valueRequired: false,
@@ -493,7 +497,7 @@ module.exports = SourceSelectingSubGenerator.extend({
             'The responses element represents a collection of response types for the web script. The responses element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-responses.html');
           return true;
-        }.bind(this),
+        },
         message: 'Provide a ' + chalk.green('|') + ' separated list of <response ' + chalk.yellow('@type') + '> values',
         commonFilter: filters.textListFilterFactory('|'),
         valueRequired: false,
@@ -510,7 +514,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       this.props = props;
 
       var targetModule = props.targetModule.module;
-      var modulePath = this.destinationPath(targetModule.path);
+      var moduleRoot = this.destinationPath(targetModule.path);
       var wsRoot = (targetModule.war === 'repo'
           ? 'src/main/amp/config/alfresco/extension/templates/webscripts'
           : 'src/main/amp/config/alfresco/web-extension/site-webscripts');
@@ -523,8 +527,8 @@ module.exports = SourceSelectingSubGenerator.extend({
       var javaSrcPath = this.templatePath(props.javaBaseClass + '.java');
       var jsSrcPath = this.templatePath('controller.js');
       var wsSrcPath = this.templatePath('webscript-context.xml');
-      var descPath = path.join(modulePath, wsRoot, props.package);
-      var genPath = path.join(modulePath, genRoot);
+      var descPath = path.join(moduleRoot, wsRoot, props.package);
+      var genPath = path.join(moduleRoot, genRoot);
       props.methods.forEach(function (method) {
         var descName = props.id + '.' + method + '.desc.xml';
         var destPath = path.join(descPath, descName);
@@ -550,7 +554,7 @@ module.exports = SourceSelectingSubGenerator.extend({
           props.qualifiedClassName = props.classPackage + '.' + props.className;
           props.beanId = 'webscript.' + pkg + '.' + props.id + '.' + method;
           var javaControllerName = props.className + '.java';
-          var javaClassPath = path.join(modulePath, 'src/main/java', props.package, 'webscripts');
+          var javaClassPath = path.join(moduleRoot, 'src/main/java', props.package, 'webscripts');
           var javaControllerPath = path.join(javaClassPath, javaControllerName);
           this.out.info('Generating ' + javaControllerName + ' in ' + javaClassPath);
           this.out.info('FROM ' + javaSrcPath);
