@@ -13,6 +13,10 @@ module.exports = SourceSelectingSubGenerator.extend({
     arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_REPO;
     SourceSelectingSubGenerator.apply(this, arguments);
 
+    this.out.docs(
+      'An Action is a discrete unit of work that can be invoked repeatedly. It can be invoked from a number of Alfresco features, such as Folder Rules, Workflows, Web Scripts, and Scheduled Jobs.',
+      'http://docs.alfresco.com/5.1/references/dev-extension-points-actions.html');
+
     var defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [

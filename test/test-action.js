@@ -61,7 +61,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="two-words"/],
+          [contextFile, /<bean id="\$\{artifactId}.two-words"/],
           [contextFile, /class="org.alfresco.actions.TwoWordsActionExecuter/],
         ]);
       });
@@ -105,7 +105,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="camel-case"/],
+          [contextFile, /<bean id="\$\{artifactId}.camel-case"/],
           [contextFile, /class="org.alfresco.actions.CamelCaseActionExecuter/],
         ]);
       });
@@ -149,7 +149,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="test"/],
+          [contextFile, /<bean id="\$\{artifactId}.test"/],
           [contextFile, /class="org.alfresco.actions.TestActionExecuter/],
         ]);
       });
@@ -193,7 +193,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="prompts"/],
+          [contextFile, /<bean id="\$\{artifactId}.prompts"/],
           [contextFile, /class="org.alfresco.actions.PromptsActionExecuter/],
         ]);
       });
