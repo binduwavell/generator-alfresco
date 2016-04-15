@@ -375,7 +375,11 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
 function beforeExit () {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
     if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
-      fs.unlinkSync(this.destinationPath(constants.FILE_RUN_SH));
+      fs.writeFileSync(this.destinationPath(constants.FILE_RUN_SH), [
+        '#!/bin/bash',
+        'echo WARNING: This version of the SDK does not support spring-loaded.',
+        'echo WARNING: Please use: run-without-springloaded.sh instead of run.sh.',
+      ].join('\n'));
       fs.unlinkSync(this.destinationPath(path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH)));
     }
   }
