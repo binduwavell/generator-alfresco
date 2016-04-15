@@ -14,11 +14,6 @@ describe('generator-alfresco:app', function () {
       helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
-        .withPrompts({
-          sdkVersion: '2.1.0',
-          removeDefaultSourceAmps: false,
-          removeDefaultSourceSamples: false,
-        })
         .on('end', done);
     });
 
@@ -50,10 +45,8 @@ describe('generator-alfresco:app', function () {
         constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
         'repo/pom.xml',
-        'repo-amp/pom.xml',
         'runner/pom.xml',
         'share/pom.xml',
-        'share-amp/pom.xml',
         'solr-config/pom.xml',
         'TODO.md',
       ]);
@@ -68,12 +61,6 @@ describe('generator-alfresco:app', function () {
       assert.noFileContent(
         'scripts/debug.sh',
         /springloaded/
-      );
-    });
-    it('adds generic include for generated beans', function () {
-      assert.fileContent(
-        'repo-amp/src/main/amp/config/alfresco/module/repo-amp/module-context.xml',
-        /<import resource="classpath:alfresco\/module\/\${project\.artifactId}\/context\/generated\/\*-context\.xml"\/>/
       );
     });
     it('does not create enterprise specific files', function () {
@@ -92,6 +79,117 @@ describe('generator-alfresco:app', function () {
         ['scripts/run.bat', /-Penterprise/],
         ['scripts/run-without-springloaded.sh', /-Penterprise/],
       ]);
+    });
+    describe('generate model without modules', function () {
+      var osTempDir = path.join(os.tmpdir(), 'temp-test');
+      before(function (done) {
+        helpers.run(path.join(__dirname, '../generators/model'))
+          // generator will create a temp directory and make sure it's empty
+          .inTmpDir(function () {
+            // we want our test to run inside the previously generated directory
+            // and we don't want it to be empty, so this is a hack for that.
+            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            process.chdir(osTempDir);
+          })
+          .withOptions({
+            'model-name': 'testModel',
+            'model-description': 'test desc',
+            'model-author': 'test author',
+            'model-version': '1.0',
+            'namespace-prefix': 'zz',
+          })
+          .on('end', done);
+      });
+
+      it('model files should not be generated', function () {
+        var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+        var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        assert.noFile([
+          modelFile,
+          contextFile,
+        ]);
+      });
+    });
+  });
+
+  describe('generate project with source amps', function () {
+    this.timeout(60000);
+    var osTempDir = path.join(os.tmpdir(), 'temp-test');
+
+    before(function (done) {
+      helpers.run(path.join(__dirname, '../generators/app'))
+        .inDir(path.join(os.tmpdir(), './temp-test'))
+        .withOptions({ 'skip-install': true })
+        .withPrompts({
+          removeDefaultSourceAmps: false,
+        })
+        .on('end', done);
+    });
+    describe('generate second pair of modules', function () {
+      before(function (done) {
+        helpers.run(path.join(__dirname, '../generators/amp'))
+          // generator will create a temp directory and make sure it's empty
+          .inTmpDir(function () {
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
+            process.chdir(osTempDir);
+          })
+          .withOptions({
+            'force': true, // tests can't handle conflicts
+            'war': 'both',
+            'project-group-id': 'org.alfresco',
+            'project-artifact-id': 'both-customizations',
+            'project-version': '1.0.0-SNAPSHOT',
+            'remove-default-source-samples': false,
+            'create-parent': false,
+            'parent-name': '',
+            'parent-description': '',
+            'repo-name': '',
+            'repo-description': '',
+          })
+          .on('end', done);
+      });
+      it('amp files exist in project', function () {
+        assert.file([
+          path.join(osTempDir, 'customizations/both-customizations-repo-amp/pom.xml'),
+          path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
+        ]);
+      });
+      it('sample files exist in project', function () {
+        assert.file([
+          path.join(osTempDir, 'customizations/both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
+          path.join(osTempDir, 'customizations/both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
+        ]);
+      });
+      describe('generate a valid model', function () {
+        before(function (done) {
+          helpers.run(path.join(__dirname, '../generators/model'))
+            // generator will create a temp directory and make sure it's empty
+            .inTmpDir(function () {
+              // we want our test to run inside the previously generated directory
+              // and we don't want it to be empty, so this is a hack for that.
+              // process.chdir(path.join(this.osTempDir, 'temp-test'));
+              process.chdir(osTempDir);
+            })
+            .withOptions({
+              'model-name': 'testModel',
+              'model-description': 'test desc',
+              'model-author': 'test author',
+              'model-version': '1.0',
+              'namespace-prefix': 'zz',
+            })
+            .on('end', done);
+        });
+        it('model files should not be generated', function () {
+          var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+          var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+          assert.noFile([
+            modelFile,
+            contextFile,
+          ]);
+        });
+      });
     });
   });
 });
