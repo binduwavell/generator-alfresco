@@ -411,6 +411,7 @@ module.exports = yeoman.Base.extend({
         projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
         projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
         projectVersion: this.config.get(constants.PROP_PROJECT_VERSION),
+        removeDefaultSourceAmps: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
       };
       this.fs.copy(

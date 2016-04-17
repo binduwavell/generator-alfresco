@@ -78,18 +78,20 @@ module.exports = function (yo) {
   };
 
   module.normalizeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    debug('attempting to normalize: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    debug('attempting to normalize: %j %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     // first argument is always required
     if (undefined !== modOrGroupId) {
       // if the first argument is the only argument, make sure it provides all
       // properties for a module, if so add the module
       if (!artifactId && !ver && !packaging && !war && !loc && !path) {
+        debug('only modOrGroupId so let\'s check if we have a module');
         if (modOrGroupId.groupId && modOrGroupId.artifactId
           && modOrGroupId['version'] && modOrGroupId.packaging
           && modOrGroupId.war && modOrGroupId['location'] && modOrGroupId.path) {
+          debug('returning pre-objectified module: %j', modOrGroupId);
           return modOrGroupId;
         } else {
-          // one or more module properties is missing
+          debug('one or more module properties is missing: %j', modOrGroupId);
           return undefined;
         }
       } else if (!artifactId || !ver || !packaging || !war || !loc || !path) {

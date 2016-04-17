@@ -30,7 +30,7 @@ module.exports = function (yo) {
     // console.log("Existing module: " + JSON.stringify(mod));
     if (!mod) {
       mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-      // console.log("Adding module: " + JSON.stringify(mod));
+      debug('normalized result: %j', mod);
     }
     yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
     this.moduleRegistry.addModule(mod);
@@ -45,9 +45,9 @@ module.exports = function (yo) {
         ops.push(function () { addFailsafeConfigToRunner(mod) });
       }
       ops.push(function () { addModuleToTomcatContext(mod) });
+      ops.push(function () { updateProjectPom(mod) });
     }
 
-    ops.push(function () { updateProjectPom(mod) });
     ops.push(function () { addModuleToWarWrapper(mod) });
     // TODO: what else do we need to do when we remove a module?
     debug('addModule() finished');
@@ -269,7 +269,13 @@ module.exports = function (yo) {
     var wrapperPom = yo.fs.read(wrapperPomPath);
     var pom = require('./maven-pom.js')(wrapperPom);
     if (!pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
-      pom.addDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
+      var scope;
+      var systemPath;
+      if (mod.location === 'local') {
+        scope = 'system';
+        systemPath = '${project.basedir}/../' + mod.path;
+      }
+      pom.addDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging, scope, systemPath);
     }
 
     // search existing plugins for maven-war-plugin, create if necessary

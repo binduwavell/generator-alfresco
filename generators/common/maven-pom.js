@@ -162,7 +162,7 @@ module.exports = function (pomString) {
     }
   };
 
-  module.addDependency = function (groupId, artifactId, version, type, scope) {
+  module.addDependency = function (groupId, artifactId, version, type, scope, systemPath) {
     var dependency = module.findDependency(groupId, artifactId, version, type, scope);
     if (!dependency) {
       dependency = domutils.createChild(module.getOrCreateTopLevelElement('pom', 'dependencies'), 'pom', 'dependency');
@@ -196,6 +196,15 @@ module.exports = function (pomString) {
       scopeNode = domutils.getChild(dependency, 'pom', 'scope');
       if (scopeNode) {
         domutils.removeParentsChild(dependency, scopeNode);
+      }
+    }
+    if (systemPath) {
+      var systemPathNode = domutils.getOrCreateChild(dependency, 'pom', 'systemPath');
+      systemPathNode.textContent = systemPath;
+    } else {
+      systemPathNode = domutils.getChild(dependency, 'pom', 'systemPath');
+      if (systemPathNode) {
+        domutils.removeParentsChild(dependency, systemPathNode);
       }
     }
     return dependency;
