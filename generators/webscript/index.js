@@ -577,7 +577,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         // and we likely won't have sample data for all locales.
         ['de', 'en', 'es', 'fr'].forEach(function (locale) {
           var propPath = this.templatePath(locale + '.properties');
-          var localeName = props.id + '.' + method + (locale === 'en' ? '' : '.' + locale) + '.properties';
+          var localeName = props.id + '.' + method + (locale === 'en' ? '' : '_' + locale) + '.properties';
           var localePath = path.join(descPath, localeName);
           this.out.info('Generating ' + localeName + ' in ' + descPath);
           this.fs.copyTpl(propPath, localePath, props);
