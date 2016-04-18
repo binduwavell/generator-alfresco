@@ -40,6 +40,24 @@ module.exports = SubGenerator.extend({
     this.setupArgumentsAndOptions(this.prompts);
   },
 
+  help: function () {
+    var Base = require('yeoman-generator').Base;
+    var helpArray = [Base.prototype.help.apply(this)];
+    [
+      {label: 'Source AMP', namespace: 'alfresco:amp-source'},
+      {label: 'Local AMP', namespace: 'alfresco:amp-local'},
+      {label: 'Remote AMP', namespace: 'alfresco:amp-remote'},
+    ].forEach(function (subgenDesc) {
+      helpArray.push('\n' + subgenDesc.label + ' Options:');
+      var subgen = this.env.create(subgenDesc.namespace);
+      ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
+        subgen._options[op].hide = true;
+      });
+      helpArray.push(Base.prototype.optionsHelp.apply(subgen));
+    }.bind(this));
+    return helpArray.join('\n');
+  },
+
   prompting: function () {
     this.subgeneratorPrompt(this.prompts, function (props) {
       if (props.ampType === AMP_TYPE_SOURCE) {
