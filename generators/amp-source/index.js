@@ -35,17 +35,22 @@ module.exports = SubGenerator.extend({
         default: defGroupId,
         message: 'Project groupId?',
         commonFilter: filters.requiredTextFilter,
-        invalidMessage: 'The ' + chalk.yellow('project groupId') + ' is required',
         valueRequired: true,
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
         option: { name: 'project-artifact-id', config: { alias: 'a', desc: 'prefix for project artifactId', type: String } },
+        when: function (props) {
+          this.out.docs([
+            'In order to have consistent artifact names, we will automatiaclly append',
+            '-repo, -share and/or -parent to your artifactId prefix where appropraite.',
+          ].join(' '));
+          return true;
+        },
         default: defArtifactIdPrefix,
         message: 'Project artifactId prefix?',
         commonFilter: filters.requiredTextFilter,
-        invalidMessage: 'The ' + chalk.yellow('project artifactId prefix') + ' is required',
         valueRequired: true,
       },
       {
@@ -55,7 +60,6 @@ module.exports = SubGenerator.extend({
         default: defVersion,
         message: 'Project version?',
         commonFilter: filters.requiredTextFilter,
-        invalidMessage: 'The ' + chalk.yellow('project version') + ' is required',
         valueRequired: true,
       },
       {
@@ -74,6 +78,13 @@ module.exports = SubGenerator.extend({
         when: function (props) {
           var warType = props[constants.PROP_WAR];
           var show = (WAR_TYPE_BOTH === warType);
+          if (show) {
+            this.out.docs([
+              'Unlike the traditional all-in-one SDK structure, where source',
+              'AMP projects are placed in the project root, we place them inside a customizations',
+              'folder. If you create both repo & share amps together, we\'ll offer to group them',
+              'in a parent folder inside customizations.'].join(' '));
+          }
           if (!show) this.createParent = false;
           return show;
         },
@@ -146,12 +157,20 @@ module.exports = SubGenerator.extend({
   },
 
   prompting: function () {
+    if (this.bail) return;
+
     this.out.info([
       'This sub-generator will update existing POM\'s and context files.',
-      'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
-      'Type "h" when prompted to get details about your choices.'].join(' '));
+      'Yeoman will display ' + chalk.yellow('conflict <filename>'),
+      'and ask you if you want to update each file.',
+      '\nType "h" when prompted to get details about your choices.'].join(' '));
 
-    this.out.docs('', 'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-add-custom-amps-aio.html');
+    this.out.docs([
+      'In order to customize the Alfresco repository and/or share, the best practice',
+      'is still to create AMPs. Here we\'ll walk you through what you need to provide',
+      'in order for us to create source code projects for you to place your',
+      'customizations in.'].join(' '),
+      'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-add-custom-amps-aio.html');
 
     var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
     var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);

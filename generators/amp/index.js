@@ -12,6 +12,14 @@ var AMP_TYPE_CHOICES = {
   'local': AMP_TYPE_LOCAL,
   'remote': AMP_TYPE_REMOTE,
 };
+var NAMESPACE_SOURCE = 'alfresco:amp-source';
+var NAMESPACE_LOCAL = 'alfresco:amp-local';
+var NAMESPACE_REMOTE = 'alfresco:amp-remote';
+var NAMESPACE_CHOICES = [
+  {label: AMP_TYPE_SOURCE, namespace: NAMESPACE_SOURCE},
+  {label: AMP_TYPE_LOCAL, namespace: NAMESPACE_LOCAL},
+  {label: AMP_TYPE_REMOTE, namespace: NAMESPACE_REMOTE},
+];
 
 module.exports = SubGenerator.extend({
 
@@ -25,9 +33,9 @@ module.exports = SubGenerator.extend({
         option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP or Remote AMP', type: String } },
         when: function (props) {
           this.out.docs('This generator will create/install amps into your project files:');
-          this.out.definition('Source AMP', 'We\'ll create a new source code projects that you can add code/config to');
-          this.out.definition('Local AMP', 'Installs an amp file from ./amps or ./amps_share into this project');
-          this.out.definition('Remote AMP', 'Installs an amp file from a reachable Maven repository into this project');
+          this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
+          this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./amps or ./amps_share into this project');
+          this.out.definition(AMP_TYPE_REMOTE, 'Installs an amp file from a reachable Maven repository into this project');
           return true;
         },
         choices: AMP_TYPES,
@@ -43,11 +51,7 @@ module.exports = SubGenerator.extend({
   help: function () {
     var Base = require('yeoman-generator').Base;
     var helpArray = [Base.prototype.help.apply(this)];
-    [
-      {label: 'Source AMP', namespace: 'alfresco:amp-source'},
-      {label: 'Local AMP', namespace: 'alfresco:amp-local'},
-      {label: 'Remote AMP', namespace: 'alfresco:amp-remote'},
-    ].forEach(function (subgenDesc) {
+    NAMESPACE_CHOICES.forEach(function (subgenDesc) {
       helpArray.push('\n' + subgenDesc.label + ' Options:');
       var subgen = this.env.create(subgenDesc.namespace);
       ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
@@ -60,18 +64,12 @@ module.exports = SubGenerator.extend({
 
   prompting: function () {
     this.subgeneratorPrompt(this.prompts, function (props) {
-      if (props.ampType === AMP_TYPE_SOURCE) {
-        debug('delegating to amp-source');
-        this.composeWith('alfresco:amp-source', { options: this.options });
-      }
-      if (props.ampType === AMP_TYPE_LOCAL) {
-        debug('delegating to amp-local');
-        this.composeWith('alfresco:amp-local', { options: this.options });
-      }
-      if (props.ampType === AMP_TYPE_REMOTE) {
-        debug('delegating to amp-remote');
-        this.composeWith('alfresco:amp-remote', { options: this.options });
-      }
+      NAMESPACE_CHOICES.forEach(function (subgenDesc) {
+        if (props.ampType === subgenDesc.label) {
+          debug('delegating to %s', subgenDesc.namespace);
+          this.composeWith(subgenDesc.namespace, { options: this.options });
+        }
+      }.bind(this));
     }.bind(this));
   },
 });

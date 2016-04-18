@@ -1,5 +1,6 @@
 'use strict';
 var debug = require('debug')('generator-alfresco:amp-remote');
+var chalk = require('chalk');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
 var SubGenerator = require('../subgenerator.js');
@@ -51,14 +52,20 @@ module.exports = SubGenerator.extend({
   },
 
   prompting: function () {
+    if (this.bail) return;
+
+    this.out.docs([
+      'Some functionality of the Alfresco content management system is delivered as extra modules,',
+      'such as Records Management (RM), Google Docs Integration, and Alfresco Office Services, which',
+      'provides SharePoint Protocol support. If you know the maven groupId, artifactId and version,',
+      'we can link such modules to your project.'].join(' '),
+      'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-link-alf-amps-aio.html');
+
     this.out.info([
       'This sub-generator will update existing POM\'s and context files.',
-      'Yeoman will display "conflict <filename>" and ask you if you want to update each file.',
-      'Type "h" when prompted to get details about your choices.'].join(' '));
-
-    this.out.docs(
-      'Some functionality of the Alfresco content management system is delivered as extra modules, such as Records Management (RM), Google Docs Integration, and Alfresco Office Services, whic provides SharePoint Protocol support. You can link such modules to your project.',
-      'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-link-alf-amps-aio.html');
+      'Yeoman will display ' + chalk.yellow('conflict <filename>'),
+      'and ask you if you want to update each file.',
+      '\nType "h" when prompted to get details about your choices.'].join(' '));
 
     this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
