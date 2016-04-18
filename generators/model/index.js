@@ -1,6 +1,7 @@
 'use strict';
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:model');
+var _ = require('lodash');
 var path = require('path');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
@@ -118,6 +119,10 @@ module.exports = SourceSelectingSubGenerator.extend({
       this.props = props;
       var modelFileName = props.modelName + 'Model.xml';
       var contextFileName = props.modelName + '-model-context.xml';
+      if (_.isEmpty(props.targetModule)) {
+        this.bail = true;
+        return;
+      }
       var targetModule = props.targetModule.module;
       var modulePath = this.destinationPath(targetModule.path);
       var contextGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
