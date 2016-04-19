@@ -1,17 +1,9 @@
 TODO
 ====
 
-- [ ] Make progress on webscript sub-generator
-  - [ ] List project amps that we can generate webscripts in
-  - [ ] Update wizard to include more/all options for .desc.xml
-  - [x] Move webscript sub-generators so it can''t be used yet
 - [ ] Make progress on a share widget sub-generator
   - [ ] Offer list of share source modules
   - [ ] Start from https://github.com/myprysm/generator-alfresco/tree/master/generators/share-widget
-- [ ] Make progress on action sub-generator
-  - [ ] Review action branch and see what all needs to be done
-  - [ ] List project amps that we can generate webscripts in
-  - [ ] Generate into appropriate target location rather than project root
 - [ ] Ask if we should include codenvy factory in the project
   - [ ] Need to figure out how we are going to handle enterprise
 - [ ] Include instructions about how to configure IDEs (or generate the config)
@@ -26,6 +18,14 @@ TODO
 TODONE
 ======
 
+- [x] Make progress on action sub-generator
+  - [x] Review action branch and see what all needs to be done
+  - [x] List project amps that we can generate webscripts in
+  - [x] Generate into appropriate target location rather than project root
+- [x] Make progress on webscript sub-generator
+  - [x] List project amps that we can generate webscripts in
+  - [x] Update wizard to include more/all options for .desc.xml
+  - [x] Move webscript sub-generators so it can''t be used yet
 - [x] Make progress on amp sub-generator
   - [x] Support creating a parent folder when creating repo and share amp together
   - [x] When creating source AMP prompt for name and description and inject into project
