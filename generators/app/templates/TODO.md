@@ -42,7 +42,7 @@ yo alfresco:amp -A local -p amps_share/javascript-console-share-0.6.0.amp -g org
 
 - [ ] If you have the JavaScript console AMPs deployed in a Maven repository
       that your project has access to, you can use the following commands to 
-      install these amps (you may have to update the groupId, artifactId
+      install these *remote* amps (you may have to update the groupId, artifactId
       and/or version depending on how these are deployed for you):
 
 ```bash
