@@ -7,7 +7,7 @@ var path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp', function () {
+describe('generator-alfresco:amp-source', function () {
   this.timeout(30000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -27,7 +27,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating both a repo and share amp', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -54,7 +54,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating both a repo and share amp and removing samples', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -95,7 +95,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating both a repo and share amp via prompts', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -133,7 +133,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating repo amp', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -168,7 +168,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating share amp', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -203,7 +203,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('after creating both repo and share amps in parent folder', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -238,7 +238,7 @@ describe('generator-alfresco:amp', function () {
 
   describe('when creating amp with invalid war type', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp'))
+      helpers.run(path.join(__dirname, '../generators/amp-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated

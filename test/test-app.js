@@ -127,7 +127,7 @@ describe('generator-alfresco:app', function () {
     });
     describe('generate second pair of modules', function () {
       before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/amp'))
+        helpers.run(path.join(__dirname, '../generators/amp-source'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
             // HACK: we want our test to run inside the previously generated
