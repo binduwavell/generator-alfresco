@@ -59,7 +59,7 @@ module.exports = SubGenerator.extend({
         option: { name: 'project-version', config: { alias: 'v', desc: 'version for project', type: String } },
         default: defVersion,
         message: 'Project version?',
-        commonFilter: filters.requiredTextFilter,
+        commonFilter: filters.requiredVersionFilter,
         valueRequired: true,
       },
       {

@@ -43,7 +43,7 @@ module.exports = SubGenerator.extend({
         name: 'version',
         option: { name: 'version', config: { alias: 'v', desc: 'amp version', type: String } },
         message: 'Amp version?',
-        commonFilter: filters.requiredTextFilter,
+        commonFilter: filters.requiredVersionFilter,
         valueRequired: true,
       },
     ];

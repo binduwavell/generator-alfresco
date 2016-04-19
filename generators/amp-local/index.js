@@ -60,7 +60,7 @@ module.exports = SubGenerator.extend({
         option: { name: 'version', config: { alias: 'v', desc: 'amp version', type: String } },
         default: getObjectValueFactory(this, 'gav', 'version'),
         message: 'Amp version?',
-        commonFilter: filters.requiredTextFilter,
+        commonFilter: filters.requiredVersionFilter,
         valueRequired: true,
       },
     ];

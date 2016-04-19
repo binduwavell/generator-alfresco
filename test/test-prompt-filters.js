@@ -179,6 +179,17 @@ describe('generator-alfresco:prompt-filters', function () {
     it('handles textual input', function () {
       assert.equal(filters.optionalTextFilter('asdf'), 'asdf');
     });
+
+    it('handles boolean input', function () {
+      assert.equal(filters.optionalTextFilter(true), '');
+      assert.equal(filters.optionalTextFilter(false), undefined);
+    });
+
+    it('handles numeric input', function () {
+      assert.equal(filters.optionalTextFilter(1), '1');
+      assert.equal(filters.optionalTextFilter(1.0), '1'); // yeah this sucks
+      assert.equal(filters.optionalTextFilter(1.2), '1.2');
+    });
   });
 
   describe('.requiredTextFilter()', function () {
@@ -191,6 +202,12 @@ describe('generator-alfresco:prompt-filters', function () {
 
     it('handles textual input', function () {
       assert.equal(filters.requiredTextFilter('asdf'), 'asdf');
+    });
+
+    it('handles numeric input', function () {
+      assert.equal(filters.requiredTextFilter(1), '1');
+      assert.equal(filters.requiredTextFilter(1.0), '1'); // yeah this sucks
+      assert.equal(filters.requiredTextFilter(1.2), '1.2');
     });
   });
 
@@ -271,6 +288,31 @@ describe('generator-alfresco:prompt-filters', function () {
     it('handles last match in a case insensitive way', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('threE'), ['Three']);
+    });
+  });
+
+  describe('.requiredVersionFilter()', function () {
+    it('handles invalid input', function () {
+      assert.equal(filters.requiredVersionFilter(undefined), undefined);
+      assert.equal(filters.requiredVersionFilter(null), undefined);
+      assert.equal(filters.requiredVersionFilter(true), undefined);
+      assert.equal(filters.requiredVersionFilter(''), undefined);
+    });
+
+    it('handles textual input', function () {
+      assert.equal(filters.requiredVersionFilter('asdf'), 'asdf');
+    });
+
+    it('handles numeric input', function () {
+      assert.equal(filters.requiredVersionFilter(1), '1');
+      assert.equal(filters.requiredVersionFilter(1.0), '1'); // yeah this sucks
+      assert.equal(filters.requiredVersionFilter(1.2), '1.2');
+    });
+
+    it('handles VERSION- prefixed input', function () {
+      assert.equal(filters.requiredVersionFilter('VERSION-1'), '1');
+      assert.equal(filters.requiredVersionFilter('VERSION-1.0'), '1.0');
+      assert.equal(filters.requiredVersionFilter('1.2'), '1.2');
     });
   });
 

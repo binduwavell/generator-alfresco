@@ -199,20 +199,23 @@ module.exports = {
   /**
    * Given some text or the empty string return it.
    * If we receive true return empty string.
+   * If we receive a number convert it to a string and return it.
    * Otherwise return undefined.
    *
-   * @param {(string|boolean|undefined|null)} input
+   * @param {(string|boolean|number|undefined|null)} input
    * @returns {(string|undefined)}
    */
   optionalTextFilter: function (input) {
     debug('optionalTextFilter(%s)', input);
     if (_.isString(input)) return input;
     if (_.isBoolean(input)) return (input ? '' : undefined);
+    if (_.isNumber(input)) return '' + input;
     return undefined;
   },
 
   /**
    * Given some none empty text return it.
+   * If we receive a number convert it to a string and return it.
    * Otherwise return undefined.
    *
    * @param {(string|boolean|undefined|null)} input
@@ -221,6 +224,7 @@ module.exports = {
   requiredTextFilter: function (input) {
     debug('requiredTextFilter(%s)', input);
     if (_.isString(input) && !_.isEmpty(input)) return input;
+    if (_.isNumber(input)) return '' + input;
     return undefined;
   },
 
@@ -271,6 +275,29 @@ module.exports = {
     return function (input) {
       return module.exports.requiredTextListFilter(input, sep, choices);
     };
+  },
+
+  /**
+   * Given some none empty text return it.
+   * If the text starts with "VERSION-", remove that text
+   *   This is a stupid hack because Yeoman is messing
+   *   with our numeric options.
+   * If we receive a number convert it to a string and return it.
+   * Otherwise return undefined.
+   *
+   * @param {(string|boolean|undefined|null)} input
+   * @returns {(string|undefined)}
+   */
+  requiredVersionFilter: function (input) {
+    debug('requiredTextFilter(%s)', input);
+    if (_.isString(input) && !_.isEmpty(input)) {
+      if (_.startsWith(input, 'VERSION-')) {
+        return input.substr(8);
+      }
+      return input;
+    }
+    if (_.isNumber(input)) return '' + input;
+    return undefined;
   },
 
   /**

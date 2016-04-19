@@ -7,11 +7,14 @@ others may be optional.
 
 <% if (removeDefaultSourceAmps) { -%>
 - [ ] You accepted the default "Remove default source amps" option during
-      project creation, you will not have any source amps setup to begin with.
+      project creation, you will not have any source amps setup to begin 
+      with, don't be scared and read on. BTW, your project will totally
+      work even without any amps in it, you'll just have vanilla repo
+      and share webapps.
 <% } -%>
 - [ ] You can use the following command to start an interactive session 
       that will guide you through what you need to provide to create
-      a repo or share source amp (it will even allow to create a pair
+      a repo or share source amp (it will even allow you to create a pair
       with a repo amp and a share amp):
       
 ```bash
@@ -22,26 +25,38 @@ yo alfresco:amp
 yo alfresco:amp-source
 yo alfresco:amp -A source
 
-# Try the following to get the full command line optionlist:
+# Try the following to get the full command line option list:
 yo alfresco:amp-source --help
 ```
 
+- [ ] Would you like to have the JavaScript Console in your dev environment?
+      Clone https://github.com/share-extras/js-console and build it. Then,
+      copy javascript-console-repo-0.6.0.amp to the ./amps folder and 
+      javascript-console-share-0.6.0.amp to the ./amps\_share folder.
+      Then, you can use the following commands to install these *local* amps:
+      
+```bash
+yo alfresco:amp -A local -p amps/javascript-console-repo-0.6.0.amp -g org.sharextras -a javascript-console-repo -v 0.6.0
+yo alfresco:amp -A local -p amps_share/javascript-console-share-0.6.0.amp -g org.sharextras -a javascript-console-share -v 0.6.0
+```
+
 - [ ] If you have the JavaScript console AMPs deployed in a Maven repository
-      that you have access to using the default GAV from inside the .amp 
-      files, you can use the following commands to install these amps:
+      that your project has access to, you can use the following commands to 
+      install these amps (you may have to update the groupId, artifactId
+      and/or version depending on how these are deployed for you):
 
 ```bash
 yo alfresco:amp -A remote -w repo -g org.sharextras -a javascript-console-repo -v 0.6.0
 yo alfresco:amp -A remote -w share -g org.sharextras -a javascript-console-share -v 0.6.0
 ```
 
-- [ ] If you copy the file javascript-console-repo-0.6.0.amp to ./amps and the
-      javascript-console-share-0.6.0.amp file to ./amps\_share, you can use
-      the following command to install these amps:
-      
+- [ ] Would you like to be able to control content type type of uploads and 
+      capture metadata during upload? Try adding Uploader Plus to your 
+      project from Maven Central:
+
 ```bash
-yo alfresco:amp -A local -p amps/javascript-console-repo-0.6.0.amp -g org.sharextras -a javascript-console-repo -v 0.6.0
-yo alfresco:amp -A local -p amps_share/javascript-console-share-0.6.0.amp -g org.sharextras -a javascript-console-share -v 0.6.0
+yo alfresco:amp -A remote -w repo -g com.softwareloop -a uploader-plus-repo -v 1.2
+yo alfresco:amp -A remote -w share -g com.softwareloop -a uploader-plus-surf -v 1.2
 ```
 
 <% if (isEnterprise) { %>
