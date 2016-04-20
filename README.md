@@ -104,7 +104,7 @@ push updates back to GitHub.
 Another super low effort option to getting started quickly is to open a clone of this project 
 in Codenvy (a cloud IDE), by clicking this badge: 
 [![create project on Codenvy][codenvy-image]](
-http://beta.codenvy.com/f?id=zia672875qiibfzv).
+http://beta.codenvy.com/f?id=zia672875qiibfzv) (this link is currently to the new awesome beta.codenvy.com.)
 
 Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
 allowing you to run the generator in an embedded docker container called a runner. 
