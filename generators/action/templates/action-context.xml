@@ -4,12 +4,12 @@
 <beans>
 
   <!-- Registration of action -->
-  <bean id="<%- artifactId %>-<%- actionId %>" class="<%- packageName %>.<%- className %>" parent="action-executer">
+  <bean id="<%- artifactId %>.<%- actionId %>" class="<%- packageName %>.<%- className %>" parent="action-executer">
     <property name="serviceRegistry" ref="ServiceRegistry" />
   </bean>
 
   <!-- Register bundle with labels for action -->
-  <bean id="<%- artifactId %>-<%- actionId %>-action-properties" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+  <bean id="<%- artifactId %>.<%- actionId %>-action-messages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
     <property name="resourceBundles">
       <list>
         <value>alfresco/module/${project.artifactId}/messages/<%- artifactId %>-<%- actionId %>-action</value>

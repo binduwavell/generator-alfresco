@@ -26,6 +26,7 @@ describe('generator-alfresco:action', function () {
     describe('when creating action with two word name', function () {
       var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TwoWordsActionExecuter.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-two-words-context.xml');
+      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-two-words-action.properties');
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../generators/action'))
@@ -47,6 +48,7 @@ describe('generator-alfresco:action', function () {
         assert.file([
           actionFile,
           contextFile,
+          messageFile,
         ]);
       });
 
@@ -61,7 +63,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="\$\{artifactId}.two-words"/],
+          [contextFile, /<bean id="repo-amp.two-words"/],
           [contextFile, /class="org.alfresco.actions.TwoWordsActionExecuter/],
         ]);
       });
@@ -70,6 +72,7 @@ describe('generator-alfresco:action', function () {
     describe('when creating action with camel case name', function () {
       var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/CamelCaseActionExecuter.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-camel-case-context.xml');
+      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-camel-case-action.properties');
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../generators/action'))
@@ -91,6 +94,7 @@ describe('generator-alfresco:action', function () {
         assert.file([
           actionFile,
           contextFile,
+          messageFile,
         ]);
       });
 
@@ -105,7 +109,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="\$\{artifactId}.camel-case"/],
+          [contextFile, /<bean id="repo-amp.camel-case"/],
           [contextFile, /class="org.alfresco.actions.CamelCaseActionExecuter/],
         ]);
       });
@@ -114,6 +118,7 @@ describe('generator-alfresco:action', function () {
     describe('when creating action using package that does not end with .actions', function () {
       var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TestActionExecuter.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-test-context.xml');
+      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-test-action.properties');
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../generators/action'))
@@ -135,6 +140,7 @@ describe('generator-alfresco:action', function () {
         assert.file([
           actionFile,
           contextFile,
+          messageFile,
         ]);
       });
 
@@ -149,7 +155,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="\$\{artifactId}.test"/],
+          [contextFile, /<bean id="repo-amp.test"/],
           [contextFile, /class="org.alfresco.actions.TestActionExecuter/],
         ]);
       });
@@ -158,6 +164,7 @@ describe('generator-alfresco:action', function () {
     describe('when creating action using prompts', function () {
       var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/PromptsActionExecuter.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-prompts-context.xml');
+      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-prompts-action.properties');
 
       before(function (done) {
         helpers.run(path.join(__dirname, '../generators/action'))
@@ -179,6 +186,7 @@ describe('generator-alfresco:action', function () {
         assert.file([
           actionFile,
           contextFile,
+          messageFile,
         ]);
       });
 
@@ -193,7 +201,7 @@ describe('generator-alfresco:action', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="\$\{artifactId}.prompts"/],
+          [contextFile, /<bean id="repo-amp.prompts"/],
           [contextFile, /class="org.alfresco.actions.PromptsActionExecuter/],
         ]);
       });
@@ -217,9 +225,11 @@ describe('generator-alfresco:action', function () {
     it('does not create action files', function () {
       var actionFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/actions/NoProjectActionExecuter.java');
       var contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-no-project-context.xml');
+      var messageFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-no-project-action.properties');
       assert.noFile([
         actionFile,
         contextFile,
+        messageFile,
       ]);
     });
   });

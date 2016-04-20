@@ -93,16 +93,16 @@ module.exports = SourceSelectingSubGenerator.extend({
 
       var classSrc = this.templatePath('ActionExecuter.java');
       var contextSrc = this.templatePath('action-context.xml');
-      var propertiesSrc = this.templatePath('action.properties');
+      var messagesSrc = this.templatePath('action.properties');
 
       var packagePath = _.replace(packageName, /\./g, '/');
       var classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
       var contextDst = path.join(moduleRoot, genRoot, 'action-' + actionId + '-context.xml');
-      var propertiesDst = path.join(moduleRoot, msgRoot, artifactId + '-' + actionId + '-action.properties');
+      var messagesDst = path.join(moduleRoot, msgRoot, artifactId + '-' + actionId + '-action.properties');
 
       this.fs.copyTpl(classSrc, classDst, templateContext);
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
-      this.fs.copyTpl(propertiesSrc, propertiesDst, templateContext);
+      this.fs.copyTpl(messagesSrc, messagesDst, templateContext);
 
       debug('prompting done function finished');
     }.bind(this));
