@@ -27,16 +27,16 @@ import java.util.List;
  * aParams.put(<%- className %>.PARAM_ONE, "Document");
  * aParams.put(<%- className %>.PARAM_TWO, "Example");
  *
- * Action action = actionService.createAction("<%- actionId %>", aParams);
+ * Action action = actionService.createAction("<%- artifactId %>.<%- actionId %>", aParams);
  * if (action != null) {
  *   actionService.executeAction(action, docNodeRef, checkConditions, executeAsync);
  * } else {
- *   throw new RuntimeException("Could not create <%- actionId %> action");
+ *   throw new RuntimeException("Could not create <%- artifactId %>.<%- actionId %> action");
  * }
  * ```
  *
  * ```javascript
- * var myAction = actions.create('<%- actionId %>');
+ * var myAction = actions.create('<%- artifactId %>.<%- actionId %>');
  * myAction.parameters['one'] = 'Document';
  * myAction.parameters['two'] = 'Example';
  * myAction.execute(document);
@@ -45,7 +45,7 @@ import java.util.List;
 public class <%- className %> extends ActionExecuterAbstractBase {
   private static Log logger = LogFactory.getLog(<%- className %>.class);
 
-  public static final String ACTION_NAME = "<%- actionId %>";
+  public static final String ACTION_NAME = "<%- artifactId %>.<%- actionId %>";
   public static final String PARAM_ONE = "one";
   public static final String PARAM_TWO = "two";
 
@@ -66,15 +66,5 @@ public class <%- className %> extends ActionExecuterAbstractBase {
     if (serviceRegistry.getNodeService().exists(actionedUponNodeRef) == true) {
       logger.info("<%- className %> is processing: " + actionedUponNodeRef.toString());
     }
-  }
-
-  /**
-   * By default Alfresco will use the bean name as the action name.
-   * We like to namespace qualify our beans, so this is how we make
-   * Alfresco use the unqualified name for our action.
-   */
-  @Override
-  public void setBeanName(String name) {
-    super.setBeanName(ACTION_NAME);
   }
 }
