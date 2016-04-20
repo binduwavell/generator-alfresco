@@ -103,7 +103,7 @@ push updates back to GitHub.
 
 Another super low effort option to getting started quickly is to open a clone of this project 
 in Codenvy (a cloud IDE), by clicking this badge: 
-[![create project on Codenvy](https://codenvy.com/factory/resources/factory-white.png)](
+[![create project on Codenvy][codenvy-image]](
 http://beta.codenvy.com/f?id=zia672875qiibfzv).
 
 Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
@@ -137,5 +137,5 @@ Apache 2.0
 [coveralls-url]: https://coveralls.io/github/binduwavell/generator-alfresco?branch=master
 [gitter-image]: https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg
 [gitter-url]: https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[codenvy-image]: https://img.shields.io/badge/codenvy-clone-blue.svg
+[codenvy-image]: http://beta.codenvy.com/factory/resources/codenvy-contribute.svg
 [codenvy-url]: https://codenvy.com/factory?id=zmv24wynr689af6f
