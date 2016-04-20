@@ -46,6 +46,14 @@ module.exports = SourceSelectingSubGenerator.extend({
         invalidMessage: 'Package is required and must be a valid java package',
         valueRequired: true,
       },
+      {
+        type: 'input',
+        name: 'description',
+        option: { name: 'description', config: { alias: 'd', desc: 'Description for action', type: 'String' } },
+        message: 'What ' + chalk.yellow('description') + ' should we use?',
+        commonFilter: filters.optionalTextFilter,
+        valueRequired: false,
+      },
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
@@ -60,31 +68,41 @@ module.exports = SourceSelectingSubGenerator.extend({
 
       // figure stuff out about our environment
       var targetModule = props.targetModule.module;
+      var artifactId = targetModule.artifactId;
       var moduleRoot = this.destinationPath(targetModule.path);
+      var msgRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages';
       var genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
 
       // get information from prompts
-      var actionId = _.kebabCase(props.name);
-      var className = _.upperFirst(_.camelCase(props.name)) + 'ActionExecuter';
+      var actionTitle = props.name;
+      var actionId = _.kebabCase(actionTitle);
+      var className = _.upperFirst(_.camelCase(actionTitle)) + 'ActionExecuter';
       var packageName = props.package;
       if (!_.endsWith(packageName, '.actions')) {
         packageName += '.actions';
       }
+      var actionDescription = props.description;
       var templateContext = {
+        actionDescription: actionDescription,
         actionId: actionId,
+        actionTitle: actionTitle,
+        artifactId: artifactId,
         className: className,
         packageName: packageName,
       };
 
       var classSrc = this.templatePath('ActionExecuter.java');
       var contextSrc = this.templatePath('action-context.xml');
+      var propertiesSrc = this.templatePath('action.properties');
 
       var packagePath = _.replace(packageName, /\./g, '/');
       var classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
       var contextDst = path.join(moduleRoot, genRoot, 'action-' + actionId + '-context.xml');
+      var propertiesDst = path.join(moduleRoot, msgRoot, artifactId + '-' + actionId + '-action.properties');
 
       this.fs.copyTpl(classSrc, classDst, templateContext);
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
+      this.fs.copyTpl(propertiesSrc, propertiesDst, templateContext);
 
       debug('prompting done function finished');
     }.bind(this));
