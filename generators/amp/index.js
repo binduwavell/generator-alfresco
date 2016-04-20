@@ -12,9 +12,9 @@ var AMP_TYPE_CHOICES = {
   'local': AMP_TYPE_LOCAL,
   'remote': AMP_TYPE_REMOTE,
 };
-var NAMESPACE_SOURCE = 'alfresco:amp-source';
-var NAMESPACE_LOCAL = 'alfresco:amp-local';
-var NAMESPACE_REMOTE = 'alfresco:amp-remote';
+var NAMESPACE_SOURCE = 'alfresco:amp-add-source';
+var NAMESPACE_LOCAL = 'alfresco:amp-add-local';
+var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 var NAMESPACE_CHOICES = [
   {label: AMP_TYPE_SOURCE, namespace: NAMESPACE_SOURCE},
   {label: AMP_TYPE_LOCAL, namespace: NAMESPACE_LOCAL},
