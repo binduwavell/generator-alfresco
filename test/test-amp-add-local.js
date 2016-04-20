@@ -8,7 +8,7 @@ var path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp-local', function () {
+describe('generator-alfresco:amp-add-local', function () {
   this.timeout(30000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -51,7 +51,7 @@ describe('generator-alfresco:amp-local', function () {
       var ampSrc = path.join(__dirname, 'fixtures/repo-amp.amp');
       var ampPath = path.join(osTempDir, 'amps/repo-amp.amp');
       fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
-      helpers.run(path.join(__dirname, '../generators/amp-local'))
+      helpers.run(path.join(__dirname, '../generators/amp-add-local'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -82,7 +82,7 @@ describe('generator-alfresco:amp-local', function () {
       var ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
       var ampPath = path.join(osTempDir, 'amps_share/share-amp.amp');
       fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
-      helpers.run(path.join(__dirname, '../generators/amp-local'))
+      helpers.run(path.join(__dirname, '../generators/amp-add-local'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -119,7 +119,7 @@ describe('generator-alfresco:amp-local', function () {
       var ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
       var ampPath = path.join(osTempDir, 'amps_share/share-amp.amp');
       fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
-      helpers.run(path.join(__dirname, '../generators/amp-local'))
+      helpers.run(path.join(__dirname, '../generators/amp-add-local'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated

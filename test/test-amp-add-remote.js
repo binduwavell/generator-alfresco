@@ -7,7 +7,7 @@ var path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp-remote', function () {
+describe('generator-alfresco:amp-add-remote', function () {
   this.timeout(30000);
 
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -33,7 +33,7 @@ describe('generator-alfresco:amp-remote', function () {
 
   describe('installing a remote repo amp using options', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-remote'))
+      helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -62,7 +62,7 @@ describe('generator-alfresco:amp-remote', function () {
 
   describe('installing a remote share amp using prompts', function () {
     before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-remote'))
+      helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
