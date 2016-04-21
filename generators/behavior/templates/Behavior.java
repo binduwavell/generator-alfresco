@@ -50,7 +50,7 @@ public class <%- className %> implements InitializingBean {
    * @param after the node's properties after the change
    */
   public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after){
-    if(nodeRef != null){
+    if(nodeRef != null) {
       logger.info("<%- className %> working on properties update for node: " + nodeRef.toString());
     }
   }
