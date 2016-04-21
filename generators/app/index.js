@@ -45,6 +45,11 @@ module.exports = yeoman.Base.extend({
       if (!this.mavenVersion) {
         throw new Error('We are unable to find a maven executable. A compatible version of maven is required.');
       }
+      var configJSON;
+      try { configJSON = this.fs.readJSON('.yo-rc.json') } catch (err) { /* ignore */ }
+      if (!_.isEmpty(configJSON) && !configJSON['generator-alfresco']) {
+        throw new Error('The generator ' + chalk.blue('generator-alfresco') + ' must be run in a location where there are no other yeoman based generator projects up the folder hierarchy');
+      }
     } catch (e) {
       this.out.error(e.message);
       this.bail = true;
