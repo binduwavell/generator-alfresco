@@ -5,13 +5,13 @@ Depending on how you answer the questions presented by the alfresco generator
 there may be additional steps you can do. Some of these may be required while
 others may be optional.
 
-<% if (removeDefaultSourceAmps) { -%>
+<%_ if (removeDefaultSourceAmps) { _%>
 - [ ] You accepted the default "Remove default source amps" option during
       project creation, you will not have any source amps setup to begin 
       with, don't be scared and read on. BTW, your project will totally
       work even without any amps in it, you'll just have vanilla repo
       and share webapps.
-<% } -%>
+<%_ } _%>
 - [ ] You can use the following command to start an interactive session 
       that will guide you through what you need to provide to create
       a repo or share source amp (it will even allow you to create a pair
@@ -58,17 +58,17 @@ yo alfresco:amp -A remote -w share -g org.sharextras -a javascript-console-share
 yo alfresco:amp -A remote -w repo -g com.softwareloop -a uploader-plus-repo -v 1.2
 yo alfresco:amp -A remote -w share -g com.softwareloop -a uploader-plus-surf -v 1.2
 ```
+<%_ if (isEnterprise) { _%>
 
-<% if (isEnterprise) { %>
 For Enterprise Use
 ------------------
 
 - [ ] Make sure that your ~/.m2/settings.xml file is configured to allow access to enterprise artifacts
 - [ ] Copy your license file to repo/src/main/resources/alfresco/extension/license
-- [ ] You may wish to install the Support Tools AMP:
+- [ ] You may wish to install the Support Tools AMP from artifacts.alfresco.com:
 
 ```bash
 yo alfresco:amp-add-remote -w repo -g org.alfresco.support -a support-tools -v 1.10
 ```
 
-<% } %>
+<%_ } _%>

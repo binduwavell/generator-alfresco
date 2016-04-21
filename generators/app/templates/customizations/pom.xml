@@ -9,9 +9,9 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <parent>
-    <groupId><%= projectGroupId %></groupId>
-    <artifactId><%= projectArtifactId %></artifactId>
-    <version><%= projectVersion %></version>
+    <groupId><%- projectGroupId %></groupId>
+    <artifactId><%- projectArtifactId %></artifactId>
+    <version><%- projectVersion %></version>
   </parent>
   <modules/>
 </project>
