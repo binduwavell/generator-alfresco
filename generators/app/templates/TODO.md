@@ -22,11 +22,11 @@ others may be optional.
 yo alfresco:amp
 
 # Or go straight into source amp creation with either of these:
-yo alfresco:amp-source
+yo alfresco:amp-add-source
 yo alfresco:amp -A source
 
 # Try the following to get the full command line option list:
-yo alfresco:amp-source --help
+yo alfresco:amp-add-source --help
 ```
 
 - [ ] Would you like to have the JavaScript Console in your dev environment?
@@ -68,7 +68,7 @@ For Enterprise Use
 - [ ] You may wish to install the Support Tools AMP:
 
 ```bash
-yo alfresco:amp-remote -w repo -g org.alfresco.support -a support-tools -v 1.10
+yo alfresco:amp-add-remote -w repo -g org.alfresco.support -a support-tools -v 1.10
 ```
 
 <% } %>
