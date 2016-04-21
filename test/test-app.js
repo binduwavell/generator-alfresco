@@ -5,6 +5,8 @@ var constants = require('../generators/common/constants.js');
 var helpers = require('yeoman-test');
 var os = require('os');
 var path = require('path');
+var fs = require('fs');
+var rmdir = require('rmdir');
 
 describe('generator-alfresco:app', function () {
   describe('default prompts', function () {
@@ -190,6 +192,73 @@ describe('generator-alfresco:app', function () {
           ]);
         });
       });
+    });
+  });
+
+  describe('generate project within a different yeoman project', function () {
+    this.timeout(60000);
+    var osTempDir = path.join(os.tmpdir(), 'a-yo-project');
+    if (!fs.existsSync(osTempDir)) {
+      fs.mkdirSync(osTempDir);
+    } else {
+      rmdir(osTempDir, function (err, dirs, files) {
+        if (err) throw err;
+        fs.mkdirSync(osTempDir);
+      });
+    }
+
+    before(function (done) {
+      process.chdir(osTempDir);
+      fs.writeFile('.yo-rc.json', JSON.stringify({ 'generator-generator': {} }));
+      helpers.run(path.join(__dirname, '../generators/app'))
+        .inTmpDir(function () {
+          // we want our test to run inside the previously generated directory
+          // and we don't want it to be empty, so this is a hack for that.
+          process.chdir(osTempDir);
+        })
+        .withOptions({ 'skip-install': true })
+        .withPrompts({
+          removeDefaultSourceAmps: false,
+        })
+        .on('end', done);
+    });
+    it('did not create files', function () {
+      assert.noFile([
+        '.editorconfig',
+        '.gitignore',
+        'pom.xml',
+        'debug.sh',
+        'run.sh',
+        'run.bat',
+        'run-without-springloaded.sh',
+        'scripts/debug.sh',
+        'scripts/env.sh',
+        'scripts/explode-alf-sources.sh',
+        'scripts/find-exploded.sh',
+        'scripts/grep-exploded.sh',
+        'scripts/package-to-exploded.sh',
+        'scripts/run.sh',
+        'scripts/run.bat',
+        'scripts/run-without-springloaded.sh',
+        'amps/README.md',
+        'amps_share/README.md',
+        constants.FOLDER_CUSTOMIZATIONS + '/README.md',
+        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
+        constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
+        constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
+        constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
+        'repo/pom.xml',
+        'runner/pom.xml',
+        'share/pom.xml',
+        'solr-config/pom.xml',
+        'TODO.md',
+      ]);
+    });
+    it('.yo-rc.json does not contain generator-alfresco', function () {
+      assert.noFileContent(
+        '.yo-rc.json',
+        /generator-alfresco/
+      );
     });
   });
 });

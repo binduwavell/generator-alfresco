@@ -24,7 +24,8 @@ module.exports = BaseGenerator.extend({
       desc = 'Adding ' + subgeneratorName + ' to ' + chalk.green(this.config.get(constants.PROP_PROJECT_ARTIFACT_ID)) + ' project!';
     }
     // ==== GUARD AGAINST SUB-GENERATOR BEING RUN STAND-ALONE ====
-    try { var configJSON = this.fs.readJSON('.yo-rc.json') } catch (err) { /* ignore */ }
+    var configJSON;
+    try { configJSON = this.fs.readJSON('.yo-rc.json') } catch (err) { /* ignore */ }
     if (!configJSON || !configJSON['generator-alfresco']) {
       this.out.error('The ' + chalk.blue(subgeneratorName) + ' sub-generator must be run in a project created using ' + chalk.green('yo alfresco'));
       this.bail = true;
