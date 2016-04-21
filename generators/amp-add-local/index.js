@@ -206,7 +206,7 @@ function getGAVFromAMP (path) {
  */
 function getObjectValueFactory (obj, prop, key, def) {
   return function () {
-    if (_.isObject(obj) && obj.hasOwnProperty(prop) && obj[prop].hasOwnProperty(key)) {
+    if (_.isObject(obj) && obj.hasOwnProperty(prop) && _.isObject(obj[prop]) && obj[prop].hasOwnProperty(key)) {
       debug('found obj[%s][%s] = %s', prop, key, obj[prop][key]);
       return obj[prop][key];
     }

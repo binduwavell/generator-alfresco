@@ -168,7 +168,7 @@ module.exports = {
    *         the last exact match will be returned.
    *
    * @param {(string|boolean|undefined|null)} input
-   * @param {string[]} list
+   * @param {Object.<string, string>} map
    * @returns {(string|undefined)}
    */
   chooseOneMapStartsWithFilter: function (input, map) {
