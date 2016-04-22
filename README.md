@@ -50,35 +50,162 @@ yo alfresco
 ```
 
 This will ask you a number of questions and then generate a project based on your
-answers.
+answers. `yo alfresco` will make sure you have an appropriate version of Java and
+Maven available for the version of the SDK you select. It will then use the 
+all-in-one Alfresco SDK archetype from the selected version of the SDK to create
+a project. Finally it will add (and potentially remove) some additional files and
+folders to the project.
+
+Here is an example of what the top level folder structure might look like:
+
+```
+TODO.md
+amps
+amps_share
+customizations
+debug.sh
+modules
+pom.xml
+repo
+run-without-springloaded.sh
+run.bat
+run.sh
+runner
+scripts
+share
+solr-config
+source_templates
+```
+
+Notice that we provide a `run-without-springloaded.sh` in addition to the default
+`run.sh`. The generator automatically makes these executable. There are some other
+helpful scripts in the `scripts` folder.
+
+As part of the generation process, we actually copy the `repo-amp` and `share-amp` 
+folders to `source_templates`. That way we have SDK specific instances of these
+folder structures that we can use later on when you want to add **Source AMPS**
+to your project.
+
+One of the questions the we ask is `? Should we remove the default source amps? (Y/n)`.
+Notice that the default here is `Y` and in the project listing above there are no
+folders for `repo-amp` or `share-amp`. Of course if you answer `N` to this question
+then the default AMPs will be left in place.
+
+If you accept the default behavior of removing the default source amps, we 
+remove those top level folders. We also, remove them from the top level `pom.xml`.
+We remove the references from `repo/pom.xml`, `share/pom.xml` and even from the
+Tomcat context files in the `runner` module.
 
 ```bash
 yo alfresco --help
+yo alfresco:action --help
+yo alfresco:amp --help
+yo alfresco:behavior --help
+yo alfresco:model --help
+yo alfresco:webscript --help
 ```
 
-Will print out information about cli arguments and options. It will also list the
-sub-generators we have completed.
+Will print out information about cli arguments and options.
 
 ```bash
 yo alfresco:amp
 ```
 
-This will ask a few questions and then create additional repo/share source AMPs
-and plug them into your project files (including maven and  spring/tomcat contexts.)
+This starts by asking if you would like to add source, local or remote AMPs. 
 
-We still need to add the ability to integrate pre-packaged AMPs from the /amps
-and /amps_share folders and from remote maven repositories to this sub-generator.
+When you select **Source AMP**, we'll ask a few questions and then create additional 
+repo/share source AMPs under the `customizations` folder. These are created by copying
+the `repo-amp` and `share-amp` folders from `source_templates`. Of course, we update
+paths and names appropriately. We also automatically plug them into your project files 
+(including maven and spring/tomcat contexts.) 
+
+You can use either of the following as a shortcut for adding source AMPs:
+
+```bash
+yo alfresco:amp -A source
+yo alfresco:amp-add-source
+```
+
+If you have AMP files you'd like to incorporate into your project, you can place
+repository AMPs into the `amps` root folder (just like you do when you use the
+Alfresco installer.) Similarly you can place your pre-packaged Share AMP files
+into the `amps_share` root folder. In order to get these plugged into the project
+you use the **Local AMP** option with the `yo alfresco:amp` sub-generator. Here
+are some example commands you could use:
+
+```bash
+yo alfresco:amp
+yo alfresco:amp -A local
+yo alfresco:amp-add-local
+```
+
+When you use these commands, we'll go through the `amps` and `amps_share` folders
+and find any AMP files that are not already linked into your project structure.
+You select the AMP files one at a time, you'll be asked to provide a Maven
+groupId, artifactId and version for the AMP. If this information is included 
+inside the AMP file, we'll try to provide you with sane default values. At the 
+end of the day, it's not super important what values you provide. Of course 
+you'll probably be happy if you choose meaningful values when you come back to
+the project in a month or a year.
+
+The final option for installing AMPs into your project is to select **Remote AMP***.
+Here are some sample comman lines you can use:
+
+```bash
+yo alfresco:amp
+yo alfresco:amp -A remote
+yo alfresco:amp-add-remote
+```
+
+This option allows you to specify if the AMP should be installed into the repository
+or Share. It also asks you to provide Maven groupId, artifactId and version for an AMP 
+file that is in a Maven repository that your build has access to. For example, the 
+Uploader Plus plugin is available in Maven Central, so you can provide information for
+one of these AMPs and the build will automatically download and install the AMP the next
+time you run your project.
+
+```bash
+yo alfresco:action
+```
+
+You'll be prompted for some basic information including which repo **Source AMP** you 
+want to create the action in. We'll create a basic repository action for you. This 
+includes a Java class, a properties file that causes the action and arguments to have 
+pretty labels and a context file with bean definitions for the Java class and the 
+resource bundle for loading the properties file.
+
+```bash
+yo alfresco:behavior
+```
+
+You'll be prompted for some basic information including which repo **Source AMP** you 
+want to create the behavior class in. We'll create a class that registers a behavior 
+for the `onUpdateProperties` policy on all `cm:content` nodes. We'll also generate a
+context file that registers a bean for this class and passes in the minimal items 
+you'll need to create behavior code.
+
+```bash
+yo alfresco:model
+```
+
+You'll be prompted for some basic information including which repo **Source AMP** you 
+want to create the model in. We'll create a very bare `model.xml` file for you, this
+file has a bunch of commented out examples in it, so you should be able to create a
+valid model pretty easily. Of course we also provide a context file that registers
+the model.
+
 
 ```bash
 yo alfresco:webscript
 ```
 
 This will ask you a bunch of questions and then produce appropriate repo/share files
-for your WebScript. If you choose multiple methods you can in fact scaffold multiple
+for your WebScript. If you choose multiple HTTP methods you can in fact scaffold multiple
 webscripts with one pass through this sub-generator.
 
-We are planning to add many more sub-generators for things like: content models,
-repo actions, behaviors, jobs, workflows, etc.
+We are planning to add many more sub-generators for things like: jobs, workflows, JavaScript
+root objects, metadata extractors, content transformers, etc. We also hope to add 
+sub-generators for doing a bunch of common tasks with Share customization.
 
 ### Try The Project / Contribute
 
@@ -103,8 +230,7 @@ push updates back to GitHub.
 
 Another super low effort option to getting started quickly is to open a clone of this project 
 in Codenvy (a cloud IDE), by clicking this badge: 
-[![create project on Codenvy][codenvy-image]](
-http://beta.codenvy.com/f?id=zia672875qiibfzv) (this link is currently to the new awesome beta.codenvy.com.)
+[![create project on Codenvy][codenvy-image]][codenvy-url] (this link is currently to the new awesome beta.codenvy.com.)
 
 Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
 allowing you to run the generator in an embedded docker container called a runner. 
@@ -138,4 +264,4 @@ Apache 2.0
 [gitter-image]: https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg
 [gitter-url]: https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [codenvy-image]: http://beta.codenvy.com/factory/resources/codenvy-contribute.svg
-[codenvy-url]: https://codenvy.com/factory?id=zmv24wynr689af6f
+[codenvy-url]: http://beta.codenvy.com/f?id=zia672875qiibfzv
