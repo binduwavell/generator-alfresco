@@ -1,4 +1,4 @@
-# generator-alfresco [![Build Status][travis-image]][travis-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Dev Dependency Status][bithound-dev-image]][bithound-dev-url] [![Coverage Status][codecov-image]][codecov-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
+# generator-alfresco [![Build Status][travis-image]][travis-url] [![Coverage Status][codecov-image]][codecov-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Dev Dependency Status][bithound-dev-image]][bithound-dev-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
 
 ## Getting Started
 
