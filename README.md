@@ -1,4 +1,4 @@
-# generator-alfresco [![Build Status][travis-image]][travis-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
+# generator-alfresco [![Build Status][travis-image]][travis-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Coverage Status][codecov-image]][codecov-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
 
 ## Getting Started
 
@@ -259,6 +259,8 @@ Apache 2.0
 [bithound-dep-url]: https://www.bithound.io/github/binduwavell/generator-alfresco/master/dependencies/npm
 [daviddm-image]: https://david-dm.org/binduwavell/generator-alfresco.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/binduwavell/generator-alfresco
+[codecov-image]: https://codecov.io/github/binduwavell/generator-alfresco/coverage.svg?branch=master
+[codecov-url]: https://codecov.io/github/binduwavell/generator-alfresco?branch=master
 [coveralls-image]: https://coveralls.io/repos/binduwavell/generator-alfresco/badge.svg?branch=master&service=github
 [coveralls-url]: https://coveralls.io/github/binduwavell/generator-alfresco?branch=master
 [gitter-image]: https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg

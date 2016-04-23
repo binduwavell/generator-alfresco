@@ -6,7 +6,8 @@ var nodeVersion = '' + process.argv[2];
 var cmd;
 
 if (nodeVersion === '5.1') {
-  cmd = 'npm run cover:color';
+//  cmd = 'npm run coveralls:color';
+  cmd = 'npm run codecov:color';
 } else {
   cmd = 'npm run test:color';
 }
