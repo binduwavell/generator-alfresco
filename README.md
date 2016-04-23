@@ -246,6 +246,10 @@ Here is a slightly dated video showing the process with the older version of Cod
 
 If you find a bug or something is confusing, you can review [existing](https://github.com/binduwavell/generator-alfresco/issues) or create a [new issue](https://github.com/binduwavell/generator-alfresco/issues/new). If you'd like to chat, you can reach out on our [Gitter](https://gitter.im/binduwavell/generator-alfresco) channel.
 
+## Hello Brussels
+
+We are looking forward to sharing our story and project at [BeeCon](http://beecon.buzz/).
+
 ## License
 
 Apache 2.0
