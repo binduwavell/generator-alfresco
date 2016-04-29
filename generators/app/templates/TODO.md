@@ -30,24 +30,12 @@ yo alfresco:amp-add-source --help
 ```
 
 - [ ] Would you like to have the JavaScript Console in your dev environment?
-      Clone https://github.com/share-extras/js-console and build it. Then,
-      copy javascript-console-repo-0.6.0.amp to the ./amps folder and 
-      javascript-console-share-0.6.0.amp to the ./amps\_share folder.
-      Then, you can use the following commands to install these *local* amps:
-      
-```bash
-yo alfresco:amp -A local -p amps/javascript-console-repo-0.6.0.amp -g org.sharextras -a javascript-console-repo -v 0.6.0
-yo alfresco:amp -A local -p amps_share/javascript-console-share-0.6.0.amp -g org.sharextras -a javascript-console-share -v 0.6.0
-```
-
-- [ ] If you have the JavaScript console AMPs deployed in a Maven repository
-      that your project has access to, you can use the following commands to 
-      install these *remote* amps (you may have to update the groupId, artifactId
-      and/or version depending on how these are deployed for you):
+      You can use the following commands to install these *remote* amps 
+      (you may have to update the version):
 
 ```bash
-yo alfresco:amp -A remote -w repo -g org.sharextras -a javascript-console-repo -v 0.6.0
-yo alfresco:amp -A remote -w share -g org.sharextras -a javascript-console-share -v 0.6.0
+yo alfresco:amp -A remote -w repo -g de.fmaul -a javascript-console-repo -v 0.6
+yo alfresco:amp -A remote -w share -g de.fmaul -a javascript-console-share -v 0.6
 ```
 
 - [ ] Would you like to be able to control content type type of uploads and 
