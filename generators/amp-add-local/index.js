@@ -137,7 +137,9 @@ module.exports = SubGenerator.extend({
  * @returns {Array<string>}
  */
 function findAmps (projectRootPath, folderName) {
-  return fs.readdirSync(path.join(projectRootPath, folderName))
+  var ampFolder = path.join(projectRootPath, folderName);
+  if (!fs.existsSync(ampFolder)) return [];
+  return fs.readdirSync(ampFolder)
     .filter(function (file) {
       debug('Evaluating if %s ends in .amp', file);
       return _.endsWith(_.toLower(file), '.amp');
