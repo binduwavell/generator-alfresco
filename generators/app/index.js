@@ -1,6 +1,7 @@
 'use strict';
 var yeoman = require('yeoman-generator');
 var _ = require('lodash');
+var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
@@ -93,9 +94,19 @@ module.exports = yeoman.Base.extend({
             this.bail = true;
           }
           if (this.bail) return false;
-          this.out.docs(
-            'For Alfresco 5.0 development we suggest using the 2.1.1 SDK, For Alfresco 5.1 development, use the 2.2.0 SDK.',
-            'http://docs.alfresco.com/community/concepts/alfresco-sdk-compatibility.html');
+
+          var compTable = new AsciiTable('Version Compatibility Table');
+          compTable.setHeading('SDK', 'Community Default', 'Enterprise Default', 'Notes');
+          _.keys(this.sdkVersions).forEach(function (ver) {
+            compTable.addRow(
+              ver,
+              this.sdkVersions[ver].providedCommunityVersion,
+              this.sdkVersions[ver].providedEnterpriseVersion,
+              this.sdkVersions[ver].supportedRepositoryVersions
+            );
+          }.bind(this));
+          this.out.docs(compTable.toString(), 'http://docs.alfresco.com/5.1/concepts/alfresco-sdk-compatibility.html');
+
           return true;
         }.bind(this),
         default: this._getConfigValue(constants.PROP_SDK_VERSION),
