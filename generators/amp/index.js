@@ -6,19 +6,23 @@ var SubGenerator = require('../subgenerator.js');
 var AMP_TYPE_SOURCE = 'Source AMP';
 var AMP_TYPE_LOCAL = 'Local AMP';
 var AMP_TYPE_REMOTE = 'Remote AMP';
-var AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE];
+var AMP_TYPE_COMMON = 'Common AMP';
+var AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE, AMP_TYPE_COMMON];
 var AMP_TYPE_CHOICES = {
   'source': AMP_TYPE_SOURCE,
   'local': AMP_TYPE_LOCAL,
   'remote': AMP_TYPE_REMOTE,
+  'common': AMP_TYPE_COMMON,
 };
 var NAMESPACE_SOURCE = 'alfresco:amp-add-source';
 var NAMESPACE_LOCAL = 'alfresco:amp-add-local';
 var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
+var NAMESPACE_COMMON = 'alfresco:amp-add-common';
 var NAMESPACE_CHOICES = [
   {label: AMP_TYPE_SOURCE, namespace: NAMESPACE_SOURCE},
   {label: AMP_TYPE_LOCAL, namespace: NAMESPACE_LOCAL},
   {label: AMP_TYPE_REMOTE, namespace: NAMESPACE_REMOTE},
+  {label: AMP_TYPE_COMMON, namespace: NAMESPACE_COMMON},
 ];
 
 module.exports = SubGenerator.extend({
@@ -30,16 +34,17 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: 'ampType',
-        option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP or Remote AMP', type: String, choices: AMP_TYPES } },
+        option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP, Remote AMP or Common AMP', type: String, choices: AMP_TYPES } },
         when: function (readonlyProps) {
           this.out.docs('This generator will create/install amps into your project files:');
           this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
           this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./amps or ./amps_share into this project');
           this.out.definition(AMP_TYPE_REMOTE, 'Installs an amp file from a reachable Maven repository into this project');
+          this.out.definition(AMP_TYPE_COMMON, 'Offers to install common amps such as JavaScript Console and Support Tools');
           return true;
         },
         choices: AMP_TYPES,
-        message: 'Do you want to add source AMPs, a pre packaged AMP from your amps/amp_share folder or an AMP from a maven repository?',
+        message: 'Do you want to add source AMPs, a pre packaged AMP from your amps/amp_share folder, an AMP from a maven repository or a common community provided AMP?',
         commonFilter: filters.chooseOneMapStartsWithFilterFactory(AMP_TYPE_CHOICES),
         valueRequired: true,
       },

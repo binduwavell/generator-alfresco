@@ -36,16 +36,20 @@ yo alfresco:amp-add-source --help
 ```bash
 yo alfresco:amp -A remote -w repo -g de.fmaul -a javascript-console-repo -v 0.6
 yo alfresco:amp -A remote -w share -g de.fmaul -a javascript-console-share -v 0.6
+
+# Alternatively you can use the following one-liner:
+      
+yo alfresco:amp -A common -p javascript
 ```
 
-- [ ] Would you like to be able to control content type type of uploads and 
-      capture metadata during upload? Try adding Uploader Plus to your 
-      project from Maven Central:
-
+- [ ] If you'd like to add Upload Plus and the community build of RM, 
+      which are both available from the Common AMP sub-generator, you 
+      can use this simple one-liner:
+      
 ```bash
-yo alfresco:amp -A remote -w repo -g com.softwareloop -a uploader-plus-repo -v 1.2
-yo alfresco:amp -A remote -w share -g com.softwareloop -a uploader-plus-surf -v 1.2
+yo alfresco:amp -A common -p uploader,records
 ```
+
 <%_ if (isEnterprise) { _%>
 
 For Enterprise Use
@@ -53,9 +57,13 @@ For Enterprise Use
 
 - [ ] Make sure that your ~/.m2/settings.xml file is configured to allow access to enterprise artifacts
 - [ ] Copy your license file to repo/src/main/resources/alfresco/extension/license
-- [ ] You may wish to install the Support Tools AMP from artifacts.alfresco.com:
+- [ ] You may wish to install the Support Tools AMP from artifacts.alfresco.com, here are a couple of options:
 
 ```bash
+yo alfresco:amp -A common -p support
+
+# or the following version that allows you to fully control how you bring the amp in
+
 yo alfresco:amp-add-remote -w repo -g org.alfresco.support -a support-tools -v 1.10
 ```
 
