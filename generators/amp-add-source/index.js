@@ -4,6 +4,7 @@ var debug = require('debug')('generator-alfresco:amp-source');
 var path = require('path');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
+var validators = require('../common/prompt-validators.js');
 var SubGenerator = require('../subgenerator.js');
 
 var WAR_TYPE_BOTH = 'Both repo & share';
@@ -43,14 +44,15 @@ module.exports = SubGenerator.extend({
         option: { name: 'project-artifact-id', config: { alias: 'a', desc: 'prefix for project artifactId', type: String } },
         when: function (readonlyProps) {
           this.out.docs([
-            'In order to have consistent artifact names, we will automatiaclly append',
-            '-repo, -share and/or -parent to your artifactId prefix where appropraite.',
+            'In order to have consistent artifact names, we will automatically append',
+            '-repo, -share and/or -parent to your artifactId prefix where appropriate.',
           ].join(' '));
           return true;
         },
         default: defArtifactIdPrefix,
         message: 'Project artifactId prefix?',
         commonFilter: filters.requiredTextFilter,
+        validate: validators.uniqueSourceAmpModuleValidatorFactory(this.moduleRegistry),
         valueRequired: true,
       },
       {

@@ -396,6 +396,20 @@ module.exports = {
     };
   },
 
+  /**
+   * Given some input text and a array of filters,
+   * we sequentially apply the filters to get the final value
+   *
+   * @param filterArray
+   * @returns function
+   */
+  sequentialFilterFactory: function (filterArray) {
+    return function (input) {
+      return filterArray.reduce(function (previousValue, filter) {
+        return filter.call(this, previousValue);
+      }.bind(this), input);
+    };
+  },
 };
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
