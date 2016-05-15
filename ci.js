@@ -5,7 +5,7 @@ require('shelljs/global');
 var nodeVersion = '' + process.argv[2];
 var cmd;
 
-if (nodeVersion === '5.1') {
+if (nodeVersion === 'v6') {
 //  cmd = 'npm run coveralls:color';
   cmd = 'npm run codecov:color';
 } else {

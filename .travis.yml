@@ -4,10 +4,11 @@ jdk:
   - oraclejdk8
 
 env:
-  - NODE_VERSION=0.10
-  - NODE_VERSION=0.12
-  - NODE_VERSION=4.2
-  - NODE_VERSION=5.1
+  - NODE_VERSION=v0.10
+  - NODE_VERSION=v0.12
+  - NODE_VERSION=v4
+  - NODE_VERSION=v5
+  - NODE_VERSION=v6
 
 install:
   - nvm install $NODE_VERSION
