@@ -11,8 +11,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     this.timeout(60000);
     this.osTempDir = path.join(os.tmpdir(), 'temp-test');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(this.osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -21,7 +21,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     }.bind(this));
 
     it('there is a .yo-rc.json in the current working directory', function () {
@@ -35,8 +35,9 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     it('the test-artifact folder is in the temp-test folder', function () {
       assert.equal(path.basename(path.resolve('..')), 'temp-test');
     });
-    it('we can abort project creation based on artifactId and folder name mismatch', function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    // TODO(vprince): pull the helpers.run() code into describe/before pattern used elsewhere
+    it('we can abort project creation based on artifactId and folder name mismatch', function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // we want our test to run inside the previously generated directory
@@ -48,13 +49,14 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           sdkVersion: '2.2.0',
           projectArtifactId: 'test-artifact-1',
         })
-        .on('end', function () {
+        .toPromise()
+        .then(function (dir) {
           assert.equal(fs.existsSync(path.join(this.osTempDir, 'test-artifact/test-artifact-1')), false);
-          done();
         }.bind(this));
     }.bind(this));
-    it('we can abort project creation based on artifactId update prompt', function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    // TODO(vprince): pull the helpers.run() code into describe/before pattern used elsewhere
+    it('we can abort project creation based on artifactId update prompt', function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // we want our test to run inside the previously generated directory
@@ -67,9 +69,9 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           projectArtifactId: 'test-artifact-1',
           abortProjectArtifactIdUpdate: true,
         })
-        .on('end', function () {
+        .toPromise()
+        .then(function (dir) {
           assert.equal(fs.existsSync(path.join(this.osTempDir, 'test-artifact/test-artifact-1')), false);
-          done();
         }.bind(this));
     }.bind(this));
   });
@@ -78,8 +80,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     this.timeout(60000);
     this.osTempDir = path.join(os.tmpdir(), 'demo');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(this.osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -88,7 +90,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     }.bind(this));
     it('there is a .json-config in the current working directory', function () {
       assert.file([
@@ -116,23 +118,24 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     this.timeout(60000);
     this.osTempDir = path.join(os.tmpdir(), 'temp-test');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(this.osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     }.bind(this));
     it('there is a .json-config in the current working directory', function () {
       assert.file([
         '.yo-rc.json',
       ]);
     });
-    it('re-running generator and updating artifactId in existing project', function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    // TODO(vprince): pull the helpers.run() code into describe/before pattern used elsewhere
+    it('re-running generator and updating artifactId in existing project', function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .withOptions({
           'skip-install': true,
           'force': true,
@@ -148,7 +151,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           projectArtifactId: 'test-artifact-1',
           abortProjectArtifactIdUpdate: false,
         })
-        .on('end', function () {
+        .toPromise()
+        .then(function (dir) {
           assert.equal(fs.existsSync(this.osTempDir), true);
           assert.equal(fs.existsSync(path.join(this.osTempDir, 'test-artifact-1')), false);
           assert.file([
@@ -158,7 +162,6 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
             'pom.xml',
             /<artifactId>test-artifact-1<\/artifactId>/
           );
-          done();
         }.bind(this));
     }.bind(this));
   });

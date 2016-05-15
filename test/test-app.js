@@ -12,11 +12,11 @@ describe('generator-alfresco:app', function () {
   describe('default prompts', function () {
     this.timeout(60000);
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
-        .on('end', done);
+        .toPromise();
     });
 
     it('creates files', function () {
@@ -53,23 +53,27 @@ describe('generator-alfresco:app', function () {
         'TODO.md',
       ]);
     });
+
     it('adds amps_source to modules in top pom', function () {
       assert.fileContent(
         'pom.xml',
         /<module>customizations<\/module>/
       );
     });
+
     it('debug.sh does not reference springloaded', function () {
       assert.noFileContent(
         'scripts/debug.sh',
         /springloaded/
       );
     });
+
     it('does not create enterprise specific files', function () {
       assert.noFile([
         'repo/src/main/resources/alfresco/extension/license/README.md',
       ]);
     });
+
     it('run.sh and debug.sh should not include -Penterprise flag', function () {
       assert.noFileContent([
         ['debug.sh', /-Penterprise/],
@@ -82,10 +86,12 @@ describe('generator-alfresco:app', function () {
         ['scripts/run-without-springloaded.sh', /-Penterprise/],
       ]);
     });
-    describe('generate model without modules', function () {
+
+    describe('when trying to generate model without any source modules', function () {
       var osTempDir = path.join(os.tmpdir(), 'temp-test');
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/model'))
+
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/model'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
             // we want our test to run inside the previously generated directory
@@ -98,9 +104,10 @@ describe('generator-alfresco:app', function () {
             'model-description': 'test desc',
             'model-author': 'test author',
             'model-version': '1.0',
+            'namespace-uri': 'http://www.test.com/model/content/1.0',
             'namespace-prefix': 'zz',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('model files should not be generated', function () {
@@ -114,22 +121,23 @@ describe('generator-alfresco:app', function () {
     });
   });
 
-  describe('generate project with source amps', function () {
+  describe('generate project with default source amps', function () {
     this.timeout(60000);
     var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
-        .inDir(path.join(os.tmpdir(), './temp-test'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
+        .inDir(osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
           removeDefaultSourceAmps: false,
         })
-        .on('end', done);
+        .toPromise();
     });
-    describe('generate second pair of modules', function () {
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+
+    describe('generate second pair of source modules', function () {
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
             // HACK: we want our test to run inside the previously generated
@@ -150,28 +158,31 @@ describe('generator-alfresco:app', function () {
             'repo-name': '',
             'repo-description': '',
           })
-          .on('end', done);
+          .toPromise();
       });
+
       it('amp files exist in project', function () {
         assert.file([
           path.join(osTempDir, 'customizations/both-customizations-repo-amp/pom.xml'),
           path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
         ]);
       });
+
       it('sample files exist in project', function () {
         assert.file([
           path.join(osTempDir, 'customizations/both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
           path.join(osTempDir, 'customizations/both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
         ]);
       });
-      describe('generate a valid model', function () {
-        before(function (done) {
-          helpers.run(path.join(__dirname, '../generators/model'))
+
+      describe('generate a model without specifying which source amp to target', function () {
+        before(function () {
+          return helpers.run(path.join(__dirname, '../generators/model'))
             // generator will create a temp directory and make sure it's empty
             .inTmpDir(function () {
-              // we want our test to run inside the previously generated directory
-              // and we don't want it to be empty, so this is a hack for that.
-              // process.chdir(path.join(this.osTempDir, 'temp-test'));
+              // HACK: we want our test to run inside the previously generated
+              // directory and we don't want it to be empty, so this is a hack
+              // for that.
               process.chdir(osTempDir);
             })
             .withOptions({
@@ -179,9 +190,10 @@ describe('generator-alfresco:app', function () {
               'model-description': 'test desc',
               'model-author': 'test author',
               'model-version': '1.0',
+              'namespace-uri': 'http://www.test.com/model/content/1.0',
               'namespace-prefix': 'zz',
             })
-            .on('end', done);
+            .toPromise();
         });
         it('model files should not be generated', function () {
           var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
@@ -207,10 +219,10 @@ describe('generator-alfresco:app', function () {
       });
     }
 
-    before(function (done) {
+    before(function () {
       process.chdir(osTempDir);
       fs.writeFile('.yo-rc.json', JSON.stringify({ 'generator-generator': {} }));
-      helpers.run(path.join(__dirname, '../generators/app'))
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inTmpDir(function () {
           // we want our test to run inside the previously generated directory
           // and we don't want it to be empty, so this is a hack for that.
@@ -220,7 +232,7 @@ describe('generator-alfresco:app', function () {
         .withPrompts({
           removeDefaultSourceAmps: false,
         })
-        .on('end', done);
+        .toPromise();
     });
     it('did not create files', function () {
       assert.noFile([

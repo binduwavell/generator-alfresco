@@ -67,9 +67,11 @@ module.exports = SubGenerator.extend({
       'and ask you if you want to update each file.',
       '\nType "h" when prompted to get details about your choices.'].join(' '));
 
-    this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
-    }.bind(this));
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 
   writing: function () {

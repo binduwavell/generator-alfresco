@@ -3,6 +3,7 @@ var yeoman = require('yeoman-generator');
 var _ = require('lodash');
 var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
+var debug = require('debug')('generator-alfresco:app');
 var fs = require('fs');
 var path = require('path');
 var rmdir = require('rmdir');
@@ -22,10 +23,12 @@ module.exports = yeoman.Base.extend({
     return undefined;
   },
   initializing: function () {
+    debug('initializing generator-alfresco');
     this.out = require('./../common/generator-output.js')(this);
 
     this.pkg = require('../../package.json');
     this.sdkVersions = require('./../common/sdk-versions.js');
+    debug('assigning default values');
     this.defaultConfig = {
       sdkVersion: '2.1.1',
       projectGroupId: 'org.alfresco',
@@ -38,14 +41,17 @@ module.exports = yeoman.Base.extend({
     };
     this.bail = false;
     try {
+      debug('grabbing current java version');
       this.javaVersion = versions.getJavaVersion();
       if (!this.javaVersion) {
         throw new Error('We are unable to find a java executable. A compatible version of java is required.');
       }
+      debug('grabbing current maven version');
       this.mavenVersion = versions.getMavenVersion();
       if (!this.mavenVersion) {
         throw new Error('We are unable to find a maven executable. A compatible version of maven is required.');
       }
+      debug('checking if we are running in an existing non-generator-alfresco project directory');
       var configJSON;
       try { configJSON = this.fs.readJSON('.yo-rc.json') } catch (err) { /* ignore */ }
       if (!_.isEmpty(configJSON) && !configJSON['generator-alfresco']) {
@@ -55,19 +61,21 @@ module.exports = yeoman.Base.extend({
       this.out.error(e.message);
       this.bail = true;
     }
+    this.answerOverrides = {};
   },
 
   prompting: function () {
     if (this.bail) return;
 
-    // Display banner/logo
+    debug('displaying banner/logo');
     this.out.banner();
 
+    debug('defining prompts');
     var prompts = [
       {
         type: 'confirm',
         name: constants.PROP_ABORT_EXISTING_PROJECT,
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
           // If we find the .yo-rc.json file, show the warning
           if (fs.existsSync(this.config.path)) {
@@ -89,8 +97,8 @@ module.exports = yeoman.Base.extend({
       {
         type: 'list',
         name: constants.PROP_SDK_VERSION,
-        when: function (props) {
-          if (props[constants.PROP_ABORT_EXISTING_PROJECT]) {
+        when: function (readonlyProps) {
+          if (readonlyProps[constants.PROP_ABORT_EXISTING_PROJECT]) {
             this.bail = true;
           }
           if (this.bail) return false;
@@ -117,19 +125,19 @@ module.exports = yeoman.Base.extend({
         type: 'input',
         name: constants.PROP_ARCHETYPE_VERSION,
         message: 'Archetype version?',
-        default: function (props) {
+        default: function (readonlyProps) {
           var savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
           if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
         }.bind(this),
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
-          this.sdk = this.sdkVersions[props.sdkVersion];
+          this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
           if (this.sdk.promptForArchetypeVersion) {
             return true;
           } else {
             // if we don't prompt then save the version anyway
-            props[constants.PROP_ARCHETYPE_VERSION] = this.sdk.archetypeVersion;
+            this.answerOverrides[constants.PROP_ARCHETYPE_VERSION] = this.sdk.archetypeVersion;
             return false;
           }
         }.bind(this),
@@ -139,7 +147,7 @@ module.exports = yeoman.Base.extend({
         name: constants.PROP_PROJECT_GROUP_ID,
         message: 'Project groupId?',
         default: this._getConfigValue(constants.PROP_PROJECT_GROUP_ID),
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
           return true;
         }.bind(this),
@@ -147,7 +155,7 @@ module.exports = yeoman.Base.extend({
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID,
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
           return true;
         }.bind(this),
@@ -158,9 +166,9 @@ module.exports = yeoman.Base.extend({
         // When run inside a existing project
         type: 'confirm',
         name: constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE,
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
-          if (fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+          if (fs.existsSync(this.config.path) && !_.isEqual(readonlyProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
             return true;
           }
           return false;
@@ -172,14 +180,14 @@ module.exports = yeoman.Base.extend({
         // When run inside a non-existing project
         type: 'confirm',
         name: constants.PROP_CREATE_SUB_FOLDER,
-        when: function (props) {
-          if (props[constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE]) {
+        when: function (readonlyProps) {
+          if (readonlyProps[constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE]) {
             this.bail = true;
           }
           if (this.bail) return false;
-          if (!fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+          if (!fs.existsSync(this.config.path) && !_.isEqual(readonlyProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
             this.out.warn('The artifactId must match the name of the artifact folder. As such, we are going to create a sub-folder in the existing folder named: "'
-              + props[constants.PROP_PROJECT_ARTIFACT_ID] + '".');
+              + readonlyProps[constants.PROP_PROJECT_ARTIFACT_ID] + '".');
             return true;
           }
           return false;
@@ -190,8 +198,8 @@ module.exports = yeoman.Base.extend({
       {
         type: 'input',
         name: constants.PROP_PROJECT_VERSION,
-        when: function (props) {
-          if (!_.isNil(props[constants.PROP_CREATE_SUB_FOLDER]) && !props[constants.PROP_CREATE_SUB_FOLDER]) {
+        when: function (readonlyProps) {
+          if (!_.isNil(readonlyProps[constants.PROP_CREATE_SUB_FOLDER]) && !readonlyProps[constants.PROP_CREATE_SUB_FOLDER]) {
             this.bail = true;
           }
           if (this.bail) return false;
@@ -204,12 +212,12 @@ module.exports = yeoman.Base.extend({
         type: 'input',
         name: constants.PROP_PROJECT_PACKAGE,
         message: 'Project package?',
-        default: function (props) {
-          return props.projectGroupId;
+        default: function (readonlyProps) {
+          return readonlyProps.projectGroupId;
         },
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
-          this.sdk = this.sdkVersions[props.sdkVersion];
+          this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
           return this.sdk.promptForProjectPackage;
         }.bind(this),
       },
@@ -219,7 +227,7 @@ module.exports = yeoman.Base.extend({
         message: 'Would you like to use Community or Enterprise?',
         default: this._getConfigValue(constants.PROP_COMMUNITY_OR_ENTERPRISE),
         choices: ['Community', 'Enterprise'],
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
           return true;
         }.bind(this),
@@ -229,11 +237,12 @@ module.exports = yeoman.Base.extend({
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
         message: 'Should we remove the default source amps?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
-          this.sdk = this.sdkVersions[props.sdkVersion];
-          props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS] = (true && this.sdk.removeDefaultModules);
-          return props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS];
+          this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
+          this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]
+            = (this.sdk.removeDefaultModules !== undefined);
+          return this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS];
         }.bind(this),
       },
       {
@@ -241,37 +250,40 @@ module.exports = yeoman.Base.extend({
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
         message: 'Should we remove samples from the default source amps?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
-        when: function (props) {
+        when: function (readonlyProps) {
           if (this.bail) return false;
-          if (props[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]) {
-            props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = false;
+          if (readonlyProps[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]) {
+            this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = false;
           } else {
-            this.sdk = this.sdkVersions[props.sdkVersion];
-            props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES]
-              = (true && (this.sdk.removeRepoSamples || this.sdk.removeShareSamples));
+            this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
+            this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES]
+              = ((this.sdk.removeRepoSamples !== undefined) || (this.sdk.removeShareSamples !== undefined));
           }
-          return props[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES];
+          return this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES];
         }.bind(this),
       },
     ];
 
-    var donePrompting = this.async();
-    this.prompt(prompts, function (props) {
+    debug('initiating prompting and returning promise for inquierer completion');
+    return this.prompt(prompts).then(function (props) {
+      var combinedProps = {};
+      _.assign(combinedProps, this.answerOverrides);
+      _.assign(combinedProps, props);
       // The below 2 if conditions are here because the prompts used in testing
       // are not injected into the prompts
-      if (!_.isNil(props[constants.PROP_ABORT_EXISTING_PROJECT]) && props[constants.PROP_ABORT_EXISTING_PROJECT]) {
+      if (!_.isNil(combinedProps[constants.PROP_ABORT_EXISTING_PROJECT]) && combinedProps[constants.PROP_ABORT_EXISTING_PROJECT]) {
         this.bail = true;
       }
-      if (!_.isNil(props[constants.PROP_CREATE_SUB_FOLDER]) && !props[constants.PROP_CREATE_SUB_FOLDER]) {
+      if (!_.isNil(combinedProps[constants.PROP_CREATE_SUB_FOLDER]) && !combinedProps[constants.PROP_CREATE_SUB_FOLDER]) {
         this.bail = true;
       }
       if (!this.bail) {
-        props.generatorVersion = this.pkg.version;
+        combinedProps.generatorVersion = this.pkg.version;
         if (!this.config.get(constants.PROP_ORIGINAL_GENERATOR_VERSION)) {
-          props[constants.PROP_ORIGINAL_GENERATOR_VERSION] = this.pkg.version;
+          combinedProps[constants.PROP_ORIGINAL_GENERATOR_VERSION] = this.pkg.version;
         }
-        if (!fs.existsSync(this.config.path) && !_.isEqual(props[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
-          var projectPath = path.join(process.cwd(), props[constants.PROP_PROJECT_ARTIFACT_ID]);
+        if (!fs.existsSync(this.config.path) && !_.isEqual(combinedProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
+          var projectPath = path.join(process.cwd(), combinedProps[constants.PROP_PROJECT_ARTIFACT_ID]);
           if (!_.isNil(projectPath) && !_.isEqual(process.cwd(), projectPath)) {
             if (!fs.existsSync(projectPath)) {
               fs.mkdirSync(projectPath);
@@ -280,7 +292,7 @@ module.exports = yeoman.Base.extend({
             this.destinationRoot(projectPath);
           }
         }
-        this.sdk = this.sdkVersions[props.sdkVersion];
+        this.sdk = this.sdkVersions[combinedProps.sdkVersion || this.answerOverrides.sdkVersion];
         this._saveProps([
           constants.PROP_ORIGINAL_GENERATOR_VERSION,
           constants.PROP_GENERATOR_VERSION,
@@ -293,11 +305,10 @@ module.exports = yeoman.Base.extend({
           constants.PROP_COMMUNITY_OR_ENTERPRISE,
           constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
           constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
-        ], props);
+        ], combinedProps);
         // can only setup module registry/manager once we have other variables setup
         this.moduleManager = require('./../common/alfresco-module-manager.js')(this);
       }
-      donePrompting();
     }.bind(this));
   },
 
@@ -317,6 +328,7 @@ module.exports = yeoman.Base.extend({
   configuring: {
     saveConfig: function () {
       if (this.bail) return;
+      debug('saving config');
       this.config.save();
     },
   },
@@ -325,12 +337,14 @@ module.exports = yeoman.Base.extend({
     checkVersions: function () {
       if (this.bail) return;
       try {
+        debug('checking java version for sdk compatibility');
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
           throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' '
             + 'for the SDK you have selected (' + this.archetypeVersion + '). '
             + 'Either set JAVA_HOME to point to a valid version of java or install one.');
         }
+        debug('checking maven version for sdk compatibility');
         if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
           throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' '

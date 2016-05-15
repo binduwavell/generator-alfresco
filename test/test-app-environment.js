@@ -10,26 +10,25 @@ describe('generator-alfresco:app-environment', function () {
   describe('detects invalid JAVA_HOME quickly', function () {
     this.timeout(4000);
 
-    before(function (done) {
+    before(function () {
       this.bail = false;
       if (process.env.JAVA_HOME) {
         var javaHome = process.env.JAVA_HOME;
         process.env.JAVA_HOME = 'asdfASDF';
-        helpers.run(path.join(__dirname, '../generators/app'))
+        return helpers.run(path.join(__dirname, '../generators/app'))
           .inDir(path.join(os.tmpdir(), './temp-test'))
           .withOptions({ 'skip-install': false })
           .withPrompts({
             removeDefaultSourceAmps: false,
             removeDefaultSourceSamples: false,
           })
-          .on('end', function () {
+          .toPromise()
+          .then(function (dir) {
             process.env.JAVA_HOME = javaHome;
-            done();
           });
       } else {
         console.log('WARNING: Skipping tests because JAVA_HOME is not set');
         this.bail = true;
-        done();
       }
     });
 
@@ -76,23 +75,23 @@ describe('generator-alfresco:app-environment', function () {
   describe('detects invalid M2_HOME quickly', function () {
     this.timeout(4000);
 
-    before(function (done) {
+    before(function () {
       var m2Home = process.env.M2_HOME;
       process.env.M2_HOME = 'asdfASDF';
-      helpers.run(path.join(__dirname, '../generators/app'))
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': false })
         .withPrompts({
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', function () {
+        .toPromise()
+        .then(function (dir) {
           if (m2Home) {
             process.env.M2_HOME = m2Home;
           } else {
             delete process.env.M2_HOME;
           }
-          done();
         });
     });
 

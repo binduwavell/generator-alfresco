@@ -10,8 +10,8 @@ describe('generator-alfresco:app-2-1-0', function () {
   describe('default prompts with SDK 2.1.0', function () {
     this.timeout(60000);
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -19,7 +19,7 @@ describe('generator-alfresco:app-2-1-0', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('creates files', function () {

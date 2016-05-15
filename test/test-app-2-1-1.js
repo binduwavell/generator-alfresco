@@ -9,8 +9,8 @@ describe('generator-alfresco:app-2-1-1', function () {
   describe('provide non-standard project GAV with SDK 2.1.1', function () {
     this.timeout(60000);
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
@@ -24,7 +24,7 @@ describe('generator-alfresco:app-2-1-1', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: true,
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('removes package based demo files', function () {

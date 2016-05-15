@@ -1,6 +1,7 @@
 'use strict';
 /* eslint-env node, mocha */
 var assert = require('yeoman-assert');
+var debug = require('debug')('generator-alfresco-test:action');
 var helpers = require('yeoman-test');
 var os = require('os');
 var path = require('path');
@@ -10,8 +11,9 @@ describe('generator-alfresco:action', function () {
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('with simple 2.1.1 project', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      debug('Attempting to scaffold a project to perform tests inside.');
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(osTempDir)
         .withOptions({'skip-install': true})
         .withPrompts({
@@ -20,7 +22,7 @@ describe('generator-alfresco:action', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     });
 
     describe('when creating action with two word name', function () {
@@ -28,20 +30,20 @@ describe('generator-alfresco:action', function () {
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-two-words-context.xml');
       var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-two-words-action.properties');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/action'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/action'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'name': 'two words',
             'package': 'org.alfresco.actions',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate action files', function () {
@@ -74,20 +76,20 @@ describe('generator-alfresco:action', function () {
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-camel-case-context.xml');
       var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-camel-case-action.properties');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/action'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/action'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'name': 'CamelCase',
             'package': 'org.alfresco.actions',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate action files', function () {
@@ -120,20 +122,20 @@ describe('generator-alfresco:action', function () {
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-test-context.xml');
       var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-test-action.properties');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/action'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/action'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'name': 'test',
             'package': 'org.alfresco',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate action files', function () {
@@ -166,20 +168,20 @@ describe('generator-alfresco:action', function () {
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-prompts-context.xml');
       var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-prompts-action.properties');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/action'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/action'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withPrompts({
             'name': 'prompts',
             'package': 'org.alfresco.actions',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate action files', function () {
@@ -211,15 +213,15 @@ describe('generator-alfresco:action', function () {
   describe('when creating actions when there is no project', function () {
     var noProjectTempDir = path.join(os.tmpdir(), 'no-project');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/action'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/action'))
         .inDir(noProjectTempDir)
         // generator will create a temp directory and make sure it's empty
         .withOptions({
           'name': 'no-project',
           'package': 'org.alfresco.actions',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('does not create action files', function () {

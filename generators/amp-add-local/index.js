@@ -36,8 +36,9 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'groupId',
         option: { name: 'group-id', config: { alias: 'g', desc: 'amp groupId', type: String } },
-        when: function (props) {
-          this.gav = getGAVFromAMP(this.destinationPath(props.path));
+        when: function (readonlyProps) {
+          var p = (readonlyProps.path || this.answerOverrides.path);
+          this.gav = getGAVFromAMP(this.destinationPath(p));
           return true;
         },
         default: getObjectValueFactory(this, 'gav', 'groupId'),
@@ -88,7 +89,7 @@ module.exports = SubGenerator.extend({
       'and ask you if you want to update each file.',
       '\nType "h" when prompted to get details about your choices.'].join(' '));
 
-    this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
       this.props.warType;
       if (_.startsWith(this.props.path, 'amps/')) {
@@ -98,7 +99,9 @@ module.exports = SubGenerator.extend({
         this.props.warType = 'share';
       }
       if (this.props.warType === undefined) this.bail = true;
-    }.bind(this));
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 
   writing: function () {

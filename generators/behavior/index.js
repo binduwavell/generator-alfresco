@@ -32,7 +32,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs('The java package that your behavior class must be placed into.');
           return true;
         },
@@ -50,12 +50,12 @@ module.exports = SourceSelectingSubGenerator.extend({
 
   prompting: function () {
     debug('prompting');
-    this.subgeneratorPrompt(this.prompts, function (props) {
+    return this.subgeneratorPrompt(this.prompts, function (props) {
       debug('prompting done function');
       this.props = props;
 
       // figure stuff out about our environment
-      var targetModule = props.targetModule.module;
+      var targetModule = this.targetModule.module;
       var artifactId = targetModule.artifactId;
       var moduleRoot = this.destinationPath(targetModule.path);
       var genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
@@ -85,8 +85,9 @@ module.exports = SourceSelectingSubGenerator.extend({
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
 
       debug('prompting done function finished');
-    }.bind(this));
-    debug('prompting finished');
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 
   /*

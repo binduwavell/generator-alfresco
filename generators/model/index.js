@@ -1,7 +1,6 @@
 'use strict';
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:model');
-var _ = require('lodash');
 var path = require('path');
 var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
@@ -19,7 +18,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'modelName',
         option: { name: 'model-name', config: { alias: 'n', desc: 'Model Name', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model name identifies the model.',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
@@ -33,7 +32,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'modelDescription',
         option: { name: 'model-description', config: { alias: 'd', desc: 'Model Description', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model description describes the model.',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
@@ -47,7 +46,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'modelAuthor',
         option: { name: 'model-author', config: { alias: 'a', desc: 'Model Author', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model author is the creator of the model.',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
@@ -61,7 +60,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'modelVersion',
         option: { name: 'model-version', config: { alias: 'v', desc: 'Model Version', type: String } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model version is the version of the model. It should be of format 1.0',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
@@ -76,14 +75,16 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'namespaceUri',
         option: { name: 'namespace-uri', config: { alias: 'u', desc: 'Namespace URI', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model uri is needed for the model. It should be a url path',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
           return true;
         },
-        default: function (props) {
-          this.defaultUri = 'http://www.' + props.modelName + '.com/model/content/' + props.modelVersion;
+        default: function (readonlyProps) {
+          var name = (readonlyProps.modelName || this.answerOverrides.modelName);
+          var version = (readonlyProps.modelVersion || this.answerOverrides.modelVersion);
+          this.defaultUri = 'http://www.' + name + '.com/model/content/' + version;
           return this.defaultUri;
         }.bind(this),
         message: 'What ' + chalk.yellow('model uri') + ' should we use?',
@@ -95,7 +96,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'namespacePrefix',
         option: { name: 'namespace-prefix', config: { alias: 'p', desc: 'Namespace Prefix', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs(
             'The model prefix is needed for the model.',
             'https://docs.alfresco.com/5.0/tasks/dev-extensions-content-models-tutorials-deploy-model.html');
@@ -113,17 +114,14 @@ module.exports = SourceSelectingSubGenerator.extend({
   },
 
   prompting: function () {
-    debug('prompting');
-    this.subgeneratorPrompt(this.prompts, function (props) {
-      debug('prompting done function');
+    debug('model prompting');
+    return this.subgeneratorPrompt(this.prompts, function (props) {
+      debug('starting model prompting done function');
       this.props = props;
       var modelFileName = props.modelName + 'Model.xml';
       var contextFileName = props.modelName + '-model-context.xml';
-      if (_.isEmpty(props.targetModule)) {
-        this.bail = true;
-        return;
-      }
-      var targetModule = props.targetModule.module;
+
+      var targetModule = this.targetModule.module;
       var modulePath = this.destinationPath(targetModule.path);
       var contextGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
       var modelGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/model/generated';
@@ -131,13 +129,16 @@ module.exports = SourceSelectingSubGenerator.extend({
       var templateContextPath = this.templatePath('custom-model-context.xml');
       var contextGenPath = path.join(modulePath, contextGenRoot, contextFileName);
       this.out.info('Generating context file in: ' + contextGenPath);
+      debug('from %s to %s with context %j', templateContextPath, contextGenPath, props);
       this.fs.copyTpl(templateContextPath, contextGenPath, props);
       var modelGenPath = path.join(modulePath, modelGenRoot, modelFileName);
       this.out.info('Generating model file in: ' + modelGenPath);
+      debug('from %s to %s with context %j', templateModelPath, modelGenPath, props);
       this.fs.copyTpl(templateModelPath, modelGenPath, props);
-      debug('prompting done function finished');
-    }.bind(this));
-    debug('prompting finished');
+      debug('completed model prompting done function');
+    }).then(function () {
+      debug('model prompting finished');
+    });
   },
 
   /*
