@@ -1,10 +1,12 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
+var debug = require('debug')('generator-alfresco:subgenerator');
 var path = require('path');
 var yosay = require('yosay');
 var constants = require('./common/constants.js');
 var BaseGenerator = require('./base-generator.js');
+var Promise = require('pinkie-promise');
 
 /**
  * Makes sure the code is run in a project rather than being
@@ -20,6 +22,7 @@ module.exports = BaseGenerator.extend({
   subgeneratorPrompt: function (prompts, desc, donePromptingFunc) {
     var subgeneratorName = path.basename(this.templatePath('..'));
     if (donePromptingFunc === undefined && _.isFunction(desc)) {
+      debug('promoting second arg to donePromptingFunc and creating default description');
       donePromptingFunc = desc;
       desc = 'Adding ' + subgeneratorName + ' to ' + chalk.green(this.config.get(constants.PROP_PROJECT_ARTIFACT_ID)) + ' project!';
     }
@@ -29,12 +32,17 @@ module.exports = BaseGenerator.extend({
     if (!configJSON || !configJSON['generator-alfresco']) {
       this.out.error('The ' + chalk.blue(subgeneratorName) + ' sub-generator must be run in a project created using ' + chalk.green('yo alfresco'));
       this.bail = true;
+      return Promise.resolve();
     } else {
       if (desc) {
         this.log(yosay(desc));
       }
 
-      BaseGenerator.prototype.subgeneratorPrompt.call(this, prompts, desc, donePromptingFunc);
+      debug('calling BaseGenerator.subgeneratorPrompt');
+      return BaseGenerator.prototype.subgeneratorPrompt.call(this, prompts, desc, donePromptingFunc)
+        .then(function () {
+          debug('completed BaseGenerator.subgeneratorPrompt');
+        });
     }
   },
 

@@ -13,8 +13,8 @@ describe('generator-alfresco:amp-add-source', function () {
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   // We need a test project setup before we begin
-  before(function (done) {
-    helpers.run(path.join(__dirname, '../generators/app'))
+  before(function () {
+    return helpers.run(path.join(__dirname, '../generators/app'))
       .inDir(osTempDir)
       .withOptions({ 'skip-install': true })
       .withPrompts({
@@ -22,12 +22,12 @@ describe('generator-alfresco:amp-add-source', function () {
         projectArtifactId: 'temp-test',
         removeDefaultSourceAmps: true,
       })
-      .on('end', done);
+      .toPromise();
   });
 
   describe('after creating both a repo and share amp', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -48,13 +48,13 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .on('end', done);
+        .toPromise();
     });
   });
 
   describe('after creating both a repo and share amp and removing samples', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -75,7 +75,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {
@@ -94,8 +94,8 @@ describe('generator-alfresco:amp-add-source', function () {
   });
 
   describe('after creating both a repo and share amp via prompts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -120,7 +120,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'shareName': 'share name',
           'shareDescription': 'share description',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {
@@ -132,8 +132,8 @@ describe('generator-alfresco:amp-add-source', function () {
   });
 
   describe('after creating repo amp', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -154,7 +154,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('repo amp files exist in project', function () {
@@ -167,8 +167,8 @@ describe('generator-alfresco:amp-add-source', function () {
   });
 
   describe('after creating share amp', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -189,7 +189,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('share amp files exist in project', function () {
@@ -202,8 +202,8 @@ describe('generator-alfresco:amp-add-source', function () {
   });
 
   describe('after creating both repo and share amps in parent folder', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -224,7 +224,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': 'repo name',
           'repo-description': 'repo description',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist under the parent project folder', function () {
@@ -237,8 +237,8 @@ describe('generator-alfresco:amp-add-source', function () {
   });
 
   describe('when creating amp with invalid war type', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -252,7 +252,7 @@ describe('generator-alfresco:amp-add-source', function () {
           'project-artifact-id': 'invalid-war-type',
           'remove-default-source-samples': true,
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('nothing is created', function () {

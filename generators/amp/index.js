@@ -31,7 +31,7 @@ module.exports = SubGenerator.extend({
         type: 'list',
         name: 'ampType',
         option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP or Remote AMP', type: String } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs('This generator will create/install amps into your project files:');
           this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
           this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./amps or ./amps_share into this project');
@@ -63,14 +63,16 @@ module.exports = SubGenerator.extend({
   },
 
   prompting: function () {
-    this.subgeneratorPrompt(this.prompts, function (props) {
+    return this.subgeneratorPrompt(this.prompts, function (props) {
       NAMESPACE_CHOICES.forEach(function (subgenDesc) {
         if (props.ampType === subgenDesc.label) {
           debug('delegating to %s', subgenDesc.namespace);
           this.composeWith(subgenDesc.namespace, { options: this.options });
         }
       }.bind(this));
-    }.bind(this));
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 });
 

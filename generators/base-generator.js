@@ -65,6 +65,7 @@ module.exports = yeoman.Base.extend({
     this.moduleRegistry = require('./common/alfresco-module-registry.js')(this);
     this.modules = this.moduleRegistry.getNamedModules();
     this.moduleManager = require('./common/alfresco-module-manager.js')(this);
+    this.answerOverrides = {};
   },
 
   setupArgumentsAndOptions: function (prompts) {
@@ -94,7 +95,8 @@ module.exports = yeoman.Base.extend({
           debug('Calling commonFilter(%s) for option: %s', this.options[prompt.option.name], prompt.option.name);
           var v = prompt.commonFilter.call(this, this.options[prompt.option.name]);
           if (undefined !== v) {
-            props[prompt.name] = v;
+            // props[prompt.name] = v;
+            this.answerOverrides[prompt.name] = v;
             this.out.info('Value for ' + prompt.option.name + ' set from command line: ' + chalk.reset.dim.cyan(v));
             return false;
           }
@@ -131,7 +133,7 @@ module.exports = yeoman.Base.extend({
                 msg = prompt.invalidMessage;
               }
             }
-            return (undefined !== prompt.commonFilter.call(this, input) ? true : msg);
+            return (prompt.commonFilter.call(this, input) !== undefined ? true : msg);
           }.bind(this);
         }
       }
@@ -139,15 +141,17 @@ module.exports = yeoman.Base.extend({
     }.bind(this));
 
     // ==== NOW DO THE ACTUAL PROMPTING ====
-    var donePrompting = this.async();
-    this.prompt(processedPrompts, function (props) {
+    return this.prompt(processedPrompts).then(function (props) {
       if (!this.bail) {
+        var combinedProps = {};
+        _.assign(combinedProps, this.answerOverrides);
+        _.assign(combinedProps, props);
         processedPrompts.forEach(function (promptItem) {
           var name = promptItem.name;
           var required = promptItem.valueRequired;
           if (name && required) {
-            debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), props[name]);
-            if (undefined === props[name]) {
+            debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), combinedProps[name]);
+            if (undefined === combinedProps[name]) {
               this.out.error('At least one required properties not set: ' + name);
               this.bail = true;
             }
@@ -156,9 +160,9 @@ module.exports = yeoman.Base.extend({
       }
       if (!this.bail && donePromptingFunc) {
         debug('calling user supplied done prompting function');
-        donePromptingFunc.call(this, props);
+        donePromptingFunc.call(this, combinedProps);
+        debug('completed user supplied done prompting function');
       }
-      donePrompting();
     }.bind(this));
   },
 

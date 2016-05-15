@@ -13,8 +13,8 @@ describe('generator-alfresco:webscript', function () {
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   // We need a test project setup before we begin
-  before(function (done) {
-    helpers.run(path.join(__dirname, '../generators/app'))
+  before(function () {
+    return helpers.run(path.join(__dirname, '../generators/app'))
       .inDir(osTempDir)
       .withOptions({ 'skip-install': true })
       .withPrompts({
@@ -22,12 +22,16 @@ describe('generator-alfresco:webscript', function () {
         projectArtifactId: 'temp-test',
         removeDefaultSourceAmps: false, // we need source modules to gen into
       })
-      .on('end', done);
+      .toPromise();
+  });
+
+  it('creates a project', function () {
+    assert.file(path.join(osTempDir, '.yo-rc.json'));
   });
 
   describe('after creating java webscripts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/webscript'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -66,7 +70,7 @@ describe('generator-alfresco:webscript', function () {
           'requests': '',
           'responses': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {
@@ -107,8 +111,8 @@ describe('generator-alfresco:webscript', function () {
   });
 
   describe('after creating javascript webscripts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/webscript'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -122,7 +126,6 @@ describe('generator-alfresco:webscript', function () {
           'id': 'javascript',
           'package': 'org.alfresco',
           'language': 'javascript',
-          'java-base-class': '',
           'methods': 'get,put,post,delete',
           'template-formats': 'html,json,xml,csv,atom,rss',
           'kind': '',
@@ -147,10 +150,11 @@ describe('generator-alfresco:webscript', function () {
           'requests': '',
           'responses': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {
+      console.log('PATH: ' + process.cwd());
       assert.file([
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/javascript.get.desc.xml'),
         path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/org/alfresco/javascript.get.js'),
@@ -212,8 +216,8 @@ describe('generator-alfresco:webscript', function () {
   });
 
   describe('after creating combined java and javascript webscripts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/webscript'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -252,7 +256,7 @@ describe('generator-alfresco:webscript', function () {
           'requests': '',
           'responses': '',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {
@@ -325,8 +329,8 @@ describe('generator-alfresco:webscript', function () {
   });
 
   describe('after creating combined java and javascript webscripts via prompts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/webscript'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/webscript'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -367,7 +371,7 @@ describe('generator-alfresco:webscript', function () {
           'requests': [],
           'responses': [],
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('amp files exist in project', function () {

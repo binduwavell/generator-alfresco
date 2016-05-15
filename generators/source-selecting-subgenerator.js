@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var chalk = require('chalk');
+var debug = require('debug')('generator-alfresco:source-selecting-subgenerator');
 var constants = require('./common/constants.js');
 var SubGenerator = require('./subgenerator.js');
 
@@ -49,13 +50,13 @@ module.exports = SubGenerator.extend({
           if (module) {
             this.out.info('Using source module from command line: ' + chalk.reset.dim.cyan(module.name));
             props[constants.PROP_WAR] = module.module.war;
-            props.targetModule = module;
+            this.targetModule = module;
             return false;
           }
           // Error out if there are no matching modules
           if (this.modules.length === 0) {
             this.out.error('No source modules available matching your criteria. Try creating a source module with ' + chalk.bold.green('"yo alfresco:amp"') + ' before using this sub-generator.');
-            props.targetModule = true;
+            this.targetModule = true;
             this.bail = true;
             return false;
           }
@@ -64,7 +65,7 @@ module.exports = SubGenerator.extend({
             module = this.modules[0];
             this.out.info('Using only available source module: ' + chalk.reset.dim.cyan(module.name));
             props[constants.PROP_WAR] = module.module.war;
-            props.targetModule = module;
+            this.targetModule = module;
             return false;
           }
           // If a target war is provided don't bother prompting for the war type
@@ -81,7 +82,7 @@ module.exports = SubGenerator.extend({
         type: 'list',
         name: 'targetModule',
         when: function (props) {
-          if (props.targetModule) return false;
+          if (this.targetModule) return false;
           // Reduce module options based on which war type was selected
           this.modules = this.modules
             .filter(function (mod) {
@@ -97,10 +98,10 @@ module.exports = SubGenerator.extend({
           if (this.modules.length === 1) {
             var module = this.modules[0];
             this.out.info('Using only available source module: ' + chalk.reset.dim.cyan(module.name));
-            props.targetModule = module;
+            this.targetModule = module;
             return false;
           }
-          return (!props.targetModule);
+          return (!this.targetModule);
         }.bind(this),
         choices: function (props) {
           return this.modules
@@ -125,9 +126,29 @@ module.exports = SubGenerator.extend({
 
   subgeneratorPrompt: function (prompts, desc, donePromptingFunc) {
     var p = _.concat(this.sourcePrompts, prompts);
-    SubGenerator.prototype.subgeneratorPrompt.call(this, p, desc, donePromptingFunc);
+    if (donePromptingFunc === undefined && _.isFunction(desc)) {
+      debug('promoting second arg to donePromptingFunc');
+      donePromptingFunc = desc;
+      desc = undefined;
+    }
+    return SubGenerator.prototype.subgeneratorPrompt.call(this, p, desc, function (props) {
+      if (this.targetModule === undefined && props.targetModule !== undefined) {
+        debug('capturing targetModule from prompt response');
+        this.targetModule = props.targetModule;
+      }
+      if (this.targetModule === undefined) {
+        this.out.error('A source module must be specified');
+        this.bail = true;
+      }
+      if (!this.bail && donePromptingFunc) {
+        debug('calling done prompting function for module %s', this.targetModule.name);
+        donePromptingFunc.call(this, props);
+        debug('completed done prompting function');
+      } else {
+        debug('not calling user provided done prompting function');
+      }
+    });
   },
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

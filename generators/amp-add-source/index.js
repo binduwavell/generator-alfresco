@@ -41,7 +41,7 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
         option: { name: 'project-artifact-id', config: { alias: 'a', desc: 'prefix for project artifactId', type: String } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs([
             'In order to have consistent artifact names, we will automatiaclly append',
             '-repo, -share and/or -parent to your artifactId prefix where appropraite.',
@@ -75,8 +75,8 @@ module.exports = SubGenerator.extend({
         type: 'confirm',
         name: 'createParent',
         option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean } },
-        when: function (props) {
-          var warType = props[constants.PROP_WAR];
+        when: function (readonlyProps) {
+          var warType = (readonlyProps[constants.PROP_WAR] || this.answerOverrides[constants.PROP_WAR]);
           var show = (WAR_TYPE_BOTH === warType);
           if (show) {
             this.out.docs([
@@ -97,8 +97,11 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'parentName',
         option: { name: 'parent-name', config: { alias: 'm', desc: 'Name for parent pom', type: String } },
-        when: function (props) {
-          return props.createParent;
+        when: function (readonlyProps) {
+          var create = (readonlyProps.createParent !== undefined
+            ? readonlyProps.createParent
+            : this.answerOverrides.createParent);
+          return create;
         },
         message: 'Name for parent pom?',
         commonFilter: filters.optionalTextFilter,
@@ -108,8 +111,11 @@ module.exports = SubGenerator.extend({
         type: 'input',
         name: 'parentDescription',
         option: { name: 'parent-description', config: { alias: 's', desc: 'Description for parent pom', type: String } },
-        when: function (props) {
-          return props.createParent;
+        when: function (readonlyProps) {
+          var create = (readonlyProps.createParent !== undefined
+            ? readonlyProps.createParent
+            : this.answerOverrides.createParent);
+          return create;
         },
         message: 'Description for parent pom?',
         commonFilter: filters.optionalTextFilter,
@@ -175,7 +181,7 @@ module.exports = SubGenerator.extend({
     var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
     var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
 
-    this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
       if (defGroupId === props[constants.PROP_PROJECT_GROUP_ID]) {
         props[constants.PROP_PROJECT_GROUP_ID] = constants.VAR_PROJECT_GROUPID;
@@ -188,7 +194,9 @@ module.exports = SubGenerator.extend({
       } else {
         this.props[constants.PROP_WAR] = [this.props[constants.PROP_WAR]];
       }
-    }.bind(this));
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 
   writing: function () {

@@ -13,15 +13,15 @@ describe('generator-alfresco:amp-add-remote', function () {
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   // We need a test project setup before we begin
-  before(function (done) {
-    helpers.run(path.join(__dirname, '../generators/app'))
+  before(function () {
+    return helpers.run(path.join(__dirname, '../generators/app'))
       .inDir(osTempDir)
       .withOptions({ 'skip-install': true })
       .withPrompts({
         sdkVersion: '2.1.1',
         projectArtifactId: 'temp-test',
       })
-      .on('end', done);
+      .toPromise();
   });
 
   it('starts with a basic project', function () {
@@ -32,8 +32,8 @@ describe('generator-alfresco:amp-add-remote', function () {
   });
 
   describe('installing a remote repo amp using options', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -48,7 +48,7 @@ describe('generator-alfresco:amp-add-remote', function () {
           'artifact-id': 'uploader-plus-repo',
           'version': '1.2',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('references amp in repo/pom.xml', function () {
@@ -61,8 +61,8 @@ describe('generator-alfresco:amp-add-remote', function () {
   });
 
   describe('installing a remote share amp using prompts', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/amp-add-remote'))
         // generator will create a temp directory and make sure it's empty
         .inTmpDir(function () {
           // HACK: we want our test to run inside the previously generated
@@ -77,7 +77,7 @@ describe('generator-alfresco:amp-add-remote', function () {
           'artifact-id': 'uploader-plus-surf',
           'version': '1.2',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('references amp in repo/pom.xml', function () {

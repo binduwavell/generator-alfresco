@@ -24,7 +24,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'name',
         option: { name: 'name', config: { alias: 'n', desc: 'Action name', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs('The action name will be used to construct the bean id and class name for the action.');
           return true;
         },
@@ -36,7 +36,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: 'String' } },
-        when: function (props) {
+        when: function (readonlyProps) {
           this.out.docs('The java package that your action class must be placed into.');
           return true;
         },
@@ -62,12 +62,12 @@ module.exports = SourceSelectingSubGenerator.extend({
 
   prompting: function () {
     debug('prompting');
-    this.subgeneratorPrompt(this.prompts, function (props) {
-      debug('prompting done function');
+    return this.subgeneratorPrompt(this.prompts, function (props) {
+      debug('starting done prompting function');
       this.props = props;
 
       // figure stuff out about our environment
-      var targetModule = props.targetModule.module;
+      var targetModule = this.targetModule.module;
       var artifactId = targetModule.artifactId;
       var moduleRoot = this.destinationPath(targetModule.path);
       var msgRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages';
@@ -104,9 +104,10 @@ module.exports = SourceSelectingSubGenerator.extend({
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
       this.fs.copyTpl(messagesSrc, messagesDst, templateContext);
 
-      debug('prompting done function finished');
-    }.bind(this));
-    debug('prompting finished');
+      debug('done prompting function finished');
+    }).then(function () {
+      debug('prompting finished');
+    });
   },
 
   /*

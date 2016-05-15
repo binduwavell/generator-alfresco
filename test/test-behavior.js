@@ -10,8 +10,8 @@ describe('generator-alfresco:behavior', function () {
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('with simple 2.1.1 project', function () {
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/app'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(osTempDir)
         .withOptions({'skip-install': true})
         .withPrompts({
@@ -20,27 +20,27 @@ describe('generator-alfresco:behavior', function () {
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })
-        .on('end', done);
+        .toPromise();
     });
 
     describe('when creating behavior with two word name', function () {
       var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/TwoWords.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-two-words-context.xml');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/behavior'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/behavior'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'class': 'two words',
             'package': 'org.alfresco.behaviors',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate behavior files', function () {
@@ -71,20 +71,20 @@ describe('generator-alfresco:behavior', function () {
       var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/CamelCase.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-camel-case-context.xml');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/behavior'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/behavior'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'class': 'CamelCase',
             'package': 'org.alfresco.behaviors',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate behavior files', function () {
@@ -115,20 +115,20 @@ describe('generator-alfresco:behavior', function () {
       var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Test.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-test-context.xml');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/behavior'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/behavior'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withOptions({
             'class': 'test',
             'package': 'org.alfresco',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate behavior files', function () {
@@ -159,20 +159,20 @@ describe('generator-alfresco:behavior', function () {
       var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Prompts.java');
       var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-prompts-context.xml');
 
-      before(function (done) {
-        helpers.run(path.join(__dirname, '../generators/behavior'))
+      before(function () {
+        return helpers.run(path.join(__dirname, '../generators/behavior'))
           // generator will create a temp directory and make sure it's empty
           .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
+            // HACK: we want our test to run inside the previously generated
+            // directory and we don't want it to be empty, so this is a hack
+            // for that.
             process.chdir(osTempDir);
           })
           .withPrompts({
             'class': 'prompts',
             'package': 'org.alfresco.behaviors',
           })
-          .on('end', done);
+          .toPromise();
       });
 
       it('creates appropriate behavior files', function () {
@@ -203,15 +203,15 @@ describe('generator-alfresco:behavior', function () {
   describe('when creating behavior when there is no project', function () {
     var noProjectTempDir = path.join(os.tmpdir(), 'no-project');
 
-    before(function (done) {
-      helpers.run(path.join(__dirname, '../generators/behavior'))
+    before(function () {
+      return helpers.run(path.join(__dirname, '../generators/behavior'))
         .inDir(noProjectTempDir)
         // generator will create a temp directory and make sure it's empty
         .withOptions({
           'class': 'no-project',
           'package': 'org.alfresco.behaviors',
         })
-        .on('end', done);
+        .toPromise();
     });
 
     it('does not create action files', function () {
