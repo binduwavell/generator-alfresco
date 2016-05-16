@@ -1,6 +1,6 @@
 .DS_Store
 .idea
-.coveralls.yml
+generator-alfresco.iml
 npm-debug.log
 *~
 coverage/

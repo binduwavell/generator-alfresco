@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-/* eslint-env node */
+/* eslint-env node, shelljs */
 require('shelljs/global');
 
-var nodeVersion = '' + process.argv[2];
+var nodeVersion = String(process.argv[2]);
 var cmd;
 
 if (nodeVersion === 'v6') {
-//  cmd = 'npm run coveralls:color';
   cmd = 'npm run codecov:color';
 } else {
   cmd = 'npm run test:color';
