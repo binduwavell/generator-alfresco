@@ -105,9 +105,83 @@ describe('generator-alfresco:prompt-filters', function () {
     });
   });
 
+  describe('.chooseOneMapFilter()', function () {
+    it('detects invalid input', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilter(undefined, choices), undefined);
+      assert.equal(filters.chooseOneMapFilter(null, choices), undefined);
+      assert.equal(filters.chooseOneMapFilter('', choices), undefined);
+      assert.equal(filters.chooseOneMapFilter(true, choices), undefined);
+      assert.equal(filters.chooseOneMapFilter(false, choices), undefined);
+      assert.equal(filters.chooseOneMapFilter('four', choices), undefined);
+      assert.equal(filters.chooseOneMapFilter('twobyfour', choices), undefined);
+    });
+
+    it('handles exact match for first item in list in case insensitive manner', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilter('one', choices), 'won');
+      assert.equal(filters.chooseOneMapFilter('One', choices), 'won');
+      assert.equal(filters.chooseOneMapFilter('won', choices), 'won');
+      assert.equal(filters.chooseOneMapFilter('Won', choices), 'won');
+    });
+
+    it('handles exact match for middle item in list in case insensitive manner', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilter('twO', choices), 'tew');
+      assert.equal(filters.chooseOneMapFilter('tWo', choices), 'tew');
+      assert.equal(filters.chooseOneMapFilter('teW', choices), 'tew');
+      assert.equal(filters.chooseOneMapFilter('tEw', choices), 'tew');
+    });
+
+    it('handles exact matche for last item in list', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilter('three', choices), 'trEe');
+      assert.equal(filters.chooseOneMapFilter('threE', choices), 'trEe');
+      assert.equal(filters.chooseOneMapFilter('tree', choices), 'trEe');
+      assert.equal(filters.chooseOneMapFilter('Tree', choices), 'trEe');
+    });
+  });
+
+  describe('.chooseOneMapFilterFactory()', function () {
+    it('detects invalid input', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'thrE'};
+      assert.equal(filters.chooseOneMapFilterFactory(choices)(undefined), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)(null), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)(''), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)(true), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)(false), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('four'), undefined);
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('twobyfour'), undefined);
+    });
+
+    it('handles exact match for first item in list in case insensitive manner', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('one'), 'won');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('One'), 'won');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('won'), 'won');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('Won'), 'won');
+    });
+
+    it('handles exact match for middle item in list in case insensitive manner', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('twO'), 'tew');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('tWo'), 'tew');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('teW'), 'tew');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('Tew'), 'tew');
+    });
+
+    it('handles exact matche for last item in list', function () {
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'trEe'};
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('three'), 'trEe');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('threE'), 'trEe');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('Tree'), 'trEe');
+      assert.equal(filters.chooseOneMapFilterFactory(choices)('treE'), 'trEe');
+    });
+  });
+
   describe('.chooseOneStartsWithFilter()', function () {
     it('detects invalid input', function () {
-      var choices = ['one', 'two', 'three'];
+      var choices = {'one': 'won', 'two': 'tew', 'three': 'thrE'};
       assert.equal(filters.chooseOneStartsWithFilter(undefined, choices), undefined);
       assert.equal(filters.chooseOneStartsWithFilter(null, choices), undefined);
       assert.equal(filters.chooseOneStartsWithFilter('', choices), undefined);
@@ -288,6 +362,80 @@ describe('generator-alfresco:prompt-filters', function () {
     it('handles last match in a case insensitive way', function () {
       var choices = ['one', 'two', 'Three'];
       assert.deepEqual(filters.requiredTextListFilterFactory('^', choices)('threE'), ['Three']);
+    });
+  });
+
+  describe('.requiredTextStartsWithListFilter()', function () {
+    it('handles invalid input', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.equal(filters.requiredTextStartsWithListFilter(undefined, '^', choices), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilter(null, '^', choices), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilter('', '^', choices), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilter(true, '^', choices), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilter('four', '^', choices), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilter('one^two^Three', '^', []), undefined);
+    });
+
+    it('can handle multipe inputs and filter based on choices', function () {
+      var choices = ['one', 'two', 'threE'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilter('Three^tWo^one', '^', choices), ['one', 'two', 'threE']);
+    });
+
+    it('filters out values not included in the choices list', function () {
+      var choices = ['one', 'two', 'threE'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilter('four^Three^tWo^two and a half^one^zerO', '^', choices), ['one', 'two', 'threE']);
+    });
+
+    it('handles first match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilter('One', '^', choices), ['one']);
+    });
+
+    it('handles middle match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilter('tWo', '^', choices), ['two']);
+    });
+
+    it('handles last match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'Three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilter('threE', '^', choices), ['Three']);
+    });
+  });
+
+  describe('.requiredTextStartsWithListFilterFactory()', function () {
+    it('handles invalid input', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', choices)(undefined), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', choices)(null), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', choices)(''), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', choices)(true), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', choices)('four'), undefined);
+      assert.equal(filters.requiredTextStartsWithListFilterFactory('^', [])('one^two^Three'), undefined);
+    });
+
+    it('can handle multipe inputs and filter based on choices', function () {
+      var choices = ['one', 'two', 'threE'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilterFactory('^', choices)('Three^tWo^one'), ['one', 'two', 'threE']);
+    });
+
+    it('filters out values not included in the choices list', function () {
+      var choices = ['one', 'two', 'threE'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilterFactory('^', choices)('four^Three^tWo^two and a half^one^zerO'), ['one', 'two', 'threE']);
+    });
+
+    it('handles first match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilterFactory('^', choices)('One'), ['one']);
+    });
+
+    it('handles middle match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilterFactory('^', choices)('tWo'), ['two']);
+    });
+
+    it('handles last match in a case insensitive way', function () {
+      var choices = ['one', 'two', 'Three'];
+      assert.deepEqual(filters.requiredTextStartsWithListFilterFactory('^', choices)('threE'), ['Three']);
     });
   });
 

@@ -10,7 +10,7 @@ describe('generator-alfresco:action', function () {
   this.timeout(60000);
   var osTempDir = path.join(os.tmpdir(), 'temp-test');
 
-  describe('with simple 2.1.1 project', function () {
+  describe('with 2.1.1 project containing default amps and samples', function () {
     before(function () {
       debug('Attempting to scaffold a project to perform tests inside.');
       return helpers.run(path.join(__dirname, '../generators/app'))

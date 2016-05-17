@@ -105,7 +105,7 @@ module.exports = {
     if (_.isString(input)) {
       if (input === '') return undefined;
       var ilc = input.toLocaleLowerCase();
-      list.forEach(function (item) {
+      _.forEach(list, function (item) {
         var it = item.toLocaleLowerCase();
         if (_.startsWith(it, ilc)) retv = retv || item;
         if (it === ilc) retv = item;
@@ -132,23 +132,23 @@ module.exports = {
    * @returns {(string|undefined)}
    */
   chooseOneMapFilter: function (input, map) {
-    // TODO(bwavell): write tests
     debug('chooseOneMapFilter(%s, %s)', input, JSON.stringify(map));
     if (input === true) return undefined;
+    var retv;
     if (_.isString(input)) {
       if (_.isEmpty(input)) return undefined;
       var ilc = input.toLocaleLowerCase();
       _.forOwn(map, function (value, key) {
+        if (retv) return;
         var kit = key.toLocaleLowerCase();
         var vit = value.toLocaleLowerCase();
-        if (kit === ilc) return value;
-        if (vit === ilc) return value;
+        if (kit === ilc) retv = value;
+        if (vit === ilc) retv = value;
       });
     }
-    return undefined;
+    return retv;
   },
   chooseOneMapFilterFactory: function (map) {
-    // TODO(bwavell): write tests
     return function (input) {
       return module.exports.chooseOneMapFilter(input, map);
     };
@@ -274,6 +274,53 @@ module.exports = {
   requiredTextListFilterFactory: function (sep, choices) {
     return function (input) {
       return module.exports.requiredTextListFilter(input, sep, choices);
+    };
+  },
+
+  /**
+   * Given some input text, a separator and a list of choices, we
+   * split the input using the separator. We remove any empty items
+   * from the list.
+   *
+   * We provide all choices that start-with in a case-insensitive
+   * manner one of the inputs. We return in the order provided in
+   * the choices list and using the case provided in the choices list.
+   *
+   * An empty list is not allowed (undefined will be returned.)
+   *
+   * @param input
+   * @param sep
+   * @param choices
+   * @returns {(string[]|undefined)}
+   */
+  requiredTextStartsWithListFilter: function (input, sep, choices) {
+    debug('requiredTextStartsWithListFilter(%s, %s, %s)', input, sep, (choices ? JSON.stringify(choices) : 'undefined'));
+    // if we already have a list, just return it. We may
+    // want to add validation that the items are in the
+    // choices list
+    if (_.isArray(input) && input.length > 0) return input;
+    if (choices === undefined) return undefined;
+    if (!_.isString(input)) return undefined;
+    var inputs = input.split(new RegExp('s*\\' + sep + '\\s*'));
+    // remove any empty input items
+    inputs = inputs.filter(function (i) {
+      return (!_.isEmpty(i));
+    });
+    var lcis = inputs.map(function (i) {
+      return i.toLocaleLowerCase();
+    });
+    var retv = choices.filter(function (c) {
+      var lc = c.toLocaleLowerCase();
+      return (lcis.find(function (li) {
+        return (_.startsWith(lc, li));
+      }) !== undefined);
+    });
+    if (_.isEmpty(retv)) return undefined;
+    return retv;
+  },
+  requiredTextStartsWithListFilterFactory: function (sep, choices) {
+    return function (input) {
+      return module.exports.requiredTextStartsWithListFilter(input, sep, choices);
     };
   },
 
