@@ -311,7 +311,7 @@ module.exports = {
     });
     var retv = choices.filter(function (c) {
       var lc = c.toLocaleLowerCase();
-      return (lcis.find(function (li) {
+      return (_.find(lcis, function (li) {
         return (_.startsWith(lc, li));
       }) !== undefined);
     });
