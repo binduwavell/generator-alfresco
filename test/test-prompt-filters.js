@@ -549,6 +549,22 @@ describe('generator-alfresco:prompt-filters', function () {
       assert.deepEqual(filters.textListFilterFactory('^', choices)('threE'), ['Three']);
     });
   });
+
+  describe('.sequentialFilterFactory()', function () {
+    it('handles invalid input', function () {
+      assert.equal(filters.sequentialFilterFactory([])(undefined), undefined);
+      assert.equal(filters.sequentialFilterFactory([])(null), undefined);
+    });
+    it('handles single value in array', function () {
+      assert.equal(filters.sequentialFilterFactory([filters.requiredTextFilter])(undefined), undefined);
+      assert.equal(filters.sequentialFilterFactory([filters.requiredTextFilter])('one'), 'one');
+      assert.equal(filters.sequentialFilterFactory([filters.requiredTextFilter])(''), undefined);
+    });
+    it('handles multiple values in array', function () {
+      assert.equal(filters.sequentialFilterFactory([filters.requiredTextFilter, filters.optionalTextFilter])('one'), 'one');
+      assert.equal(filters.sequentialFilterFactory([filters.booleanFilter, filters.requiredTextFilter])('one'), undefined);
+    });
+  });
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
