@@ -16,7 +16,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: constants.PROP_WAR,
-        option: { name: 'war', config: { alias: 'w', desc: 'War to target: repo or share', type: String } },
+        option: { name: 'war', config: { alias: 'w', desc: 'War to target: repo or share', type: String, choices: WAR_TYPES } },
         choices: WAR_TYPES,
         message: 'Which war would you like add an AMP to?',
         commonFilter: filters.chooseOneStartsWithFilterFactory(WAR_TYPES),

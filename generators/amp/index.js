@@ -30,7 +30,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: 'ampType',
-        option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP or Remote AMP', type: String } },
+        option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP or Remote AMP', type: String, choices: AMP_TYPES } },
         when: function (readonlyProps) {
           this.out.docs('This generator will create/install amps into your project files:');
           this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
