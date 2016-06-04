@@ -23,7 +23,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: constants.PROP_WAR,
-        option: { name: 'war', config: { alias: 'w', desc: 'War to target: repo, share or both', type: String } },
+        option: { name: 'war', config: { alias: 'w', desc: 'War to target: repo, share or both', type: String, choices: WAR_TYPES } },
         choices: WAR_TYPES,
         message: 'Which war would you like to customize?',
         commonFilter: filters.chooseOneMapStartsWithFilterFactory({ 'repo': constants.WAR_TYPE_REPO, 'share': constants.WAR_TYPE_SHARE, 'both': WAR_TYPE_BOTH }),
@@ -67,7 +67,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'confirm',
         name: 'removeDefaultSourceSamples',
-        option: { name: 'remove-default-source-samples', config: { alias: 'R', desc: 'Remove sample code from new amp(s)', type: Boolean } },
+        option: { name: 'remove-default-source-samples', config: { alias: 'R', desc: 'Remove sample code from new amp(s)', type: Boolean, choices: ['true', 'false'] } },
         default: true,
         message: 'Should we remove the default samples?',
         commonFilter: filters.booleanFilter,
@@ -76,7 +76,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'confirm',
         name: 'createParent',
-        option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean } },
+        option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean, choices: ['false', 'true'] } },
         when: function (readonlyProps) {
           var warType = (readonlyProps[constants.PROP_WAR] || this.answerOverrides[constants.PROP_WAR]);
           var show = (WAR_TYPE_BOTH === warType);
