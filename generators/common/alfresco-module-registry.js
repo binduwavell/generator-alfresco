@@ -115,12 +115,19 @@ module.exports = function (yo) {
 
   module.findModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var found;
-    var moduleToFind = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (undefined !== moduleToFind) {
+    // path is optional, if it is provided we'll pass it along to normalizeModule
+    // if it is not provided we use loc to determine if a value should be synthesized
+    // or not for path
+    var p = path || (loc ? 'no path specified' : undefined);
+    var moduleToFind = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, p);
+    if (moduleToFind !== undefined) {
       modules.forEach(function (mod) {
         if (moduleToFind.groupId === mod.groupId && moduleToFind.artifactId === mod.artifactId
           && moduleToFind['version'] === mod['version'] && moduleToFind.packaging === mod.packaging
-          && moduleToFind.war === mod.war && moduleToFind['location'] === mod['location'] && moduleToFind.path === mod.path) {
+          && moduleToFind.war === mod.war && moduleToFind['location'] === mod['location']
+          // if no path is specified, then don't require path for match
+          && (path === undefined || moduleToFind.path === mod.path)) {
+          debug('found: %s', mod);
           found = mod;
         }
       });
@@ -130,20 +137,20 @@ module.exports = function (yo) {
 
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (undefined !== mod) {
+    if (mod !== undefined) {
       var foundMod = module.findModule(mod);
       if (!foundMod) {
         modules.push(mod);
       }
     } else {
-      throw new Error('All components of the module are required: '
-        + 'groupId, artifactId, version, packaging, war, location and path.');
+      throw new Error('All components of the module are required (except path): '
+        + 'groupId, artifactId, version, packaging, war and location.');
     }
   };
 
   module.removeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     var mod = module.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (undefined !== mod) {
+    if (mod !== undefined) {
       var foundMod = module.findModule(mod);
       if (foundMod) {
         var idx = modules.indexOf(foundMod);
@@ -152,8 +159,8 @@ module.exports = function (yo) {
         throw new Error('You may only remove a module that has already been registered');
       }
     } else {
-      throw new Error('All components of the module are required: '
-        + 'groupId, artifactId, version, packaging, war, location and path.');
+      throw new Error('All components of the module are required (except path): '
+        + 'groupId, artifactId, version, packaging, war and location.');
     }
   };
 

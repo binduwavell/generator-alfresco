@@ -22,7 +22,7 @@ module.exports = function (yo) {
     ops.push(fn);
   };
 
-  module.moduleRegistry = require('./alfresco-module-registry.js')(yo);
+  module.moduleRegistry = yo.moduleRegistry || require('./alfresco-module-registry.js')(yo);
 
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);

@@ -111,7 +111,7 @@ Will print out information about cli arguments and options.
 yo alfresco:amp
 ```
 
-This starts by asking if you would like to add source, local or remote AMPs. 
+This starts by asking if you would like to add source, local, remote or common AMPs. 
 
 When you select **Source AMP**, we'll ask a few questions and then create additional 
 repo/share source AMPs under the `customizations` folder. These are created by copying
@@ -148,7 +148,13 @@ end of the day, it's not super important what values you provide. Of course
 you'll probably be happy if you choose meaningful values when you come back to
 the project in a month or a year.
 
-The final option for installing AMPs into your project is to select **Remote AMP**.
+to select **Remote AMP**.
+This option allows you to specify if the AMP should be installed into the repository
+or Share. It also asks you to provide Maven groupId, artifactId and version for an AMP 
+file that is in a Maven repository that your build has access to. For example, the 
+Uploader Plus plugin is available in Maven Central, so you can provide information for
+one of these AMPs and the build will automatically download and install the AMP the next
+time you run your project.
 Here are some sample comman lines you can use:
 
 ```bash
@@ -157,12 +163,26 @@ yo alfresco:amp -A remote
 yo alfresco:amp-add-remote
 ```
 
-This option allows you to specify if the AMP should be installed into the repository
-or Share. It also asks you to provide Maven groupId, artifactId and version for an AMP 
-file that is in a Maven repository that your build has access to. For example, the 
-Uploader Plus plugin is available in Maven Central, so you can provide information for
-one of these AMPs and the build will automatically download and install the AMP the next
-time you run your project.
+The final option for installing amps is **Common AMPS**, this lists AMPs that are
+available via a public maven repo that we can plug into your project on your 
+behalf. Currently these include:
+
+- JavaScript Console
+- Records Management (Community)
+- Support Tools
+- Uploader Plus
+
+Here are some sample comman lines you can use:
+
+```bash
+yo alfresco:amp
+yo alfresco:amp -A common
+yo alfresco:amp-add-common
+```
+
+You can actually specify more than one AMP to install at the same time; we'll even
+install both repo and share amps if necessary.
+
 
 ```bash
 yo alfresco:action

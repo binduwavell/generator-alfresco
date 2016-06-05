@@ -218,6 +218,22 @@ describe('generator-alfresco:alfresco-module-registry', function () {
       assert.equal(module, undefined);
     });
 
+    it('finds module even when no path is provided', function () {
+      var repo = require('../generators/common/alfresco-module-registry.js')(yomock);
+      repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
+      var module = repo.findModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', undefined);
+      assert.ok(module);
+      assert.deepEqual(module, {
+        'groupId': 'groupId',
+        'artifactId': 'artifactId',
+        'version': 'version',
+        'packaging': 'packaging',
+        'war': 'war',
+        'location': 'location',
+        'path': 'path',
+      });
+    });
+
     it('finds the only existing module', function () {
       var repo = require('../generators/common/alfresco-module-registry.js')(yomock);
       repo.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'location', 'path');
