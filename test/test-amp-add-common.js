@@ -42,7 +42,7 @@ describe('generator-alfresco:amp-add-common', function () {
         })
         .withOptions({
           'force': true, // tests can't handle conflicts
-          'project-names': ['JavaScript Console', 'Records Management (Community)'],
+          'project-names': ['JavaScript Console', 'Records Management (Community 5.0)'],
         })
         /*
         .withGenerators([
@@ -62,10 +62,10 @@ describe('generator-alfresco:amp-add-common', function () {
         [path.join(osTempDir, 'share/pom.xml'), /<version>0\.6</],
         [path.join(osTempDir, 'repo/pom.xml'), /<groupId>\${alfresco\.groupId}</],
         [path.join(osTempDir, 'repo/pom.xml'), /<artifactId>alfresco-rm</],
-        [path.join(osTempDir, 'repo/pom.xml'), /<version>\${alfresco\.rm\.version}</],
+        [path.join(osTempDir, 'repo/pom.xml'), /<version>2.3</],
         [path.join(osTempDir, 'share/pom.xml'), /<groupId>\${alfresco\.groupId}</],
         [path.join(osTempDir, 'share/pom.xml'), /<artifactId>alfresco-rm-share</],
-        [path.join(osTempDir, 'share/pom.xml'), /<version>\${alfresco\.rm\.version}</],
+        [path.join(osTempDir, 'share/pom.xml'), /<version>2.3</],
       ]);
     });
 
@@ -79,10 +79,10 @@ describe('generator-alfresco:amp-add-common', function () {
         [path.join(osTempDir, '.yo-rc.json'), /"version": "0\.6",/],
         [path.join(osTempDir, '.yo-rc.json'), /"groupId": "\${alfresco\.groupId}",/],
         [path.join(osTempDir, '.yo-rc.json'), /"artifactId": "alfresco-rm",/],
-        [path.join(osTempDir, '.yo-rc.json'), /"version": "\${alfresco\.rm\.version}",/],
+        [path.join(osTempDir, '.yo-rc.json'), /"version": "2.3",/],
         [path.join(osTempDir, '.yo-rc.json'), /"groupId": "\${alfresco\.groupId}",/],
         [path.join(osTempDir, '.yo-rc.json'), /"artifactId": "alfresco-rm-share",/],
-        [path.join(osTempDir, '.yo-rc.json'), /"version": "\${alfresco\.rm\.version}",/],
+        [path.join(osTempDir, '.yo-rc.json'), /"version": "2.3",/],
       ]);
     });
   });
