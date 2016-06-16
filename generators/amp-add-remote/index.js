@@ -40,8 +40,8 @@ module.exports = SubGenerator.extend({
       },
       {
         type: 'input',
-        name: 'version',
-        option: { name: 'version', config: { alias: 'v', desc: 'amp version', type: String } },
+        name: 'ampVersion',
+        option: { name: 'amp-version', config: { alias: 'v', desc: 'amp version', type: String } },
         message: 'Amp version?',
         commonFilter: filters.requiredVersionFilter,
         valueRequired: true,
@@ -82,7 +82,7 @@ module.exports = SubGenerator.extend({
     var mod = {
       'groupId': this.props.groupId,
       'artifactId': this.props.artifactId,
-      'version': this.props.version,
+      'version': this.props.ampVersion,
       'packaging': 'amp',
       'war': this.props.war,
       'location': 'remote',

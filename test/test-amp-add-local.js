@@ -64,7 +64,7 @@ describe('generator-alfresco:amp-add-local', function () {
           'path': 'amps/repo-amp.amp',
           'group-id': 'org.alfresco',
           'artifact-id': 'repo-amp',
-          'version': '1.0.0-SNAPSHOT',
+          'amp-version': '1.0.0-SNAPSHOT',
         })
         .toPromise();
     });
@@ -128,7 +128,7 @@ describe('generator-alfresco:amp-add-local', function () {
           'path': 'amps/empty-amp.amp',
           'groupId': 'com.empty',
           'artifactId': 'empty-amp',
-          'version': '1.0.0-SNAPSHOT',
+          'ampVersion': '1.0.0-SNAPSHOT',
         })
         .toPromise();
     });

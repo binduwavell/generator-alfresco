@@ -46,7 +46,7 @@ describe('generator-alfresco:amp-add-remote', function () {
           'war': 'repo',
           'group-id': 'com.softwareloop',
           'artifact-id': 'uploader-plus-repo',
-          'version': '1.2',
+          'amp-version': '1.2',
         })
         .toPromise();
     });
@@ -75,7 +75,7 @@ describe('generator-alfresco:amp-add-remote', function () {
           'war': 'share',
           'group-id': 'com.softwareloop',
           'artifact-id': 'uploader-plus-surf',
-          'version': '1.2',
+          'amp-version': '1.2',
         })
         .toPromise();
     });
