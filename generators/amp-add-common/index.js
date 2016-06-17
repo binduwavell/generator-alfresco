@@ -19,14 +19,48 @@ var PROJECTS = [
     availability: ['Community', 'Enterprise'],
   },
   {
-    name: 'Records Management (Community)',
+    name: 'Records Management (Community 5.0)',
+    sdkVersions: ['2.1.0', '2.1.1'],
     repoGroupId: '${alfresco.groupId}',
     repoArtifactId: 'alfresco-rm',
-    repoVersion: '${alfresco.rm.version}',
+    repoVersion: '2.3',
     shareGroupId: '${alfresco.groupId}',
     shareArtifactId: 'alfresco-rm-share',
-    shareVersion: '${alfresco.rm.version}',
+    shareVersion: '2.3',
     availability: ['Community', 'Enterprise'],
+  },
+  {
+    name: 'Records Management (Community 5.1)',
+    sdkVersions: ['2.2.0'],
+    repoGroupId: '${alfresco.groupId}',
+    repoArtifactId: 'alfresco-rm-community-repo',
+    repoVersion: '2.4.b',
+    shareGroupId: '${alfresco.groupId}',
+    shareArtifactId: 'alfresco-rm-community-share',
+    shareVersion: '2.4.b',
+    availability: ['Community'],
+  },
+  {
+    name: 'Core - Records Management',
+    sdkVersions: ['2.2.0'],
+    repoGroupId: '${alfresco.groupId}',
+    repoArtifactId: 'alfresco-rm-core-repo',
+    repoVersion: '2.4',
+    shareGroupId: '${alfresco.groupId}',
+    shareArtifactId: 'alfresco-rm-core-share',
+    shareVersion: '2.4',
+    availability: ['Enterprise'],
+  },
+  {
+    name: 'Enterprise - Records Management',
+    sdkVersions: ['2.2.0'],
+    repoGroupId: '${alfresco.groupId}',
+    repoArtifactId: 'alfresco-rm-enterprise-repo',
+    repoVersion: '2.4',
+    shareGroupId: '${alfresco.groupId}',
+    shareArtifactId: 'alfresco-rm-enterprise-share',
+    shareVersion: '2.4',
+    availability: ['Enterprise'],
   },
   {
     name: 'Support Tools',
@@ -58,10 +92,15 @@ module.exports = SubGenerator.extend({
     debug('constructing');
 
     var communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
+    var sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
     var projects = PROJECTS
       .filter(function (project) {
         if (communityOrEnterprise === undefined) return true;
         return (project.availability.indexOf(communityOrEnterprise) > -1);
+      })
+      .filter(function (project) {
+        if (sdkVersion === undefined) return true;
+        return (project.hasOwnProperty('sdkVersions') ? project.sdkVersions.indexOf(sdkVersion) > -1 : true);
       })
       .filter(isNotAppliedFactory(this.moduleRegistry));
 
