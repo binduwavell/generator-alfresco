@@ -11,12 +11,21 @@ module.exports = {
     return _.toLower(retv);
   },
 
+  alphaCamelCaseFilter: function (name) {
+    if (!_.isString(name) || _.isEmpty(name)) return undefined;
+    name = _.camelCase(name);
+    var retv;
+    retv = name.replace(/[^A-Za-z]/g, '');
+    if (retv === '') return undefined;
+    return retv;
+  },
+
   modelNameFilter: function (name) {
-    var retv = module.exports.alphaLowerCaseFilter(name);
+    var retv = module.exports.alphaCamelCaseFilter(name);
     if (undefined === retv) return undefined;
     // If the name ends with model, remove it
-    if (retv.match(/.model$/)) {
-      retv = retv.replace(/model$/, '');
+    if (retv.match(/.model$/i)) {
+      retv = retv.replace(/model$/i, '');
     }
     return retv;
   },

@@ -51,6 +51,41 @@ describe('generator-alfresco:model-prompt-filters', function () {
       assert.equal(undefined, lowerCaseStr);
     });
   });
+
+  describe('.alphaCamelCaseFilter()', function () {
+    it('check alphaCamelCaseFilter filter handling with mixed case', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('testStringWithCamelCase');
+      assert.equal('testStringWithCamelCase', camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with mixed case but starting in upper case', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('TestStringWithCamelCase');
+      assert.equal('testStringWithCamelCase', camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with spaces', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('test string with space');
+      assert.equal('testStringWithSpace', camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with hyphen', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('test-string-with-hyphen');
+      assert.equal('testStringWithHyphen', camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with underscore', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('test_string_with_underscore');
+      assert.equal('testStringWithUnderscore', camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with empty string', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter('');
+      assert.equal(undefined, camelCaseStr);
+    });
+    it('check alphaCamelCaseFilter filter handling with null', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter(null);
+      assert.equal(undefined, camelCaseStr);
+    });
+    it('check alphaCamelLowerCaseFilter filter handling with no parameters', function () {
+      var camelCaseStr = modelFilters.alphaCamelCaseFilter();
+      assert.equal(undefined, camelCaseStr);
+    });
+  });
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
