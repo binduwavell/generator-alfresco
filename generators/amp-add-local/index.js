@@ -92,10 +92,10 @@ module.exports = SubGenerator.extend({
     return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
       this.props.warType;
-      if (/^amps(?:\/|\\)/.test(this.props.path)) {
+      if (_.startsWith(this.props.path, path.join('amps', path.sep))) {
         this.props.warType = 'repo';
       }
-      if (/^amps_share(?:\/|\\)/.test(this.props.path)) {
+      if (_.startsWith(this.props.path, path.join('amps_share', path.sep))) {
         this.props.warType = 'share';
       }
       if (this.props.warType === undefined) this.bail = true;
