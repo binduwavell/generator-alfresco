@@ -1,5 +1,6 @@
 'use strict';
 var chalk = require('chalk');
+var fs = require('fs');
 var debug = require('debug')('generator-alfresco:amp-source');
 var path = require('path');
 var constants = require('../common/constants.js');
@@ -211,7 +212,9 @@ module.exports = SubGenerator.extend({
       var artifactId = prefix + '-' + war + '-amp';
       var groupId = this.props[constants.PROP_PROJECT_GROUP_ID];
       var version = this.props[constants.PROP_PROJECT_VERSION];
-      var parentPath = constants.FOLDER_CUSTOMIZATIONS;
+      var hasCustomizations = fs.existsSync(
+        path.join(this.destinationPath(constants.FOLDER_CUSTOMIZATIONS), 'pom.xml'));
+      var parentPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
       // If are parent folder is created we need to put a pom in it
       // and link said pom into the customizations pom
       if (this.props.createParent) {
@@ -234,16 +237,25 @@ module.exports = SubGenerator.extend({
         parentPom.setProjectGAV(parentGroupId, parentArtifactId, parentVersion, 'pom');
         if (this.props.parentName) parentPom.setTopLevelElementTextContent('pom', 'name', this.props.parentName);
         if (this.props.parentDescription) parentPom.setTopLevelElementTextContent('pom', 'description', this.props.parentDescription);
-        parentPom.setParentGAV('org.alfresco.maven', 'customizations', '1.0.0-SNAPSHOT');
+        if (hasCustomizations) {
+          parentPom.setParentGAV('org.alfresco.maven', 'customizations', '1.0.0-SNAPSHOT');
+        } else {
+          parentPom.setParentGAV(
+            this.config.get(constants.PROP_PROJECT_GROUP_ID),
+            this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+            this.config.get(constants.PROP_PROJECT_VERSION)
+          );
+        }
         this.fs.write(parentPomPath, parentPom.getPOMString());
 
-        var customizationsPomPath = this.destinationPath(path.join(constants.FOLDER_CUSTOMIZATIONS, 'pom.xml'));
-        this.out.info('Adding ' + parentArtifactId + ' to customizations module ' + customizationsPomPath);
-        var customizationsPomStr = this.fs.read(customizationsPomPath);
-        var customizationsPom = require('../common/maven-pom.js')(customizationsPomStr);
-        if (!customizationsPom.findModule(parentArtifactId)) {
-          customizationsPom.addModule(parentArtifactId, true);
-          this.fs.write(customizationsPomPath, customizationsPom.getPOMString());
+        var containingFolderPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
+        var containingPomPath = this.destinationPath(path.join(containingFolderPath, 'pom.xml'));
+        this.out.info('Adding ' + parentArtifactId + ' module to containing pom ' + containingPomPath);
+        var containingPomStr = this.fs.read(containingPomPath);
+        var containingPom = require('../common/maven-pom.js')(containingPomStr);
+        if (!containingPom.findModule(parentArtifactId)) {
+          containingPom.addModule(parentArtifactId, true);
+          this.fs.write(containingPomPath, containingPom.getPOMString());
         }
       }
       var modulePath = path.join(parentPath, artifactId);

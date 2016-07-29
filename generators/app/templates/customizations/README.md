@@ -1,9 +1,14 @@
 customizations
 ==============
 
-We will store the source for amps and modules you are coding under here.
+As this folder exists, we will store the source for amps and modules you 
+are coding under this folder. This organization is particularly useful 
+for complex projects that have lots of AMPs and JARs.
 
-    yo alfresco:amp
+There are also folders here for including pre-packaged amps and jars.
+These use the same naming convention as the Alfresco installer. They are
+`amps` and `amps_share`.
 
-can be used to create starter code and plug it into all the right places
-for building, rad and testing.
+The `modules` folder structure is included as a place to place 
+pre-packaged jar customizations. The features for linking 
+these into projects have not been implemented yet.
