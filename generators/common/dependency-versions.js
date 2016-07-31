@@ -59,7 +59,7 @@ module.exports.getRegExpMatchFromProcessOutput = function (cmd, args, re) {
   proc.stdout.pipe(split()).on('data', processLine);
   proc.stderr.pipe(split()).on('data', processLine);
   proc.on('error', function (code, signal) { done = true })
-      .on('exit', function (code, signal) { done = true });
+    .on('exit', function (code, signal) { done = true });
 
   deasync.loopWhile(function () { return !done });
 
