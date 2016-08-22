@@ -45,9 +45,11 @@ describe('generator-alfresco:model', function () {
       .then(function (dir) {
         var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
         var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/testModel.properties');
         assert.file([
           modelFile,
           contextFile,
+          messageFile,
         ]);
         assert.fileContent(
           modelFile,
@@ -77,6 +79,22 @@ describe('generator-alfresco:model', function () {
           contextFile,
           /<value>alfresco\/module\/\${project.artifactId}\/model\/generated\/testModel.xml<\/value>/
         );
+        assert.fileContent(
+          messageFile,
+          /zz_test/
+        );
+        assert.fileContent(
+          contextFile,
+          /<value>alfresco\/module\/\${project.artifactId}\/messages\/generated\/testModel<\/value>/
+        );
+        assert.fileContent(
+          contextFile,
+          /<property name="models"/
+        );
+        assert.fileContent(
+          contextFile,
+          /<property name="labels"/
+        );
       });
   });
 
@@ -100,6 +118,7 @@ describe('generator-alfresco:model', function () {
         assert.noFile([
           path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/invalidVersionModel.xml'),
           path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/invalidversion-model-context.xml'),
+          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/invalidVersionModel.properties'),
         ]);
       });
   });
