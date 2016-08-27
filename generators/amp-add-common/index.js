@@ -9,6 +9,16 @@ var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 
 var PROJECTS = [
   {
+    name: 'AOS - Alfresco Office Services',
+    repoGroupId: 'org.alfresco.aos-module',
+    repoArtifactId: 'alfresco-aos-module',
+    repoVersion: '1.1.3',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+    availability: ['Community', 'Enterprise'],
+  },
+  {
     name: 'JavaScript Console',
     repoGroupId: 'de.fmaul',
     repoArtifactId: 'javascript-console-repo',
