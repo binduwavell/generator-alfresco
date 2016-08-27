@@ -42,7 +42,7 @@ describe('generator-alfresco:amp-add-common', function () {
         })
         .withOptions({
           'force': true, // tests can't handle conflicts
-          'project-names': ['JavaScript Console', 'Records Management (Community 5.0)'],
+          'project-names': ['JavaScript Console', 'RM - Records Management (Community 5.0)'],
         })
         /*
         .withGenerators([
