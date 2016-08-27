@@ -9,6 +9,28 @@ var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 
 var PROJECTS = [
   {
+    name: 'AOS - Alfresco Office Services (Enterprise 5.1)',
+    sdkVersions: ['2.2.0'],
+    repoGroupId: 'org.alfresco.aos-module',
+    repoArtifactId: 'alfresco-aos-module',
+    repoVersion: '1.1.3',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+    availability: ['Enterprise'],
+  },
+  {
+    name: 'AOS - Alfresco Office Services (Community 5.1)',
+    sdkVersions: ['2.2.0'],
+    repoGroupId: 'org.alfresco.aos-module',
+    repoArtifactId: 'alfresco-aos-module',
+    repoVersion: '1.1',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+    availability: ['Community'],
+  },
+  {
     name: 'JavaScript Console',
     repoGroupId: 'de.fmaul',
     repoArtifactId: 'javascript-console-repo',
@@ -19,7 +41,7 @@ var PROJECTS = [
     availability: ['Community', 'Enterprise'],
   },
   {
-    name: 'Records Management (Community 5.0)',
+    name: 'RM - Records Management (Community 5.0)',
     sdkVersions: ['2.1.0', '2.1.1'],
     repoGroupId: '${alfresco.groupId}',
     repoArtifactId: 'alfresco-rm',
@@ -30,7 +52,7 @@ var PROJECTS = [
     availability: ['Community', 'Enterprise'],
   },
   {
-    name: 'Records Management (Community 5.1)',
+    name: 'RM - Records Management (Community 5.1)',
     sdkVersions: ['2.2.0'],
     repoGroupId: '${alfresco.groupId}',
     repoArtifactId: 'alfresco-rm-community-repo',
@@ -41,7 +63,7 @@ var PROJECTS = [
     availability: ['Community'],
   },
   {
-    name: 'Core - Records Management',
+    name: 'RM Core - Records Management',
     sdkVersions: ['2.2.0'],
     repoGroupId: '${alfresco.groupId}',
     repoArtifactId: 'alfresco-rm-core-repo',
@@ -52,7 +74,7 @@ var PROJECTS = [
     availability: ['Enterprise'],
   },
   {
-    name: 'Enterprise - Records Management',
+    name: 'RM Enterprise - Records Management',
     sdkVersions: ['2.2.0'],
     repoGroupId: '${alfresco.groupId}',
     repoArtifactId: 'alfresco-rm-enterprise-repo',
