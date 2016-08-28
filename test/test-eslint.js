@@ -1,6 +1,7 @@
 'use strict';
 /* eslint-env node, mocha */
 var lint = require('mocha-eslint');
+var semver = require('semver');
 
 var paths = [
   'generators/*.js',
@@ -17,5 +18,10 @@ var options = {
   timeout: 5000,
 };
 
-// Run the tests
-lint(paths, options);
+// Run the tests if node is new enough to run eslint
+var versions = process.versions;
+if (semver.gte(versions.node, '4.4.0')) {
+  lint(paths, options);
+} else {
+  console.warn('Not running eslint because ' + versions.node + ' is not supported by eslint, min node version is 4.4.0');
+}
