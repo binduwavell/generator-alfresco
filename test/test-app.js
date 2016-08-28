@@ -19,7 +19,7 @@ describe('generator-alfresco:app', function () {
         .toPromise();
     });
 
-    it('creates files', function () {
+    it('creates basic files', function () {
       // TODO(bwavell): add more tests
       assert.file([
         '.editorconfig',
@@ -39,10 +39,6 @@ describe('generator-alfresco:app', function () {
         'scripts/run.sh',
         'scripts/run.bat',
         'scripts/run-without-springloaded.sh',
-        'amps/README.md',
-        'amps_share/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
         constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
@@ -54,8 +50,18 @@ describe('generator-alfresco:app', function () {
       ]);
     });
 
-    it('adds amps_source to modules in top pom', function () {
-      assert.fileContent(
+    it('does not create advanced files', function () {
+      // TODO(bwavell): add more tests
+      assert.noFile([
+        constants.FOLDER_CUSTOMIZATIONS + '/amps/README.md',
+        constants.FOLDER_CUSTOMIZATIONS + '/amps_share/README.md',
+        constants.FOLDER_CUSTOMIZATIONS + '/README.md',
+        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
+      ]);
+    });
+
+    it('does not add customizations to modules in top pom', function () {
+      assert.noFileContent(
         'pom.xml',
         /<module>customizations<\/module>/
       );
@@ -163,15 +169,15 @@ describe('generator-alfresco:app', function () {
 
       it('amp files exist in project', function () {
         assert.file([
-          path.join(osTempDir, 'customizations/both-customizations-repo-amp/pom.xml'),
-          path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
+          path.join(osTempDir, 'both-customizations-repo-amp/pom.xml'),
+          path.join(osTempDir, 'both-customizations-share-amp/pom.xml'),
         ]);
       });
 
       it('sample files exist in project', function () {
         assert.file([
-          path.join(osTempDir, 'customizations/both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
-          path.join(osTempDir, 'customizations/both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
+          path.join(osTempDir, 'both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
+          path.join(osTempDir, 'both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
         ]);
       });
 

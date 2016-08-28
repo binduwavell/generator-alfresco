@@ -29,16 +29,16 @@ module.exports = yeoman.Base.extend({
     this.pkg = require('../../package.json');
     this.sdkVersions = require('./../common/sdk-versions.js');
     debug('assigning default values');
-    this.defaultConfig = {
-      sdkVersion: '2.1.1',
-      projectGroupId: 'org.alfresco',
-      projectArtifactId: path.basename(process.cwd()),
-      projectVersion: '1.0.0-SNAPSHOT',
-      projectPackage: 'org.alfresco',
-      communityOrEnterprise: 'Community',
-      removeDefaultSourceAmps: true,
-      removeDefaultSourceSamples: true,
-    };
+    this.defaultConfig = {};
+    this.defaultConfig[constants.PROP_SDK_VERSION] = '2.1.1';
+    this.defaultConfig[constants.PROP_PROJECT_STRUCTURE] = constants.PROJECT_STRUCTURE_BASIC;
+    this.defaultConfig[constants.PROP_PROJECT_GROUP_ID] = 'org.alfresco';
+    this.defaultConfig[constants.PROP_PROJECT_ARTIFACT_ID] = path.basename(process.cwd());
+    this.defaultConfig[constants.PROP_PROJECT_VERSION] = '1.0.0-SNAPSHOT';
+    this.defaultConfig[constants.PROP_PROJECT_PACKAGE] = 'org.alfresco';
+    this.defaultConfig[constants.PROP_COMMUNITY_OR_ENTERPRISE] = 'Community';
+    this.defaultConfig[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS] = true;
+    this.defaultConfig[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = true;
     this.bail = false;
     try {
       debug('grabbing current java version');
@@ -141,6 +141,19 @@ module.exports = yeoman.Base.extend({
             return false;
           }
         }.bind(this),
+      },
+      {
+        type: 'list',
+        name: constants.PROP_PROJECT_STRUCTURE,
+        when: function (readonlyProps) {
+          if (this.bail) return false;
+          this.out.definition('basic', 'The basic structure adds scripts and a folder to hold source amp project templates to the default All-In-One project structure. It also adds few helpful files.');
+          this.out.definition('advanced', 'The advanced structure extends the basic structure by adding a customizations folder for grouping source modules. The customizations folder also includes sub-folders for storing pre-built AMPs and JARs.');
+          return true;
+        }.bind(this),
+        default: this._getConfigValue(constants.PROP_PROJECT_STRUCTURE),
+        message: 'Do you want to use the basic or advanced project structure?',
+        choices: constants.PROJECT_STRUCTURES,
       },
       {
         type: 'input',
@@ -298,6 +311,7 @@ module.exports = yeoman.Base.extend({
           constants.PROP_GENERATOR_VERSION,
           constants.PROP_SDK_VERSION,
           constants.PROP_ARCHETYPE_VERSION,
+          constants.PROP_PROJECT_STRUCTURE,
           constants.PROP_PROJECT_GROUP_ID,
           constants.PROP_PROJECT_ARTIFACT_ID,
           constants.PROP_PROJECT_VERSION,
@@ -458,8 +472,12 @@ module.exports = yeoman.Base.extend({
         tplContext
       );
       // copy template folders
-      [constants.FOLDER_AMPS, constants.FOLDER_AMPS_SHARE, constants.FOLDER_CUSTOMIZATIONS,
-       constants.FOLDER_MODULES, constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS].forEach(
+      var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+      var templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
+      if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
+        templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
+      }
+      templateFolders.forEach(
         function (folderName) {
           this.out.info('Copying ' + folderName);
           this.fs.copyTpl(
@@ -528,11 +546,15 @@ module.exports = yeoman.Base.extend({
         }
       }
       // Make sure customizations/pom.xml is included in the top pom
-      var topPomPath = this.destinationPath('pom.xml');
-      var topPomContent = this.fs.read(topPomPath);
-      var topPom = require('./../common/maven-pom.js')(topPomContent);
-      topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
-      this.fs.write(topPomPath, topPom.getPOMString());
+      // if advanced project structure was selected
+      var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+      if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
+        var topPomPath = this.destinationPath('pom.xml');
+        var topPomContent = this.fs.read(topPomPath);
+        var topPom = require('./../common/maven-pom.js')(topPomContent);
+        topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
+        this.fs.write(topPomPath, topPom.getPOMString());
+      }
     },
     removeDefaultSourceModules: function () {
       if (this.bail) return;

@@ -19,6 +19,7 @@ describe('generator-alfresco:amp-add-source', function () {
       .withOptions({ 'skip-install': true })
       .withPrompts({
         sdkVersion: '2.1.1',
+        projectStructure: 'advanced',
         projectArtifactId: 'temp-test',
         removeDefaultSourceAmps: true,
       })

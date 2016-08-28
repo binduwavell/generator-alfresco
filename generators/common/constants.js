@@ -21,9 +21,14 @@ module.exports = {
   FOLDER_SOURCE_TEMPLATES: 'source_templates',
   FOLDER_TOMCAT: 'tomcat',
 
+  PROJECT_STRUCTURE_BASIC: 'basic',
+  PROJECT_STRUCTURE_ADVANCED: 'advanced',
+  PROJECT_STRUCTURES: ['basic', 'advanced'],
+
   PROP_ORIGINAL_GENERATOR_VERSION: 'originalGeneratorVersion',
   PROP_GENERATOR_VERSION: 'generatorVersion',
   PROP_ARCHETYPE_VERSION: 'archetypeVersion',
+  PROP_PROJECT_STRUCTURE: 'projectStructure',
   PROP_COMMUNITY_OR_ENTERPRISE: 'communityOrEnterprise',
   PROP_PROJECT_ARTIFACT_ID: 'projectArtifactId',
   PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE: 'abortProjectArtifactIdUpdate',

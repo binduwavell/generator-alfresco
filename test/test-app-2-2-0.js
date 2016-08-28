@@ -41,10 +41,6 @@ describe('generator-alfresco:app', function () {
         'scripts/package-to-exploded.sh',
         'scripts/run.bat',
         'scripts/run-without-springloaded.sh',
-        'amps/README.md',
-        'amps_share/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
         constants.FOLDER_SOURCE_TEMPLATES + '/test-artifact-repo-amp/pom.xml',
         constants.FOLDER_SOURCE_TEMPLATES + '/test-artifact-share-amp/pom.xml',
@@ -56,12 +52,6 @@ describe('generator-alfresco:app', function () {
         'solr-config/pom.xml',
         'TODO.md',
       ]);
-    });
-    it('adds amps_source to modules in top pom', function () {
-      assert.fileContent(
-        'pom.xml',
-        /<module>customizations<\/module>/
-      );
     });
     it('debug.sh does not reference springloaded', function () {
       assert.noFileContent(

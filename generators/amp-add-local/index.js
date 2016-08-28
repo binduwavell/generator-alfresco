@@ -5,6 +5,7 @@ var debug = require('debug')('generator-alfresco:amp-local');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
+var constants = require('../common/constants.js');
 var filters = require('../common/prompt-filters.js');
 var properties = require('../common/java-properties.js');
 var SubGenerator = require('../subgenerator.js');
@@ -14,8 +15,12 @@ module.exports = SubGenerator.extend({
   constructor: function () {
     SubGenerator.apply(this, arguments);
 
-    var possibleRepoAmps = unknownAmps(findAmps(this.destinationPath(), 'amps'), this.moduleRegistry);
-    var possibleShareAmps = unknownAmps(findAmps(this.destinationPath(), 'amps_share'), this.moduleRegistry);
+    var possibleRepoAmps = unknownAmps(
+      findAmps(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS)),
+      this.moduleRegistry);
+    var possibleShareAmps = unknownAmps(
+      findAmps(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE)),
+      this.moduleRegistry);
     this.possibleAmps = _.concat(_.orderBy(possibleRepoAmps, 'name'), _.orderBy(possibleShareAmps, 'name'));
 
     if (this.possibleAmps.length > 0) {
@@ -71,7 +76,7 @@ module.exports = SubGenerator.extend({
 
   prompting: function () {
     if (this.possibleAmps.length === 0) {
-      this.out.error('There are no new amps in ./amps or ./amps_share for us to import');
+      this.out.error('There are no new amps in customizations/amps or customizations/amps_share for us to import');
       this.bail = true;
     }
     if (this.bail) return;
@@ -79,8 +84,9 @@ module.exports = SubGenerator.extend({
     this.out.docs([
       'Some functionality of the Alfresco content management system is delivered as extra modules,',
       'such as Records Management (RM), Google Docs Integration, and Alfresco Office Services, which',
-      'provides SharePoint Protocol support. If you have the associated amps copied to your ./amps',
-      'and ./amps_share folders in the project here, we can link such modules to your project.\n',
+      'provides SharePoint Protocol support. If you have the associated amps copied to your',
+      'customizations/amps and customizations/amps_share folders in this project, we can link such',
+      'modules into your project.\n',
     ].join(' '));
 
     this.out.info([
@@ -92,13 +98,16 @@ module.exports = SubGenerator.extend({
     return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
       this.props.warType;
-      if (_.startsWith(this.props.path, path.join('amps', path.sep))) {
+      if (_.startsWith(this.props.path, path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS, path.sep))) {
         this.props.warType = 'repo';
       }
-      if (_.startsWith(this.props.path, path.join('amps_share', path.sep))) {
+      if (_.startsWith(this.props.path, path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE, path.sep))) {
         this.props.warType = 'share';
       }
-      if (this.props.warType === undefined) this.bail = true;
+      if (this.props.warType === undefined) {
+        this.out.error('Did not find AMP in expected local AMP folder.');
+        this.bail = true;
+      }
     }).then(function () {
       debug('prompting finished');
     });
