@@ -4,8 +4,11 @@ var semver = require('semver');
 var versions = process.versions;
 if (semver.lt(versions.node, '4.4.0')) {
   console.warn('Not running eslint because ' + versions.node + ' is not supported by eslint, min node version is 4.4.0');
-  process.exit(0);
 } else {
+  runESLint();
+}
+
+function runESLint () {
   var lint = require('mocha-eslint');
 
   var paths = [
