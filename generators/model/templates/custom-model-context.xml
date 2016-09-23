@@ -10,6 +10,11 @@
                 <value>alfresco/module/${project.artifactId}/model/generated/<%-modelName%>Model.xml</value>
             </list>
         </property>
+        <property name="labels">
+            <list>
+                <value>alfresco/module/${project.artifactId}/messages/generated/<%-modelName%>Model</value>
+            </list>
+        </property>
     </bean>
 
 </beans>

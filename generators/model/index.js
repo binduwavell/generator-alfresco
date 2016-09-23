@@ -120,13 +120,16 @@ module.exports = SourceSelectingSubGenerator.extend({
       debug('starting model prompting done function');
       this.props = props;
       var modelFileName = props.modelName + 'Model.xml';
+      var messageFileName = props.modelName + 'Model.properties';
       var contextFileName = props.modelName + '-model-context.xml';
 
       var targetModule = this.targetModule.module;
       var modulePath = this.destinationPath(targetModule.path);
       var contextGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
       var modelGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/model/generated';
+      var messageGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages/generated';
       var templateModelPath = this.templatePath('customModel.xml');
+      var templateMessagePath = this.templatePath('customModel.properties');
       var templateContextPath = this.templatePath('custom-model-context.xml');
       var contextGenPath = path.join(modulePath, contextGenRoot, contextFileName);
       this.out.info('Generating context file in: ' + contextGenPath);
@@ -136,6 +139,10 @@ module.exports = SourceSelectingSubGenerator.extend({
       this.out.info('Generating model file in: ' + modelGenPath);
       debug('from %s to %s with context %j', templateModelPath, modelGenPath, props);
       this.fs.copyTpl(templateModelPath, modelGenPath, props);
+      var messageGenPath = path.join(modulePath, messageGenRoot, messageFileName);
+      this.out.info('Generating message file in: ' + messageGenPath);
+      debug('from %s to %s with context %j', templateMessagePath, messageGenPath, props);
+      this.fs.copyTpl(templateMessagePath, messageGenPath, props);
       debug('completed model prompting done function');
     }).then(function () {
       debug('model prompting finished');
