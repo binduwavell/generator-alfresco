@@ -581,6 +581,13 @@ module.exports = yeoman.Base.extend({
         }
       }
     },
+    setLog4jdevProperties: function () {
+      if (this.bail) return;
+
+      // set the dev-log4j.properties file for the project package
+      var devLog4jPropertiesPath = 'repo/src/main/resources/alfresco/extension/dev-log4j.properties';
+      this.fs.write(devLog4jPropertiesPath, 'log4j.logger.' + this.projectPackage + '=${app.log.root.level}\n');
+    },
   },
 
   install: {
