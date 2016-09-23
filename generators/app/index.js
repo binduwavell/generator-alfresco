@@ -585,8 +585,11 @@ module.exports = yeoman.Base.extend({
       if (this.bail) return;
 
       // set the dev-log4j.properties file for the project package
-      var devLog4jPropertiesPath = 'repo/src/main/resources/alfresco/extension/dev-log4j.properties';
-      this.fs.write(devLog4jPropertiesPath, 'log4j.logger.' + this.projectPackage + '=${app.log.root.level}\n');
+      var devLog4jPropertiesPath = this.destinationPath('repo/src/main/resources/alfresco/extension/dev-log4j.properties');
+      var fileContent = '# You can add here custom log4j classes. This will be merged with the main log4j.properties\n'
+                        + '# See http://wiki.alfresco.com/wiki/Developing_an_Alfresco_Module#Best_Log4j_Configuration_Practices\n'
+                        + 'log4j.logger.' + this.projectPackage + '=${app.log.root.level}\n';
+      this.fs.write(devLog4jPropertiesPath, fileContent);
     },
   },
 
