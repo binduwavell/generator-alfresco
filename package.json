@@ -30,7 +30,7 @@
     "cross-spawn": "4.0.0",
     "deasync": "0.1.7",
     "debug": "2.2.0",
-    "lodash": "4.15.0",
+    "lodash": "4.16.1",
     "pinkie-promise": "2.0.1",
     "pretty-data": "0.40.0",
     "rmdir": "1.2.0",
@@ -45,9 +45,9 @@
   },
   "devDependencies": {
     "codecov": "1.0.1",
-    "coveralls": "2.11.12",
-    "eslint": "3.4.0",
-    "eslint-config-standard": "6.0.0",
+    "coveralls": "2.11.14",
+    "eslint": "3.5.0",
+    "eslint-config-standard": "6.0.1",
     "eslint-plugin-promise": "2.0.1",
     "eslint-plugin-standard": "2.0.0",
     "fixme": "0.4.0",
@@ -61,7 +61,7 @@
     "npm-check-updates": "2.8.0",
     "shelljs": "0.5.3",
     "yeoman-assert": "2.2.1",
-    "yeoman-test": "1.4.0"
+    "yeoman-test": "1.5.1"
   },
   "config": {
     "ghooks": {
