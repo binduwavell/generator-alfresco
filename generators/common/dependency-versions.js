@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var deasync = require('deasync');
 var fs = require('fs');
 var path = require('path');
@@ -12,7 +13,7 @@ module.exports.getJavaVersion = function (cmd) {
       cmd = path.join(process.env.JAVA_HOME, '/bin/java');
     } else {
       var defaultCmds = ['/bin/java', '/usr/bin/java', '/usr/local/bin/java'];
-      cmd = defaultCmds.find(function (c) {
+      cmd = _.find(defaultCmds, function (c) {
         var e = fs.existsSync(c);
         debug('Checking if Java binary exists at: ' + c + ', ' + e);
         return e;
@@ -41,7 +42,7 @@ module.exports.getMavenVersion = function (cmd) {
       cmd = path.join(process.env.M2_HOME, '/bin/mvn');
     } else {
       var defaultCmds = ['/bin/mvn', '/usr/bin/mvn', '/usr/local/bin/mvn'];
-      cmd = defaultCmds.find(function (c) {
+      cmd = _.find(defaultCmds, function (c) {
         var e = fs.existsSync(c);
         debug('Checking if Maven binary exists at: ' + c + ', ' + e);
         return e;
