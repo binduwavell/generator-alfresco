@@ -38,7 +38,7 @@ module.exports = SubGenerator.extend({
         when: function (readonlyProps) {
           this.out.docs('This generator will create/install amps into your project files:');
           this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
-          this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./amps or ./amps_share into this project');
+          this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./customizations/amps or ./customizations/amps_share into this project');
           this.out.definition(AMP_TYPE_REMOTE, 'Installs an amp file from a reachable Maven repository into this project');
           this.out.definition(AMP_TYPE_COMMON, 'Offers to install common amps such as JavaScript Console and Support Tools');
           return true;
