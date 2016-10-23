@@ -3,9 +3,9 @@ var chalk = require('chalk');
 var fs = require('fs');
 var debug = require('debug')('generator-alfresco:amp-source');
 var path = require('path');
-var constants = require('../common/constants.js');
-var filters = require('../common/prompt-filters.js');
-var validators = require('../common/prompt-validators.js');
+var constants = require('generator-alfresco-common').constants;
+var filters = require('generator-alfresco-common').prompt_filters;
+var validators = require('generator-alfresco-common').prompt_validators;
 var SubGenerator = require('../subgenerator.js');
 
 var WAR_TYPE_BOTH = 'Both repo & share';
@@ -233,7 +233,7 @@ module.exports = SubGenerator.extend({
         if (this.fs.exists(parentPomPath)) {
           parentPomStr = this.fs.read(parentPomPath);
         }
-        var parentPom = require('../common/maven-pom.js')(parentPomStr);
+        var parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
         parentPom.setProjectGAV(parentGroupId, parentArtifactId, parentVersion, 'pom');
         if (this.props.parentName) parentPom.setTopLevelElementTextContent('pom', 'name', this.props.parentName);
         if (this.props.parentDescription) parentPom.setTopLevelElementTextContent('pom', 'description', this.props.parentDescription);
@@ -252,7 +252,7 @@ module.exports = SubGenerator.extend({
         var containingPomPath = this.destinationPath(path.join(containingFolderPath, 'pom.xml'));
         this.out.info('Adding ' + parentArtifactId + ' module to containing pom ' + containingPomPath);
         var containingPomStr = this.fs.read(containingPomPath);
-        var containingPom = require('../common/maven-pom.js')(containingPomStr);
+        var containingPom = require('generator-alfresco-common').maven_pom(containingPomStr);
         if (!containingPom.findModule(parentArtifactId)) {
           containingPom.addModule(parentArtifactId, true);
           this.fs.write(containingPomPath, containingPom.getPOMString());
@@ -271,7 +271,7 @@ module.exports = SubGenerator.extend({
             this.out.info('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
-            var pom = require('../common/maven-pom.js')(pomStr);
+            var pom = require('generator-alfresco-common').maven_pom(pomStr);
             if (this.props.repoName) pom.setTopLevelElementTextContent('pom', 'name', this.props.repoName);
             if (this.props.repoDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.repoDescription);
             this.fs.write(pomPath, pom.getPOMString());
@@ -301,7 +301,7 @@ module.exports = SubGenerator.extend({
             console.log('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
-            var pom = require('../common/maven-pom.js')(pomStr);
+            var pom = require('generator-alfresco-common').maven_pom(pomStr);
             if (this.props.shareName) pom.setTopLevelElementTextContent('pom', 'name', this.props.shareName);
             if (this.props.shareDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.shareDescription);
             this.fs.write(pomPath, pom.getPOMString());

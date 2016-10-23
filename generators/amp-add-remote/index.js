@@ -1,8 +1,8 @@
 'use strict';
 var debug = require('debug')('generator-alfresco:amp-remote');
 var chalk = require('chalk');
-var constants = require('../common/constants.js');
-var filters = require('../common/prompt-filters.js');
+var constants = require('generator-alfresco-common').constants;
+var filters = require('generator-alfresco-common').prompt_filters;
 var SubGenerator = require('../subgenerator.js');
 
 var WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];

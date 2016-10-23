@@ -4,7 +4,7 @@ var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:subgenerator');
 var path = require('path');
 var yosay = require('yosay');
-var constants = require('./common/constants.js');
+var constants = require('generator-alfresco-common').constants;
 var BaseGenerator = require('./base-generator.js');
 var Promise = require('pinkie-promise');
 

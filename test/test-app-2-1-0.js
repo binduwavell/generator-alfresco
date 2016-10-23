@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-env node, mocha */
 var assert = require('yeoman-assert');
-var constants = require('../generators/common/constants.js');
+var constants = require('generator-alfresco-common').constants;
 var helpers = require('yeoman-test');
 var os = require('os');
 var path = require('path');

@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:source-selecting-subgenerator');
-var constants = require('./common/constants.js');
+var constants = require('generator-alfresco-common').constants;
 var SubGenerator = require('./subgenerator.js');
 
 /**

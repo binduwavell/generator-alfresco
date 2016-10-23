@@ -3,8 +3,8 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:model');
 var path = require('path');
-var constants = require('../common/constants.js');
-var filters = require('../common/prompt-filters.js');
+var constants = require('generator-alfresco-common').constants;
+var filters = require('generator-alfresco-common').prompt_filters;
 var modelFilters = require('./model-prompt-filters.js');
 var SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 

@@ -5,9 +5,9 @@ var debug = require('debug')('generator-alfresco:amp-local');
 var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
-var constants = require('../common/constants.js');
-var filters = require('../common/prompt-filters.js');
-var properties = require('../common/java-properties.js');
+var constants = require('generator-alfresco-common').constants;
+var filters = require('generator-alfresco-common').prompt_filters;
+var properties = require('generator-alfresco-common').java_properties;
 var SubGenerator = require('../subgenerator.js');
 
 module.exports = SubGenerator.extend({
