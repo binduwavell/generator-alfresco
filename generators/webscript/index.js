@@ -77,11 +77,11 @@ module.exports = SourceSelectingSubGenerator.extend({
           if (show) {
             this.out.docs(
               ['The Web Script Framework provides two Java classes that implement the difficult parts of the org.alfresco.web.scripts.WebScript interface, which you can extend as a starting point. The simplest helper Java class is named as follows: org.alfresco.web.scripts.AbstractWebScript',
-               'This helper provides an implementation of getDescription() but does not provide any execution assistance, which it delegates to its derived class. This allows a Java-backed web script to take full control of the execution process, including how output is rendered to the response.',
-               'The other helper Java class is named: org.alfresco.web.scripts.DeclarativeWebScript',
-               'This helper provides an implementation of getDescription() and execute(). It encapsulates the execution of a scripted web script, which is:',
-               '*  Locate an associated controller script written in JavaScript and, if found, execute it.\n*  Locate an associated response template for the requested format and execute it, passing the model populated by the controller script.',
-               'By default, all web scripts implemented through scripting alone are backed by the DeclarativeWebScript Java class. There is one special hook point that makes this a useful class for your own Java-backed web scripts to extend. Prior to controller script execution, DeclarativeWebScript invokes the template method executeImpl(), which it expects the derived Java classes to implement.',
+                'This helper provides an implementation of getDescription() but does not provide any execution assistance, which it delegates to its derived class. This allows a Java-backed web script to take full control of the execution process, including how output is rendered to the response.',
+                'The other helper Java class is named: org.alfresco.web.scripts.DeclarativeWebScript',
+                'This helper provides an implementation of getDescription() and execute(). It encapsulates the execution of a scripted web script, which is:',
+                '*  Locate an associated controller script written in JavaScript and, if found, execute it.\n*  Locate an associated response template for the requested format and execute it, passing the model populated by the controller script.',
+                'By default, all web scripts implemented through scripting alone are backed by the DeclarativeWebScript Java class. There is one special hook point that makes this a useful class for your own Java-backed web scripts to extend. Prior to controller script execution, DeclarativeWebScript invokes the template method executeImpl(), which it expects the derived Java classes to implement.',
               ], 'http://docs.alfresco.com/5.1/concepts/ws-and-Java.html');
           }
           return show;
@@ -261,7 +261,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         when: function (readonlyProps) {
           this.out.docs(
             ['The runas attribute allows a web script developer to state that the execution of a web script must run as a particular Alfresco content repository user, regardless of who initiated the web script.',
-             'This is useful where the behavior of the web script requires specific permissions to succeed. Due to security concerns, the runas attribute is only available for web script implementations placed into the Java classpath.',
+              'This is useful where the behavior of the web script requires specific permissions to succeed. Due to security concerns, the runas attribute is only available for web script implementations placed into the Java classpath.',
             ].join('\n\n'),
             'http://docs.alfresco.com/5.1/references/api-wsdl-authentication.html');
           return true;
@@ -321,9 +321,9 @@ module.exports = SourceSelectingSubGenerator.extend({
           if (disp) {
             this.out.docs(
               ['Specifies the buffer size in bytes. Integer value.',
-               'Sets the size in bytes of the transactional buffer the webscript will allocate to guard against the potential rollback of a transaction during the webscript processing. If a rollback occurs and the buffer has not been filled, then it is able to rollback without any output from the webscript being committed to the container output stream. This means error responses can be returned instead of partially formed responses with an error embedded into them.',
-               'Buffers are only present where a transaction is required, otherwise they are not used.',
-               'For some webscripts, a buffer is not appropriate and would actually be detrimental to performance - the webscript might require direct access to the output stream not a wrapped buffer object - the remoteadm webscripts are such an example.',
+                'Sets the size in bytes of the transactional buffer the webscript will allocate to guard against the potential rollback of a transaction during the webscript processing. If a rollback occurs and the buffer has not been filled, then it is able to rollback without any output from the webscript being committed to the container output stream. This means error responses can be returned instead of partially formed responses with an error embedded into them.',
+                'Buffers are only present where a transaction is required, otherwise they are not used.',
+                'For some webscripts, a buffer is not appropriate and would actually be detrimental to performance - the webscript might require direct access to the output stream not a wrapped buffer object - the remoteadm webscripts are such an example.',
               ], 'http://docs.alfresco.com/5.1/references/api-wsdl-transaction.html');
           } else {
             this.answerOverrides.transactionBuffersize = undefined;
@@ -635,13 +635,13 @@ function packageFilter (pkg) {
   if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
   // To begin with, if package is provided in dot notation replace dots with slashes
   // also, treat spaces like path separators
-  var output = pkg.replace(/[\.\s]/g, '/');
+  var output = pkg.replace(/[.\s]/g, '/');
   // package/path should start with a slash
   if (!_.startsWith(output, '/')) {
     output = '/' + output;
   }
   // package/path should not end with a slash
-  output = output.replace(/[\/\s]*$/g, '');
+  output = output.replace(/[/\s]*$/g, '');
   // package/path should be all lower case
   output = output.toLocaleLowerCase();
   // if after cleanup all we have is a / then treat as undefined

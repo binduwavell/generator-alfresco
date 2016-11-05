@@ -126,7 +126,7 @@ function packageFilter (pkg) {
   var output = pkg;
   // To begin with, if package is provided in path notation replace
   // slashes with dots also, treat spaces like path separators
-  output = _.replace(output, /[\/\s]/g, '.');
+  output = _.replace(output, /[/\s]/g, '.');
   // package should not start with any dots
   output = _.replace(output, /^\.*/, '');
   // package should not end with any dots
