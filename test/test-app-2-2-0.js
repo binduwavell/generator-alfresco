@@ -83,9 +83,9 @@ describe('generator-alfresco:app', function () {
     it('uses correct folder names for exploding sources', function () {
       assert.fileContent([
         ['scripts/explode-alf-sources.sh',
-        /test-artifact-repo-amp/],
+          /test-artifact-repo-amp/],
         ['scripts/explode-alf-sources.sh',
-        /test-artifact-share-amp/],
+          /test-artifact-share-amp/],
       ]);
     });
   });
