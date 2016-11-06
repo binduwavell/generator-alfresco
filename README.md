@@ -169,10 +169,38 @@ The final option for installing AMPs is **Common AMPS**, this lists AMPs that ar
 available via a public maven repo that we can plug into your project on your 
 behalf. Currently these include:
 
+- Alfresco Office Services (AOS)
 - JavaScript Console
-- Records Management (Community)
+- JScript Extensions
+- Records Management (RM)
+- Share Inbound Calendar Invites
+- Share Site Announcements
+- Share Site Creators
+- Share Site Space Templates
 - Support Tools
 - Uploader Plus
+
+Here is a summary of which versions of common AMPS are available with each version
+of the SDK:
+
+| SDK >                          | 2.2.0     | 2.2.0      | 2.1.1     | 2.1.1      | 2.1.0     | 2.1.0      | 2.0.0     | 2.0.0      | local     | local      |
+| Common AMP v                   | Community | Enterprise | Community | Enterprise | Community | Enterprise | Community | Enterprise | Community | Enterprise |
+| ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
+| Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
+| JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
+| JScript Extensions             | 1.2       | 1.2        |           |            |           |            |           |            |           |            |
+| Records Management             | 2.5.a     | 2.5.0      | 2.3       | 2.3        | 2.3       | 2.3        |           |            |           |            |
+| Share Inbound Calendar Invites | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |
+| Share Site Announcements       | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      |
+| Share Site Creators            | 0.0.5     | 0.0.5      |           |            |           |            |           |            |           |            |
+| Share Site Space Templates     | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      |
+| Support Tools                  |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |
+| Uploader Plus                  | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        |
+
+You don't need to worry about this too much as it will automatically detect the SDK 
+version and if you are using Community or Enterprise and even which AMPs you have
+already applied and only show you ones that are valid for your project.
+
 
 Here are some sample command lines you can use:
 
