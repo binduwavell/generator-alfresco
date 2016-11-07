@@ -71,9 +71,11 @@ module.exports = yeoman.Base.extend({
   setupArgumentsAndOptions: function (prompts) {
     prompts.forEach(function (prompt) {
       if (prompt.hasOwnProperty('argument')) {
+        debug('Adding argument %s with config %j', prompt.argument.name, prompt.argument.config);
         this.argument(prompt.argument.name, prompt.argument.config);
       }
       if (prompt.hasOwnProperty('option')) {
+        debug('Adding option %s with config %j', prompt.option.name, prompt.option.config);
         this.option(prompt.option.name, prompt.option.config);
       }
     }.bind(this));
@@ -81,23 +83,32 @@ module.exports = yeoman.Base.extend({
 
   subgeneratorPrompt: function (prompts, desc, donePromptingFunc) {
     // ==== PROMPT EXTENSIONS ====
-    var processedPrompts = prompts.map(function (prompt) {
+    this.processedPrompts = prompts.map(function (prompt) {
       var newPrompt = _.assign({}, prompt);
       var oldWhen = prompt.when;
       newPrompt.when = function (props) {
         debug('Synthetic when() logic');
         if (this.bail) return false;
-        if (prompt.hasOwnProperty('commonFilter')
-          && _.isFunction(prompt.commonFilter)
-          && prompt.hasOwnProperty('option')
-          && prompt.option.hasOwnProperty('name')
-          && prompt.hasOwnProperty('name')) {
-          debug('Calling commonFilter(%s) for option: %s', this.options[prompt.option.name], prompt.option.name);
-          var v = prompt.commonFilter.call(this, this.options[prompt.option.name]);
+        if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter) && prompt.hasOwnProperty('name')
+          && ((prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name'))
+            || (prompt.hasOwnProperty('argument') && prompt.argument.hasOwnProperty('name'))
+          )
+        ) {
+          var cliName;
+          var cliValue;
+          if (prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name')) {
+            cliName = prompt.option.name;
+            cliValue = this.options[prompt.option.name];
+            debug('Calling commonFilter(%s) for option: %s', cliValue, cliName);
+          } else {
+            cliName = prompt.argument.name;
+            cliValue = this[prompt.argument.name];
+            debug('Calling commonFilter(%s) for argument: %s', cliValue, cliName);
+          }
+          var v = prompt.commonFilter.call(this, cliValue);
           if (undefined !== v) {
-            // props[prompt.name] = v;
             this.answerOverrides[prompt.name] = v;
-            this.out.info('Value for ' + prompt.option.name + ' set from command line: ' + chalk.reset.dim.cyan(v));
+            this.out.info('Value for ' + cliName + ' set from command line: ' + chalk.reset.dim.cyan(v));
             return false;
           }
         }
@@ -141,12 +152,12 @@ module.exports = yeoman.Base.extend({
     }.bind(this));
 
     // ==== NOW DO THE ACTUAL PROMPTING ====
-    return this.prompt(processedPrompts).then(function (props) {
+    return this.prompt(this.processedPrompts).then(function (props) {
       if (!this.bail) {
         var combinedProps = {};
         _.assign(combinedProps, this.answerOverrides);
         _.assign(combinedProps, props);
-        processedPrompts.forEach(function (promptItem) {
+        this.processedPrompts.forEach(function (promptItem) {
           var name = promptItem.name;
           var required = promptItem.valueRequired;
           if (name && required) {
