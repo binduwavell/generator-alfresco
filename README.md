@@ -183,8 +183,7 @@ behalf. Currently these include:
 Here is a summary of which versions of common AMPS are available with each version
 of the SDK:
 
-| SDK >                          | 2.2.0     | 2.2.0      | 2.1.1     | 2.1.1      | 2.1.0     | 2.1.0      | 2.0.0     | 2.0.0      | local     | local      |
-| Common AMP v                   | Community | Enterprise | Community | Enterprise | Community | Enterprise | Community | Enterprise | Community | Enterprise |
+|                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
 | ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
 | Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
 | JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
