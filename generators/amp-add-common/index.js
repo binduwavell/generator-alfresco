@@ -73,17 +73,16 @@ var PROJECTS = [
     shareVersion: '0.6',
   },
   {
-    // https://addons.alfresco.com/addons/alfresco-jscript-extensions says com/ent 5.0
-    // FAILURE with 5.0.d and 5.0.1 loads of errors on repo start
+    // https://addons.alfresco.com/addons/alfresco-jscript-extensions says com/ent 5.0 & 5.1
+    // SUCCESS with 5.0.d and 5.0.1
     // SUCCESS with 5.1.e and 5.1.1
     name: 'JScript Extensions',
     description: 'Helpful javascript root object extensions which are helpful in many scenarios. Extensions include: auth, batch, database, downloads, favorites, fileWriter, policies, jobs, permissions, repoAdmin, tenantAdmin, trans and workflowAdmin',
     url: 'https://github.com/jgoldhammer/alfresco-jscript-extensions',
     availability: ['Community', 'Enterprise'],
-    sdkVersions: ['2.2.0'],
     repoGroupId: 'de.jgoldhammer',
     repoArtifactId: 'alfresco-jscript-extension',
-    repoVersion: '1.2',
+    repoVersion: '1.3.1',
     shareGroupId: undefined,
     shareArtifactId: undefined,
     shareVersion: undefined,
