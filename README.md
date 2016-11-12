@@ -186,6 +186,7 @@ of the SDK:
 |                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
 | ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
 | Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
+| JavaMelody                     | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
 | JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
 | JScript Extensions             | 1.2       | 1.2        |           |            |           |            |           |            |           |            |
 | Records Management             | 2.5.a     | 2.5.0      | 2.3       | 2.3        | 2.3       | 2.3        |           |            |           |            |

@@ -50,6 +50,19 @@ var PROJECTS = [
   },
   */
   {
+    name: 'JavaMelody',
+    description: 'Monitor Alfresco in QA and production environments.',
+    url: 'https://github.com/javamelody/alfresco-javamelody',
+    availability: ['Community', 'Enterprise'],
+    sdkVersions: ['2.2.0'],
+    repoGroupId: 'net.bull.javamelody',
+    repoArtifactId: 'alfresco-javamelody-addon',
+    repoVersion: '1.62.0',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+  },
+  {
     name: 'JavaScript Console',
     description: 'Enables the execution of arbitrary javascript code in the repository.',
     url: 'https://github.com/share-extras/js-console',
