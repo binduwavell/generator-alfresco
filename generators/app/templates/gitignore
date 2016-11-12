@@ -2,7 +2,7 @@
 .externalToolBuilders
 .idea
 .ipr
-.iml
+*.iml
 .project
 .settings
 /*.log
