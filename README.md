@@ -170,6 +170,8 @@ available via a public maven repo that we can plug into your project on your
 behalf. Currently these include:
 
 - Alfresco Office Services (AOS)
+- Developer Helper
+- JavaMelody
 - JavaScript Console
 - JScript Extensions
 - Records Management (RM)
@@ -186,6 +188,7 @@ of the SDK:
 |                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
 | ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
 | Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
+| Developer Helper               | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0       | 1.0.0      | 1.0.0      |
 | JavaMelody                     | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
 | JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
 | JScript Extensions             | 1.2       | 1.2        |           |            |           |            |           |            |           |            |
