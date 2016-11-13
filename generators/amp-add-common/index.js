@@ -34,21 +34,18 @@ var PROJECTS = [
     shareArtifactId: undefined,
     shareVersion: undefined,
   },
-  /*
-  WARNING: Not currently in Maven Central
   {
-    name: 'Order of the Bee - Support Tools',
-    description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
-    url: 'https://github.com/AFaust/ootbee-support-tools',
+    name: 'Developer Helper',
+    description: 'A few simple tools like Open in Node Browser to help developers.',
+    url: 'https://github.com/binduwavell/alf-dev-helper',
     availability: ['Community', 'Enterprise'],
-    repoGroupId: 'org.orderofthebee.addons',
-    repoArtifactId: 'ootbee-support-tools-repo',
-    repoVersion: '0.0.1.0-SNAPSHOT',
-    shareGroupId: undefined,
-    shareArtifactId: undefined,
-    shareVersion: undefined,
+    repoGroupId: 'net.wavell',
+    repoArtifactId: 'alf-dev-helper-repo-amp',
+    repoVersion: '1.0.0',
+    shareGroupId: 'net.wavell',
+    shareArtifactId: 'alf-dev-helper-share-amp',
+    shareVersion: '1.0.0',
   },
-  */
   {
     name: 'JavaMelody',
     description: 'Monitor Alfresco in QA and production environments.',
@@ -90,6 +87,21 @@ var PROJECTS = [
     shareArtifactId: undefined,
     shareVersion: undefined,
   },
+  /*
+  WARNING: Not currently in Maven Central
+  {
+    name: 'Order of the Bee - Support Tools',
+    description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
+    url: 'https://github.com/AFaust/ootbee-support-tools',
+    availability: ['Community', 'Enterprise'],
+    repoGroupId: 'org.orderofthebee.addons',
+    repoArtifactId: 'ootbee-support-tools-repo',
+    repoVersion: '0.0.1.0-SNAPSHOT',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+  },
+  */
   {
     name: 'RM - Records Management (5.0.1)',
     description: 'Alfresco Records Management brings a combination of simplicity and control to information governance. The solution strengthens compliance by integrating records management into the natural flow of business and automating the complete record lifecycle‚ from capture through retention to final destruction.',
