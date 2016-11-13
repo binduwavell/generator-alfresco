@@ -109,11 +109,15 @@ yo alfresco:webscript --help
 
 Will print out information about cli arguments and options.
 
+#### alfresco:amp
+
 ```bash
 yo alfresco:amp
 ```
 
 This starts by asking if you would like to add source, local, remote or common AMPs. 
+
+##### alfresco:amp-add-source
 
 When you select **Source AMP**, we'll ask a few questions and then create additional 
 repo/share source AMPs under the `customizations` folder. These are created by copying
@@ -127,6 +131,8 @@ You can use either of the following as a shortcut for adding source AMPs:
 yo alfresco:amp -A source
 yo alfresco:amp-add-source
 ```
+
+##### alfresco:amp-add-local
 
 If you have AMP files you'd like to incorporate into your project, you can place
 repository AMPs into the `amps` root folder (just like you do when you use the
@@ -150,6 +156,8 @@ end of the day, it's not super important what values you provide. Of course
 you'll probably be happy if you choose meaningful values when you come back to
 the project in a month or a year.
 
+##### alfresco:amp-add-remote
+
 The **Remote AMP** option allows you to specify if the AMP should be installed into the 
 repository or Share. It also asks you to provide Maven groupId, artifactId and version 
 for an AMP file that is in a Maven repository that your build has access to. For example, 
@@ -165,11 +173,15 @@ yo alfresco:amp -A remote
 yo alfresco:amp-add-remote
 ```
 
+##### alfresco:amp-add-common
+
 The final option for installing AMPs is **Common AMPS**, this lists AMPs that are
 available via a public maven repo that we can plug into your project on your 
 behalf. Currently these include:
 
 - Alfresco Office Services (AOS)
+- Developer Helper
+- JavaMelody
 - JavaScript Console
 - JScript Extensions
 - Records Management (RM)
@@ -186,6 +198,7 @@ of the SDK:
 |                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
 | ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
 | Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
+| Developer Helper               | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0      | 1.0.0     | 1.0.0       | 1.0.0      | 1.0.0      |
 | JavaMelody                     | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
 | JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
 | JScript Extensions             | 1.2       | 1.2        |           |            |           |            |           |            |           |            |
@@ -213,6 +226,8 @@ yo alfresco:amp-add-common
 You can actually specify more than one AMP to install at the same time; we'll even
 install both repo and share amps if necessary.
 
+#### alfresco:action
+
 ```bash
 yo alfresco:action
 ```
@@ -222,6 +237,8 @@ want to create the action in. We'll create a basic repository action for you. Th
 includes a Java class, a properties file that causes the action and arguments to have 
 pretty labels and a context file with bean definitions for the Java class and the 
 resource bundle for loading the properties file.
+
+#### alfresco:behavior
 
 ```bash
 yo alfresco:behavior
@@ -233,6 +250,8 @@ for the `onUpdateProperties` policy on all `cm:content` nodes. We'll also genera
 context file that registers a bean for this class and passes in the minimal items 
 you'll need to create behavior code.
 
+#### alfresco:model
+
 ```bash
 yo alfresco:model
 ```
@@ -243,6 +262,7 @@ file has a bunch of commented out examples in it, so you should be able to creat
 valid model pretty easily. Of course we also provide a context file that registers
 the model.
 
+#### alfresco:webscript
 
 ```bash
 yo alfresco:webscript
