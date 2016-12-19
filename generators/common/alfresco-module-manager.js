@@ -1,9 +1,9 @@
 'use strict';
 var debug = require('debug')('generator-alfresco:alfresco-module-manager');
 var path = require('path');
-var constants = require('./constants.js');
-var domutils = require('./xml-dom-utils.js');
-var memFsUtils = require('./mem-fs-utils.js');
+var constants = require('generator-alfresco-common').constants;
+var domutils = require('generator-alfresco-common').xml_dom_utils;
+var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -22,7 +22,7 @@ module.exports = function (yo) {
     ops.push(fn);
   };
 
-  module.moduleRegistry = yo.moduleRegistry || require('./alfresco-module-registry.js')(yo);
+  module.moduleRegistry = yo.moduleRegistry || require('generator-alfresco-common').alfresco_module_registry(yo);
 
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
@@ -181,7 +181,7 @@ module.exports = function (yo) {
     var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + parentPomPath);
     var parentPom = yo.fs.read(parentPomPath);
-    var pom = require('./maven-pom.js')(parentPom);
+    var pom = require('generator-alfresco-common').maven_pom(parentPom);
     if (!pom.findModule(mod.artifactId)) {
       pom.addModule(mod.artifactId, true);
       yo.fs.write(parentPomPath, pom.getPOMString());
@@ -203,7 +203,7 @@ module.exports = function (yo) {
       var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
       if (yo.fs.exists(ctxPath)) {
         var ctxFile = yo.fs.read(ctxPath);
-        var ctx = require('./tomcat-context.js')(ctxFile);
+        var ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
         var targetFolder = yo.sdk.targetFolderName.call(yo, basename);
 
         ctx.addExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + targetFolder + '/web');
@@ -230,7 +230,7 @@ module.exports = function (yo) {
     var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Finding parent GAV info for ' + mod.artifactId + ' module from ' + parentPomPath);
     var parentPomStr = yo.fs.read(parentPomPath);
-    var parentPom = require('./maven-pom.js')(parentPomStr);
+    var parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
     var parentGroupIdEl = parentPom.getTopLevelElement('pom', 'groupId');
     var parentArtifactIdEl = parentPom.getTopLevelElement('pom', 'artifactId');
     var parentVersionEl = parentPom.getTopLevelElement('pom', 'version');
@@ -241,7 +241,7 @@ module.exports = function (yo) {
     // console.log("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
     var projectPom = yo.fs.read(projectPomPath);
     // console.log("POM CONTENTS: " + projectPom);
-    var pom = require('./maven-pom.js')(projectPom);
+    var pom = require('generator-alfresco-common').maven_pom(projectPom);
     // Unless we are in the customizations folder we can use provided values with
     // inheritance magic for project.blah references. In the customizations folder
     // we have to be more explicit as that folder has fixed GAV.
@@ -267,7 +267,7 @@ module.exports = function (yo) {
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
     var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
     var wrapperPom = yo.fs.read(wrapperPomPath);
-    var pom = require('./maven-pom.js')(wrapperPom);
+    var pom = require('generator-alfresco-common').maven_pom(wrapperPom);
     if (!pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
       var scope;
       var systemPath;
@@ -349,7 +349,7 @@ module.exports = function (yo) {
     var parentPomPath = yo.destinationPath('pom.xml');
     yo.out.warn('Removing ' + mod.artifactId + ' module from ' + parentPomPath);
     var parentPom = yo.fs.read(parentPomPath);
-    var pom = require('./maven-pom.js')(parentPom);
+    var pom = require('generator-alfresco-common').maven_pom(parentPom);
     if (pom.findModule(mod.artifactId)) {
       pom.removeModule(mod.artifactId);
       yo.fs.write(parentPomPath, pom.getPOMString());
@@ -361,7 +361,7 @@ module.exports = function (yo) {
     yo.out.info('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
     var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
     var wrapperPom = yo.fs.read(wrapperPomPath);
-    var pom = require('./maven-pom.js')(wrapperPom);
+    var pom = require('generator-alfresco-common').maven_pom(wrapperPom);
     if (pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
       pom.removeDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
       pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging);
@@ -407,7 +407,7 @@ module.exports = function (yo) {
       var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
       if (yo.fs.exists(ctxPath)) {
         var ctxFile = yo.fs.read(ctxPath);
-        var ctx = require('./tomcat-context.js')(ctxFile);
+        var ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
 
         ctx.removeExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + basename + '/web');
         ctx.removeVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/classes');

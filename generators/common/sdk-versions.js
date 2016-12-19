@@ -4,8 +4,8 @@ var debug = require('debug')('generator-alfresco:sdk-versions');
 var fs = require('fs');
 var path = require('path');
 var semver = require('semver');
-var constants = require('./constants.js');
-var domutils = require('./xml-dom-utils.js');
+var constants = require('generator-alfresco-common').constants;
+var domutils = require('generator-alfresco-common').xml_dom_utils;
 
 module.exports = {
   '2.2.0': {
@@ -225,7 +225,7 @@ function setupNewRepoAmp (pathPrefix) {
   // debug(memFsUtils.dumpFileNames(this.fs));
   var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
   // debug(contextDocOrig);
-  var context = require('./spring-context.js')(contextDocOrig);
+  var context = require('generator-alfresco-common').spring_context(contextDocOrig);
   if (!context.hasImport(importPath)) {
     context.addImport(importPath);
     var contextDocNew = context.getContextString();
@@ -325,7 +325,7 @@ function removeRepoSamples (pathPrefix, projectPackage, artifactIdPrefix) {
 
   var moduleContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + prefix + 'repo-amp/module-context.xml';
   var contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
-  var context = require('./spring-context.js')(contextDocOrig);
+  var context = require('generator-alfresco-common').spring_context(contextDocOrig);
   [
     'classpath:alfresco/module/${project.artifactId}/context/service-context.xml',
     'classpath:alfresco/module/${project.artifactId}/context/bootstrap-context.xml',

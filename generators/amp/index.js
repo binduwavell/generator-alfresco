@@ -1,6 +1,6 @@
 'use strict';
 var debug = require('debug')('generator-alfresco:amp');
-var filters = require('../common/prompt-filters.js');
+var filters = require('generator-alfresco-common').prompt_filters;
 var SubGenerator = require('../subgenerator.js');
 
 var AMP_TYPE_SOURCE = 'Source AMP';

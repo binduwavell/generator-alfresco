@@ -1,8 +1,8 @@
 'use strict';
 var _ = require('lodash');
 var debug = require('debug')('generator-alfresco:amp-common');
-var constants = require('../common/constants.js');
-var filters = require('../common/prompt-filters.js');
+var constants = require('generator-alfresco-common').constants;
+var filters = require('generator-alfresco-common').prompt_filters;
 var SubGenerator = require('../subgenerator.js');
 
 var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
