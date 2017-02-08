@@ -87,21 +87,18 @@ var PROJECTS = [
     shareArtifactId: undefined,
     shareVersion: undefined,
   },
-  /*
-  WARNING: Not currently in Maven Central
   {
     name: 'Order of the Bee - Support Tools',
     description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
     url: 'https://github.com/AFaust/ootbee-support-tools',
     availability: ['Community', 'Enterprise'],
-    repoGroupId: 'org.orderofthebee.addons',
-    repoArtifactId: 'ootbee-support-tools-repo',
-    repoVersion: '0.0.1.0-SNAPSHOT',
-    shareGroupId: undefined,
-    shareArtifactId: undefined,
-    shareVersion: undefined,
+    repoGroupId: 'org.orderofthebee.support-tools',
+    repoArtifactId: 'support-tools-repo',
+    repoVersion: '0.0.1.0',
+    shareGroupId: 'org.orderofthebee.support-tools',
+    shareArtifactId: 'support-tools-share',
+    shareVersion: '0.0.1.0',
   },
-  */
   {
     name: 'RM - Records Management (5.0.1)',
     description: 'Alfresco Records Management brings a combination of simplicity and control to information governance. The solution strengthens compliance by integrating records management into the natural flow of business and automating the complete record lifecycle‚ from capture through retention to final destruction.',
