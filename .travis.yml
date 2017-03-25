@@ -4,20 +4,20 @@ jdk:
   - oraclejdk8
 
 env:
+  - NODE_VERSION=v7
   - NODE_VERSION=v6
   - NODE_VERSION=v5
   - NODE_VERSION=v4
-  - NODE_VERSION=v0.12
-  - NODE_VERSION=v0.10
 
 cache:
+  yarn: true
   directories:
-  - node_modules
   - $HOME/.m2
 
 install:
   - nvm install $NODE_VERSION
-  - npm install
+  - npm install -g yarn
+  - yarn
 
 script:
   - nvm use $NODE_VERSION

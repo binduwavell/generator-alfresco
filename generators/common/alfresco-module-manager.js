@@ -27,7 +27,7 @@ module.exports = function (yo) {
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    // console.log("Existing module: " + JSON.stringify(mod));
+    debug("Existing module: " + JSON.stringify(mod));
     if (!mod) {
       mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
       debug('normalized result: %j', mod);
@@ -37,7 +37,7 @@ module.exports = function (yo) {
 
     // Stuff we only need to do for source amps
     if (mod.location === 'source') {
-      // console.log('Scheduling ops for ' + mod.artifactId);
+      debug('Scheduling ops for ' + mod.artifactId);
       ops.push(function () { copyTemplateForModule(mod) });
       ops.push(function () { renamePathElementsForModule(mod) });
       ops.push(function () { addModuleToParentPom(mod) });
@@ -56,17 +56,17 @@ module.exports = function (yo) {
   function copyTemplateForModule (mod) {
     debug('copyTemplateForModule()');
     var toPath = yo.destinationPath(mod.path);
-    // console.log('Copy destination: ' + toPath);
+    debug('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
       var prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId');
       var fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
-        // console.log('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
+        debug('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
         memFsUtils.inMemoryCopy(yo.fs, fromPath, toPath);
       } else {
-        // console.log('PHYSICAL COPY: ' + fromPath + '/** to: ' + toPath);
+        debug('PHYSICAL COPY: ' + fromPath + '/** to: ' + toPath);
         yo.fs.copy(path.join(fromPath, '/**'), toPath);
       }
     } else {
@@ -96,12 +96,12 @@ module.exports = function (yo) {
           mod.artifactId
         );
         yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
-        // console.log("MOVING FROM: " + fromPath + " to: " + toPath);
+        debug("MOVING FROM: " + fromPath + " to: " + toPath);
         if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
-          // console.log('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+          debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
           memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
         } else {
-          // console.log('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+          debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
           yo.fs.move(fromPath + '/**', toPath);
         }
       }
@@ -238,9 +238,9 @@ module.exports = function (yo) {
     var parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
     var parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
 
-    // console.log("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
+    debug("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
     var projectPom = yo.fs.read(projectPomPath);
-    // console.log("POM CONTENTS: " + projectPom);
+    debug("POM CONTENTS: " + projectPom);
     var pom = require('generator-alfresco-common').maven_pom(projectPom);
     // Unless we are in the customizations folder we can use provided values with
     // inheritance magic for project.blah references. In the customizations folder
@@ -303,7 +303,7 @@ module.exports = function (yo) {
     var configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
     domutils.getOrCreateChild(configuration, 'pom', 'overlays');
     pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
-    // console.log(pom.getPOMString());
+    debug(pom.getPOMString());
     yo.fs.write(wrapperPomPath, pom.getPOMString());
     debug('addModuleToWarWrapper() finished');
   }
@@ -333,12 +333,12 @@ module.exports = function (yo) {
     yo.out.warn('Deleting source module: ' + mod.path);
     var absPath = yo.destinationPath(mod.path);
     // if we have files on disk already this will get them
-    // console.log("DELETING EXISTING FILES FROM: " + absPath);
+    debug("DELETING EXISTING FILES FROM: " + absPath);
     yo.fs.delete(absPath);
     // if we have files in mem-fs, this should get those
     yo.fs.store.each(function (file, idx) {
       if (file.path.indexOf(absPath) === 0) {
-        // console.log("DELETING: " + file.path);
+        debug("DELETING: " + file.path);
         yo.fs.delete(file.path);
       }
     });
@@ -380,12 +380,12 @@ module.exports = function (yo) {
       // now if we find executions for this module remove them too
       var mft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests-' + mod.artifactId + '"]', pluginExs);
       if (mft) {
-        console.log('Removing functional-tests-' + mod.artifactId);
+        debug('Removing functional-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mft);
       }
       var mvt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests-' + mod.artifactId + '"]', pluginExs);
       if (mvt) {
-        console.log('Removing verify-tests-' + mod.artifactId);
+        debug('Removing verify-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mvt);
       }
       yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));

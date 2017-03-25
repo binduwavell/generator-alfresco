@@ -38,6 +38,8 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.fs.write(yomock.wrapperPomPath, '');
       yomock.templatePomPath = yomock.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/repo-packaging/pom.xml');
       yomock.fs.write(yomock.templatePomPath, '');
+      yomock.modulePropertiesPath = yomock.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/repo-packaging/src/main/amp/config/alfresco/module/repo-amp/module.properties');
+      yomock.fs.write(yomock.modulePropertiesPath, '');
       yomock.projectPomPath = yomock.destinationPath('path/pom.xml');
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');
       yomock.moduleManager.save();
@@ -83,7 +85,13 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       assert.equal(packagingNode.textContent, 'packaging');
       var parentNode = pom.getOrCreateTopLevelElement('pom', 'parent');
       assert.ok(parentNode);
-      assert.equal(parentNode.toString(), '<parent>\n    <groupId>com.example</groupId>\n    <artifactId>placeholder</artifactId>\n    <version>0.0.1-SNAPSHOT</version>\n  </parent>');
+      assert.equal(parentNode.toString(), [
+        '<parent xmlns="http://maven.apache.org/POM/4.0.0">',
+        '    <groupId>com.example</groupId>',
+        '    <artifactId>placeholder</artifactId>',
+        '    <version>0.0.1-SNAPSHOT</version>',
+        '  </parent>',
+      ].join('\n'));
     });
 
     it('adds a module to the top pom', function () {
@@ -139,6 +147,10 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       yomock.fs.write(yomock.wrapperPomPath, '');
       yomock.targetPomPath = yomock.destinationPath('path/pom.xml');
       yomock.fs.write(yomock.targetPomPath, '');
+      yomock.templatePomPath = yomock.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/war-packaging/pom.xml');
+      yomock.fs.write(yomock.templatePomPath, '');
+      yomock.modulePropertiesPath = yomock.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/war-packaging/src/main/amp/config/alfresco/module/repo-amp/module.properties');
+      yomock.fs.write(yomock.modulePropertiesPath, '');
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
       yomock.moduleManager.removeModule('groupId', 'artifactId', 'version', 'packaging', 'war', 'source', 'path');
       yomock.moduleManager.save();

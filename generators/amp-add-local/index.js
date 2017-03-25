@@ -97,7 +97,6 @@ module.exports = SubGenerator.extend({
 
     return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
-      this.props.warType;
       if (_.startsWith(this.props.path, path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS, path.sep))) {
         this.props.warType = 'repo';
       }
