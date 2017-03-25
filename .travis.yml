@@ -16,6 +16,7 @@ cache:
 
 install:
   - nvm install $NODE_VERSION
+  - npm install -g yarn
   - yarn
 
 script:
