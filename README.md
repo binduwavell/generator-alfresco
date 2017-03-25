@@ -13,7 +13,7 @@ Alfresco SDK and specifically the All in One maven archetype.
 ### What is [Yeoman](http://yeoman.io)?
 
 Yeoman is a command line tool that helps you to automate coding tasks. Out of the box, Yeoman 
-doesn't do very much. It relies on a library of thousands of 
+doesn't do very much. It relies on a library of thousands of
 [generators](http://yeoman.io/generators/) to actually perform the coding tasks for you.
 
 Yeoman lives in the [npm](https://npmjs.org) package repository. Assuming you have a recent
@@ -24,21 +24,24 @@ to install Yeoman.
 npm install -g yo
 ```
 
+NOTE: that we now require Node 4.x or above. Information on installing Node is linked from
+our [Supported Platforms / Node Versions][installing-node] wiki page.
+
 ### Installing and using the generator
 
-You have a couple of options for installing the Alfresco generator for Yeoman. Your choice will 
+You have a couple of options for installing the Alfresco generator for Yeoman. Your choice will
 depend on if you plan to extend the generator or if you simply want to use it.
 
 > _Checkout the next section for what to do if you plan to work on the generator code._
 
-We have not pushed a version of the Alfresco generator to npmjs.org yet, so if you don't 
+We have not pushed a version of the Alfresco generator to npmjs.org yet, so if you don't
 plan to make changes to the generator itself, run:
 
 ```bash
 npm install -g binduwavell/generator-alfresco
 ```
 
-WARNING: you will likely need to update this occasionally as the project is under active 
+WARNING: you will likely need to update this occasionally as the project is under active
 development.
 
 Now, assuming you have all of the pre-requisites installed (including appropriate
@@ -335,3 +338,4 @@ Apache 2.0
 [gitter-url]: https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [codenvy-image]: http://beta.codenvy.com/factory/resources/codenvy-contribute.svg
 [codenvy-url]: http://beta.codenvy.com/f?id=zia672875qiibfzv
+[installing-node]: https://github.com/binduwavell/generator-alfresco/wiki/Supported-Platforms-Node-Versions#user-content-installing-node
