@@ -10,13 +10,13 @@ env:
   - NODE_VERSION=v4
 
 cache:
+  yarn: true
   directories:
-  - node_modules
   - $HOME/.m2
 
 install:
   - nvm install $NODE_VERSION
-  - npm install
+  - yarn
 
 script:
   - nvm use $NODE_VERSION
