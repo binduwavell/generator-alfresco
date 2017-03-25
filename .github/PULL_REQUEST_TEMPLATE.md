@@ -9,7 +9,6 @@ We will not consider a PR untill all of the following items are checked off--tha
   * TIP: You can watch/run a specific test during developemnt with `npm run test:watchone test/TEST-FILE-NAME`
 - [ ] Appropriate coverage validated with `npm run cover:local`
 - [ ] All `npm test` passes without any issues
-- [ ] Commits squashed
 
 ### CONVINCING DESCRIPTION
 ### RELATED INFORMATION
@@ -22,4 +21,3 @@ We will not consider a PR untill all of the following items are checked off--tha
 - After some time, we will close PRs that have not been accepted
 
 When we decline or close your PR. You are encouraged to address the concernes outlined in the PR and then re-submit it. We want contributions. We also need for them to be of high quality and high value and to not take undue resources away from the features and enhancements the core team is working on. Thanks for understanding!
-
