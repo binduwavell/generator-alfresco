@@ -77,35 +77,39 @@ module.exports = function (yo) {
 
   function renamePathElementsForModule (mod) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
-    var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
-      return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
-    });
-    if (defaultMods && defaultMods.length > 0) {
-      if (mod.artifactId !== defaultMods[0].artifactId) {
-        // <path>/src/main/amp/config/alfresco/module/<artifactId>
-        var fromPath = path.join(
-          yo.destinationPath(),
-          mod.path,
-          '/src/main/amp/config/alfresco/module',
-          defaultMods[0].artifactId
-        );
-        var toPath = path.join(
-          yo.destinationPath(),
-          mod.path,
-          '/src/main/amp/config/alfresco/module',
-          mod.artifactId
-        );
-        yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
-        debug("MOVING FROM: " + fromPath + " to: " + toPath);
-        if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
-          debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
-          memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
-        } else {
-          debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
-          yo.fs.move(fromPath + '/**', toPath);
+
+    if (mod.war === constants.WAR_TYPE_REPO) {
+      var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
+        return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
+      });
+      if (defaultMods && defaultMods.length > 0) {
+        if (mod.artifactId !== defaultMods[0].artifactId) {
+          // <path>/src/main/amp/config/alfresco/module/<artifactId>
+          var fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            '/src/main/amp/config/alfresco/module',
+            defaultMods[0].artifactId
+          );
+          var toPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            '/src/main/amp/config/alfresco/module',
+            mod.artifactId
+          );
+          yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+          debug("MOVING FROM: " + fromPath + " to: " + toPath);
+          if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+            debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+            memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+          } else {
+            debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+            yo.fs.move(fromPath + '/**', toPath);
+          }
         }
       }
     }
+
     debug('renamePathElementsForModule() finished');
   }
 
