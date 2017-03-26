@@ -18,7 +18,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'modelName',
-        option: { name: 'model-name', config: { alias: 'n', desc: 'Model Name', type: 'String' } },
+        option: { name: 'model-name', config: { alias: 'n', desc: 'Model Name', type: String } },
         when: function (readonlyProps) {
           this.out.docs(
             'The model name identifies the model.',
@@ -32,7 +32,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'modelDescription',
-        option: { name: 'model-description', config: { alias: 'd', desc: 'Model Description', type: 'String' } },
+        option: { name: 'model-description', config: { alias: 'd', desc: 'Model Description', type: String } },
         when: function (readonlyProps) {
           this.out.docs(
             'The model description describes the model.',
@@ -46,7 +46,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'modelAuthor',
-        option: { name: 'model-author', config: { alias: 'a', desc: 'Model Author', type: 'String' } },
+        option: { name: 'model-author', config: { alias: 'a', desc: 'Model Author', type: String } },
         when: function (readonlyProps) {
           this.out.docs(
             'The model author is the creator of the model.',
@@ -75,7 +75,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'namespaceUri',
-        option: { name: 'namespace-uri', config: { alias: 'u', desc: 'Namespace URI', type: 'String' } },
+        option: { name: 'namespace-uri', config: { alias: 'u', desc: 'Namespace URI', type: String } },
         when: function (readonlyProps) {
           this.out.docs(
             'The model uri is needed for the model. It should be a url path',
@@ -96,7 +96,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'namespacePrefix',
-        option: { name: 'namespace-prefix', config: { alias: 'p', desc: 'Namespace Prefix', type: 'String' } },
+        option: { name: 'namespace-prefix', config: { alias: 'p', desc: 'Namespace Prefix', type: String } },
         when: function (readonlyProps) {
           this.out.docs(
             'The model prefix is needed for the model.',

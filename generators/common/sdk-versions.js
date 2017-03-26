@@ -382,9 +382,12 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   [
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/' + slingshotContextFile,
   ].forEach(function (file) {
-    if (memFsUtils.existsInMemory(this.fs, file) || fs.existsSync(file)) {
+    var destinationFile = this.destinationPath(file);
+    if (memFsUtils.existsInMemory(this.fs, destinationFile) || fs.existsSync(file)) {
       this.out.info('Renaming share-amp file to *.sample: ' + file);
-      this.fs.move(file, file + '.sample');
+      this.fs.move(destinationFile, destinationFile + '.sample');
+    } else {
+      debug('Unable to locate ' + file + ' in order to rename with .sample');
     }
   }.bind(this));
   debug('removeShareSamples() finished');

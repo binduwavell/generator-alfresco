@@ -23,7 +23,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'class',
-        option: { name: 'class', config: { alias: 'c', desc: 'Class name for behavior', type: 'String' } },
+        option: { name: 'class', config: { alias: 'c', desc: 'Class name for behavior', type: String } },
         message: 'What behavior ' + chalk.yellow('class name') + ' should we use?',
         commonFilter: filters.requiredTextFilter,
         valueRequired: true,
@@ -31,7 +31,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'package',
-        option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: 'String' } },
+        option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: String } },
         when: function (readonlyProps) {
           this.out.docs('The java package that your behavior class must be placed into.');
           return true;

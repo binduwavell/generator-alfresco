@@ -90,8 +90,9 @@ module.exports = Generator.extend({
       newPrompt.when = function (props) {
         debug('Synthetic when() logic');
         if (this.bail) return false;
-        if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter) && prompt.hasOwnProperty('name')
-          && ((prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name'))
+        if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter)
+          && prompt.hasOwnProperty('name') && (
+            (prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name'))
             || (prompt.hasOwnProperty('argument') && prompt.argument.hasOwnProperty('name'))
           )
         ) {
@@ -103,7 +104,7 @@ module.exports = Generator.extend({
             debug('Calling commonFilter(%s) for option: %s', cliValue, cliName);
           } else {
             cliName = prompt.argument.name;
-            cliValue = this[prompt.argument.name];
+            cliValue = this.options[prompt.argument.name];
             debug('Calling commonFilter(%s) for argument: %s', cliValue, cliName);
           }
           var v = prompt.commonFilter.call(this, cliValue);

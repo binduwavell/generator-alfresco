@@ -23,7 +23,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'name',
-        option: { name: 'name', config: { alias: 'n', desc: 'Action name', type: 'String' } },
+        option: { name: 'name', config: { alias: 'n', desc: 'Action name', type: String } },
         when: function (readonlyProps) {
           this.out.docs('The action name will be used to construct the bean id and class name for the action.');
           return true;
@@ -35,7 +35,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'package',
-        option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: 'String' } },
+        option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: String } },
         when: function (readonlyProps) {
           this.out.docs('The java package that your action class must be placed into.');
           return true;
@@ -49,7 +49,7 @@ module.exports = SourceSelectingSubGenerator.extend({
       {
         type: 'input',
         name: 'description',
-        option: { name: 'description', config: { alias: 'd', desc: 'Description for action', type: 'String' } },
+        option: { name: 'description', config: { alias: 'd', desc: 'Description for action', type: String } },
         message: 'What ' + chalk.yellow('description') + ' should we use?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
