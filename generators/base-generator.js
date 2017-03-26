@@ -2,7 +2,8 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:base-generator');
-var yeoman = require('yeoman-generator');
+
+var Generator = require('yeoman-generator');
 
 /**
  * Base class for a yeoman generator in the generator-alfresco project. This
@@ -54,9 +55,9 @@ var yeoman = require('yeoman-generator');
  * In order to reduce boilerplate, each function we create will be bound to this
  * yeoman generator instance automatically.
  */
-module.exports = yeoman.Base.extend({
+module.exports = Generator.extend({
   constructor: function () {
-    yeoman.Base.apply(this, arguments);
+    Generator.apply(this, arguments);
 
     this.bail = false;
     this.out = require('generator-alfresco-common').generator_output(this);

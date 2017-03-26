@@ -1,10 +1,10 @@
 'use strict';
-var Generator = require('yeoman-generator');
 var _ = require('lodash');
 var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:app');
 var fs = require('fs');
+var Generator = require('yeoman-generator');
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');

@@ -6,6 +6,7 @@ var path = require('path');
 var semver = require('semver');
 var constants = require('generator-alfresco-common').constants;
 var domutils = require('generator-alfresco-common').xml_dom_utils;
+var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 
 module.exports = {
   '2.2.0': {
@@ -381,8 +382,10 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   [
     pathPrefix + '/src/main/amp/config/alfresco/web-extension/' + slingshotContextFile,
   ].forEach(function (file) {
-    this.out.info('Renaming share-amp file to *.sample: ' + file);
-    this.fs.move(file, file + '.sample');
+    if (memFsUtils.existsInMemory(this.fs, file) || fs.existsSync(file)) {
+      this.out.info('Renaming share-amp file to *.sample: ' + file);
+      this.fs.move(file, file + '.sample');
+    }
   }.bind(this));
   debug('removeShareSamples() finished');
 }
