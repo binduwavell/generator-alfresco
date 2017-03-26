@@ -54,15 +54,15 @@ module.exports = SubGenerator.extend({
   },
 
   help: function () {
-    var Base = require('yeoman-generator').Base;
-    var helpArray = [Base.prototype.help.apply(this)];
+    var Generator = require('yeoman-generator');
+    var helpArray = [Generator.prototype.help.apply(this)];
     NAMESPACE_CHOICES.forEach(function (subgenDesc) {
       helpArray.push('\n' + subgenDesc.label + ' Options:');
       var subgen = this.env.create(subgenDesc.namespace);
       ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
         subgen._options[op].hide = true;
       });
-      helpArray.push(Base.prototype.optionsHelp.apply(subgen));
+      helpArray.push(Generator.prototype.optionsHelp.apply(subgen));
     }.bind(this));
     return helpArray.join('\n');
   },
@@ -72,7 +72,7 @@ module.exports = SubGenerator.extend({
       NAMESPACE_CHOICES.forEach(function (subgenDesc) {
         if (props.ampType === subgenDesc.label) {
           debug('delegating to %s', subgenDesc.namespace);
-          this.composeWith(subgenDesc.namespace, { options: this.options });
+          this.composeWith(subgenDesc.namespace, this.options);
         }
       }.bind(this));
     }).then(function () {

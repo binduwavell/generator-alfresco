@@ -27,7 +27,7 @@ module.exports = function (yo) {
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
     var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    debug("Existing module: " + JSON.stringify(mod));
+    debug('Existing module: ' + JSON.stringify(mod));
     if (!mod) {
       mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
       debug('normalized result: %j', mod);
@@ -77,35 +77,39 @@ module.exports = function (yo) {
 
   function renamePathElementsForModule (mod) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
-    var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
-      return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
-    });
-    if (defaultMods && defaultMods.length > 0) {
-      if (mod.artifactId !== defaultMods[0].artifactId) {
-        // <path>/src/main/amp/config/alfresco/module/<artifactId>
-        var fromPath = path.join(
-          yo.destinationPath(),
-          mod.path,
-          '/src/main/amp/config/alfresco/module',
-          defaultMods[0].artifactId
-        );
-        var toPath = path.join(
-          yo.destinationPath(),
-          mod.path,
-          '/src/main/amp/config/alfresco/module',
-          mod.artifactId
-        );
-        yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
-        debug("MOVING FROM: " + fromPath + " to: " + toPath);
-        if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
-          debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
-          memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
-        } else {
-          debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
-          yo.fs.move(fromPath + '/**', toPath);
+
+    if (mod.war === constants.WAR_TYPE_REPO) {
+      var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
+        return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
+      });
+      if (defaultMods && defaultMods.length > 0) {
+        if (mod.artifactId !== defaultMods[0].artifactId) {
+          // <path>/src/main/amp/config/alfresco/module/<artifactId>
+          var fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            '/src/main/amp/config/alfresco/module',
+            defaultMods[0].artifactId
+          );
+          var toPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            '/src/main/amp/config/alfresco/module',
+            mod.artifactId
+          );
+          yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+          debug('MOVING FROM: ' + fromPath + ' to: ' + toPath);
+          if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+            debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+            memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+          } else {
+            debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+            yo.fs.move(fromPath + '/**', toPath);
+          }
         }
       }
     }
+
     debug('renamePathElementsForModule() finished');
   }
 
@@ -238,9 +242,9 @@ module.exports = function (yo) {
     var parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
     var parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
 
-    debug("POM EXISTS: " + projectPomPath + " [" + yo.fs.exists(projectPomPath) + "]");
+    debug('POM EXISTS: ' + projectPomPath + ' [' + yo.fs.exists(projectPomPath) + ']');
     var projectPom = yo.fs.read(projectPomPath);
-    debug("POM CONTENTS: " + projectPom);
+    debug('POM CONTENTS: ' + projectPom);
     var pom = require('generator-alfresco-common').maven_pom(projectPom);
     // Unless we are in the customizations folder we can use provided values with
     // inheritance magic for project.blah references. In the customizations folder
@@ -333,12 +337,12 @@ module.exports = function (yo) {
     yo.out.warn('Deleting source module: ' + mod.path);
     var absPath = yo.destinationPath(mod.path);
     // if we have files on disk already this will get them
-    debug("DELETING EXISTING FILES FROM: " + absPath);
+    debug('DELETING EXISTING FILES FROM: ' + absPath);
     yo.fs.delete(absPath);
     // if we have files in mem-fs, this should get those
     yo.fs.store.each(function (file, idx) {
       if (file.path.indexOf(absPath) === 0) {
-        debug("DELETING: " + file.path);
+        debug('DELETING: ' + file.path);
         yo.fs.delete(file.path);
       }
     });

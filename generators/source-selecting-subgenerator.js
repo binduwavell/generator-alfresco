@@ -3,6 +3,7 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:source-selecting-subgenerator');
 var constants = require('generator-alfresco-common').constants;
+
 var SubGenerator = require('./subgenerator.js');
 
 /**
@@ -37,7 +38,7 @@ module.exports = SubGenerator.extend({
       {
         type: 'list',
         name: constants.PROP_WAR,
-        option: { name: 'module-path', config: { alias: 'm', desc: 'Project relative path to module root', type: 'String' } },
+        option: { name: 'module-path', config: { alias: 'm', desc: 'Project relative path to module root', type: String } },
         when: function (props) {
           var module;
           // Handle converting a module path provided from the command line into

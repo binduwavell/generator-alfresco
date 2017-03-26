@@ -13,8 +13,8 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       'get': function () { return undefined },
       'set': function () { },
     },
-    tmpDir: os.tmpDir(),
-    destinationPath: function (p) { if (p) { return path.join(yomock.tmpDir, p) } else { return yomock.tmpDir } },
+    tmpdir: os.tmpdir(),
+    destinationPath: function (p) { if (p) { return path.join(yomock.tmpdir, p) } else { return yomock.tmpdir } },
     out: {
       info: function (msg) { /* console.log('INFO: ' + msg) */ },
       warn: function (msg) { /* console.log('WARN: ' + msg) */ },

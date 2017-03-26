@@ -17,7 +17,7 @@ var TestGenerator = BaseGenerator.extend({
       {
         type: 'input',
         name: 'myargument',
-        argument: { name: 'myargument', config: { required: false, type: 'String' } },
+        argument: { name: 'myargument', config: { required: false, type: String } },
         when: false,
         message: 'What is the value of your argument?',
         commonFilter: filters.optionalTextFilter,
@@ -26,7 +26,7 @@ var TestGenerator = BaseGenerator.extend({
       {
         type: 'input',
         name: 'myprompt',
-        option: { name: 'myprompt', config: { alias: 'p', desc: 'Prompt item', type: 'String' } },
+        option: { name: 'myprompt', config: { alias: 'p', desc: 'Prompt item', type: String } },
         when: function () {
           return true;
         },
@@ -37,7 +37,7 @@ var TestGenerator = BaseGenerator.extend({
       {
         type: 'input',
         name: 'bail',
-        option: { name: 'bail', config: { alias: 'b', desc: 'Bail item', type: 'String' } },
+        option: { name: 'bail', config: { alias: 'b', desc: 'Bail item', type: String } },
         when: function (readonlyProps) {
           if (readonlyProps.myprompt === 'bail') {
             this.bail = true;
@@ -51,7 +51,7 @@ var TestGenerator = BaseGenerator.extend({
       {
         type: 'input',
         name: 'bailed',
-        option: { name: 'bailed', config: { alias: 'B', desc: 'Bail item', type: 'String' } },
+        option: { name: 'bailed', config: { alias: 'B', desc: 'Bail item', type: String } },
         message: 'What is the value of your bailed?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,

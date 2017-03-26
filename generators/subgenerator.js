@@ -5,8 +5,8 @@ var debug = require('debug')('generator-alfresco:subgenerator');
 var path = require('path');
 var yosay = require('yosay');
 var constants = require('generator-alfresco-common').constants;
+
 var BaseGenerator = require('./base-generator.js');
-var Promise = require('pinkie-promise');
 
 /**
  * Makes sure the code is run in a project rather than being

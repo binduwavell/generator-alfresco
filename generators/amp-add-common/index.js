@@ -3,6 +3,7 @@ var _ = require('lodash');
 var debug = require('debug')('generator-alfresco:amp-common');
 var constants = require('generator-alfresco-common').constants;
 var filters = require('generator-alfresco-common').prompt_filters;
+
 var SubGenerator = require('../subgenerator.js');
 
 var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
@@ -253,6 +254,8 @@ module.exports = SubGenerator.extend({
 
     var projectNames = projects.map(function (project) { return project.name });
 
+    debug('Offering the following common amps: ', projectNames);
+
     this.prompts = [
       {
         type: 'checkbox',
@@ -287,8 +290,8 @@ module.exports = SubGenerator.extend({
       _.forEach(projects, function (project) {
         if (project.repoGroupId) {
           debug('attempting to compose %s to add %s to the repo', NAMESPACE_REMOTE, project.repoArtifactId);
-          this.composeWith(NAMESPACE_REMOTE,
-            {options: {
+          this.composeWith(require.resolve('../amp-add-remote'),
+            {
               war: 'repo',
               'group-id': project.repoGroupId,
               'artifact-id': project.repoArtifactId,
@@ -296,14 +299,12 @@ module.exports = SubGenerator.extend({
               _moduleRegistry: this.moduleRegistry,
               _modules: this.modules,
               _moduleManager: this.moduleManager,
-            }},
-            {local: require.resolve('../amp-add-remote')}
-          );
+            });
         }
         if (project.shareGroupId) {
           debug('attempting to compose %s to add %s to the share', NAMESPACE_REMOTE, project.shareArtifactId);
-          this.composeWith(NAMESPACE_REMOTE,
-            {options: {
+          this.composeWith(require.resolve('../amp-add-remote'),
+            {
               war: 'share',
               'group-id': project.shareGroupId,
               'artifact-id': project.shareArtifactId,
@@ -311,9 +312,7 @@ module.exports = SubGenerator.extend({
               _moduleRegistry: this.moduleRegistry,
               _modules: this.modules,
               _moduleManager: this.moduleManager,
-            }},
-            {local: require.resolve('../amp-add-remote')}
-          );
+            });
         }
       }.bind(this));
     }.bind(this));
