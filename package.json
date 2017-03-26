@@ -34,7 +34,7 @@
     "rmdir": "1.2.0",
     "run-async": "2.3.0",
     "semver": "5.3.0",
-    "yeoman-generator": "0.24.1",
+    "yeoman-generator": "1.1.1",
     "yosay": "2.0.0"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "eslint": "eslint generators test || echo DONE",
     "fixme": "node -e \"require('fixme')()\"",
     "ncu": "ncu",
-    "ncu:upgrade": "ncu -u -x run-async -x yeoman-generator",
+    "ncu:upgrade": "ncu -u",
     "precommit": "eslint generators test",
     "test": "mocha --reporter spec test",
     "test:color": "mocha --colors --reporter spec test",

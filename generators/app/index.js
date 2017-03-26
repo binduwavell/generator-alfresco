@@ -1,5 +1,5 @@
 'use strict';
-var yeoman = require('yeoman-generator');
+var Generator = require('yeoman-generator');
 var _ = require('lodash');
 var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
@@ -11,7 +11,7 @@ var semver = require('semver');
 var constants = require('generator-alfresco-common').constants;
 var versions = require('generator-alfresco-common').dependency_versions;
 
-module.exports = yeoman.Base.extend({
+module.exports = Generator.extend({
   _getConfigValue: function (key) {
     if (!_.isNil(key)) {
       if (!_.isNil(this.config.get(key))) {
