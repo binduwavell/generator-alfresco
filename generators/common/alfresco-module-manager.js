@@ -4,6 +4,7 @@ var path = require('path');
 var constants = require('generator-alfresco-common').constants;
 var domutils = require('generator-alfresco-common').xml_dom_utils;
 var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
+var slash = require('slash');
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -197,7 +198,7 @@ module.exports = function (yo) {
   function addModuleToTomcatContext (mod) {
     yo.out.info('Adding path elements for ' + mod.artifactId + ' tomcat context file');
     var warType = mod.war;
-    var modPath = mod.path;
+    var modPath = slash(mod.path);
     var basename = path.basename(modPath);
     if ([constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE].indexOf(warType) > -1) {
       var fileName = constants.FILE_CONTEXT_REPO_XML;
