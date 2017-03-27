@@ -3,6 +3,9 @@ language: java
 jdk:
   - oraclejdk8
 
+dist: precise
+sudo: false
+
 env:
   - NODE_VERSION=v7
   - NODE_VERSION=v6
@@ -16,11 +19,12 @@ cache:
 
 install:
   - nvm install $NODE_VERSION
-  - npm install -g yarn
-  - yarn
+  - wget https://yarnpkg.com/install.sh
+  - chmod 755 install.sh
+  - ./install.sh
+  - $HOME/.yarn/bin/yarn
 
 script:
-  - nvm use $NODE_VERSION
   - node ci.js $NODE_VERSION
 
 notifications:
