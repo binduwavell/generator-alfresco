@@ -3,15 +3,12 @@
 require('shelljs/global');
 
 var nodeVersion = String(process.argv[2]);
-var cmd;
-
+var testCommand = 'npm run test:color';
 if (nodeVersion === 'v7') {
-  cmd = 'npm run codecov:color';
-} else {
-  cmd = 'npm run test:color';
+  testCommand = 'npm run codecov:color';
 }
 
-var proc = exec(cmd, {stdin: 'inherit'});
+var proc = exec(testCommand, {stdin: 'inherit'});
 if (proc === undefined || proc === null) {
   echo('ERROR: unable to execute tests');
   exit(1);
