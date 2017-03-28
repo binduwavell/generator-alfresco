@@ -34,12 +34,7 @@ describe('generator-alfresco:amp-add-common', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-common'))
         // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'project-names': ['JavaScript Console', 'RM - Records Management (5.0.1)'],

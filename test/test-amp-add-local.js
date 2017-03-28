@@ -54,13 +54,7 @@ describe('generator-alfresco:amp-add-local', function () {
         var ampPath = path.join(osTempDir, 'customizations/amps/repo-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
-        // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
             'path': 'customizations/amps/repo-amp.amp',
@@ -85,13 +79,7 @@ describe('generator-alfresco:amp-add-local', function () {
         var ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
-        // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
           })
@@ -116,13 +104,7 @@ describe('generator-alfresco:amp-add-local', function () {
         var ampPath = path.join(osTempDir, 'customizations/amps/empty-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
-        // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
           })
@@ -156,13 +138,7 @@ describe('generator-alfresco:amp-add-local', function () {
         var ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
-        // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
           })
@@ -204,13 +180,7 @@ describe('generator-alfresco:amp-add-local', function () {
     describe('installing a non-existent local repo amp using options', function () {
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
-        // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
             'path': 'customizations/amps/repo-amp.amp',

@@ -9,11 +9,11 @@ describe('generator-alfresco:app-remove-sample-code', function () {
   describe('remove sdk sample code', function () {
     this.timeout(60000);
 
-    var tmpdir = path.join(os.tmpdir(), './temp-test');
+    var osTempDir = path.join(os.tmpdir(), './temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
-        .inDir(tmpdir)
+        .inDir(osTempDir)
         .withOptions({'skip-install': false})
         .withPrompts({
           archetypeVersion: '2.1.1',
@@ -24,18 +24,13 @@ describe('generator-alfresco:app-remove-sample-code', function () {
     });
 
     it('creates a project', function () {
-      assert.file(path.join(tmpdir, '.yo-rc.json'));
+      assert.file(path.join(osTempDir, '.yo-rc.json'));
     });
 
     describe('remove sdk sample code again', function () {
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/app'))
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(tmpdir);
-          })
+          .cd(osTempDir)
           .withLocalConfig({
             archetypeVersion: '2.1.1',
             removeDefaultSourceAmps: false,

@@ -38,12 +38,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     // TODO(vprince): pull the helpers.run() code into describe/before pattern used elsewhere
     it('we can abort project creation based on artifactId and folder name mismatch', function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // we want our test to run inside the previously generated directory
-          // and we don't want it to be empty, so this is a hack for that.
-          process.chdir(path.join(this.osTempDir, 'test-artifact'));
-        }.bind(this))
+        .cd(path.join(this.osTempDir, 'test-artifact'))
         .withPrompts({
           abortExistingProject: true,
           sdkVersion: '2.2.0',
@@ -57,12 +52,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
     // TODO(vprince): pull the helpers.run() code into describe/before pattern used elsewhere
     it('we can abort project creation based on artifactId update prompt', function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // we want our test to run inside the previously generated directory
-          // and we don't want it to be empty, so this is a hack for that.
-          process.chdir(path.join(this.osTempDir, 'test-artifact'));
-        }.bind(this))
+        .cd(path.join(this.osTempDir, 'test-artifact'))
         .withPrompts({
           abortExistingProject: false,
           sdkVersion: '2.2.0',
@@ -140,11 +130,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
           'skip-install': true,
           'force': true,
         })
-        .inTmpDir(function () {
-          // we want our test to run inside the previously generated directory
-          // and we don't want it to be empty, so this is a hack for that.
-          process.chdir(this.osTempDir);
-        }.bind(this))
+        .cd(this.osTempDir)
         .withPrompts({
           abortExistingProject: false,
           sdkVersion: '2.1.1',
