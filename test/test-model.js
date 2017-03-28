@@ -25,13 +25,7 @@ describe('generator-alfresco:model', function () {
   // TODO(vprince): break down into describe/it
   it('create model files in existing project', function () {
     return helpers.run(path.join(__dirname, '../generators/model'))
-      // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function () {
-        // HACK: we want our test to run inside the previously generated
-        // directory and we don't want it to be empty, so this is a hack
-        // for that.
-        process.chdir(osTempDir);
-      })
+      .cd(osTempDir)
       .withOptions({
         'force': true,
         'model-name': 'testModel',
@@ -101,13 +95,7 @@ describe('generator-alfresco:model', function () {
   // TODO(vprince): break down into describe/it
   it('create with invalid version', function () {
     return helpers.run(path.join(__dirname, '../generators/model'))
-      // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function () {
-        // HACK: we want our test to run inside the previously generated
-        // directory and we don't want it to be empty, so this is a hack
-        // for that.
-        process.chdir(osTempDir);
-      })
+      .cd(osTempDir)
       .withOptions({
         'model-name': 'invalidVersionModel',
         'model-version': 'asd',
@@ -126,13 +114,7 @@ describe('generator-alfresco:model', function () {
   // TODO(vprince): break down into describe/it with some assertion about the expected state
   it('name only contains invalid characters for coverage', function () {
     return helpers.run(path.join(__dirname, '../generators/model'))
-      // generator will create a temp directory and make sure it's empty
-      .inTmpDir(function () {
-        // HACK: we want our test to run inside the previously generated
-        // directory and we don't want it to be empty, so this is a hack
-        // for that.
-        process.chdir(osTempDir);
-      })
+      .cd(osTempDir)
       .withOptions({
         'model-name': '......',
         'model-description': 'test desc',

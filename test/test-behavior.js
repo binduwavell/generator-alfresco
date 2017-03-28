@@ -29,13 +29,7 @@ describe('generator-alfresco:behavior', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'class': 'two words',
             'package': 'org.alfresco.behaviors',
@@ -73,13 +67,7 @@ describe('generator-alfresco:behavior', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'class': 'CamelCase',
             'package': 'org.alfresco.behaviors',
@@ -117,13 +105,7 @@ describe('generator-alfresco:behavior', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'class': 'test',
             'package': 'org.alfresco',
@@ -161,13 +143,7 @@ describe('generator-alfresco:behavior', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withPrompts({
             'class': 'prompts',
             'package': 'org.alfresco.behaviors',

@@ -29,13 +29,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating both a repo and share amp', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'both',
@@ -56,13 +50,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating both a repo and share amp and removing samples', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'both',
@@ -97,13 +85,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating both a repo and share amp via prompts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
         })
@@ -135,13 +117,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating repo amp', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'repo',
@@ -170,13 +146,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating share amp', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'share',
@@ -205,13 +175,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('after creating both repo and share amps in parent folder', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'both',
@@ -240,13 +204,7 @@ describe('generator-alfresco:amp-add-source', function () {
   describe('when creating amp with invalid war type', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'war': 'asdf',

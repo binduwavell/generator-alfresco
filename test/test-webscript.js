@@ -32,13 +32,7 @@ describe('generator-alfresco:webscript', function () {
   describe('after creating java webscripts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/webscript'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'module-path': 'repo-amp',
@@ -113,13 +107,7 @@ describe('generator-alfresco:webscript', function () {
   describe('after creating javascript webscripts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/webscript'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'module-path': 'repo-amp',
@@ -218,13 +206,7 @@ describe('generator-alfresco:webscript', function () {
   describe('after creating combined java and javascript webscripts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/webscript'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
           'module-path': 'repo-amp',
@@ -331,13 +313,7 @@ describe('generator-alfresco:webscript', function () {
   describe('after creating combined java and javascript webscripts via prompts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/webscript'))
-        // generator will create a temp directory and make sure it's empty
-        .inTmpDir(function () {
-          // HACK: we want our test to run inside the previously generated
-          // directory and we don't want it to be empty, so this is a hack
-          // for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({
           'force': true,
           'module-path': 'repo-amp',

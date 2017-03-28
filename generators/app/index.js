@@ -22,6 +22,14 @@ module.exports = Generator.extend({
     }
     return undefined;
   },
+
+  _whenNotBail: function (that) {
+    return function (readonlyProps) {
+      if (this.bail) return false;
+      return true;
+    }.bind(that);
+  },
+
   initializing: function () {
     debug('initializing generator-alfresco');
     this.out = require('generator-alfresco-common').generator_output(this);
@@ -160,18 +168,12 @@ module.exports = Generator.extend({
         name: constants.PROP_PROJECT_GROUP_ID,
         message: 'Project groupId?',
         default: this._getConfigValue(constants.PROP_PROJECT_GROUP_ID),
-        when: function (readonlyProps) {
-          if (this.bail) return false;
-          return true;
-        }.bind(this),
+        when: this._whenNotBail(this),
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID,
-        when: function (readonlyProps) {
-          if (this.bail) return false;
-          return true;
-        }.bind(this),
+        when: this._whenNotBail(this),
         default: this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID),
         message: 'Project artifactId?',
       },
@@ -240,10 +242,7 @@ module.exports = Generator.extend({
         message: 'Would you like to use Community or Enterprise?',
         default: this._getConfigValue(constants.PROP_COMMUNITY_OR_ENTERPRISE),
         choices: ['Community', 'Enterprise'],
-        when: function (readonlyProps) {
-          if (this.bail) return false;
-          return true;
-        }.bind(this),
+        when: this._whenNotBail(this),
       },
       {
         type: 'confirm',
@@ -446,6 +445,7 @@ module.exports = Generator.extend({
         done();
       }.bind(this));
     },
+
     generatorOverlay: function () {
       if (this.bail) return;
       var isEnterprise = (this.communityOrEnterprise === 'Enterprise');
@@ -504,12 +504,14 @@ module.exports = Generator.extend({
           tplContext);
       }
     },
+
     registerDefaultSampleModules: function () {
       if (this.bail) return;
       if (this.sdk.registerDefaultModules) {
         this.sdk.registerDefaultModules.call(this);
       }
     },
+
     editGeneratedResources: function () {
       if (this.bail) return;
       if (!this.removeDefaultSourceAmps && this.sdk.defaultModuleRegistry) {
@@ -556,12 +558,14 @@ module.exports = Generator.extend({
         this.fs.write(topPomPath, topPom.getPOMString());
       }
     },
+
     removeDefaultSourceModules: function () {
       if (this.bail) return;
       if (this.removeDefaultSourceAmps && this.sdk.removeDefaultModules) {
         this.sdk.removeDefaultModules.call(this);
       }
     },
+
     removeDefaultSourceModuleSamples: function () {
       if (this.bail) return;
       if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
@@ -615,7 +619,6 @@ module.exports = Generator.extend({
       }
     },
   },
-
 });
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

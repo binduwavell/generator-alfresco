@@ -31,11 +31,11 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
   describe('remove sdk sample modules', function () {
     this.timeout(60000);
 
-    var tmpdir = path.join(os.tmpdir(), './temp-test');
+    var osTempDir = path.join(os.tmpdir(), './temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
-        .inDir(tmpdir)
+        .inDir(osTempDir)
         .withOptions({'skip-install': false})
         .withPrompts({
           removeDefaultSourceAmps: true,
@@ -45,7 +45,7 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
     });
 
     it('creates a project', function () {
-      assert.file(path.join(tmpdir, '.yo-rc.json'));
+      assert.file(path.join(osTempDir, '.yo-rc.json'));
     });
 
     it('does not create sample amp specific files', function () {
@@ -58,12 +58,7 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
     describe('remove sdk sample modules again', function () {
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/app'))
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(tmpdir);
-          })
+          .cd(osTempDir)
           .withLocalConfig({
             removeDefaultSourceAmps: true,
             removeDefaultSourceSamples: false,

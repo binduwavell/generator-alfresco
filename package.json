@@ -31,7 +31,6 @@
     "generator-alfresco-common": "0.9.7",
     "lodash": "4.17.4",
     "rmdir": "1.2.0",
-    "run-async": "2.3.0",
     "semver": "5.3.0",
     "slash": "1.0.0",
     "yeoman-generator": "1.1.1",

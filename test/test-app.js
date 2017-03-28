@@ -98,13 +98,7 @@ describe('generator-alfresco:app', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/model'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // we want our test to run inside the previously generated directory
-            // and we don't want it to be empty, so this is a hack for that.
-            // process.chdir(path.join(this.osTempDir, 'temp-test'));
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'model-name': 'testModel',
             'model-description': 'test desc',
@@ -144,13 +138,7 @@ describe('generator-alfresco:app', function () {
     describe('generate second pair of source modules', function () {
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
-          // generator will create a temp directory and make sure it's empty
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(osTempDir);
-          })
+          .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts
             'war': 'both',
@@ -184,13 +172,7 @@ describe('generator-alfresco:app', function () {
       describe('generate a model without specifying which source amp to target', function () {
         before(function () {
           return helpers.run(path.join(__dirname, '../generators/model'))
-            // generator will create a temp directory and make sure it's empty
-            .inTmpDir(function () {
-              // HACK: we want our test to run inside the previously generated
-              // directory and we don't want it to be empty, so this is a hack
-              // for that.
-              process.chdir(osTempDir);
-            })
+            .cd(osTempDir)
             .withOptions({
               'model-name': 'testModel',
               'model-description': 'test desc',
@@ -229,11 +211,7 @@ describe('generator-alfresco:app', function () {
       process.chdir(osTempDir);
       fs.writeFile('.yo-rc.json', JSON.stringify({ 'generator-generator': {} }));
       return helpers.run(path.join(__dirname, '../generators/app'))
-        .inTmpDir(function () {
-          // we want our test to run inside the previously generated directory
-          // and we don't want it to be empty, so this is a hack for that.
-          process.chdir(osTempDir);
-        })
+        .cd(osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
           removeDefaultSourceAmps: false,

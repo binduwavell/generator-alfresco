@@ -10,11 +10,11 @@ describe('generator-alfresco:app-local', function () {
   describe('default prompts with local SDK', function () {
     this.timeout(60000);
 
-    var tmpdir = path.join(os.tmpdir(), './temp-test');
+    var osTempDir = path.join(os.tmpdir(), './temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
-        .inDir(tmpdir)
+        .inDir(osTempDir)
         .withOptions({'skip-install': false})
         .withPrompts({
           sdkVersion: 'local',
@@ -26,18 +26,13 @@ describe('generator-alfresco:app-local', function () {
     });
 
     it('creates a project', function () {
-      assert.file(path.join(tmpdir, '.yo-rc.json'));
+      assert.file(path.join(osTempDir, '.yo-rc.json'));
     });
 
     describe('default prompts with local SDK inside previous instantiation', function () {
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/app'))
-          .inTmpDir(function () {
-            // HACK: we want our test to run inside the previously generated
-            // directory and we don't want it to be empty, so this is a hack
-            // for that.
-            process.chdir(tmpdir);
-          })
+          .cd(osTempDir)
           .withLocalConfig({ 'archetypeVersion': '2.1.0' })
           .withOptions({ 'skip-install': false })
           .withPrompts({

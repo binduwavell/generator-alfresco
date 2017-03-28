@@ -311,7 +311,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: true,
       },
       {
-        // TODO(bwavell): figure out what the default is and document that
+        // TODO(bwavell): Figure out what the default is and document that
         type: 'input',
         name: 'transactionBuffersize',
         option: { name: 'transaction-buffersize', config: { alias: 'B', desc: 'Transactional buffer size in bytes', type: Number } },
@@ -368,7 +368,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: true,
       },
       {
-        // TODO(bwavell): validate that the default is false as the docs are inconsistent
+        // TODO(bwavell): Validate that the default is false as the docs are inconsistent
         type: 'list',
         name: 'cachePublic',
         option: { name: 'cache-public', config: { alias: 'P', desc: 'Allow public caching', type: Boolean } },
@@ -391,7 +391,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: true,
       },
       {
-        // TODO(bwavell): validate that the default is false as the docs are inconsistent
+        // TODO(bwavell): Validate that the default is false as the docs are inconsistent
         type: 'list',
         name: 'cacheMustrevalidate',
         option: { name: 'cache-must-revalidate', config: { alias: 'R', desc: 'Force revalidation', type: Boolean } },
@@ -414,7 +414,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: true,
       },
       {
-        // TODO(bwavell): figure out if there is a fixed list of formats/mimetypes
+        // TODO(bwavell): Figure out if there is a fixed list of formats/mimetypes
         type: 'input',
         name: 'negotiations',
         option: { name: 'negotiations', config: { alias: 'n', desc: 'Vertical bar \'|\' separated list of format=mimetype values', type: String } },
@@ -451,7 +451,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         valueRequired: true,
       },
       {
-        // TODO(bwavell): figure out what the default is
+        // TODO(bwavell): Figure out what the default is
         type: 'list',
         name: 'formdataMultipartProcessing',
         option: { name: 'multipart', config: { alias: 'U', desc: 'Enable multipart form data processing', type: Boolean } },
