@@ -1,6 +1,6 @@
 # generator-alfresco 
 
-[![Build Status][travis-image]][travis-url] [![Coverage Status][codecov-image]][codecov-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Dev Dependency Status][bithound-dev-image]][bithound-dev-url] [![Join the Chat][gitter-image]][gitter-url] [![Quick Contribution on Codenvy][codenvy-image]][codenvy-url]
+[![Build Status][travis-image]][travis-url] [![Coverage Status][codecov-image]][codecov-url] [![Dependency Status][bithound-dep-image]][bithound-dep-url] [![Dev Dependency Status][bithound-dev-image]][bithound-dev-url] [![Join the Chat][gitter-image]][gitter-url]
 
 ## Getting Started
 
@@ -288,8 +288,7 @@ familiar with and agree to our [code of conduct](./CODE_OF_CONDUCT.md#readme).
 If you plan to to make changes to the generator itself, there are detailed
 instructions in the [contributing](./CONTRIBUTING.md#readme) page. 
 
-If you are particularly impatient, you have a couple options options for a quick
-start. You can check out the generator-alfresco project (or ideally a fork of the same)
+Check out the generator-alfresco project (or ideally a fork of the same)
 and then run the following command from the checked out project directory:
 
 ```bash
@@ -297,23 +296,9 @@ npm install
 npm link # may need sudo
 ```
 
-This is essentially the same as the ```npm install -g binduwavell/generator-alfresco```
+This is essentially the same as the `npm install -g binduwavell/generator-alfresco`
 command above, but you'll have a project directory where you can tweak things, and
 push updates back to GitHub.
-
-Another super low effort option to getting started quickly is to open a clone of this project 
-in Codenvy (a cloud IDE), by clicking this badge: 
-[![create project on Codenvy][codenvy-image]][codenvy-url] (this link is currently to the new awesome beta.codenvy.com.)
-
-Clicking the button will create a temporary workspace at Codenvy with a clone of this project, 
-allowing you to run the generator in an embedded docker container called a runner. 
-You can make edits to the generator-alfresco project, test them and send pull requests right
-from your browser. You can even run the generated Alfresco All-In-One community project 
-produced by the generator in the runner. Other than your browser, this is a zero install option.
-
-Here is a slightly dated video showing the process with the older version of Codenvy:
-
-[![watch video demo using Codenvy](http://img.youtube.com/vi/Pq5IwG5Aq0Q/0.jpg)](http://www.youtube.com/watch?v=Pq5IwG5Aq0Q)
 
 ## Getting Help
 
@@ -337,6 +322,4 @@ Apache 2.0
 [coveralls-url]: https://coveralls.io/github/binduwavell/generator-alfresco?branch=master
 [gitter-image]: https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-brightgreen.svg
 [gitter-url]: https://gitter.im/binduwavell/generator-alfresco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[codenvy-image]: http://beta.codenvy.com/factory/resources/codenvy-contribute.svg
-[codenvy-url]: http://beta.codenvy.com/f?id=zia672875qiibfzv
 [installing-node]: https://github.com/binduwavell/generator-alfresco/wiki/Supported-Platforms-Node-Versions#user-content-installing-node
