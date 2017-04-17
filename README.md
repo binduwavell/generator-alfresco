@@ -304,6 +304,8 @@ push updates back to GitHub.
 
 If you find a bug or something is confusing, you can review [existing](https://github.com/binduwavell/generator-alfresco/issues) or create a [new issue](https://github.com/binduwavell/generator-alfresco/issues/new). If you'd like to chat, you can reach out on our [Gitter](https://gitter.im/binduwavell/generator-alfresco) channel.
 
+AN EDIT WE SHOULD REJECT
+
 ## License
 
 Apache 2.0
