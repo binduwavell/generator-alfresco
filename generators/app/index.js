@@ -3,6 +3,7 @@ var _ = require('lodash');
 var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:app');
+var trace = require('debug')('generator-alfresco-trace:app');
 var fs = require('fs');
 var Generator = require('yeoman-generator');
 var path = require('path');
@@ -350,14 +351,14 @@ module.exports = Generator.extend({
     checkVersions: function () {
       if (this.bail) return;
       try {
-        debug('checking java version for sdk compatibility');
+        this.out.info('Checking java version for sdk compatibility');
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
           throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' '
             + 'for the SDK you have selected (' + this.archetypeVersion + '). '
             + 'Either set JAVA_HOME to point to a valid version of java or install one.');
         }
-        debug('checking maven version for sdk compatibility');
+        this.out.info('Checking maven version for sdk compatibility');
         if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
           throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' '
@@ -373,6 +374,7 @@ module.exports = Generator.extend({
 
   writing: {
     generateArchetype: function () {
+      trace('generateArchetype');
       if (this.bail) return;
       var done = this.async();
 
@@ -447,6 +449,7 @@ module.exports = Generator.extend({
     },
 
     generatorOverlay: function () {
+      trace('generatorOverlay');
       if (this.bail) return;
       var isEnterprise = (this.communityOrEnterprise === 'Enterprise');
       var tplContext = {
@@ -458,20 +461,24 @@ module.exports = Generator.extend({
         removeDefaultSourceAmps: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
       };
+      trace('Copying .editorconfig');
       this.fs.copy(
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
       );
+      trace('Copying .gitignore');
       this.fs.copy(
         this.templatePath('gitignore'),
         this.destinationPath('.gitignore')
       );
+      trace('Copying TODO.md');
       this.fs.copyTpl(
         this.templatePath('TODO.md'),
         this.destinationPath('TODO.md'),
         tplContext
       );
       // copy template folders
+      trace('Copying folders');
       var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
       var templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
       if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
@@ -488,6 +495,7 @@ module.exports = Generator.extend({
         }.bind(this)
       );
       // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
+      trace('Copying scripts');
       [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
         function (fileName) {
           this.fs.copy(
@@ -497,6 +505,7 @@ module.exports = Generator.extend({
         }.bind(this)
       );
       // enterprise specific stuff
+      trace('Copying enterprise license');
       if (isEnterprise) {
         this.fs.copy(
           this.templatePath(constants.FOLDER_REPO),
