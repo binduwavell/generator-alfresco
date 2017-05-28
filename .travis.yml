@@ -25,7 +25,7 @@ install:
   - $HOME/.yarn/bin/yarn
 
 script:
-  - node ci.js $NODE_VERSION
+  - if [[ '${NODE_VERSION}' == 'v7' ]]; then npm run codecov; else npm run test; fi
 
 notifications:
   webhooks:

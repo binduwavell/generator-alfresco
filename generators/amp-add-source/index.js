@@ -298,7 +298,7 @@ module.exports = SubGenerator.extend({
         // If we have a custom name or description then get that info into the pom
         if (this.props.shareName || this.props.shareDescription) {
           this.moduleManager.pushOp(function () {
-            console.log('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
+            this.out.info('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
             var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
             var pomStr = this.fs.read(pomPath);
             var pom = require('generator-alfresco-common').maven_pom(pomStr);

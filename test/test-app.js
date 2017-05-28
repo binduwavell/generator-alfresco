@@ -209,7 +209,7 @@ describe('generator-alfresco:app', function () {
 
     before(function () {
       process.chdir(osTempDir);
-      fs.writeFile('.yo-rc.json', JSON.stringify({ 'generator-generator': {} }));
+      fs.writeFileSync('.yo-rc.json', JSON.stringify({ 'generator-generator': {} }));
       return helpers.run(path.join(__dirname, '../generators/app'))
         .cd(osTempDir)
         .withOptions({ 'skip-install': true })
