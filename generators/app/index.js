@@ -10,6 +10,7 @@ var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
 var constants = require('generator-alfresco-common').constants;
+var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 var versions = require('generator-alfresco-common').dependency_versions;
 
 module.exports = Generator.extend({
@@ -376,6 +377,37 @@ module.exports = Generator.extend({
     generateArchetype: function () {
       trace('generateArchetype');
       if (this.bail) return;
+      if (this.sdk.useArchetypeTemplate) {
+        this.writing._generateArchetypeUsingJavaScript.call(this);
+      } else {
+        this.writing._generateArchetypeUsingMaven.call(this);
+      }
+    },
+
+    _generateArchetypeUsingJavaScript: function () {
+      trace('Loading maven archetype generate module');
+      var mvn = require('generator-alfresco-common').maven_archetype_generate(this);
+      trace('Creating context for archetype generate');
+      this.out.info('Attempting to use javascript and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
+      var rootPath = path.join('archetypes', this.sdk.archetypeVersion);
+      var metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
+      var resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
+      var properties = {
+        groupId: this.projectGroupId,
+        artifactId: this.projectArtifactId,
+        version: this.projectVersion,
+        package: (this.projectPackage !== undefined ? this.projectPackage : this.projectGroupId),
+      };
+
+      trace('Performing generation');
+      mvn.generate(metadataPath, resourcePath, this.destinationPath(), properties);
+
+      trace('Saving source templates');
+      this.writing._backupSourceTemplates.call(this, this.destinationPath(), true);
+      trace('Done saving source templates');
+    },
+
+    _generateArchetypeUsingMaven: function () {
       var done = this.async();
 
       this.out.info('Attempting to use maven and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
@@ -421,31 +453,38 @@ module.exports = Generator.extend({
           );
         }.bind(this));
 
-        if (this.sdk.defaultModuleRegistry) {
-          this.out.info('Attempting to backup generated amp templates');
-          var folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
-            return mod.artifactId;
-          });
-          folders.forEach(
-            function (folderName) {
-              var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
-              if (!fs.existsSync(to)) {
-                var from = path.join(genDir, folderName);
-                this.out.info('Copying from: ' + from + ' to: ' + to);
-                this.fs.copy(from, to);
-              } else {
-                this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
-              }
-            }.bind(this));
-        } else {
-          this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
-              + 'version of the SDK.');
-        }
+        this.writing._backupSourceTemplates.call(this, genDir, false);
 
         rmdir(tmpdir);
 
         done();
       }.bind(this));
+    },
+
+    _backupSourceTemplates: function (sourceDir, forceInMemoryCopy) {
+      if (this.sdk.defaultModuleRegistry) {
+        this.out.info('Attempting to backup generated amp templates');
+        var folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
+          return mod.artifactId;
+        });
+        folders.forEach(folderName => {
+          var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
+          if (!fs.existsSync(to)) {
+            var from = path.join(sourceDir, folderName);
+            this.out.info('Copying from: ' + from + ' to: ' + to);
+            if (forceInMemoryCopy) {
+              memFsUtils.inMemoryCopy(this.fs, from, to);
+            } else {
+              this.fs.copy(from, to);
+            }
+          } else {
+            this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
+          }
+        });
+      } else {
+        this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
+          + 'version of the SDK.');
+      }
     },
 
     generatorOverlay: function () {
@@ -484,16 +523,14 @@ module.exports = Generator.extend({
       if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
         templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
       }
-      templateFolders.forEach(
-        function (folderName) {
-          this.out.info('Copying ' + folderName);
-          this.fs.copyTpl(
-            this.templatePath(folderName),
-            this.destinationPath(folderName),
-            tplContext
-          );
-        }.bind(this)
-      );
+      templateFolders.forEach(folderName => {
+        this.out.info('Copying ' + folderName);
+        this.fs.copyTpl(
+          this.templatePath(folderName),
+          this.destinationPath(folderName),
+          tplContext
+        );
+      });
       // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
       trace('Copying scripts');
       [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
