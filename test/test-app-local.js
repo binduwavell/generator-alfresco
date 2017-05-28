@@ -99,6 +99,13 @@ describe('generator-alfresco:app-local', function () {
           ['scripts/run-without-springloaded.sh', /-Penterprise/],
         ]);
       });
+      it('dev-log4j.properties should include log output for package', function () {
+        var logString = 'log4j.logger.org.alfresco=${app.log.root.level}';
+        assert.fileContent(
+          'repo/src/main/resources/alfresco/extension/dev-log4j.properties',
+          logString
+        );
+      });
     });
   });
 });
