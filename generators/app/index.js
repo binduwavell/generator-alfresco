@@ -3,12 +3,14 @@ var _ = require('lodash');
 var AsciiTable = require('ascii-table');
 var chalk = require('chalk');
 var debug = require('debug')('generator-alfresco:app');
+var trace = require('debug')('generator-alfresco-trace:app');
 var fs = require('fs');
 var Generator = require('yeoman-generator');
 var path = require('path');
 var rmdir = require('rmdir');
 var semver = require('semver');
 var constants = require('generator-alfresco-common').constants;
+var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 var versions = require('generator-alfresco-common').dependency_versions;
 
 module.exports = Generator.extend({
@@ -350,14 +352,14 @@ module.exports = Generator.extend({
     checkVersions: function () {
       if (this.bail) return;
       try {
-        debug('checking java version for sdk compatibility');
+        this.out.info('Checking java version for sdk compatibility');
         if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
           throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' '
             + 'for the SDK you have selected (' + this.archetypeVersion + '). '
             + 'Either set JAVA_HOME to point to a valid version of java or install one.');
         }
-        debug('checking maven version for sdk compatibility');
+        this.out.info('Checking maven version for sdk compatibility');
         if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
           throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') '
             + 'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' '
@@ -373,7 +375,39 @@ module.exports = Generator.extend({
 
   writing: {
     generateArchetype: function () {
+      trace('generateArchetype');
       if (this.bail) return;
+      if (this.sdk.useArchetypeTemplate) {
+        this.writing._generateArchetypeUsingJavaScript.call(this);
+      } else {
+        this.writing._generateArchetypeUsingMaven.call(this);
+      }
+    },
+
+    _generateArchetypeUsingJavaScript: function () {
+      trace('Loading maven archetype generate module');
+      var mvn = require('generator-alfresco-common').maven_archetype_generate(this);
+      trace('Creating context for archetype generate');
+      this.out.info('Attempting to use javascript and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
+      var rootPath = path.join('archetypes', this.sdk.archetypeVersion);
+      var metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
+      var resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
+      var properties = {
+        groupId: this.projectGroupId,
+        artifactId: this.projectArtifactId,
+        version: this.projectVersion,
+        package: (this.projectPackage !== undefined ? this.projectPackage : this.projectGroupId),
+      };
+
+      trace('Performing generation');
+      mvn.generate(metadataPath, resourcePath, this.destinationPath(), properties);
+
+      trace('Saving source templates');
+      this.writing._backupSourceTemplates.call(this, this.destinationPath(), true);
+      trace('Done saving source templates');
+    },
+
+    _generateArchetypeUsingMaven: function () {
       var done = this.async();
 
       this.out.info('Attempting to use maven and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
@@ -419,26 +453,7 @@ module.exports = Generator.extend({
           );
         }.bind(this));
 
-        if (this.sdk.defaultModuleRegistry) {
-          this.out.info('Attempting to backup generated amp templates');
-          var folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
-            return mod.artifactId;
-          });
-          folders.forEach(
-            function (folderName) {
-              var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
-              if (!fs.existsSync(to)) {
-                var from = path.join(genDir, folderName);
-                this.out.info('Copying from: ' + from + ' to: ' + to);
-                this.fs.copy(from, to);
-              } else {
-                this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
-              }
-            }.bind(this));
-        } else {
-          this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
-              + 'version of the SDK.');
-        }
+        this.writing._backupSourceTemplates.call(this, genDir, false);
 
         rmdir(tmpdir);
 
@@ -446,7 +461,34 @@ module.exports = Generator.extend({
       }.bind(this));
     },
 
+    _backupSourceTemplates: function (sourceDir, forceInMemoryCopy) {
+      if (this.sdk.defaultModuleRegistry) {
+        this.out.info('Attempting to backup generated amp templates');
+        var folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
+          return mod.artifactId;
+        });
+        folders.forEach(folderName => {
+          var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
+          if (!fs.existsSync(to)) {
+            var from = path.join(sourceDir, folderName);
+            this.out.info('Copying from: ' + from + ' to: ' + to);
+            if (forceInMemoryCopy) {
+              memFsUtils.inMemoryCopy(this.fs, from, to);
+            } else {
+              this.fs.copy(from, to);
+            }
+          } else {
+            this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
+          }
+        });
+      } else {
+        this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
+          + 'version of the SDK.');
+      }
+    },
+
     generatorOverlay: function () {
+      trace('generatorOverlay');
       if (this.bail) return;
       var isEnterprise = (this.communityOrEnterprise === 'Enterprise');
       var tplContext = {
@@ -458,36 +500,39 @@ module.exports = Generator.extend({
         removeDefaultSourceAmps: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
       };
+      trace('Copying .editorconfig');
       this.fs.copy(
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
       );
+      trace('Copying .gitignore');
       this.fs.copy(
         this.templatePath('gitignore'),
         this.destinationPath('.gitignore')
       );
+      trace('Copying TODO.md');
       this.fs.copyTpl(
         this.templatePath('TODO.md'),
         this.destinationPath('TODO.md'),
         tplContext
       );
       // copy template folders
+      trace('Copying folders');
       var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
       var templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
       if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
         templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
       }
-      templateFolders.forEach(
-        function (folderName) {
-          this.out.info('Copying ' + folderName);
-          this.fs.copyTpl(
-            this.templatePath(folderName),
-            this.destinationPath(folderName),
-            tplContext
-          );
-        }.bind(this)
-      );
+      templateFolders.forEach(folderName => {
+        this.out.info('Copying ' + folderName);
+        this.fs.copyTpl(
+          this.templatePath(folderName),
+          this.destinationPath(folderName),
+          tplContext
+        );
+      });
       // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
+      trace('Copying scripts');
       [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
         function (fileName) {
           this.fs.copy(
@@ -497,6 +542,7 @@ module.exports = Generator.extend({
         }.bind(this)
       );
       // enterprise specific stuff
+      trace('Copying enterprise license');
       if (isEnterprise) {
         this.fs.copy(
           this.templatePath(constants.FOLDER_REPO),

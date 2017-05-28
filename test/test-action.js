@@ -32,7 +32,6 @@ describe('generator-alfresco:action', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
-          // generator will create a temp directory and make sure it's empty
           .cd(osTempDir)
           .withOptions({
             'name': 'two words',
@@ -73,7 +72,6 @@ describe('generator-alfresco:action', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
-          // generator will create a temp directory and make sure it's empty
           .cd(osTempDir)
           .withOptions({
             'name': 'CamelCase',
@@ -114,7 +112,6 @@ describe('generator-alfresco:action', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
-          // generator will create a temp directory and make sure it's empty
           .cd(osTempDir)
           .withOptions({
             'name': 'test',
@@ -155,7 +152,6 @@ describe('generator-alfresco:action', function () {
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
-          // generator will create a temp directory and make sure it's empty
           .cd(osTempDir)
           .withPrompts({
             'name': 'prompts',
