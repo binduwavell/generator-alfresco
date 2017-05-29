@@ -325,6 +325,19 @@ const PROJECTS = [
       },
     ],
   },
+  // Younes Regaieg via Skype suggests com/ent 4.2 through 5.2
+  {
+    name: 'Xenit build of Alfresco Dynamic Extensions',
+    description: 'Rapid development of Alfresco repository extensions in Java.',
+    url: 'https://github.com/xenit-eu/dynamic-extensions-for-alfresco',
+    availability: ['Community', 'Enterprise'],
+    repoGroupId: 'eu.xenit',
+    repoArtifactId: 'alfresco-dynamic-extensions-repo',
+    repoVersion: '1.5.0',
+    shareGroupId: undefined,
+    shareArtifactId: undefined,
+    shareVersion: undefined,
+  },
 ];
 
 class AmpAddCommonSubGenerator extends SubGenerator {
