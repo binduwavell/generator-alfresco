@@ -1,20 +1,20 @@
 'use strict';
-var _ = require('lodash');
-var AsciiTable = require('ascii-table');
-var chalk = require('chalk');
-var debug = require('debug')('generator-alfresco:app');
-var trace = require('debug')('generator-alfresco-trace:app');
-var fs = require('fs');
-var Generator = require('yeoman-generator');
-var path = require('path');
-var rmdir = require('rmdir');
-var semver = require('semver');
-var constants = require('generator-alfresco-common').constants;
-var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
-var versions = require('generator-alfresco-common').dependency_versions;
+let _ = require('lodash');
+let AsciiTable = require('ascii-table');
+let chalk = require('chalk');
+let debug = require('debug')('generator-alfresco:app');
+let fs = require('fs');
+let Generator = require('yeoman-generator');
+let path = require('path');
+let rmdir = require('rmdir');
+let semver = require('semver');
+let trace = require('debug')('generator-alfresco-trace:app');
+let constants = require('generator-alfresco-common').constants;
+let memFsUtils = require('generator-alfresco-common').mem_fs_utils;
+let versions = require('generator-alfresco-common').dependency_versions;
 
-module.exports = Generator.extend({
-  _getConfigValue: function (key) {
+module.exports = class extends Generator {
+  _getConfigValue (key) {
     if (!_.isNil(key)) {
       if (!_.isNil(this.config.get(key))) {
         return this.config.get(key);
@@ -23,16 +23,15 @@ module.exports = Generator.extend({
       }
     }
     return undefined;
-  },
+  }
 
-  _whenNotBail: function (that) {
-    return function (readonlyProps) {
-      if (this.bail) return false;
-      return true;
-    }.bind(that);
-  },
+  _whenNotBail (that) {
+    return readonlyProps => {
+      return !this.bail;
+    };
+  }
 
-  initializing: function () {
+  initializing () {
     debug('initializing generator-alfresco');
     this.out = require('generator-alfresco-common').generator_output(this);
 
@@ -62,7 +61,7 @@ module.exports = Generator.extend({
         throw new Error('We are unable to find a maven executable. A compatible version of maven is required.');
       }
       debug('checking if we are running in an existing non-generator-alfresco project directory');
-      var configJSON;
+      let configJSON;
       try { configJSON = this.fs.readJSON('.yo-rc.json') } catch (err) { /* ignore */ }
       if (!_.isEmpty(configJSON) && !configJSON['generator-alfresco']) {
         throw new Error('The generator ' + chalk.blue('generator-alfresco') + ' must be run in a location where there are no other yeoman based generator projects up the folder hierarchy');
@@ -72,20 +71,20 @@ module.exports = Generator.extend({
       this.bail = true;
     }
     this.answerOverrides = {};
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     if (this.bail) return;
 
     debug('displaying banner/logo');
     this.out.banner();
 
     debug('defining prompts');
-    var prompts = [
+    let prompts = [
       {
         type: 'confirm',
         name: constants.PROP_ABORT_EXISTING_PROJECT,
-        when: function (readonlyProps) {
+        when: () => {
           if (this.bail) return false;
           // If we find the .yo-rc.json file, show the warning
           if (fs.existsSync(this.config.path)) {
@@ -100,33 +99,33 @@ module.exports = Generator.extend({
           } else {
             return false;
           }
-        }.bind(this),
+        },
         default: true,
         message: 'Do you want to abort?',
       },
       {
         type: 'list',
         name: constants.PROP_SDK_VERSION,
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (readonlyProps[constants.PROP_ABORT_EXISTING_PROJECT]) {
             this.bail = true;
           }
           if (this.bail) return false;
 
-          var compTable = new AsciiTable('Version Compatibility Table');
+          let compTable = new AsciiTable('Version Compatibility Table');
           compTable.setHeading('SDK', 'Community Default', 'Enterprise Default', 'Notes');
-          _.keys(this.sdkVersions).forEach(function (ver) {
+          _.keys(this.sdkVersions).forEach(ver => {
             compTable.addRow(
               ver,
               this.sdkVersions[ver].providedCommunityVersion,
               this.sdkVersions[ver].providedEnterpriseVersion,
               this.sdkVersions[ver].supportedRepositoryVersions
             );
-          }.bind(this));
+          });
           this.out.docs(compTable.toString(), 'http://docs.alfresco.com/5.1/concepts/alfresco-sdk-compatibility.html');
 
           return true;
-        }.bind(this),
+        },
         default: this._getConfigValue(constants.PROP_SDK_VERSION),
         message: 'Which SDK version would you like to use?',
         choices: _.keys(this.sdkVersions),
@@ -135,12 +134,12 @@ module.exports = Generator.extend({
         type: 'input',
         name: constants.PROP_ARCHETYPE_VERSION,
         message: 'Archetype version?',
-        default: function (readonlyProps) {
-          var savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
+        default: () => {
+          let savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
           if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
-        }.bind(this),
-        when: function (readonlyProps) {
+        },
+        when: readonlyProps => {
           if (this.bail) return false;
           this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
           if (this.sdk.promptForArchetypeVersion) {
@@ -150,17 +149,17 @@ module.exports = Generator.extend({
             this.answerOverrides[constants.PROP_ARCHETYPE_VERSION] = this.sdk.archetypeVersion;
             return false;
           }
-        }.bind(this),
+        },
       },
       {
         type: 'list',
         name: constants.PROP_PROJECT_STRUCTURE,
-        when: function (readonlyProps) {
+        when: () => {
           if (this.bail) return false;
           this.out.definition('basic', 'The basic structure adds scripts and a folder to hold source amp project templates to the default All-In-One project structure. It also adds few helpful files.');
           this.out.definition('advanced', 'The advanced structure extends the basic structure by adding a customizations folder for grouping source modules. The customizations folder also includes sub-folders for storing pre-built AMPs and JARs.');
           return true;
-        }.bind(this),
+        },
         default: this._getConfigValue(constants.PROP_PROJECT_STRUCTURE),
         message: 'Do you want to use the basic or advanced project structure?',
         choices: constants.PROJECT_STRUCTURES,
@@ -183,13 +182,13 @@ module.exports = Generator.extend({
         // When run inside a existing project
         type: 'confirm',
         name: constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE,
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (this.bail) return false;
           if (fs.existsSync(this.config.path) && !_.isEqual(readonlyProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
             return true;
           }
           return false;
-        }.bind(this),
+        },
         default: true,
         message: 'Updating the artifactId can lead to unexpected issues. Do you want to abort?',
       },
@@ -197,7 +196,7 @@ module.exports = Generator.extend({
         // When run inside a non-existing project
         type: 'confirm',
         name: constants.PROP_CREATE_SUB_FOLDER,
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (readonlyProps[constants.PROP_ABORT_PROJECT_ARTIFACT_ID_UPDATE]) {
             this.bail = true;
           }
@@ -208,20 +207,20 @@ module.exports = Generator.extend({
             return true;
           }
           return false;
-        }.bind(this),
+        },
         default: true,
         message: 'Do you want to proceed?',
       },
       {
         type: 'input',
         name: constants.PROP_PROJECT_VERSION,
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (!_.isNil(readonlyProps[constants.PROP_CREATE_SUB_FOLDER]) && !readonlyProps[constants.PROP_CREATE_SUB_FOLDER]) {
             this.bail = true;
           }
           if (this.bail) return false;
           return true;
-        }.bind(this),
+        },
         default: this._getConfigValue(constants.PROP_PROJECT_VERSION),
         message: 'Project version?',
       },
@@ -232,11 +231,11 @@ module.exports = Generator.extend({
         default: function (readonlyProps) {
           return readonlyProps.projectGroupId;
         },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (this.bail) return false;
           this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
           return this.sdk.promptForProjectPackage;
-        }.bind(this),
+        },
       },
       {
         type: 'list',
@@ -251,20 +250,20 @@ module.exports = Generator.extend({
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
         message: 'Should we remove the default source amps?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (this.bail) return false;
           this.sdk = this.sdkVersions[readonlyProps.sdkVersion || this.answerOverrides.sdkVersion];
           this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]
             = (this.sdk.removeDefaultModules !== undefined);
           return this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS];
-        }.bind(this),
+        },
       },
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
         message: 'Should we remove samples from the default source amps?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (this.bail) return false;
           if (readonlyProps[constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS]) {
             this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = false;
@@ -274,13 +273,13 @@ module.exports = Generator.extend({
               = ((this.sdk.removeRepoSamples !== undefined) || (this.sdk.removeShareSamples !== undefined));
           }
           return this.answerOverrides[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES];
-        }.bind(this),
+        },
       },
     ];
 
     debug('initiating prompting and returning promise for inquierer completion');
-    return this.prompt(prompts).then(function (props) {
-      var combinedProps = {};
+    return this.prompt(prompts).then(props => {
+      let combinedProps = {};
       _.assign(combinedProps, this.answerOverrides);
       _.assign(combinedProps, props);
       // The below 2 if conditions are here because the prompts used in testing
@@ -297,7 +296,7 @@ module.exports = Generator.extend({
           combinedProps[constants.PROP_ORIGINAL_GENERATOR_VERSION] = this.pkg.version;
         }
         if (!fs.existsSync(this.config.path) && !_.isEqual(combinedProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
-          var projectPath = path.join(process.cwd(), combinedProps[constants.PROP_PROJECT_ARTIFACT_ID]);
+          let projectPath = path.join(process.cwd(), combinedProps[constants.PROP_PROJECT_ARTIFACT_ID]);
           if (!_.isNil(projectPath) && !_.isEqual(process.cwd(), projectPath)) {
             if (!fs.existsSync(projectPath)) {
               fs.mkdirSync(projectPath);
@@ -324,104 +323,132 @@ module.exports = Generator.extend({
         // can only setup module registry/manager once we have other variables setup
         this.moduleManager = require('../common/alfresco-module-manager.js')(this);
       }
-    }.bind(this));
-  },
+    });
+  }
 
-  _saveProp: function (propName, propObject) {
-    var value = propObject[propName];
+  _saveProp (propName, propObject) {
+    let value = propObject[propName];
     this[propName] = value;
     this.config.set(propName, value);
-  },
+  }
 
-  _saveProps: function (propNames, propObject) {
-    propNames.forEach(function (propName) {
+  _saveProps (propNames, propObject) {
+    propNames.forEach(propName => {
       // console.log("SETTING " + propName + " to " + propObject[propName]);
       this._saveProp(propName, propObject);
-    }.bind(this));
-  },
+    });
+  }
 
-  configuring: {
-    saveConfig: function () {
-      if (this.bail) return;
-      debug('saving config');
-      this.config.save();
-    },
-  },
+  configuring () {
+    if (this.bail) return;
+    debug('saving config');
+    this.config.save();
+  }
 
-  default: {
-    checkVersions: function () {
-      if (this.bail) return;
-      try {
-        this.out.info('Checking java version for sdk compatibility');
-        if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
-          throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') '
-            + 'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' '
-            + 'for the SDK you have selected (' + this.archetypeVersion + '). '
-            + 'Either set JAVA_HOME to point to a valid version of java or install one.');
-        }
-        this.out.info('Checking maven version for sdk compatibility');
-        if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
-          throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') '
-            + 'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' '
-            + 'for the SDK you have selected (' + this.archetypeVersion + '). '
-            + 'Please install a supported version.');
-        }
-      } catch (e) {
-        this.out.error(e.message);
-        this.bail = true;
+  default () {
+    if (this.bail) return;
+    try {
+      this.out.info('Checking java version for sdk compatibility');
+      if (!semver.satisfies(this.javaVersion.replace(/_[0-9]+$/, ''), this.sdk.supportedJavaVersions)) {
+        throw new Error('Unfortunately the current version of java (' + this.javaVersion + ') '
+          + 'does not match one of the supported versions: ' + this.sdk.supportedJavaVersions + ' '
+          + 'for the SDK you have selected (' + this.archetypeVersion + '). '
+          + 'Either set JAVA_HOME to point to a valid version of java or install one.');
       }
-    },
-  },
-
-  writing: {
-    generateArchetype: function () {
-      trace('generateArchetype');
-      if (this.bail) return;
-      if (this.sdk.useArchetypeTemplate) {
-        this.writing._generateArchetypeUsingJavaScript.call(this);
-      } else {
-        this.writing._generateArchetypeUsingMaven.call(this);
+      this.out.info('Checking maven version for sdk compatibility');
+      if (!semver.satisfies(this.mavenVersion, this.sdk.supportedMavenVersions)) {
+        throw new Error('Unfortunately the current version of maven (' + this.mavenVersion + ') '
+          + 'does not match one of the supported versions: ' + this.sdk.supportedMavenVersions + ' '
+          + 'for the SDK you have selected (' + this.archetypeVersion + '). '
+          + 'Please install a supported version.');
       }
-    },
+    } catch (e) {
+      this.out.error(e.message);
+      this.bail = true;
+    }
+  }
 
-    _generateArchetypeUsingJavaScript: function () {
-      trace('Loading maven archetype generate module');
-      var mvn = require('generator-alfresco-common').maven_archetype_generate(this);
-      trace('Creating context for archetype generate');
-      this.out.info('Attempting to use javascript and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
-      var rootPath = path.join('archetypes', this.sdk.archetypeVersion);
-      var metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
-      var resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
-      var properties = {
-        groupId: this.projectGroupId,
-        artifactId: this.projectArtifactId,
-        version: this.projectVersion,
-        package: (this.projectPackage !== undefined ? this.projectPackage : this.projectGroupId),
-      };
+  /**
+   * Perform archetype generation and overlaying. This may do some async stuff.
+   *
+   * @returns {!Promise}
+   */
+  writing () {
+    return this._writingGenerateArchetype()
+      .then(() => {
+        this._writingGeneratorOverlay();
+        this._writingRegisterDefaultSampleModules();
+        this._writingEditGeneratedResources();
+        this._writingRemoveDefaultSourceModules();
+        this._writingRemoveDefaultSourceModuleSamples();
+      });
+  }
 
-      trace('Performing generation');
-      mvn.generate(metadataPath, resourcePath, this.destinationPath(), properties);
+  /**
+   * Wrapper for performing archetype generation, decides if JS or Maven should be used.
+   *
+   * @returns {!Promise}
+   * @private
+   */
+  _writingGenerateArchetype () {
+    trace('generateArchetype');
+    if (this.bail) return Promise.resolve();
+    if (this.sdk.useArchetypeTemplate) {
+      this._writingGenerateArchetypeUsingJavaScript();
+      return Promise.resolve();
+    } else {
+      return this._writingGenerateArchetypeUsingMaven();
+    }
+  }
 
-      trace('Saving source templates');
-      this.writing._backupSourceTemplates.call(this, this.destinationPath(), true);
-      trace('Done saving source templates');
-    },
+  /**
+   * Perform archetype generation using native JS.
+   *
+   * @private
+   */
+  _writingGenerateArchetypeUsingJavaScript () {
+    trace('Loading maven archetype generate module');
+    let mvn = require('generator-alfresco-common').maven_archetype_generate(this);
+    trace('Creating context for archetype generate');
+    this.out.info('Attempting to use javascript and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
+    let rootPath = path.join('archetypes', this.sdk.archetypeVersion);
+    let metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
+    let resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
+    let properties = {
+      groupId: this.projectGroupId,
+      artifactId: this.projectArtifactId,
+      version: this.projectVersion,
+      package: (this.projectPackage !== undefined ? this.projectPackage : this.projectGroupId),
+    };
 
-    _generateArchetypeUsingMaven: function () {
-      var done = this.async();
+    trace('Performing generation');
+    mvn.generate(metadataPath, resourcePath, this.destinationPath(), properties);
 
+    trace('Saving source templates');
+    this._writingGenerateArchetypeBackupSourceTemplates(this.destinationPath(), true);
+    trace('Done saving source templates');
+  }
+
+  /**
+   * Perform archetype generation by shelling out to `mvn archetype:generate`.
+   *
+   * @returns {!Promise}
+   * @private
+   */
+  _writingGenerateArchetypeUsingMaven () {
+    return new Promise(resolve => {
       this.out.info('Attempting to use maven and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
 
-      var cwd = process.cwd();
+      let cwd = process.cwd();
 
-      var tmpdir = path.join(cwd, 'tmp');
+      let tmpdir = path.join(cwd, 'tmp');
       if (!fs.existsSync(tmpdir)) {
         fs.mkdirSync(tmpdir);
       }
       process.chdir(tmpdir);
 
-      var cmd = 'mvn';
-      var args = [
+      let cmd = 'mvn';
+      let args = [
         'archetype:generate',
         '-DinteractiveMode=false',
         '-DarchetypeGroupId=' + this.sdk.archetypeGroupId,
@@ -437,234 +464,236 @@ module.exports = Generator.extend({
       if (undefined !== this.projectPackage) {
         args.push('-Dpackage=' + this.projectPackage);
       }
-      var proc = this.spawnCommand(cmd, args);
+      let proc = this.spawnCommand(cmd, args);
 
       // Once mvn completes move stuff up a level
-      proc.on('exit', function (code, signal) {
+      proc.on('exit', (code, signal) => {
         this.out.info('Maven completed, processing files generated by archetype');
         process.chdir(cwd); // restore current working directory
-        var genDir = path.join(tmpdir, this.projectArtifactId);
-        var sdkContents = fs.readdirSync(genDir);
-        sdkContents.forEach(function (fileOrFolder) {
-          var absSourcePath = path.join(genDir, fileOrFolder);
+        let genDir = path.join(tmpdir, this.projectArtifactId);
+        let sdkContents = fs.readdirSync(genDir);
+        sdkContents.forEach(fileOrFolder => {
+          let absSourcePath = path.join(genDir, fileOrFolder);
           this.fs.copy(
             absSourcePath,
             this.destinationPath(fileOrFolder)
           );
-        }.bind(this));
-
-        this.writing._backupSourceTemplates.call(this, genDir, false);
-
-        rmdir(tmpdir);
-
-        done();
-      }.bind(this));
-    },
-
-    _backupSourceTemplates: function (sourceDir, forceInMemoryCopy) {
-      if (this.sdk.defaultModuleRegistry) {
-        this.out.info('Attempting to backup generated amp templates');
-        var folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
-          return mod.artifactId;
         });
-        folders.forEach(folderName => {
-          var to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
-          if (!fs.existsSync(to)) {
-            var from = path.join(sourceDir, folderName);
-            this.out.info('Copying from: ' + from + ' to: ' + to);
-            if (forceInMemoryCopy) {
-              memFsUtils.inMemoryCopy(this.fs, from, to);
-            } else {
-              this.fs.copy(from, to);
-            }
+
+        this._writingGenerateArchetypeBackupSourceTemplates(genDir, false);
+
+        rmdir(tmpdir, resolve);
+      });
+    });
+  }
+
+  _writingGenerateArchetypeBackupSourceTemplates (sourceDir, forceInMemoryCopy) {
+    if (this.sdk.defaultModuleRegistry) {
+      this.out.info('Attempting to backup generated amp templates');
+      let folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
+        return mod.artifactId;
+      });
+      folders.forEach(folderName => {
+        let to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
+        if (!fs.existsSync(to)) {
+          let from = path.join(sourceDir, folderName);
+          this.out.info('Copying from: ' + from + ' to: ' + to);
+          if (forceInMemoryCopy) {
+            memFsUtils.inMemoryCopy(this.fs, from, to);
           } else {
-            this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
+            this.fs.copy(from, to);
           }
-        });
-      } else {
-        this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
-          + 'version of the SDK.');
-      }
-    },
+        } else {
+          this.out.warn('Not copying ' + folderName + ' as it has already been backed up');
+        }
+      });
+    } else {
+      this.out.warn('Not backing up generated amp templates as we don\'t have default modules defined for this '
+        + 'version of the SDK.');
+    }
+  }
 
-    generatorOverlay: function () {
-      trace('generatorOverlay');
-      if (this.bail) return;
-      var isEnterprise = (this.communityOrEnterprise === 'Enterprise');
-      var tplContext = {
-        isEnterprise: isEnterprise,
-        enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
-        projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
-        projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
-        projectVersion: this.config.get(constants.PROP_PROJECT_VERSION),
-        removeDefaultSourceAmps: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
-        sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
-      };
-      trace('Copying .editorconfig');
-      this.fs.copy(
-        this.templatePath('editorconfig'),
-        this.destinationPath('.editorconfig')
-      );
-      trace('Copying .gitignore');
-      this.fs.copy(
-        this.templatePath('gitignore'),
-        this.destinationPath('.gitignore')
-      );
-      trace('Copying TODO.md');
+  _writingGeneratorOverlay () {
+    trace('generatorOverlay');
+    if (this.bail) return;
+    let isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    let tplContext = {
+      isEnterprise: isEnterprise,
+      enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
+      projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
+      projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
+      projectVersion: this.config.get(constants.PROP_PROJECT_VERSION),
+      removeDefaultSourceAmps: this.config.get(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
+      sdkVersionPrefix: this.sdk.sdkVersionPrefix.call(this),
+    };
+    trace('Copying .editorconfig');
+    this.fs.copy(
+      this.templatePath('editorconfig'),
+      this.destinationPath('.editorconfig')
+    );
+    trace('Copying .gitignore');
+    this.fs.copy(
+      this.templatePath('gitignore'),
+      this.destinationPath('.gitignore')
+    );
+    trace('Copying TODO.md');
+    this.fs.copyTpl(
+      this.templatePath('TODO.md'),
+      this.destinationPath('TODO.md'),
+      tplContext
+    );
+    // copy template folders
+    trace('Copying folders');
+    let projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+    let templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
+    if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
+      templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
+    }
+    templateFolders.forEach(folderName => {
+      this.out.info('Copying ' + folderName);
       this.fs.copyTpl(
-        this.templatePath('TODO.md'),
-        this.destinationPath('TODO.md'),
+        this.templatePath(folderName),
+        this.destinationPath(folderName),
         tplContext
       );
-      // copy template folders
-      trace('Copying folders');
-      var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
-      var templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
-      if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
-        templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
-      }
-      templateFolders.forEach(folderName => {
-        this.out.info('Copying ' + folderName);
-        this.fs.copyTpl(
-          this.templatePath(folderName),
-          this.destinationPath(folderName),
-          tplContext
-        );
-      });
-      // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
-      trace('Copying scripts');
-      [constants.FILE_RUN_SH, constants.FILE_RUN_BAT, constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH].forEach(
-        function (fileName) {
-          this.fs.copy(
-            this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
-            this.destinationPath(fileName)
-          );
-        }.bind(this)
+    });
+    // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
+    trace('Copying scripts');
+    [
+      constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
+      constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
+    ].forEach(fileName => {
+      this.fs.copy(
+        this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
+        this.destinationPath(fileName)
       );
-      // enterprise specific stuff
-      trace('Copying enterprise license');
-      if (isEnterprise) {
-        this.fs.copy(
-          this.templatePath(constants.FOLDER_REPO),
-          this.destinationPath(constants.FOLDER_REPO),
-          tplContext);
-      }
-    },
+    });
+    // enterprise specific stuff
+    trace('Copying enterprise license');
+    if (isEnterprise) {
+      this.fs.copy(
+        this.templatePath(constants.FOLDER_REPO),
+        this.destinationPath(constants.FOLDER_REPO),
+        tplContext);
+    }
+  }
 
-    registerDefaultSampleModules: function () {
-      if (this.bail) return;
-      if (this.sdk.registerDefaultModules) {
-        this.sdk.registerDefaultModules.call(this);
-      }
-    },
+  _writingRegisterDefaultSampleModules () {
+    if (this.bail) return;
+    if (this.sdk.registerDefaultModules) {
+      this.sdk.registerDefaultModules.call(this);
+    }
+  }
 
-    editGeneratedResources: function () {
-      if (this.bail) return;
-      if (!this.removeDefaultSourceAmps && this.sdk.defaultModuleRegistry) {
-        var paths;
-        if (this.sdk.setupNewRepoModule) {
-          // Arrange for all generated beans to be included
-          paths = this.sdk.defaultModuleRegistry.call(this)
-            .filter(function (mod) {
-              return (mod.war === constants.WAR_TYPE_REPO);
-            })
-            .map(function (mod) {
-              return mod.path;
-            });
-          if (paths && paths.length > 0) {
-            paths.forEach(function (p) {
-              this.sdk.setupNewRepoModule.call(this, p);
-            }.bind(this));
-          }
-        }
-        if (this.sdk.setupNewShareModule) {
-          // Arrange for all generated beans to be included
-          paths = this.sdk.defaultModuleRegistry.call(this)
-            .filter(function (mod) {
-              return (mod.war === constants.WAR_TYPE_REPO);
-            })
-            .map(function (mod) {
-              return mod.path;
-            });
-          if (paths && paths.length > 0) {
-            paths.forEach(function (p) {
-              this.sdk.setupNewShareModule.call(this, p);
-            }.bind(this));
-          }
+  _writingEditGeneratedResources () {
+    if (this.bail) return;
+    if (!this.removeDefaultSourceAmps && this.sdk.defaultModuleRegistry) {
+      let paths;
+      if (this.sdk.setupNewRepoModule) {
+        // Arrange for all generated beans to be included
+        paths = this.sdk.defaultModuleRegistry.call(this)
+          .filter(function (mod) {
+            return (mod.war === constants.WAR_TYPE_REPO);
+          })
+          .map(function (mod) {
+            return mod.path;
+          });
+        if (paths && paths.length > 0) {
+          paths.forEach(p => {
+            this.sdk.setupNewRepoModule.call(this, p);
+          });
         }
       }
-      // Make sure customizations/pom.xml is included in the top pom
-      // if advanced project structure was selected
-      var projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
-      if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
-        var topPomPath = this.destinationPath('pom.xml');
-        var topPomContent = this.fs.read(topPomPath);
-        var topPom = require('generator-alfresco-common').maven_pom(topPomContent);
-        topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
-        this.fs.write(topPomPath, topPom.getPOMString());
-      }
-    },
-
-    removeDefaultSourceModules: function () {
-      if (this.bail) return;
-      if (this.removeDefaultSourceAmps && this.sdk.removeDefaultModules) {
-        this.sdk.removeDefaultModules.call(this);
-      }
-    },
-
-    removeDefaultSourceModuleSamples: function () {
-      if (this.bail) return;
-      if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
-        if (this.sdk.removeRepoSamples) {
-          // TODO(bwavell): 'repo-amp' should be generalized
-          this.sdk.removeRepoSamples.call(this,
-            this.sdk.sdkVersionPrefix.call(this) + 'repo-amp',
-            this.projectPackage
-          );
-        }
-        if (this.sdk.removeShareSamples) {
-          // TODO(bwavell): 'share-amp' should be generalized
-          this.sdk.removeShareSamples.call(this,
-            this.sdk.sdkVersionPrefix.call(this) + 'share-amp',
-            this.projectPackage
-          );
+      if (this.sdk.setupNewShareModule) {
+        // Arrange for all generated beans to be included
+        paths = this.sdk.defaultModuleRegistry.call(this)
+          .filter(function (mod) {
+            return (mod.war === constants.WAR_TYPE_REPO);
+          })
+          .map(function (mod) {
+            return mod.path;
+          });
+        if (paths && paths.length > 0) {
+          paths.forEach(p => {
+            this.sdk.setupNewShareModule.call(this, p);
+          });
         }
       }
-    },
-  },
+    }
+    // Make sure customizations/pom.xml is included in the top pom
+    // if advanced project structure was selected
+    let projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+    if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
+      let topPomPath = this.destinationPath('pom.xml');
+      let topPomContent = this.fs.read(topPomPath);
+      let topPom = require('generator-alfresco-common').maven_pom(topPomContent);
+      topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
+      this.fs.write(topPomPath, topPom.getPOMString());
+    }
+  }
 
-  install: {
-    makeScriptsExecutable: function () {
-      if (this.bail) return;
-      var cwd = process.cwd();
-      var scripts = [
-        constants.FILE_RUN_SH,
-        constants.FILE_RUN_BAT,
-        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
-        path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
-        path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
-        path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
-        path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
-        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
-        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
-        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
-      ];
-      scripts.forEach(function (scriptName) {
-        this.out.info('Marking ' + scriptName + ' as executable');
-        fs.chmodSync(cwd + '/' + scriptName, '0755');
-      }.bind(this));
-      if (this.removeDefaultSourceAmps) {
-        this.out.warn('Since you choose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
-      }
-    },
+  _writingRemoveDefaultSourceModules () {
+    if (this.bail) return;
+    if (this.removeDefaultSourceAmps && this.sdk.removeDefaultModules) {
+      this.sdk.removeDefaultModules.call(this);
+    }
+  }
 
-    beforeExit: function () {
-      if (this.bail) return;
-      if (this.sdk.beforeExit) {
-        this.sdk.beforeExit.call(this);
+  _writingRemoveDefaultSourceModuleSamples () {
+    if (this.bail) return;
+    if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
+      if (this.sdk.removeRepoSamples) {
+        // TODO(bwavell): 'repo-amp' should be generalized
+        this.sdk.removeRepoSamples.call(this,
+          this.sdk.sdkVersionPrefix.call(this) + 'repo-amp',
+          this.projectPackage
+        );
       }
-    },
-  },
-});
+      if (this.sdk.removeShareSamples) {
+        // TODO(bwavell): 'share-amp' should be generalized
+        this.sdk.removeShareSamples.call(this,
+          this.sdk.sdkVersionPrefix.call(this) + 'share-amp',
+          this.projectPackage
+        );
+      }
+    }
+  }
+
+  install () {
+    this._installMakeScriptsExecutable();
+    this._installBeforeExit();
+  }
+
+  _installMakeScriptsExecutable () {
+    if (this.bail) return;
+    let cwd = process.cwd();
+    let scripts = [
+      constants.FILE_RUN_SH,
+      constants.FILE_RUN_BAT,
+      path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+      path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
+      path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
+      path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
+      path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
+      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+      path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
+    ];
+    scripts.forEach(scriptName => {
+      this.out.info('Marking ' + scriptName + ' as executable');
+      fs.chmodSync(cwd + '/' + scriptName, '0755');
+    });
+    if (this.removeDefaultSourceAmps) {
+      this.out.warn('Since you choose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+    }
+  }
+
+  _installBeforeExit () {
+    if (this.bail) return;
+    if (this.sdk.beforeExit) {
+      this.sdk.beforeExit.call(this);
+    }
+  }
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

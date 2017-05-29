@@ -1,9 +1,9 @@
 'use strict';
-var _ = require('lodash');
-var chalk = require('chalk');
-var debug = require('debug')('generator-alfresco:base-generator');
+let _ = require('lodash');
+let chalk = require('chalk');
+let debug = require('debug')('generator-alfresco:base-generator');
 
-var Generator = require('yeoman-generator');
+let Generator = require('yeoman-generator');
 
 /**
  * Base class for a yeoman generator in the generator-alfresco project. This
@@ -55,9 +55,9 @@ var Generator = require('yeoman-generator');
  * In order to reduce boilerplate, each function we create will be bound to this
  * yeoman generator instance automatically.
  */
-module.exports = Generator.extend({
-  constructor: function () {
-    Generator.apply(this, arguments);
+module.exports = class extends Generator {
+  constructor (args, opts) {
+    super(args, opts);
 
     this.bail = false;
     this.out = require('generator-alfresco-common').generator_output(this);
@@ -67,10 +67,10 @@ module.exports = Generator.extend({
     this.modules = this.options._modules || this.moduleRegistry.getNamedModules();
     this.moduleManager = this.options._moduleManager || require('./common/alfresco-module-manager.js')(this);
     this.answerOverrides = {};
-  },
+  }
 
-  setupArgumentsAndOptions: function (prompts) {
-    prompts.forEach(function (prompt) {
+  setupArgumentsAndOptions (prompts) {
+    prompts.forEach(prompt => {
       if (prompt.hasOwnProperty('argument')) {
         debug('Adding argument %s with config %j', prompt.argument.name, prompt.argument.config);
         this.argument(prompt.argument.name, prompt.argument.config);
@@ -79,15 +79,15 @@ module.exports = Generator.extend({
         debug('Adding option %s with config %j', prompt.option.name, prompt.option.config);
         this.option(prompt.option.name, prompt.option.config);
       }
-    }.bind(this));
-  },
+    });
+  }
 
-  subgeneratorPrompt: function (prompts, desc, donePromptingFunc) {
+  subgeneratorPrompt (prompts, desc, donePromptingFunc) {
     // ==== PROMPT EXTENSIONS ====
-    this.processedPrompts = prompts.map(function (prompt) {
-      var newPrompt = _.assign({}, prompt);
-      var oldWhen = prompt.when;
-      newPrompt.when = function (props) {
+    this.processedPrompts = prompts.map(prompt => {
+      let newPrompt = _.assign({}, prompt);
+      let oldWhen = prompt.when;
+      newPrompt.when = props => {
         debug('Synthetic when() logic');
         if (this.bail) return false;
         if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter)
@@ -96,8 +96,8 @@ module.exports = Generator.extend({
             || (prompt.hasOwnProperty('argument') && prompt.argument.hasOwnProperty('name'))
           )
         ) {
-          var cliName;
-          var cliValue;
+          let cliName;
+          let cliValue;
           if (prompt.hasOwnProperty('option') && prompt.option.hasOwnProperty('name')) {
             cliName = prompt.option.name;
             cliValue = this.options[prompt.option.name];
@@ -107,7 +107,7 @@ module.exports = Generator.extend({
             cliValue = this.options[prompt.argument.name];
             debug('Calling commonFilter(%s) for argument: %s', cliValue, cliName);
           }
-          var v = prompt.commonFilter.call(this, cliValue);
+          let v = prompt.commonFilter.call(this, cliValue);
           if (undefined !== v) {
             this.answerOverrides[prompt.name] = v;
             this.out.info('Value for ' + cliName + ' set from command line: ' + chalk.reset.dim.cyan(v));
@@ -119,24 +119,24 @@ module.exports = Generator.extend({
           return oldWhen;
         }
         if (_.isFunction(oldWhen)) {
-          var retv = oldWhen.call(this, props);
+          let retv = oldWhen.call(this, props);
           debug('Returning when(%s)=%s via function provided in prompt: %s', JSON.stringify(props), retv, prompt.name);
           return retv;
         }
         return true;
-      }.bind(this);
+      };
       if (prompt.hasOwnProperty('commonFilter') && _.isFunction(prompt.commonFilter)) {
         if (!prompt.hasOwnProperty('filter')) {
-          newPrompt.filter = function (input) {
+          newPrompt.filter = input => {
             debug('Using commonFilter(%s) for filter', input);
             return prompt.commonFilter.call(this, input);
-          }.bind(this);
+          };
         }
         if (!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
-          newPrompt.validate = function (input) {
+          newPrompt.validate = input => {
             debug('Using commonFilter(%s) for validate', input);
-            var required = prompt.valueRequired;
-            var msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value '
+            let required = prompt.valueRequired;
+            let msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value '
               + (required ? 'is missing or invalid' : 'is invalid');
             if (prompt.hasOwnProperty('invalidMessage')) {
               if (_.isFunction(prompt.invalidMessage)) {
@@ -147,21 +147,21 @@ module.exports = Generator.extend({
               }
             }
             return (prompt.commonFilter.call(this, input) !== undefined ? true : msg);
-          }.bind(this);
+          };
         }
       }
       return newPrompt;
-    }.bind(this));
+    });
 
     // ==== NOW DO THE ACTUAL PROMPTING ====
-    return this.prompt(this.processedPrompts).then(function (props) {
+    return this.prompt(this.processedPrompts).then(props => {
+      let combinedProps = {};
       if (!this.bail) {
-        var combinedProps = {};
         _.assign(combinedProps, this.answerOverrides);
         _.assign(combinedProps, props);
-        this.processedPrompts.forEach(function (promptItem) {
-          var name = promptItem.name;
-          var required = promptItem.valueRequired;
+        this.processedPrompts.forEach(promptItem => {
+          let name = promptItem.name;
+          let required = promptItem.valueRequired;
           if (name && required) {
             debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), combinedProps[name]);
             if (undefined === combinedProps[name]) {
@@ -169,16 +169,15 @@ module.exports = Generator.extend({
               this.bail = true;
             }
           }
-        }.bind(this));
+        });
       }
       if (!this.bail && donePromptingFunc) {
         debug('calling user supplied done prompting function');
         donePromptingFunc.call(this, combinedProps);
         debug('completed user supplied done prompting function');
       }
-    }.bind(this));
-  },
-
-});
+    });
+  }
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

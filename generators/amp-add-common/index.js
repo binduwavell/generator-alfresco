@@ -1,14 +1,15 @@
 'use strict';
-var _ = require('lodash');
-var debug = require('debug')('generator-alfresco:amp-common');
-var constants = require('generator-alfresco-common').constants;
-var filters = require('generator-alfresco-common').prompt_filters;
+let _ = require('lodash');
+let debug = require('debug')('generator-alfresco:amp-common');
+let constants = require('generator-alfresco-common').constants;
+let filters = require('generator-alfresco-common').prompt_filters;
+let trace = require('debug')('generator-alfresco-trace:amp-common');
 
-var SubGenerator = require('../subgenerator.js');
+let SubGenerator = require('../subgenerator.js');
 
-var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
+let NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 
-var PROJECTS = [
+let PROJECTS = [
   {
     name: 'AOS Community - Alfresco Office Services (5.1)',
     description: 'Alfresco Office Services (AOS) allows you to access Alfresco directly from your Microsoft Office applications.',
@@ -240,16 +241,15 @@ var PROJECTS = [
   },
 ];
 
-module.exports = SubGenerator.extend({
+module.exports = class extends SubGenerator {
+  constructor (args, opts) {
+    super(args, opts);
 
-  constructor: function () {
-    SubGenerator.apply(this, arguments);
+    trace('constructing');
 
-    debug('constructing');
-
-    var communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
-    var sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
-    var projects = PROJECTS
+    let communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
+    let sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
+    let projects = PROJECTS
       .filter(function (project) {
         if (communityOrEnterprise === undefined) return true;
         return (project.availability.indexOf(communityOrEnterprise) > -1);
@@ -266,7 +266,7 @@ module.exports = SubGenerator.extend({
       return;
     }
 
-    var projectNames = projects.map(function (project) { return project.name });
+    let projectNames = projects.map(function (project) { return project.name });
 
     debug('Offering the following common amps: ', projectNames);
 
@@ -276,10 +276,10 @@ module.exports = SubGenerator.extend({
         name: 'projectNames',
         option: { name: 'project-names', config: { alias: 'p', desc: 'Which project(s): ' + _.join(projectNames, ', ') + ' (comma separated)', type: String } },
         when: function (readonlyProps) {
-          projects.map(function (project) {
+          projects.map(project => {
             this.out.definition(project.name, project.description);
             this.out.docs(undefined, project.url);
-          }.bind(this));
+          });
           return true;
         },
         choices: projectNames,
@@ -290,18 +290,18 @@ module.exports = SubGenerator.extend({
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     if (this.bail) return;
 
-    return this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
-      var projects = PROJECTS
+      let projects = PROJECTS
         .filter(function (project) {
           return (props.projectNames.indexOf(project.name) > -1);
         });
-      _.forEach(projects, function (project) {
+      _.forEach(projects, project => {
         if (project.repoGroupId) {
           debug('attempting to compose %s to add %s to the repo', NAMESPACE_REMOTE, project.repoArtifactId);
           this.composeWith(require.resolve('../amp-add-remote'),
@@ -328,21 +328,21 @@ module.exports = SubGenerator.extend({
               _moduleManager: this.moduleManager,
             });
         }
-      }.bind(this));
-    }.bind(this));
-  },
-});
+      });
+    });
+  }
+};
 
 function isNotApplied (project, moduleRegistry) {
-  var applied = false;
+  let applied = false;
   if (project.repoGroupId) {
-    var repo = moduleRegistry.findModule(project.repoGroupId, project.repoArtifactId, project.repoVersion, 'amp', 'repo', 'remote');
+    let repo = moduleRegistry.findModule(project.repoGroupId, project.repoArtifactId, project.repoVersion, 'amp', 'repo', 'remote');
     if (repo !== undefined) {
       applied = true;
     }
   }
   if (!applied && project.shareGroupId) {
-    var share = moduleRegistry.findModule(project.shareGroupId, project.shareArtifactId, project.shareVersion, 'amp', 'share', 'remote');
+    let share = moduleRegistry.findModule(project.shareGroupId, project.shareArtifactId, project.shareVersion, 'amp', 'share', 'remote');
     if (share !== undefined) {
       applied = true;
     }
