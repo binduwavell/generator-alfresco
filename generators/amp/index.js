@@ -1,24 +1,24 @@
 'use strict';
-let debug = require('debug')('generator-alfresco:amp');
-let filters = require('generator-alfresco-common').prompt_filters;
-let SubGenerator = require('../subgenerator.js');
+const debug = require('debug')('generator-alfresco:amp');
+const filters = require('generator-alfresco-common').prompt_filters;
+const SubGenerator = require('../subgenerator.js');
 
-let AMP_TYPE_SOURCE = 'Source AMP';
-let AMP_TYPE_LOCAL = 'Local AMP';
-let AMP_TYPE_REMOTE = 'Remote AMP';
-let AMP_TYPE_COMMON = 'Common AMP';
-let AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE, AMP_TYPE_COMMON];
-let AMP_TYPE_CHOICES = {
+const AMP_TYPE_SOURCE = 'Source AMP';
+const AMP_TYPE_LOCAL = 'Local AMP';
+const AMP_TYPE_REMOTE = 'Remote AMP';
+const AMP_TYPE_COMMON = 'Common AMP';
+const AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE, AMP_TYPE_COMMON];
+const AMP_TYPE_CHOICES = {
   'source': AMP_TYPE_SOURCE,
   'local': AMP_TYPE_LOCAL,
   'remote': AMP_TYPE_REMOTE,
   'common': AMP_TYPE_COMMON,
 };
-let NAMESPACE_SOURCE = 'alfresco:amp-add-source';
-let NAMESPACE_LOCAL = 'alfresco:amp-add-local';
-let NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
-let NAMESPACE_COMMON = 'alfresco:amp-add-common';
-let NAMESPACE_CHOICES = [
+const NAMESPACE_SOURCE = 'alfresco:amp-add-source';
+const NAMESPACE_LOCAL = 'alfresco:amp-add-local';
+const NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
+const NAMESPACE_COMMON = 'alfresco:amp-add-common';
+const NAMESPACE_CHOICES = [
   {label: AMP_TYPE_SOURCE, namespace: NAMESPACE_SOURCE},
   {label: AMP_TYPE_LOCAL, namespace: NAMESPACE_LOCAL},
   {label: AMP_TYPE_REMOTE, namespace: NAMESPACE_REMOTE},
@@ -53,11 +53,11 @@ module.exports = class extends SubGenerator {
   }
 
   help () {
-    let Generator = require('yeoman-generator');
-    let helpArray = [Generator.prototype.help.apply(this)];
+    const Generator = require('yeoman-generator');
+    const helpArray = [Generator.prototype.help.apply(this)];
     NAMESPACE_CHOICES.forEach(subgenDesc => {
       helpArray.push('\n' + subgenDesc.label + ' Options:');
-      let subgen = this.env.create(subgenDesc.namespace);
+      const subgen = this.env.create(subgenDesc.namespace);
       ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
         subgen._options[op].hide = true;
       });

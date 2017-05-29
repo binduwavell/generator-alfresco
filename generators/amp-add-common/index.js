@@ -1,14 +1,13 @@
 'use strict';
-let debug = require('debug')('generator-alfresco:amp-common');
-let constants = require('generator-alfresco-common').constants;
-let filters = require('generator-alfresco-common').prompt_filters;
-let trace = require('debug')('generator-alfresco-trace:amp-common');
+const debug = require('debug')('generator-alfresco:amp-common');
+const constants = require('generator-alfresco-common').constants;
+const filters = require('generator-alfresco-common').prompt_filters;
+const trace = require('debug')('generator-alfresco-trace:amp-common');
+const SubGenerator = require('../subgenerator.js');
 
-let SubGenerator = require('../subgenerator.js');
+const NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 
-let NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
-
-let PROJECTS = [
+const PROJECTS = [
   {
     name: 'AOS Community - Alfresco Office Services (5.1)',
     description: 'Alfresco Office Services (AOS) allows you to access Alfresco directly from your Microsoft Office applications.',
@@ -246,9 +245,9 @@ module.exports = class extends SubGenerator {
 
     trace('constructing');
 
-    let communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
-    let sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
-    let projects = PROJECTS
+    const communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
+    const sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
+    const projects = PROJECTS
       .filter(function (project) {
         if (communityOrEnterprise === undefined) return true;
         return (project.availability.indexOf(communityOrEnterprise) > -1);
@@ -265,7 +264,7 @@ module.exports = class extends SubGenerator {
       return;
     }
 
-    let projectNames = projects.map(function (project) { return project.name });
+    const projectNames = projects.map(function (project) { return project.name });
 
     debug('Offering the following common amps: ', projectNames);
 
@@ -296,7 +295,7 @@ module.exports = class extends SubGenerator {
 
     return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
-      let projects = PROJECTS
+      const projects = PROJECTS
         .filter(function (project) {
           return (props.projectNames.indexOf(project.name) > -1);
         });
@@ -335,13 +334,13 @@ module.exports = class extends SubGenerator {
 function isNotApplied (project, moduleRegistry) {
   let applied = false;
   if (project.repoGroupId) {
-    let repo = moduleRegistry.findModule(project.repoGroupId, project.repoArtifactId, project.repoVersion, 'amp', 'repo', 'remote');
+    const repo = moduleRegistry.findModule(project.repoGroupId, project.repoArtifactId, project.repoVersion, 'amp', 'repo', 'remote');
     if (repo !== undefined) {
       applied = true;
     }
   }
   if (!applied && project.shareGroupId) {
-    let share = moduleRegistry.findModule(project.shareGroupId, project.shareArtifactId, project.shareVersion, 'amp', 'share', 'remote');
+    const share = moduleRegistry.findModule(project.shareGroupId, project.shareArtifactId, project.shareVersion, 'amp', 'share', 'remote');
     if (share !== undefined) {
       applied = true;
     }

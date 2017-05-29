@@ -1,10 +1,9 @@
 'use strict';
-let _ = require('lodash');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:source-selecting-subgenerator');
-let constants = require('generator-alfresco-common').constants;
-
-let SubGenerator = require('./subgenerator.js');
+const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:source-selecting-subgenerator');
+const constants = require('generator-alfresco-common').constants;
+const SubGenerator = require('./subgenerator.js');
 
 /**
  * An extension of our regular subgenerator base class that
@@ -26,7 +25,7 @@ module.exports = class extends SubGenerator {
       return (mod.module.location === 'source');
     });
     // If a war target is passed in further restrict our list
-    let targetWar = arguments[1][constants.PROP_WAR];
+    const targetWar = arguments[1][constants.PROP_WAR];
     if (targetWar) {
       this.modules = this.modules.filter(function (mod) {
         return (targetWar === mod.module.war);
@@ -96,7 +95,7 @@ module.exports = class extends SubGenerator {
           }
           // If there is only one module we can select it without prompting
           if (this.modules.length === 1) {
-            let module = this.modules[0];
+            const module = this.modules[0];
             this.out.info('Using only available source module: ' + chalk.reset.dim.cyan(module.name));
             this.targetModule = module;
             return false;
@@ -120,18 +119,18 @@ module.exports = class extends SubGenerator {
   }
 
   setupArgumentsAndOptions (prompts) {
-    let p = this.sourcePrompts.concat(prompts);
-    SubGenerator.prototype.setupArgumentsAndOptions.call(this, p);
+    const p = this.sourcePrompts.concat(prompts);
+    super.setupArgumentsAndOptions(p);
   }
 
   subgeneratorPrompt (prompts, desc, donePromptingFunc) {
-    let p = this.sourcePrompts.concat(prompts);
+    const p = this.sourcePrompts.concat(prompts);
     if (donePromptingFunc === undefined && _.isFunction(desc)) {
       debug('promoting second arg to donePromptingFunc');
       donePromptingFunc = desc;
       desc = undefined;
     }
-    return SubGenerator.prototype.subgeneratorPrompt.call(this, p, desc, function (props) {
+    return super.subgeneratorPrompt(p, desc, function (props) {
       if (this.targetModule === undefined && props.targetModule !== undefined) {
         debug('capturing targetModule from prompt response');
         this.targetModule = props.targetModule;

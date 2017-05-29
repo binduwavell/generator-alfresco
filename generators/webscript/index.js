@@ -1,11 +1,11 @@
 'use strict';
-let _ = require('lodash');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:webscript');
-let path = require('path');
-let constants = require('generator-alfresco-common').constants;
-let filters = require('generator-alfresco-common').prompt_filters;
-let SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
+const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:webscript');
+const path = require('path');
+const constants = require('generator-alfresco-common').constants;
+const filters = require('generator-alfresco-common').prompt_filters;
+const SourceSelectingSubGenerator = require('../source-selecting-subgenerator.js');
 
 const METHODS = ['get', 'post', 'put', 'delete'];
 const LANGUAGES = ['Java', 'JavaScript', 'Both Java & JavaScript'];
@@ -21,7 +21,7 @@ module.exports = class extends SourceSelectingSubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
-    let defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
+    const defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [
 
@@ -29,7 +29,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'id',
         option: { name: 'id', config: { alias: 'i', desc: 'Webscript id', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The webscript id identifies the web script and must be unique within a web script package.',
             'http://docs.alfresco.com/5.1/concepts/ws-component-name.html');
@@ -72,8 +72,8 @@ module.exports = class extends SourceSelectingSubGenerator {
         name: 'javaBaseClass',
         option: { name: 'java-base-class', config: { alias: 'c', desc: 'Java webscripts base class: DeclarativeWebScript or AbstractWebScript', type: String } },
         when: function (readonlyProps) {
-          let lang = (readonlyProps.language || this.answerOverrides.language);
-          let show = (lang === 'Java' || lang === 'Both Java & JavaScript');
+          const lang = (readonlyProps.language || this.answerOverrides.language);
+          const show = (lang === 'Java' || lang === 'Both Java & JavaScript');
           if (show) {
             this.out.docs(
               ['The Web Script Framework provides two Java classes that implement the difficult parts of the org.alfresco.web.scripts.WebScript interface, which you can extend as a starting point. The simplest helper Java class is named as follows: org.alfresco.web.scripts.AbstractWebScript',
@@ -111,9 +111,9 @@ module.exports = class extends SourceSelectingSubGenerator {
         name: 'templateFormats',
         option: { name: 'template-formats', config: { alias: 't', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: String } },
         when: function (readonlyProps) {
-          let clazz = (readonlyProps.javaBaseClass || this.answerOverrides.javaBaseClass);
-          let lang = (readonlyProps.language || this.answerOverrides.language);
-          let show = (clazz !== 'AbstractWebScript' || lang.indexOf('JavaScript') > -1);
+          const clazz = (readonlyProps.javaBaseClass || this.answerOverrides.javaBaseClass);
+          const lang = (readonlyProps.language || this.answerOverrides.language);
+          const show = (clazz !== 'AbstractWebScript' || lang.indexOf('JavaScript') > -1);
           if (!show) {
             this.answerOverrides.templateFormats = [];
           }
@@ -212,10 +212,10 @@ module.exports = class extends SourceSelectingSubGenerator {
         option: { name: 'format-default', config: { alias: 'F', desc: 'Default format to use if no selection is made', type: String } },
         when: readonlyProps => {
           if (this.bail) return;
-          let fmts = (readonlyProps.templateFormats || this.answerOverrides.templateFormats);
-          let show = (fmts && fmts.length > 0);
+          const fmts = (readonlyProps.templateFormats || this.answerOverrides.templateFormats);
+          const show = (fmts && fmts.length > 0);
           if (show) {
-            let f = filters.chooseOneStartsWithFilter(this.options['format-default'], fmts);
+            const f = filters.chooseOneStartsWithFilter(this.options['format-default'], fmts);
             if (f !== undefined) {
               this.answerOverrides.formatDefault = f;
               this.out.info('Using default format from command line: ' + chalk.reset.dim.cyan(this.answerOverrides.formatDefault));
@@ -284,7 +284,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         },
         choices: TRANSACTIONS,
         default: function (readonlyProps) {
-          let auth = (readonlyProps.authentication || this.answerOverrides.authentication);
+          const auth = (readonlyProps.authentication || this.answerOverrides.authentication);
           return (auth === 'none'
             ? 'none'
             : 'required');
@@ -316,8 +316,8 @@ module.exports = class extends SourceSelectingSubGenerator {
         name: 'transactionBuffersize',
         option: { name: 'transaction-buffersize', config: { alias: 'B', desc: 'Transactional buffer size in bytes', type: Number } },
         when: readonlyProps => {
-          let txn = (readonlyProps.transaction || this.answerOverrides.transaction);
-          let disp = (txn !== 'none');
+          const txn = (readonlyProps.transaction || this.answerOverrides.transaction);
+          const disp = (txn !== 'none');
           if (disp) {
             this.out.docs(
               ['Specifies the buffer size in bytes. Integer value.',
@@ -373,7 +373,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         name: 'cachePublic',
         option: { name: 'cache-public', config: { alias: 'P', desc: 'Allow public caching', type: Boolean } },
         when: function (readonlyProps) {
-          let never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
+          const never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
           if (never === 'false') {
             this.out.docs('Specifies whether authneticated responses should be cached in the public cache. Valid values, which are optional, are as follows:');
             this.out.definition('false', '(default) specifies the web script authenticated response cannot be cached in a public cache.');
@@ -396,7 +396,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         name: 'cacheMustrevalidate',
         option: { name: 'cache-must-revalidate', config: { alias: 'R', desc: 'Force revalidation', type: Boolean } },
         when: function (readonlyProps) {
-          let never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
+          const never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
           if (never === 'false') {
             this.out.docs('Specifies whether a cache must revalidate its version of the web script response in order to ensure freshness. Valid values, which are optional, are as follows:');
             this.out.definition('true', '(default) specifies that validation must occur.');
@@ -524,29 +524,29 @@ module.exports = class extends SourceSelectingSubGenerator {
       debug('saving answers');
       this.props = props;
 
-      let targetModule = this.targetModule.module;
+      const targetModule = this.targetModule.module;
       debug('target module: %s', targetModule);
-      let moduleRoot = this.destinationPath(targetModule.path);
+      const moduleRoot = this.destinationPath(targetModule.path);
       debug('module root: %s', moduleRoot);
-      let wsRoot = (targetModule.war === 'repo'
+      const wsRoot = (targetModule.war === 'repo'
           ? 'src/main/amp/config/alfresco/extension/templates/webscripts'
           : 'src/main/amp/config/alfresco/web-extension/site-webscripts');
       debug('webscript root: %s', wsRoot);
-      let genRoot = (targetModule.war === 'repo'
+      const genRoot = (targetModule.war === 'repo'
           ? 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated'
           : 'src/main/amp/config/alfresco/web-extension');
       debug('generated root: %s', genRoot);
-      let configSrcPath = this.templatePath('config.xml');
-      let descSrcPath = this.templatePath('desc.xml.ejs');
+      const configSrcPath = this.templatePath('config.xml');
+      const descSrcPath = this.templatePath('desc.xml.ejs');
       debug('javaBaseClass: %s', props.javaBaseClass);
-      let javaSrcPath = this.templatePath(props.javaBaseClass + '.java');
-      let jsSrcPath = this.templatePath('controller.js');
-      let wsSrcPath = this.templatePath('webscript-context.xml');
-      let descPath = path.join(moduleRoot, wsRoot, props.package);
-      let genPath = path.join(moduleRoot, genRoot);
+      const javaSrcPath = this.templatePath(props.javaBaseClass + '.java');
+      const jsSrcPath = this.templatePath('controller.js');
+      const wsSrcPath = this.templatePath('webscript-context.xml');
+      const descPath = path.join(moduleRoot, wsRoot, props.package);
+      const genPath = path.join(moduleRoot, genRoot);
       props.methods.forEach(method => {
-        let descName = props.id + '.' + method + '.desc.xml';
-        let destPath = path.join(descPath, descName);
+        const descName = props.id + '.' + method + '.desc.xml';
+        const destPath = path.join(descPath, descName);
         this.out.info('Generating ' + descName + ' in ' + descPath);
         debug('copying from: %s to %s', descSrcPath, destPath);
         debug('with props: %j', props);
@@ -554,49 +554,49 @@ module.exports = class extends SourceSelectingSubGenerator {
         debug('done copying webscript descriptor');
         // JavaScript || Both Java & JavaScript
         if (props.language !== 'Java') {
-          let jsControllerName = props.id + '.' + method + '.js';
-          let jsControllerPath = path.join(descPath, jsControllerName);
+          const jsControllerName = props.id + '.' + method + '.js';
+          const jsControllerPath = path.join(descPath, jsControllerName);
           this.out.info('Generating ' + jsControllerName + ' in ' + descPath);
           this.fs.copyTpl(jsSrcPath, jsControllerPath, props);
 
-          let configName = props.id + '.' + method + '.config.xml';
-          let configPath = path.join(descPath, configName);
+          const configName = props.id + '.' + method + '.config.xml';
+          const configPath = path.join(descPath, configName);
           this.out.info('Generating ' + configName + ' in ' + descPath);
           this.fs.copyTpl(configSrcPath, configPath, props);
         }
         // Java || Both Java & JavaSctip
         if (props.language !== 'JavaScript') {
-          let pkg = props.package.replace(/\//g, '.').substring(1);
+          const pkg = props.package.replace(/\//g, '.').substring(1);
           props.classPackage = pkg + '.webscripts';
           props.className = _.upperFirst(_.camelCase(props.id)) + _.upperFirst(method) + 'Webscript';
           props.qualifiedClassName = props.classPackage + '.' + props.className;
           props.beanId = 'webscript.' + pkg + '.' + props.id + '.' + method;
-          let javaControllerName = props.className + '.java';
-          let javaClassPath = path.join(moduleRoot, 'src/main/java', props.package, 'webscripts');
-          let javaControllerPath = path.join(javaClassPath, javaControllerName);
+          const javaControllerName = props.className + '.java';
+          const javaClassPath = path.join(moduleRoot, 'src/main/java', props.package, 'webscripts');
+          const javaControllerPath = path.join(javaClassPath, javaControllerName);
           this.out.info('Generating ' + javaControllerName + ' in ' + javaClassPath);
           this.out.info('FROM ' + javaSrcPath);
           this.fs.copyTpl(javaSrcPath, javaControllerPath, props);
-          let contextName = 'webscript-' + props.id + '-' + method + '-context.xml';
-          let contextPath = path.join(genPath, contextName);
+          const contextName = 'webscript-' + props.id + '-' + method + '-context.xml';
+          const contextPath = path.join(genPath, contextName);
           this.out.info('Generating ' + contextName + ' in ' + genPath);
           this.fs.copyTpl(wsSrcPath, contextPath, props);
         }
         // NOTE: for an AbstractWebScript, we won't have any freemarker templates
         // if the language is only Java.
         props.templateFormats.forEach(format => {
-          let fmtPath = this.templatePath(format + '.ftl');
-          let tplName = props.id + '.' + method + '.' + format + '.ftl';
-          let tplPath = path.join(descPath, tplName);
+          const fmtPath = this.templatePath(format + '.ftl');
+          const tplName = props.id + '.' + method + '.' + format + '.ftl';
+          const tplPath = path.join(descPath, tplName);
           this.out.info('Generating ' + tplName + ' in ' + descPath);
           this.fs.copyTpl(fmtPath, tplPath, props);
         });
         // NOTE: consider prompting for supported locales. Realizing there are a large number of them
         // and we likely won't have sample data for all locales.
         ['de', 'en', 'es', 'fr'].forEach(locale => {
-          let propPath = this.templatePath(locale + '.properties');
-          let localeName = props.id + '.' + method + (locale === 'en' ? '' : '_' + locale) + '.properties';
-          let localePath = path.join(descPath, localeName);
+          const propPath = this.templatePath(locale + '.properties');
+          const localeName = props.id + '.' + method + (locale === 'en' ? '' : '_' + locale) + '.properties';
+          const localePath = path.join(descPath, localeName);
           this.out.info('Generating ' + localeName + ' in ' + descPath);
           this.fs.copyTpl(propPath, localePath, props);
         });
@@ -615,7 +615,7 @@ module.exports = class extends SourceSelectingSubGenerator {
 
 function idFilter (id) {
   if (!_.isString(id)) return undefined;
-  let retv = _.kebabCase(id);
+  const retv = _.kebabCase(id);
   // if after kebabbing our id we don't have anything left treat as undefined
   if (_.isEmpty(retv)) return undefined;
   return retv;
@@ -640,7 +640,7 @@ function packageFilter (pkg) {
 }
 
 function urlTemplatesFilter (templates) {
-  let urls = filters.requiredTextListFilter(templates, '|');
+  const urls = filters.requiredTextListFilter(templates, '|');
   if (urls) {
     return urls.map(function (url) {
       return (url.startsWith('/')
@@ -679,10 +679,10 @@ function negotiationsFilter (negotiations) {
   if (negotiations === true) return '';
   if (!_.isString(negotiations) || _.isEmpty(negotiations)) return undefined;
   if (negotiations.startsWith('{') && validateJSONString(negotiations)) return negotiations;
-  let negotiationList = negotiations.split(/\s*\|\s*/);
+  const negotiationList = negotiations.split(/\s*\|\s*/);
   let valSet = false;
-  let retv = negotiationList.reduce(function (negotiations, negotiation) {
-    let negotiationItems = negotiation.split(/\s*=\s*/);
+  const retv = negotiationList.reduce(function (negotiations, negotiation) {
+    const negotiationItems = negotiation.split(/\s*=\s*/);
     if (negotiationItems.length >= 2) {
       negotiations[negotiationItems[0]] = negotiationItems[1];
       valSet = true;
@@ -706,9 +706,9 @@ function validateJSONString (str) {
 function argsFilter (args) {
   if (args === undefined || args === null) return undefined;
   if (!_.isString(args) || _.isEmpty(args)) return '{}';
-  let argsList = args.split(/\s*\|\s*/);
+  const argsList = args.split(/\s*\|\s*/);
   return JSON.stringify(argsList.reduce(function (args, arg) {
-    let argItems = arg.split(/\s*=\s*/);
+    const argItems = arg.split(/\s*=\s*/);
     if (argItems.length >= 2) {
       args[argItems[0]] = argItems[1];
     }

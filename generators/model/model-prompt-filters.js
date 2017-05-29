@@ -1,11 +1,11 @@
 'use strict';
-var _ = require('lodash');
+const _ = require('lodash');
 
 module.exports = {
 
   alphaLowerCaseFilter: function (name) {
     if (!_.isString(name) || _.isEmpty(name)) return undefined;
-    var retv;
+    let retv;
     retv = name.replace(/[^A-Za-z]/g, '');
     if (retv === '') return undefined;
     return _.toLower(retv);
@@ -14,14 +14,14 @@ module.exports = {
   alphaCamelCaseFilter: function (name) {
     if (!_.isString(name) || _.isEmpty(name)) return undefined;
     name = _.camelCase(name);
-    var retv;
+    let retv;
     retv = name.replace(/[^A-Za-z]/g, '');
     if (retv === '') return undefined;
     return retv;
   },
 
   modelNameFilter: function (name) {
-    var retv = module.exports.alphaCamelCaseFilter(name);
+    let retv = module.exports.alphaCamelCaseFilter(name);
     if (undefined === retv) return undefined;
     // If the name ends with model, remove it
     if (retv.match(/.model$/i)) {
@@ -35,13 +35,13 @@ module.exports = {
       input = '' + input;
     }
     if (!_.isString(input) || _.isEmpty(input)) return undefined;
-    var re = new RegExp(regex);
-    var valid = re.test(input);
+    const re = new RegExp(regex);
+    const valid = re.test(input);
     return (valid ? input : undefined);
   },
 
   requiredRegexFilterFactory: function (regex) {
-    return function (input) {
+    return input => {
       return module.exports.requiredRegexFilter(input, regex);
     };
   },

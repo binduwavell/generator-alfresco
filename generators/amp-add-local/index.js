@@ -1,24 +1,23 @@
 'use strict';
-let _ = require('lodash');
-let AdmZip = require('adm-zip');
-let debug = require('debug')('generator-alfresco:amp-local');
-let chalk = require('chalk');
-let fs = require('fs');
-let path = require('path');
-let constants = require('generator-alfresco-common').constants;
-let filters = require('generator-alfresco-common').prompt_filters;
-let properties = require('generator-alfresco-common').java_properties;
-
-let SubGenerator = require('../subgenerator.js');
+const _ = require('lodash');
+const AdmZip = require('adm-zip');
+const debug = require('debug')('generator-alfresco:amp-local');
+const chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
+const constants = require('generator-alfresco-common').constants;
+const filters = require('generator-alfresco-common').prompt_filters;
+const properties = require('generator-alfresco-common').java_properties;
+const SubGenerator = require('../subgenerator.js');
 
 module.exports = class extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
-    let possibleRepoAmps = unknownAmps(
+    const possibleRepoAmps = unknownAmps(
       findAmps(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS)),
       this.moduleRegistry);
-    let possibleShareAmps = unknownAmps(
+    const possibleShareAmps = unknownAmps(
       findAmps(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE)),
       this.moduleRegistry);
     this.possibleAmps = _.orderBy(possibleRepoAmps, 'name').concat(_.orderBy(possibleShareAmps, 'name'));
@@ -42,7 +41,7 @@ module.exports = class extends SubGenerator {
         name: 'groupId',
         option: { name: 'group-id', config: { alias: 'g', desc: 'amp groupId', type: String } },
         when: function (readonlyProps) {
-          let p = (readonlyProps.path || this.answerOverrides.path);
+          const p = (readonlyProps.path || this.answerOverrides.path);
           this.gav = getGAVFromAMP(this.destinationPath(p));
           return true;
         },
@@ -116,7 +115,7 @@ module.exports = class extends SubGenerator {
     if (this.bail) return;
 
     debug('installing %s into %s', this.props.path, this.props.warType);
-    let mod = {
+    const mod = {
       'groupId': this.props.groupId,
       'artifactId': this.props.artifactId,
       'version': this.props.ampVersion,
@@ -142,7 +141,7 @@ module.exports = class extends SubGenerator {
  * @returns {Array<string>}
  */
 function findAmps (projectRootPath, folderName) {
-  let ampFolder = path.join(projectRootPath, folderName);
+  const ampFolder = path.join(projectRootPath, folderName);
   if (!fs.existsSync(ampFolder)) return [];
   return fs.readdirSync(ampFolder)
     .filter(function (file) {
@@ -165,7 +164,7 @@ function findAmps (projectRootPath, folderName) {
  * @returns {Array<string>}
  */
 function unknownAmps (ampPaths, registry) {
-  let mods = registry.getNamedModules();
+  const mods = registry.getNamedModules();
   return ampPaths.filter(ampPath => {
     debug('Checking if there is an existing module registered with path %s', ampPath);
     return !mods.find(mod => {
@@ -184,11 +183,11 @@ function unknownAmps (ampPaths, registry) {
  * @returns {[Object|undefined]}
  */
 function getGAVFromAMP (path) {
-  let zip = new AdmZip(path);
+  const zip = new AdmZip(path);
   let pomPropsEntry;
   if (zip) {
     pomPropsEntry = zip.getEntries().find(entry => {
-      let name = entry.entryName;
+      const name = entry.entryName;
       return (name.startsWith('META-INF/maven') && name.endsWith('pom.properties'));
     });
   }
