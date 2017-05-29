@@ -627,7 +627,7 @@ function packageFilter (pkg) {
   // also, treat spaces like path separators
   let output = pkg.replace(/[.\s]/g, '/');
   // package/path should start with a slash
-  if (!_.startsWith(output, '/')) {
+  if (!output.startsWith('/')) {
     output = '/' + output;
   }
   // package/path should not end with a slash
@@ -643,7 +643,7 @@ function urlTemplatesFilter (templates) {
   let urls = filters.requiredTextListFilter(templates, '|');
   if (urls) {
     return urls.map(function (url) {
-      return (_.startsWith(url, '/')
+      return (url.startsWith('/')
        ? url
        : '/' + url);
     });
@@ -678,7 +678,7 @@ function familiesFilter (families) {
 function negotiationsFilter (negotiations) {
   if (negotiations === true) return '';
   if (!_.isString(negotiations) || _.isEmpty(negotiations)) return undefined;
-  if (_.startsWith(negotiations, '{') && validateJSONString(negotiations)) return negotiations;
+  if (negotiations.startsWith('{') && validateJSONString(negotiations)) return negotiations;
   let negotiationList = negotiations.split(/\s*\|\s*/);
   let valSet = false;
   let retv = negotiationList.reduce(function (negotiations, negotiation) {

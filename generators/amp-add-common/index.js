@@ -1,5 +1,4 @@
 'use strict';
-let _ = require('lodash');
 let debug = require('debug')('generator-alfresco:amp-common');
 let constants = require('generator-alfresco-common').constants;
 let filters = require('generator-alfresco-common').prompt_filters;
@@ -274,7 +273,7 @@ module.exports = class extends SubGenerator {
       {
         type: 'checkbox',
         name: 'projectNames',
-        option: { name: 'project-names', config: { alias: 'p', desc: 'Which project(s): ' + _.join(projectNames, ', ') + ' (comma separated)', type: String } },
+        option: { name: 'project-names', config: { alias: 'p', desc: 'Which project(s): ' + projectNames.join(', ') + ' (comma separated)', type: String } },
         when: function (readonlyProps) {
           projects.map(project => {
             this.out.definition(project.name, project.description);
@@ -301,7 +300,7 @@ module.exports = class extends SubGenerator {
         .filter(function (project) {
           return (props.projectNames.indexOf(project.name) > -1);
         });
-      _.forEach(projects, project => {
+      projects.forEach(project => {
         if (project.repoGroupId) {
           debug('attempting to compose %s to add %s to the repo', NAMESPACE_REMOTE, project.repoArtifactId);
           this.composeWith(require.resolve('../amp-add-remote'),

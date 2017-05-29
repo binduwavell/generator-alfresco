@@ -65,7 +65,7 @@ module.exports = class extends SourceSelectingSubGenerator {
       let behaviorId = _.kebabCase(props.class);
       let className = _.upperFirst(_.camelCase(props.class));
       let packageName = props.package;
-      if (!_.endsWith(packageName, '.behaviors')) {
+      if (!packageName.endsWith('.behaviors')) {
         packageName += '.behaviors';
       }
       let templateContext = {
@@ -78,7 +78,7 @@ module.exports = class extends SourceSelectingSubGenerator {
       let classSrc = this.templatePath('Behavior.java');
       let contextSrc = this.templatePath('behavior-context.xml');
 
-      let packagePath = _.replace(packageName, /\./g, '/');
+      let packagePath = packageName.replace(/\./g, '/');
       let classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
       let contextDst = path.join(moduleRoot, genRoot, 'behavior-' + behaviorId + '-context.xml');
 
@@ -97,11 +97,11 @@ function packageFilter (pkg) {
   let output = pkg;
   // To begin with, if package is provided in path notation replace
   // slashes with dots also, treat spaces like path separators
-  output = _.replace(output, /[/\s]/g, '.');
+  output = output.replace(/[/\s]/g, '.');
   // package should not start with any dots
-  output = _.replace(output, /^\.*/, '');
+  output = output.replace(/^\.*/, '');
   // package should not end with any dots
-  output = _.replace(output, /\.*$/, '');
+  output = output.replace(/\.*$/, '');
   // package should be all lower case
   output = output.toLocaleLowerCase();
   if (_.isEmpty(output)) return undefined;
