@@ -17,7 +17,7 @@ const TRANSACTIONS = ['none', 'required', 'requiresnew'];
 const TRANSACTION_ALLOWANCES = ['readonly', 'readwrite'];
 const LIFECYCLES = ['none', 'sample', 'draft', 'public_api', 'draft_public_api', 'deprecated', 'internal'];
 
-module.exports = class extends SourceSelectingSubGenerator {
+class WebScriptSubGenerator extends SourceSelectingSubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -45,7 +45,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Webscript package', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'A web script is uniquely identified by its web script package and web script ID.',
             'http://docs.alfresco.com/5.1/concepts/ws-component-name.html');
@@ -71,7 +71,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'javaBaseClass',
         option: { name: 'java-base-class', config: { alias: 'c', desc: 'Java webscripts base class: DeclarativeWebScript or AbstractWebScript', type: String } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const lang = (readonlyProps.language || this.answerOverrides.language);
           const show = (lang === 'Java' || lang === 'Both Java & JavaScript');
           if (show) {
@@ -95,7 +95,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'checkbox',
         name: 'methods',
         option: { name: 'methods', config: { alias: 'M', desc: 'A comma separated list of: get, put, post and/or delete', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('As a convenience, you may specify more than one method here. However, if you do select multiple methods, be ' + chalk.underline('WARNED') + ' that we only go through this interview once so answers will be placed into all .desc.xml files. You can easily go update these files appropriately. Alternatively you can use this sub-generator once for each method in order to produce method specific .desc.xml files.');
           return true;
         },
@@ -110,7 +110,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'checkbox',
         name: 'templateFormats',
         option: { name: 'template-formats', config: { alias: 't', desc: 'A comma separated list of: html, json, xml, csv, atom and/or rss', type: String } },
-        when: function (readonlyProps) {
+        when: (readonlyProps) => {
           const clazz = (readonlyProps.javaBaseClass || this.answerOverrides.javaBaseClass);
           const lang = (readonlyProps.language || this.answerOverrides.language);
           const show = (clazz !== 'AbstractWebScript' || lang.indexOf('JavaScript') > -1);
@@ -131,7 +131,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'kind',
         option: { name: 'kind', config: { alias: 'k', desc: 'Fully qualified kind for webscript', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'Different kinds of web scripts can be created. When this attribute is specified it allows a web script kind other than the default to be specified. An example kind is org.alfresco.repository.content.stream. This kind of web script returns a binary stream from the repository back to the client. This might be useful for returning a thumbnail binary to the client for example. It is also possible to create additional web script kinds according to your needs.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-webscript.html');
@@ -145,7 +145,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'shortname',
         option: { name: 'shortname', config: { alias: 's', desc: 'Shortname for webscript', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The shortname element in a web descriptor file provides a human readable name for the web script. The shortname element is required.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-shortname.html');
@@ -160,7 +160,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'description',
         option: { name: 'description', config: { alias: 'd', desc: 'Description for webscript', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The description element in a web descriptor file provides documentation for the web script. The description element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-description.html');
@@ -174,7 +174,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'urlTemplates',
         option: { name: 'url-templates', config: { alias: 'u', desc: 'Vertical bar \'|\' separated list of url templates', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The url element represents a URI template to which the web script is bound. Variants of the URI template which specify a format do not need to be registered, however, specifying them is useful for documentation purposes. There must be at least one url element, but there can be several.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-url.html');
@@ -193,7 +193,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'formatSelector',
         option: { name: 'format-selector', config: { alias: 'f', desc: 'Format selection technique: any, argument or extension', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The format element controls how the content-type of the response can be specified by using the URI. The format element is optional.');
           this.out.definition('any', 'Either argument or extension can be used. This is the default where none is specified.');
           this.out.definition('argument', 'The content-type is specified by using the format query string parameter, for example /helloworld?to=dave&format=xml.');
@@ -229,7 +229,7 @@ module.exports = class extends SourceSelectingSubGenerator {
           }
           return show;
         },
-        choices: function (readonlyProps) {
+        choices: readonlyProps => {
           return (readonlyProps.templateFormats || this.answerOverrides.templateFormats);
         },
         message: 'Which <format ' + chalk.yellow('@default') + '> should we use?',
@@ -240,7 +240,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'authentication',
         option: { name: 'authentication', config: { alias: 'a', desc: 'Type of authentication required: none, guest, user or admin', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The authentication element specifies the level of authentication required to run the web script. The authentication element is optional.');
           this.out.definition('none', 'Specifies that no authentication is required to run the web script. This is the default value if the authentication level is not explicitly specified.');
           this.out.definition('guest', 'Specifies that at least guest level access is required to run the web script.');
@@ -258,7 +258,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'authenticationRunas',
         option: { name: 'authentication-runas', config: { alias: 'r', desc: 'User webscript should run as', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             ['The runas attribute allows a web script developer to state that the execution of a web script must run as a particular Alfresco content repository user, regardless of who initiated the web script.',
               'This is useful where the behavior of the web script requires specific permissions to succeed. Due to security concerns, the runas attribute is only available for web script implementations placed into the Java classpath.',
@@ -274,7 +274,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'transaction',
         option: { name: 'transaction', config: { alias: 'T', desc: 'Transaction requirement: none, required or requiresnew', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The transaction element specifies the transaction level required to run the web script. The transaction element is optional.');
           this.out.definition('none', 'Specifies that no transaction is required to run the web script. This is the default value if the transaction level is not explicitly specified, and the authentication level is none. If the authentication level is not none then the default value is required.');
           this.out.definition('required', 'Specifies that a transaction is required (and will inherit an existing transaction, if open).');
@@ -283,7 +283,7 @@ module.exports = class extends SourceSelectingSubGenerator {
           return true;
         },
         choices: TRANSACTIONS,
-        default: function (readonlyProps) {
+        default: readonlyProps => {
           const auth = (readonlyProps.authentication || this.answerOverrides.authentication);
           return (auth === 'none'
             ? 'none'
@@ -298,7 +298,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'transactionAllow',
         option: { name: 'transaction-allow', config: { alias: 'A', desc: 'Transaction allowance requirement: readonly, readwrite', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('Specifies the type of data transfer allowed. Valid values, which are optional/required, are as follows');
           this.out.definition('readonly', 'read only transfers allowed');
           this.out.definition('readwrite', 'read and write transfers allowed');
@@ -339,7 +339,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'families',
         option: { name: 'families', config: { alias: 'I', desc: 'Vertical bar \'|\' separated list of webscript families', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The family element allows a web script developer to categorize their web scripts. Any value can be assigned to family and any number of families can be assigned to the web script, providing a freeform tagging mechanism. The web script index provides views for navigating web scripts by family. The family tag can be repeated if the script belongs to multiple families. The family element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-family.html');
@@ -354,7 +354,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'cacheNever',
         option: { name: 'cache-never', config: { alias: 'C', desc: 'Disable caching, pass false to enable caching', type: Boolean } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('Specifies whether caching should be applied at all. Valid values, which are optional, are as follows:');
           this.out.definition('true', '(default) specifies the web script response should never be cached.');
           this.out.definition('false', 'specifies the web script response can be cached.');
@@ -372,7 +372,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'cachePublic',
         option: { name: 'cache-public', config: { alias: 'P', desc: 'Allow public caching', type: Boolean } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
           if (never === 'false') {
             this.out.docs('Specifies whether authneticated responses should be cached in the public cache. Valid values, which are optional, are as follows:');
@@ -395,7 +395,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'cacheMustrevalidate',
         option: { name: 'cache-must-revalidate', config: { alias: 'R', desc: 'Force revalidation', type: Boolean } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const never = (readonlyProps.cacheNever || this.answerOverrides.cacheNever);
           if (never === 'false') {
             this.out.docs('Specifies whether a cache must revalidate its version of the web script response in order to ensure freshness. Valid values, which are optional, are as follows:');
@@ -418,7 +418,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'negotiations',
         option: { name: 'negotiations', config: { alias: 'n', desc: 'Vertical bar \'|\' separated list of format=mimetype values', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The negotiate element associates an Accept header MIME type to a specific web script format of response. The mandatory value specifies the format while the mandatory attribute, accept, specifies the MIME type. Content Negotiation is enabled with the definition of at least one negotiate element. The negotiate element can be specified zero or more times.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-negotiate.html');
@@ -433,7 +433,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'lifecycle',
         option: { name: 'lifecycle', config: { alias: 'L', desc: 'Webscript lifecycle: none, sample, draft, public_api, draft_public_api, deprecated or internal', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The lifecycle element allows a web script developer to indicate the development status of a web script. Typically, web scripts start out in a draft state while being developed or tested, are promoted to production quality for widespread use, and finally retired at the end of their life. The lifecycle element is optional.');
           this.out.definition('none', 'Indicates this web script is not part of a lifecycle');
           this.out.definition('sample', 'Indicates this web script is a sample and is not intended for production use');
@@ -455,7 +455,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'list',
         name: 'formdataMultipartProcessing',
         option: { name: 'multipart', config: { alias: 'U', desc: 'Enable multipart form data processing', type: Boolean } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('Specifies whether multi-part processing should be on or off. Valid values, which are optional, are as follows:');
           this.out.definition('false', 'turns off multi-part form data processing.');
           this.out.definition('true', 'turns on multi-part form data processing.');
@@ -471,7 +471,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'args',
         option: { name: 'args', config: { alias: 'g', desc: 'Vertical bar \'|\' separated list of name=description values', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The args element represents a list of arguments passed to the web script. This are listed for documentation purposes. The args element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-args.html');
@@ -486,7 +486,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'requests',
         option: { name: 'requests', config: { alias: 'q', desc: 'Vertical bar \'|\' separated list of request types', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The requests element represents a collection of request types for the web script. The requests element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-requests.html');
@@ -500,7 +500,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'responses',
         option: { name: 'responses', config: { alias: 'S', desc: 'Vertical bar \'|\' separated list of response types', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs(
             'The responses element represents a collection of response types for the web script. The responses element is optional.',
             'http://docs.alfresco.com/5.1/references/api-wsdl-responses.html');
@@ -516,7 +516,7 @@ module.exports = class extends SourceSelectingSubGenerator {
   }
 
   prompting () {
-    return this.subgeneratorPrompt(this.prompts, function (props) {
+    return this.subgeneratorPrompt(this.prompts, props => {
       debug('parsing negotiations');
       props.negotiations = (props.negotiations ? JSON.parse(props.negotiations) : {});
       debug('parsing args');
@@ -601,7 +601,7 @@ module.exports = class extends SourceSelectingSubGenerator {
           this.fs.copyTpl(propPath, localePath, props);
         });
       });
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
@@ -642,7 +642,7 @@ function packageFilter (pkg) {
 function urlTemplatesFilter (templates) {
   const urls = filters.requiredTextListFilter(templates, '|');
   if (urls) {
-    return urls.map(function (url) {
+    return urls.map(url => {
       return (url.startsWith('/')
        ? url
        : '/' + url);
@@ -681,7 +681,7 @@ function negotiationsFilter (negotiations) {
   if (negotiations.startsWith('{') && validateJSONString(negotiations)) return negotiations;
   const negotiationList = negotiations.split(/\s*\|\s*/);
   let valSet = false;
-  const retv = negotiationList.reduce(function (negotiations, negotiation) {
+  const retv = negotiationList.reduce((negotiations, negotiation) => {
     const negotiationItems = negotiation.split(/\s*=\s*/);
     if (negotiationItems.length >= 2) {
       negotiations[negotiationItems[0]] = negotiationItems[1];
@@ -707,7 +707,7 @@ function argsFilter (args) {
   if (args === undefined || args === null) return undefined;
   if (!_.isString(args) || _.isEmpty(args)) return '{}';
   const argsList = args.split(/\s*\|\s*/);
-  return JSON.stringify(argsList.reduce(function (args, arg) {
+  return JSON.stringify(argsList.reduce((args, arg) => {
     const argItems = arg.split(/\s*=\s*/);
     if (argItems.length >= 2) {
       args[argItems[0]] = argItems[1];
@@ -715,5 +715,7 @@ function argsFilter (args) {
     return args;
   }, {}));
 }
+
+module.exports = WebScriptSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

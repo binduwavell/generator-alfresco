@@ -14,44 +14,75 @@ const slash = require('slash');
  * add/remove files and even update references in poms/context-files, etc.
  */
 
-module.exports = function (yo) {
-  const module = {};
-
-  let ops = [];
-
-  module.pushOp = function (fn) {
-    ops.push(fn);
-  };
-
-  module.moduleRegistry = yo.moduleRegistry || require('generator-alfresco-common').alfresco_module_registry(yo);
-
-  module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    let mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    debug('Existing module: ' + JSON.stringify(mod));
-    if (!mod) {
-      mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-      debug('normalized result: %j', mod);
+function MakeAlfrescoModuleManager (yo) {
+  class AlfrescoModuleManager {
+    constructor () {
+      this.moduleRegistry = yo.moduleRegistry || require('generator-alfresco-common').alfresco_module_registry(yo);
+      this.ops = [];
     }
-    yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
-    this.moduleRegistry.addModule(mod);
 
-    // Stuff we only need to do for source amps
-    if (mod.location === 'source') {
-      debug('Scheduling ops for ' + mod.artifactId);
-      ops.push(function () { copyTemplateForModule(mod) });
-      ops.push(function () { renamePathElementsForModule(mod) });
-      ops.push(function () { addModuleToParentPom(mod) });
-      if (mod.war === constants.WAR_TYPE_SHARE) {
-        ops.push(function () { addFailsafeConfigToRunner(mod) });
+    addModule (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+      debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      let mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      debug('Existing module: ' + JSON.stringify(mod));
+      if (!mod) {
+        mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+        debug('normalized result: %j', mod);
       }
-      ops.push(function () { addModuleToTomcatContext(mod) });
-      ops.push(function () { updateProjectPom(mod) });
+      yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
+      this.moduleRegistry.addModule(mod);
+
+      // Stuff we only need to do for source amps
+      if (mod.location === 'source') {
+        debug('Scheduling ops for ' + mod.artifactId);
+        this.ops.push(() => { copyTemplateForModule(mod) });
+        this.ops.push(() => { renamePathElementsForModule(mod) });
+        this.ops.push(() => { addModuleToParentPom(mod) });
+        if (mod.war === constants.WAR_TYPE_SHARE) {
+          this.ops.push(() => { addFailsafeConfigToRunner(mod) });
+        }
+        this.ops.push(() => { addModuleToTomcatContext(mod) });
+        this.ops.push(() => { updateProjectPom(mod) });
+      }
+
+      this.ops.push(() => { addModuleToWarWrapper(mod) });
+      // TODO: what else do we need to do when we remove a module?
+      debug('addModule() finished');
     }
 
-    ops.push(function () { addModuleToWarWrapper(mod) });
-    // TODO: what else do we need to do when we remove a module?
-    debug('addModule() finished');
+    removeModule (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
+      debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
+      const mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      if (mod) {
+        debug('removing module: %s', mod.artifactId);
+        this.moduleRegistry.removeModule(mod);
+        if (mod.location === 'source') {
+          this.ops.push(() => { removeModuleFiles(mod) });
+          this.ops.push(() => { removeModuleFromParentPom(mod) });
+          this.ops.push(() => { removeModuleFromWarWrapper(mod) });
+          if (mod.war === constants.WAR_TYPE_SHARE) {
+            this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
+          }
+          this.ops.push(() => { removeModuleFromTomcatContext(mod) });
+          // TODO: what else do we need to do when we remove a module?
+        }
+      }
+      debug('removeModule() finished');
+    }
+
+    pushOp (fn) {
+      this.ops.push(fn);
+    }
+
+    save () {
+      debug('saving module registry and performing scheduled tasks');
+      this.moduleRegistry.save();
+      this.ops.forEach(op => {
+        op.call(this);
+      });
+      this.ops = [];
+      debug('save() finished');
+    }
   };
 
   function copyTemplateForModule (mod) {
@@ -80,7 +111,7 @@ module.exports = function (yo) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
 
     if (mod.war === constants.WAR_TYPE_REPO) {
-      const defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
+      const defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(mod => {
         return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
       });
       if (defaultMods && defaultMods.length > 0) {
@@ -313,26 +344,6 @@ module.exports = function (yo) {
     debug('addModuleToWarWrapper() finished');
   }
 
-  module.removeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
-    debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
-    const mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    if (mod) {
-      debug('removing module: %s', mod.artifactId);
-      this.moduleRegistry.removeModule(mod);
-      if (mod.location === 'source') {
-        ops.push(function () { removeModuleFiles(mod) });
-        ops.push(function () { removeModuleFromParentPom(mod) });
-        ops.push(function () { removeModuleFromWarWrapper(mod) });
-        if (mod.war === constants.WAR_TYPE_SHARE) {
-          ops.push(function () { removeFailsafeConfigFromRunner(mod) });
-        }
-        ops.push(function () { removeModuleFromTomcatContext(mod) });
-        // TODO: what else do we need to do when we remove a module?
-      }
-    }
-    debug('removeModule() finished');
-  };
-
   function removeModuleFiles (mod) {
     // remove the actual files
     yo.out.warn('Deleting source module: ' + mod.path);
@@ -341,7 +352,7 @@ module.exports = function (yo) {
     debug('DELETING EXISTING FILES FROM: ' + absPath);
     yo.fs.delete(absPath);
     // if we have files in mem-fs, this should get those
-    yo.fs.store.each(function (file, idx) {
+    yo.fs.store.each(file => {
       if (file.path.indexOf(absPath) === 0) {
         debug('DELETING: ' + file.path);
         yo.fs.delete(file.path);
@@ -425,17 +436,9 @@ module.exports = function (yo) {
     debug('removeModuleFromTomcatContext() finished');
   }
 
-  module.save = function () {
-    debug('saving module registry and performing scheduled tasks');
-    this.moduleRegistry.save();
-    ops.forEach(function (op) {
-      op.call(this);
-    });
-    ops = [];
-    debug('save() finished');
-  };
-
-  return module;
+  return new AlfrescoModuleManager();
 };
+
+module.exports = MakeAlfrescoModuleManager;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -7,7 +7,7 @@ const SubGenerator = require('../subgenerator.js');
 
 const WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
-module.exports = class extends SubGenerator {
+class AmpAddRemoveSubGenerator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -66,9 +66,9 @@ module.exports = class extends SubGenerator {
       'and ask you if you want to update each file.',
       '\nType "h" when prompted to get details about your choices.'].join(' '));
 
-    return this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
@@ -93,5 +93,7 @@ module.exports = class extends SubGenerator {
     this.moduleManager.save();
   }
 };
+
+module.exports = AmpAddRemoveSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
