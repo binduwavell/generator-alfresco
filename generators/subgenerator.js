@@ -1,12 +1,11 @@
 'use strict';
-let _ = require('lodash');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:subgenerator');
-let path = require('path');
-let yosay = require('yosay');
-let constants = require('generator-alfresco-common').constants;
-
-let BaseGenerator = require('./base-generator.js');
+const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:subgenerator');
+const path = require('path');
+const yosay = require('yosay');
+const constants = require('generator-alfresco-common').constants;
+const BaseGenerator = require('./base-generator.js');
 
 /**
  * Makes sure the code is run in a project rather than being
@@ -16,7 +15,7 @@ let BaseGenerator = require('./base-generator.js');
  */
 module.exports = class extends BaseGenerator {
   subgeneratorPrompt (prompts, desc, donePromptingFunc) {
-    let subgeneratorName = path.basename(this.templatePath('..'));
+    const subgeneratorName = path.basename(this.templatePath('..'));
     if (donePromptingFunc === undefined && _.isFunction(desc)) {
       debug('promoting second arg to donePromptingFunc and creating default description');
       donePromptingFunc = desc;
@@ -35,7 +34,7 @@ module.exports = class extends BaseGenerator {
       }
 
       debug('calling BaseGenerator.subgeneratorPrompt');
-      return BaseGenerator.prototype.subgeneratorPrompt.call(this, prompts, desc, donePromptingFunc)
+      return super.subgeneratorPrompt(prompts, desc, donePromptingFunc)
         .then(function () {
           debug('completed BaseGenerator.subgeneratorPrompt');
         });

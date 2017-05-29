@@ -1,17 +1,17 @@
 'use strict';
-let _ = require('lodash');
-let AsciiTable = require('ascii-table');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:app');
-let fs = require('fs');
-let Generator = require('yeoman-generator');
-let path = require('path');
-let rmdir = require('rmdir');
-let semver = require('semver');
-let trace = require('debug')('generator-alfresco-trace:app');
-let constants = require('generator-alfresco-common').constants;
-let memFsUtils = require('generator-alfresco-common').mem_fs_utils;
-let versions = require('generator-alfresco-common').dependency_versions;
+const _ = require('lodash');
+const AsciiTable = require('ascii-table');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:app');
+const fs = require('fs');
+const Generator = require('yeoman-generator');
+const path = require('path');
+const rmdir = require('rmdir');
+const semver = require('semver');
+const trace = require('debug')('generator-alfresco-trace:app');
+const constants = require('generator-alfresco-common').constants;
+const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
+const versions = require('generator-alfresco-common').dependency_versions;
 
 module.exports = class extends Generator {
   _getConfigValue (key) {
@@ -80,7 +80,7 @@ module.exports = class extends Generator {
     this.out.banner();
 
     debug('defining prompts');
-    let prompts = [
+    const prompts = [
       {
         type: 'confirm',
         name: constants.PROP_ABORT_EXISTING_PROJECT,
@@ -112,7 +112,7 @@ module.exports = class extends Generator {
           }
           if (this.bail) return false;
 
-          let compTable = new AsciiTable('Version Compatibility Table');
+          const compTable = new AsciiTable('Version Compatibility Table');
           compTable.setHeading('SDK', 'Community Default', 'Enterprise Default', 'Notes');
           _.keys(this.sdkVersions).forEach(ver => {
             compTable.addRow(
@@ -135,7 +135,7 @@ module.exports = class extends Generator {
         name: constants.PROP_ARCHETYPE_VERSION,
         message: 'Archetype version?',
         default: () => {
-          let savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
+          const savedArchetypeVersion = this._getConfigValue(constants.PROP_ARCHETYPE_VERSION);
           if (savedArchetypeVersion) return savedArchetypeVersion;
           return this.sdk.archetypeVersion;
         },
@@ -296,7 +296,7 @@ module.exports = class extends Generator {
           combinedProps[constants.PROP_ORIGINAL_GENERATOR_VERSION] = this.pkg.version;
         }
         if (!fs.existsSync(this.config.path) && !_.isEqual(combinedProps[constants.PROP_PROJECT_ARTIFACT_ID], this._getConfigValue(constants.PROP_PROJECT_ARTIFACT_ID))) {
-          let projectPath = path.join(process.cwd(), combinedProps[constants.PROP_PROJECT_ARTIFACT_ID]);
+          const projectPath = path.join(process.cwd(), combinedProps[constants.PROP_PROJECT_ARTIFACT_ID]);
           if (!_.isNil(projectPath) && !_.isEqual(process.cwd(), projectPath)) {
             if (!fs.existsSync(projectPath)) {
               fs.mkdirSync(projectPath);
@@ -327,7 +327,7 @@ module.exports = class extends Generator {
   }
 
   _saveProp (propName, propObject) {
-    let value = propObject[propName];
+    const value = propObject[propName];
     this[propName] = value;
     this.config.set(propName, value);
   }
@@ -408,13 +408,13 @@ module.exports = class extends Generator {
    */
   _writingGenerateArchetypeUsingJavaScript () {
     trace('Loading maven archetype generate module');
-    let mvn = require('generator-alfresco-common').maven_archetype_generate(this);
+    const mvn = require('generator-alfresco-common').maven_archetype_generate(this);
     trace('Creating context for archetype generate');
     this.out.info('Attempting to use javascript and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
-    let rootPath = path.join('archetypes', this.sdk.archetypeVersion);
-    let metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
-    let resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
-    let properties = {
+    const rootPath = path.join('archetypes', this.sdk.archetypeVersion);
+    const metadataPath = this.templatePath(path.join(rootPath, 'META-INF', 'maven', 'archetype-metadata.xml'));
+    const resourcePath = this.templatePath(path.join(rootPath, 'archetype-resources'));
+    const properties = {
       groupId: this.projectGroupId,
       artifactId: this.projectArtifactId,
       version: this.projectVersion,
@@ -439,15 +439,15 @@ module.exports = class extends Generator {
     return new Promise(resolve => {
       this.out.info('Attempting to use maven and the ' + this.archetypeVersion + ' all-in-one archetype to setup your project.');
 
-      let cwd = process.cwd();
+      const cwd = process.cwd();
 
-      let tmpdir = path.join(cwd, 'tmp');
+      const tmpdir = path.join(cwd, 'tmp');
       if (!fs.existsSync(tmpdir)) {
         fs.mkdirSync(tmpdir);
       }
       process.chdir(tmpdir);
 
-      let cmd = 'mvn';
+      const cmd = 'mvn';
       let args = [
         'archetype:generate',
         '-DinteractiveMode=false',
@@ -464,16 +464,16 @@ module.exports = class extends Generator {
       if (undefined !== this.projectPackage) {
         args.push('-Dpackage=' + this.projectPackage);
       }
-      let proc = this.spawnCommand(cmd, args);
+      const proc = this.spawnCommand(cmd, args);
 
       // Once mvn completes move stuff up a level
       proc.on('exit', (code, signal) => {
         this.out.info('Maven completed, processing files generated by archetype');
         process.chdir(cwd); // restore current working directory
-        let genDir = path.join(tmpdir, this.projectArtifactId);
-        let sdkContents = fs.readdirSync(genDir);
+        const genDir = path.join(tmpdir, this.projectArtifactId);
+        const sdkContents = fs.readdirSync(genDir);
         sdkContents.forEach(fileOrFolder => {
-          let absSourcePath = path.join(genDir, fileOrFolder);
+          const absSourcePath = path.join(genDir, fileOrFolder);
           this.fs.copy(
             absSourcePath,
             this.destinationPath(fileOrFolder)
@@ -490,13 +490,13 @@ module.exports = class extends Generator {
   _writingGenerateArchetypeBackupSourceTemplates (sourceDir, forceInMemoryCopy) {
     if (this.sdk.defaultModuleRegistry) {
       this.out.info('Attempting to backup generated amp templates');
-      let folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
+      const folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
         return mod.artifactId;
       });
       folders.forEach(folderName => {
-        let to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
+        const to = path.join(this.destinationPath(constants.FOLDER_SOURCE_TEMPLATES), folderName);
         if (!fs.existsSync(to)) {
-          let from = path.join(sourceDir, folderName);
+          const from = path.join(sourceDir, folderName);
           this.out.info('Copying from: ' + from + ' to: ' + to);
           if (forceInMemoryCopy) {
             memFsUtils.inMemoryCopy(this.fs, from, to);
@@ -516,8 +516,8 @@ module.exports = class extends Generator {
   _writingGeneratorOverlay () {
     trace('generatorOverlay');
     if (this.bail) return;
-    let isEnterprise = (this.communityOrEnterprise === 'Enterprise');
-    let tplContext = {
+    const isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    const tplContext = {
       isEnterprise: isEnterprise,
       enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
       projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
@@ -544,7 +544,7 @@ module.exports = class extends Generator {
     );
     // copy template folders
     trace('Copying folders');
-    let projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+    const projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
     let templateFolders = [constants.FOLDER_SOURCE_TEMPLATES, constants.FOLDER_SCRIPTS];
     if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
       templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
@@ -622,11 +622,11 @@ module.exports = class extends Generator {
     }
     // Make sure customizations/pom.xml is included in the top pom
     // if advanced project structure was selected
-    let projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
+    const projectStructure = this.config.get(constants.PROP_PROJECT_STRUCTURE);
     if (projectStructure === constants.PROJECT_STRUCTURE_ADVANCED) {
-      let topPomPath = this.destinationPath('pom.xml');
-      let topPomContent = this.fs.read(topPomPath);
-      let topPom = require('generator-alfresco-common').maven_pom(topPomContent);
+      const topPomPath = this.destinationPath('pom.xml');
+      const topPomContent = this.fs.read(topPomPath);
+      const topPom = require('generator-alfresco-common').maven_pom(topPomContent);
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
     }
@@ -666,8 +666,8 @@ module.exports = class extends Generator {
 
   _installMakeScriptsExecutable () {
     if (this.bail) return;
-    let cwd = process.cwd();
-    let scripts = [
+    const cwd = process.cwd();
+    const scripts = [
       constants.FILE_RUN_SH,
       constants.FILE_RUN_BAT,
       path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),

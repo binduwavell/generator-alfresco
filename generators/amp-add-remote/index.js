@@ -1,11 +1,11 @@
 'use strict';
-let debug = require('debug')('generator-alfresco:amp-remote');
-let chalk = require('chalk');
-let constants = require('generator-alfresco-common').constants;
-let filters = require('generator-alfresco-common').prompt_filters;
-let SubGenerator = require('../subgenerator.js');
+const debug = require('debug')('generator-alfresco:amp-remote');
+const chalk = require('chalk');
+const constants = require('generator-alfresco-common').constants;
+const filters = require('generator-alfresco-common').prompt_filters;
+const SubGenerator = require('../subgenerator.js');
 
-let WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+const WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
 module.exports = class extends SubGenerator {
   constructor (args, opts) {
@@ -78,7 +78,7 @@ module.exports = class extends SubGenerator {
 
     debug('installing %s into %s', this.props.path, this.props.warType);
 
-    let mod = {
+    const mod = {
       'groupId': this.props.groupId,
       'artifactId': this.props.artifactId,
       'version': this.props.ampVersion,

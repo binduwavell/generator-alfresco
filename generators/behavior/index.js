@@ -1,12 +1,12 @@
 'use strict';
-let _ = require('lodash');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:behavior');
-let path = require('path');
-let trace = require('debug')('generator-alfresco-trace:behavior');
-let constants = require('generator-alfresco-common').constants;
-let filters = require('generator-alfresco-common').prompt_filters;
-let SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
+const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:behavior');
+const path = require('path');
+const trace = require('debug')('generator-alfresco-trace:behavior');
+const constants = require('generator-alfresco-common').constants;
+const filters = require('generator-alfresco-common').prompt_filters;
+const SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
 module.exports = class extends SourceSelectingSubGenerator {
   constructor (args, opts) {
@@ -18,7 +18,7 @@ module.exports = class extends SourceSelectingSubGenerator {
       'Behaviors/Policies can be used to run custom code when an event, such a adding a content item or deleting a content item, happens.',
       'http://docs.alfresco.com/community/references/dev-extension-points-behaviors.html');
 
-    let defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
+    const defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [
       {
@@ -56,31 +56,31 @@ module.exports = class extends SourceSelectingSubGenerator {
       this.props = props;
 
       // figure stuff out about our environment
-      let targetModule = this.targetModule.module;
-      let artifactId = targetModule.artifactId;
-      let moduleRoot = this.destinationPath(targetModule.path);
-      let genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      const targetModule = this.targetModule.module;
+      const artifactId = targetModule.artifactId;
+      const moduleRoot = this.destinationPath(targetModule.path);
+      const genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
 
       // get information from prompts
-      let behaviorId = _.kebabCase(props.class);
-      let className = _.upperFirst(_.camelCase(props.class));
+      const behaviorId = _.kebabCase(props.class);
+      const className = _.upperFirst(_.camelCase(props.class));
       let packageName = props.package;
       if (!packageName.endsWith('.behaviors')) {
         packageName += '.behaviors';
       }
-      let templateContext = {
+      const templateContext = {
         artifactId: artifactId,
         behaviorId: behaviorId,
         className: className,
         packageName: packageName,
       };
 
-      let classSrc = this.templatePath('Behavior.java');
-      let contextSrc = this.templatePath('behavior-context.xml');
+      const classSrc = this.templatePath('Behavior.java');
+      const contextSrc = this.templatePath('behavior-context.xml');
 
-      let packagePath = packageName.replace(/\./g, '/');
-      let classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
-      let contextDst = path.join(moduleRoot, genRoot, 'behavior-' + behaviorId + '-context.xml');
+      const packagePath = packageName.replace(/\./g, '/');
+      const classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
+      const contextDst = path.join(moduleRoot, genRoot, 'behavior-' + behaviorId + '-context.xml');
 
       this.fs.copyTpl(classSrc, classDst, templateContext);
       this.fs.copyTpl(contextSrc, contextDst, templateContext);

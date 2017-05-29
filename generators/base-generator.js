@@ -1,9 +1,8 @@
 'use strict';
-let _ = require('lodash');
-let chalk = require('chalk');
-let debug = require('debug')('generator-alfresco:base-generator');
-
-let Generator = require('yeoman-generator');
+const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('generator-alfresco:base-generator');
+const Generator = require('yeoman-generator');
 
 /**
  * Base class for a yeoman generator in the generator-alfresco project. This
@@ -85,8 +84,8 @@ module.exports = class extends Generator {
   subgeneratorPrompt (prompts, desc, donePromptingFunc) {
     // ==== PROMPT EXTENSIONS ====
     this.processedPrompts = prompts.map(prompt => {
-      let newPrompt = _.assign({}, prompt);
-      let oldWhen = prompt.when;
+      const newPrompt = _.assign({}, prompt);
+      const oldWhen = prompt.when;
       newPrompt.when = props => {
         debug('Synthetic when() logic');
         if (this.bail) return false;
@@ -107,7 +106,7 @@ module.exports = class extends Generator {
             cliValue = this.options[prompt.argument.name];
             debug('Calling commonFilter(%s) for argument: %s', cliValue, cliName);
           }
-          let v = prompt.commonFilter.call(this, cliValue);
+          const v = prompt.commonFilter.call(this, cliValue);
           if (undefined !== v) {
             this.answerOverrides[prompt.name] = v;
             this.out.info('Value for ' + cliName + ' set from command line: ' + chalk.reset.dim.cyan(v));
@@ -119,7 +118,7 @@ module.exports = class extends Generator {
           return oldWhen;
         }
         if (_.isFunction(oldWhen)) {
-          let retv = oldWhen.call(this, props);
+          const retv = oldWhen.call(this, props);
           debug('Returning when(%s)=%s via function provided in prompt: %s', JSON.stringify(props), retv, prompt.name);
           return retv;
         }
@@ -135,7 +134,7 @@ module.exports = class extends Generator {
         if (!prompt.hasOwnProperty('validate') && prompt.hasOwnProperty('name')) {
           newPrompt.validate = input => {
             debug('Using commonFilter(%s) for validate', input);
-            let required = prompt.valueRequired;
+            const required = prompt.valueRequired;
             let msg = 'The ' + (required ? 'required ' : '') + chalk.yellow(prompt.name) + ' value '
               + (required ? 'is missing or invalid' : 'is invalid');
             if (prompt.hasOwnProperty('invalidMessage')) {
@@ -155,13 +154,13 @@ module.exports = class extends Generator {
 
     // ==== NOW DO THE ACTUAL PROMPTING ====
     return this.prompt(this.processedPrompts).then(props => {
-      let combinedProps = {};
+      const combinedProps = {};
       if (!this.bail) {
         _.assign(combinedProps, this.answerOverrides);
         _.assign(combinedProps, props);
         this.processedPrompts.forEach(promptItem => {
-          let name = promptItem.name;
-          let required = promptItem.valueRequired;
+          const name = promptItem.name;
+          const required = promptItem.valueRequired;
           if (name && required) {
             debug('Required check for %s which is %s and has value %s', name, (required ? 'required' : 'not required'), combinedProps[name]);
             if (undefined === combinedProps[name]) {
