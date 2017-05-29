@@ -1,5 +1,4 @@
 'use strict';
-let _ = require('lodash');
 let chalk = require('chalk');
 let debug = require('debug')('generator-alfresco:model');
 let path = require('path');
@@ -84,9 +83,9 @@ module.exports = class extends SourceSelectingSubGenerator {
           return true;
         },
         default: readonlyProps => {
-          let name = (readonlyProps.modelName || this.answerOverrides.modelName);
+          let name = (readonlyProps.modelName || this.answerOverrides.modelName || '');
           let version = (readonlyProps.modelVersion || this.answerOverrides.modelVersion);
-          this.defaultUri = 'http://www.' + _.toLower(name) + '.com/model/content/' + version;
+          this.defaultUri = 'http://www.' + name.toLowerCase() + '.com/model/content/' + version;
           return this.defaultUri;
         },
         message: 'What ' + chalk.yellow('model uri') + ' should we use?',

@@ -120,12 +120,12 @@ module.exports = class extends SubGenerator {
   }
 
   setupArgumentsAndOptions (prompts) {
-    let p = _.concat(this.sourcePrompts, prompts);
+    let p = this.sourcePrompts.concat(prompts);
     SubGenerator.prototype.setupArgumentsAndOptions.call(this, p);
   }
 
   subgeneratorPrompt (prompts, desc, donePromptingFunc) {
-    let p = _.concat(this.sourcePrompts, prompts);
+    let p = this.sourcePrompts.concat(prompts);
     if (donePromptingFunc === undefined && _.isFunction(desc)) {
       debug('promoting second arg to donePromptingFunc');
       donePromptingFunc = desc;

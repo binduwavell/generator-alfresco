@@ -21,7 +21,7 @@ module.exports = class extends SubGenerator {
     let possibleShareAmps = unknownAmps(
       findAmps(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE)),
       this.moduleRegistry);
-    this.possibleAmps = _.concat(_.orderBy(possibleRepoAmps, 'name'), _.orderBy(possibleShareAmps, 'name'));
+    this.possibleAmps = _.orderBy(possibleRepoAmps, 'name').concat(_.orderBy(possibleShareAmps, 'name'));
 
     if (this.possibleAmps.length > 0) {
       debug('Amp files we could link into the project: %j', this.possibleAmps);
@@ -97,10 +97,10 @@ module.exports = class extends SubGenerator {
 
     return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
-      if (_.startsWith(this.props.path, path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS, path.sep))) {
+      if (this.props.path.startsWith(path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS, path.sep))) {
         this.props.warType = 'repo';
       }
-      if (_.startsWith(this.props.path, path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE, path.sep))) {
+      if (this.props.path.startsWith(path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS_SHARE, path.sep))) {
         this.props.warType = 'share';
       }
       if (this.props.warType === undefined) {
@@ -147,7 +147,7 @@ function findAmps (projectRootPath, folderName) {
   return fs.readdirSync(ampFolder)
     .filter(function (file) {
       debug('Evaluating if %s ends in .amp', file);
-      return _.endsWith(_.toLower(file), '.amp');
+      return file.toLowerCase().endsWith('.amp');
     })
     .map(function (file) {
       debug('Producing relative path for %s', file);
@@ -166,9 +166,9 @@ function findAmps (projectRootPath, folderName) {
  */
 function unknownAmps (ampPaths, registry) {
   let mods = registry.getNamedModules();
-  return ampPaths.filter(function (ampPath) {
+  return ampPaths.filter(ampPath => {
     debug('Checking if there is an existing module registered with path %s', ampPath);
-    return !_.find(mods, function (mod) {
+    return !mods.find(mod => {
       return (mod.module.path === ampPath);
     });
   });
@@ -187,9 +187,9 @@ function getGAVFromAMP (path) {
   let zip = new AdmZip(path);
   let pomPropsEntry;
   if (zip) {
-    pomPropsEntry = _.find(zip.getEntries(), function (entry) {
+    pomPropsEntry = zip.getEntries().find(entry => {
       let name = entry.entryName;
-      return (_.startsWith(name, 'META-INF/maven') && _.endsWith(name, 'pom.properties'));
+      return (name.startsWith('META-INF/maven') && name.endsWith('pom.properties'));
     });
   }
   if (pomPropsEntry) {
