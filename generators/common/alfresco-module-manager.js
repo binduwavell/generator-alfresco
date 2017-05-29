@@ -1,10 +1,10 @@
 'use strict';
-var debug = require('debug')('generator-alfresco:alfresco-module-manager');
-var path = require('path');
-var constants = require('generator-alfresco-common').constants;
-var domutils = require('generator-alfresco-common').xml_dom_utils;
-var memFsUtils = require('generator-alfresco-common').mem_fs_utils;
-var slash = require('slash');
+let debug = require('debug')('generator-alfresco:alfresco-module-manager');
+let path = require('path');
+let constants = require('generator-alfresco-common').constants;
+let domutils = require('generator-alfresco-common').xml_dom_utils;
+let memFsUtils = require('generator-alfresco-common').mem_fs_utils;
+let slash = require('slash');
 
 /**
  * This module is in essence a wrapper around the alfresco-module-registry
@@ -15,9 +15,9 @@ var slash = require('slash');
  */
 
 module.exports = function (yo) {
-  var module = {};
+  let module = {};
 
-  var ops = [];
+  let ops = [];
 
   module.pushOp = function (fn) {
     ops.push(fn);
@@ -27,7 +27,7 @@ module.exports = function (yo) {
 
   module.addModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('attempting to addModule: %s %s %s %s %s %s %s', modOrGroupId, artifactId, ver, packaging, war, loc, path);
-    var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    let mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     debug('Existing module: ' + JSON.stringify(mod));
     if (!mod) {
       mod = this.moduleRegistry.normalizeModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
@@ -56,12 +56,12 @@ module.exports = function (yo) {
 
   function copyTemplateForModule (mod) {
     debug('copyTemplateForModule()');
-    var toPath = yo.destinationPath(mod.path);
+    let toPath = yo.destinationPath(mod.path);
     debug('Copy destination: ' + toPath);
     if (!yo.fs.exists(toPath)) {
-      var prefix = yo.sdk.sdkVersionPrefix.call(yo);
+      let prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId');
-      var fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
+      let fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         debug('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
@@ -80,19 +80,19 @@ module.exports = function (yo) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
 
     if (mod.war === constants.WAR_TYPE_REPO) {
-      var defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
+      let defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(function (mod) {
         return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
       });
       if (defaultMods && defaultMods.length > 0) {
         if (mod.artifactId !== defaultMods[0].artifactId) {
           // <path>/src/main/amp/config/alfresco/module/<artifactId>
-          var fromPath = path.join(
+          let fromPath = path.join(
             yo.destinationPath(),
             mod.path,
             '/src/main/amp/config/alfresco/module',
             defaultMods[0].artifactId
           );
-          var toPath = path.join(
+          let toPath = path.join(
             yo.destinationPath(),
             mod.path,
             '/src/main/amp/config/alfresco/module',
@@ -115,31 +115,31 @@ module.exports = function (yo) {
   }
 
   function addFailsafeConfigToRunner (mod) {
-    var runnerPomPath = yo.destinationPath('runner/pom.xml');
+    let runnerPomPath = yo.destinationPath('runner/pom.xml');
     yo.out.info('Configuring failsafe entries for ' + mod.artifactId + ' in ' + runnerPomPath);
-    var runnerPom = yo.fs.read(runnerPomPath);
-    var pomDoc = domutils.parseFromString(runnerPom);
-    var plugin = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]', pomDoc);
+    let runnerPom = yo.fs.read(runnerPomPath);
+    let pomDoc = domutils.parseFromString(runnerPom);
+    let plugin = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]', pomDoc);
     if (plugin) {
-      var pluginExs = domutils.getFirstNodeMatchingXPath('pom:executions', plugin);
+      let pluginExs = domutils.getFirstNodeMatchingXPath('pom:executions', plugin);
       if (pluginExs) {
         // if we have generic config we should remove it
-        var pluginConfig = domutils.getFirstNodeMatchingXPath('pom:configuration', plugin);
+        let pluginConfig = domutils.getFirstNodeMatchingXPath('pom:configuration', plugin);
         if (pluginConfig) {
           domutils.removeChild(pluginConfig, 'pom', 'suiteXmlFiles');
           domutils.removeChild(pluginConfig, 'pom', 'testClassesDirectory');
         }
         // if we have the generic executions we should remove them
-        var ft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests"]', pluginExs);
+        let ft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests"]', pluginExs);
         if (ft) {
           domutils.removeParentsChild(pluginExs, ft);
         }
-        var vt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests"]', pluginExs);
+        let vt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests"]', pluginExs);
         if (vt) {
           domutils.removeParentsChild(pluginExs, vt);
         }
         // now add module specific instances
-        var ftx = [
+        let ftx = [
           '<execution>',
           '    <id>functional-tests-' + mod.artifactId + '</id>',
           '    <phase>integration-test</phase>',
@@ -154,10 +154,10 @@ module.exports = function (yo) {
           '    </configuration>',
           '</execution>',
         ].join('\n');
-        var ftdoc = domutils.parseFromString(ftx);
-        var ftn = pomDoc.importNode(ftdoc.documentElement, true);
+        let ftdoc = domutils.parseFromString(ftx);
+        let ftn = pomDoc.importNode(ftdoc.documentElement, true);
         pluginExs.appendChild(ftn);
-        var vtx = [
+        let vtx = [
           '<execution>',
           '    <id>verify-tests-' + mod.artifactId + '</id>',
           '    <phase>verify</phase>',
@@ -172,8 +172,8 @@ module.exports = function (yo) {
           '    </configuration>',
           '</execution>',
         ].join('\n');
-        var vtdoc = domutils.parseFromString(vtx);
-        var vtn = pomDoc.importNode(vtdoc.documentElement, true);
+        let vtdoc = domutils.parseFromString(vtx);
+        let vtn = pomDoc.importNode(vtdoc.documentElement, true);
         pluginExs.appendChild(vtn);
         yo.fs.write(runnerPomPath, domutils.prettyPrint(pomDoc));
       }
@@ -183,10 +183,10 @@ module.exports = function (yo) {
 
   function addModuleToParentPom (mod) {
     // TODO: if intermediate source modules are not included, include them too (customizations for example.)
-    var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
+    let parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + parentPomPath);
-    var parentPom = yo.fs.read(parentPomPath);
-    var pom = require('generator-alfresco-common').maven_pom(parentPom);
+    let parentPom = yo.fs.read(parentPomPath);
+    let pom = require('generator-alfresco-common').maven_pom(parentPom);
     if (!pom.findModule(mod.artifactId)) {
       pom.addModule(mod.artifactId, true);
       yo.fs.write(parentPomPath, pom.getPOMString());
@@ -197,19 +197,19 @@ module.exports = function (yo) {
   // TODO(bwavell): Add tests for this
   function addModuleToTomcatContext (mod) {
     yo.out.info('Adding path elements for ' + mod.artifactId + ' tomcat context file');
-    var warType = mod.war;
-    var modPath = slash(mod.path);
-    var basename = path.basename(modPath);
+    let warType = mod.war;
+    let modPath = slash(mod.path);
+    let basename = path.basename(modPath);
     if ([constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE].indexOf(warType) > -1) {
-      var fileName = constants.FILE_CONTEXT_REPO_XML;
+      let fileName = constants.FILE_CONTEXT_REPO_XML;
       if (constants.WAR_TYPE_SHARE === warType) {
         fileName = constants.FILE_CONTEXT_SHARE_XML;
       }
-      var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
+      let ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
       if (yo.fs.exists(ctxPath)) {
-        var ctxFile = yo.fs.read(ctxPath);
-        var ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
-        var targetFolder = yo.sdk.targetFolderName.call(yo, basename);
+        let ctxFile = yo.fs.read(ctxPath);
+        let ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
+        let targetFolder = yo.sdk.targetFolderName.call(yo, basename);
 
         ctx.addExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + targetFolder + '/web');
         ctx.addVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/classes');
@@ -228,33 +228,33 @@ module.exports = function (yo) {
   }
 
   function updateProjectPom (mod) {
-    var projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
+    let projectPomPath = path.join(yo.destinationPath(), mod.path, 'pom.xml');
     yo.out.info('Setting project/parent GAVs for ' + mod.artifactId + ' in ' + projectPomPath);
 
     // Obtain GAV from parent
-    var parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
+    let parentPomPath = yo.destinationPath(path.join(path.dirname(mod.path), 'pom.xml'));
     yo.out.info('Finding parent GAV info for ' + mod.artifactId + ' module from ' + parentPomPath);
-    var parentPomStr = yo.fs.read(parentPomPath);
-    var parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
-    var parentGroupIdEl = parentPom.getTopLevelElement('pom', 'groupId');
-    var parentArtifactIdEl = parentPom.getTopLevelElement('pom', 'artifactId');
-    var parentVersionEl = parentPom.getTopLevelElement('pom', 'version');
-    var parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROJECT_GROUP_ID));
-    var parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
-    var parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
+    let parentPomStr = yo.fs.read(parentPomPath);
+    let parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
+    let parentGroupIdEl = parentPom.getTopLevelElement('pom', 'groupId');
+    let parentArtifactIdEl = parentPom.getTopLevelElement('pom', 'artifactId');
+    let parentVersionEl = parentPom.getTopLevelElement('pom', 'version');
+    let parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROJECT_GROUP_ID));
+    let parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
+    let parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
 
     debug('POM EXISTS: ' + projectPomPath + ' [' + yo.fs.exists(projectPomPath) + ']');
-    var projectPom = yo.fs.read(projectPomPath);
+    let projectPom = yo.fs.read(projectPomPath);
     debug('POM CONTENTS: ' + projectPom);
-    var pom = require('generator-alfresco-common').maven_pom(projectPom);
+    let pom = require('generator-alfresco-common').maven_pom(projectPom);
     // Unless we are in the customizations folder we can use provided values with
     // inheritance magic for project.blah references. In the customizations folder
     // we have to be more explicit as that folder has fixed GAV.
     if (constants.FOLDER_CUSTOMIZATIONS !== path.basename(path.dirname(mod.path))) {
       pom.setProjectGAV(mod.groupId, mod.artifactId, mod.version, mod.packaging);
     } else {
-      var groupId = mod.groupId;
-      var version = mod.version;
+      let groupId = mod.groupId;
+      let version = mod.version;
       if (constants.VAR_PROJECT_GROUPID === groupId) {
         groupId = yo.config.get(constants.PROP_PROJECT_GROUP_ID);
       }
@@ -270,12 +270,12 @@ module.exports = function (yo) {
 
   function addModuleToWarWrapper (mod) {
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
-    var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
-    var wrapperPom = yo.fs.read(wrapperPomPath);
-    var pom = require('generator-alfresco-common').maven_pom(wrapperPom);
+    let wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
+    let wrapperPom = yo.fs.read(wrapperPomPath);
+    let pom = require('generator-alfresco-common').maven_pom(wrapperPom);
     if (!pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
-      var scope;
-      var systemPath;
+      let scope;
+      let systemPath;
       if (mod.location === 'local') {
         scope = 'system';
         systemPath = '${project.basedir}/../' + mod.path;
@@ -285,12 +285,12 @@ module.exports = function (yo) {
 
     // search existing plugins for maven-war-plugin, create if necessary
     // once found/created, make sure we have configuation/overlays
-    var build = pom.getOrCreateTopLevelElement('pom', 'build');
-    var plugins = domutils.getOrCreateChild(build, 'pom', 'plugins');
-    var plugin = domutils.getOrCreateChild(plugins, 'pom', 'plugin');
-    var artifactIdText = '';
+    let build = pom.getOrCreateTopLevelElement('pom', 'build');
+    let plugins = domutils.getOrCreateChild(build, 'pom', 'plugins');
+    let plugin = domutils.getOrCreateChild(plugins, 'pom', 'plugin');
+    let artifactIdText = '';
     do {
-      var artifactId = domutils.getOrCreateChild(plugin, 'pom', 'artifactId');
+      let artifactId = domutils.getOrCreateChild(plugin, 'pom', 'artifactId');
       artifactIdText = artifactId.textContent;
       if (artifactIdText) {
         if (artifactIdText !== 'maven-war-plugin') {
@@ -305,7 +305,7 @@ module.exports = function (yo) {
         artifactId.textContent = artifactIdText;
       }
     } while (artifactIdText !== 'maven-war-plugin');
-    var configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
+    let configuration = domutils.getOrCreateChild(plugin, 'pom', 'configuration');
     domutils.getOrCreateChild(configuration, 'pom', 'overlays');
     pom.addOverlay(mod.groupId, mod.artifactId, mod.packaging);
     debug(pom.getPOMString());
@@ -315,7 +315,7 @@ module.exports = function (yo) {
 
   module.removeModule = function (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
     debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
-    var mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+    let mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
     if (mod) {
       debug('removing module: %s', mod.artifactId);
       this.moduleRegistry.removeModule(mod);
@@ -336,7 +336,7 @@ module.exports = function (yo) {
   function removeModuleFiles (mod) {
     // remove the actual files
     yo.out.warn('Deleting source module: ' + mod.path);
-    var absPath = yo.destinationPath(mod.path);
+    let absPath = yo.destinationPath(mod.path);
     // if we have files on disk already this will get them
     debug('DELETING EXISTING FILES FROM: ' + absPath);
     yo.fs.delete(absPath);
@@ -351,10 +351,10 @@ module.exports = function (yo) {
   }
 
   function removeModuleFromParentPom (mod) {
-    var parentPomPath = yo.destinationPath('pom.xml');
+    let parentPomPath = yo.destinationPath('pom.xml');
     yo.out.warn('Removing ' + mod.artifactId + ' module from ' + parentPomPath);
-    var parentPom = yo.fs.read(parentPomPath);
-    var pom = require('generator-alfresco-common').maven_pom(parentPom);
+    let parentPom = yo.fs.read(parentPomPath);
+    let pom = require('generator-alfresco-common').maven_pom(parentPom);
     if (pom.findModule(mod.artifactId)) {
       pom.removeModule(mod.artifactId);
       yo.fs.write(parentPomPath, pom.getPOMString());
@@ -364,9 +364,9 @@ module.exports = function (yo) {
 
   function removeModuleFromWarWrapper (mod) {
     yo.out.info('Removing ' + mod.artifactId + ' module from ' + mod.war + ' war wrapper');
-    var wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
-    var wrapperPom = yo.fs.read(wrapperPomPath);
-    var pom = require('generator-alfresco-common').maven_pom(wrapperPom);
+    let wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
+    let wrapperPom = yo.fs.read(wrapperPomPath);
+    let pom = require('generator-alfresco-common').maven_pom(wrapperPom);
     if (pom.findDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging)) {
       pom.removeDependency(mod.groupId, mod.artifactId, mod.version, mod.packaging);
       pom.removeOverlay(mod.groupId, mod.artifactId, mod.packaging);
@@ -376,19 +376,19 @@ module.exports = function (yo) {
   }
 
   function removeFailsafeConfigFromRunner (mod) {
-    var runnerPomPath = yo.destinationPath('runner/pom.xml');
+    let runnerPomPath = yo.destinationPath('runner/pom.xml');
     yo.out.info('Removing failsafe entries for ' + mod.artifactId + ' from ' + runnerPomPath);
-    var runnerPom = yo.fs.read(runnerPomPath);
-    var pomDoc = domutils.parseFromString(runnerPom);
-    var pluginExs = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]/pom:executions', pomDoc);
+    let runnerPom = yo.fs.read(runnerPomPath);
+    let pomDoc = domutils.parseFromString(runnerPom);
+    let pluginExs = domutils.getFirstNodeMatchingXPath('/pom:project/pom:profiles/pom:profile[pom:id="functional-testing"]/pom:build/pom:plugins/pom:plugin[1]/pom:executions', pomDoc);
     if (pluginExs) {
       // now if we find executions for this module remove them too
-      var mft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests-' + mod.artifactId + '"]', pluginExs);
+      let mft = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="functional-tests-' + mod.artifactId + '"]', pluginExs);
       if (mft) {
         debug('Removing functional-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mft);
       }
-      var mvt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests-' + mod.artifactId + '"]', pluginExs);
+      let mvt = domutils.getFirstNodeMatchingXPath('pom:execution[pom:id="verify-tests-' + mod.artifactId + '"]', pluginExs);
       if (mvt) {
         debug('Removing verify-tests-' + mod.artifactId);
         domutils.removeParentsChild(pluginExs, mvt);
@@ -401,18 +401,18 @@ module.exports = function (yo) {
   // TODO(bwavell): Add tests for this
   function removeModuleFromTomcatContext (mod) {
     yo.out.info('Removing path elements for ' + mod.artifactId + ' from tomcat context file');
-    var warType = mod.war;
-    var modPath = mod.path;
-    var basename = path.basename(modPath);
+    let warType = mod.war;
+    let modPath = mod.path;
+    let basename = path.basename(modPath);
     if ([constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE].indexOf(warType) > -1) {
-      var fileName = constants.FILE_CONTEXT_REPO_XML;
+      let fileName = constants.FILE_CONTEXT_REPO_XML;
       if (constants.WAR_TYPE_SHARE === warType) {
         fileName = constants.FILE_CONTEXT_SHARE_XML;
       }
-      var ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
+      let ctxPath = yo.destinationPath(path.join(constants.FOLDER_RUNNER, constants.FOLDER_TOMCAT, fileName));
       if (yo.fs.exists(ctxPath)) {
-        var ctxFile = yo.fs.read(ctxPath);
-        var ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
+        let ctxFile = yo.fs.read(ctxPath);
+        let ctx = require('generator-alfresco-common').tomcat_context(ctxFile);
 
         ctx.removeExtraResourcePathMap('/=${project.parent.basedir}/' + modPath + '/target/' + basename + '/web');
         ctx.removeVirtualClasspath('${project.parent.basedir}/' + modPath + '/target/classes');

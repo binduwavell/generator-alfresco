@@ -1,23 +1,24 @@
 'use strict';
-var _ = require('lodash');
-var chalk = require('chalk');
-var debug = require('debug')('generator-alfresco:behavior');
-var path = require('path');
-var constants = require('generator-alfresco-common').constants;
-var filters = require('generator-alfresco-common').prompt_filters;
-var SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
+let _ = require('lodash');
+let chalk = require('chalk');
+let debug = require('debug')('generator-alfresco:behavior');
+let path = require('path');
+let trace = require('debug')('generator-alfresco-trace:behavior');
+let constants = require('generator-alfresco-common').constants;
+let filters = require('generator-alfresco-common').prompt_filters;
+let SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
-module.exports = SourceSelectingSubGenerator.extend({
-  constructor: function () {
-    debug('constructor');
-    arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_REPO;
-    SourceSelectingSubGenerator.apply(this, arguments);
+module.exports = class extends SourceSelectingSubGenerator {
+  constructor (args, opts) {
+    trace('constructor');
+    opts[constants.PROP_WAR] = constants.WAR_TYPE_REPO;
+    super(args, opts);
 
     this.out.docs(
       'Behaviors/Policies can be used to run custom code when an event, such a adding a content item or deleting a content item, happens.',
       'http://docs.alfresco.com/community/references/dev-extension-points-behaviors.html');
 
-    var defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
+    let defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [
       {
@@ -46,40 +47,40 @@ module.exports = SourceSelectingSubGenerator.extend({
 
     this.setupArgumentsAndOptions(this.prompts);
     debug('constructor finished');
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     debug('prompting');
     return this.subgeneratorPrompt(this.prompts, function (props) {
       debug('prompting done function');
       this.props = props;
 
       // figure stuff out about our environment
-      var targetModule = this.targetModule.module;
-      var artifactId = targetModule.artifactId;
-      var moduleRoot = this.destinationPath(targetModule.path);
-      var genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      let targetModule = this.targetModule.module;
+      let artifactId = targetModule.artifactId;
+      let moduleRoot = this.destinationPath(targetModule.path);
+      let genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
 
       // get information from prompts
-      var behaviorId = _.kebabCase(props.class);
-      var className = _.upperFirst(_.camelCase(props.class));
-      var packageName = props.package;
+      let behaviorId = _.kebabCase(props.class);
+      let className = _.upperFirst(_.camelCase(props.class));
+      let packageName = props.package;
       if (!_.endsWith(packageName, '.behaviors')) {
         packageName += '.behaviors';
       }
-      var templateContext = {
+      let templateContext = {
         artifactId: artifactId,
         behaviorId: behaviorId,
         className: className,
         packageName: packageName,
       };
 
-      var classSrc = this.templatePath('Behavior.java');
-      var contextSrc = this.templatePath('behavior-context.xml');
+      let classSrc = this.templatePath('Behavior.java');
+      let contextSrc = this.templatePath('behavior-context.xml');
 
-      var packagePath = _.replace(packageName, /\./g, '/');
-      var classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
-      var contextDst = path.join(moduleRoot, genRoot, 'behavior-' + behaviorId + '-context.xml');
+      let packagePath = _.replace(packageName, /\./g, '/');
+      let classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
+      let contextDst = path.join(moduleRoot, genRoot, 'behavior-' + behaviorId + '-context.xml');
 
       this.fs.copyTpl(classSrc, classDst, templateContext);
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
@@ -88,22 +89,12 @@ module.exports = SourceSelectingSubGenerator.extend({
     }).then(function () {
       debug('prompting finished');
     });
-  },
-
-  /*
-  writing: function () {
-    if (this.bail) return;
-  },
-
-  install: function () {
-    if (this.bail) return;
-  },
-  */
-});
+  }
+};
 
 function packageFilter (pkg) {
   if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
-  var output = pkg;
+  let output = pkg;
   // To begin with, if package is provided in path notation replace
   // slashes with dots also, treat spaces like path separators
   output = _.replace(output, /[/\s]/g, '.');

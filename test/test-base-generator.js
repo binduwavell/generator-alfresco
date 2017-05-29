@@ -1,17 +1,17 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
-var BaseGenerator = require('../generators/base-generator.js');
-var filters = require('generator-alfresco-common').prompt_filters;
+let assert = require('yeoman-assert');
+let helpers = require('yeoman-test');
+let os = require('os');
+let path = require('path');
+let BaseGenerator = require('../generators/base-generator.js');
+let filters = require('generator-alfresco-common').prompt_filters;
 
-var state = { };
+let state = { };
 
-var TestGenerator = BaseGenerator.extend({
-  constructor: function () {
-    BaseGenerator.apply(this, arguments);
+class TestGenerator extends BaseGenerator {
+  constructor (args, opts) {
+    super(args, opts);
 
     this.prompts = [
       {
@@ -59,21 +59,21 @@ var TestGenerator = BaseGenerator.extend({
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     return this.subgeneratorPrompt(this.prompts, 'base-generator-mock', function (props) {
       state.generator = this;
       state.bail = this.bail;
       state.myargument = props.myargument;
       state.myprompt = props.myprompt;
     });
-  },
-});
+  }
+};
 
 describe('generator-alfresco:base-generator', function () {
   this.timeout(300);
-  var osTempDir = path.join(os.tmpdir(), 'temp-test');
+  let osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('withOptions', function () {
     // We need a test project setup before we begin
@@ -92,45 +92,45 @@ describe('generator-alfresco:base-generator', function () {
     });
 
     it('sets appropriate filter function', function () {
-      var myprompt = state.generator.processedPrompts[1];
+      let myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('filter'));
-      var filter = myprompt.filter;
-      var v = filter('');
+      let filter = myprompt.filter;
+      let v = filter('');
       assert.equal(v, undefined);
       v = filter(123);
       assert.equal(v, '123');
     });
 
     it('sets appropriate validate function', function () {
-      var myprompt = state.generator.processedPrompts[1];
+      let myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      var validate = myprompt.validate;
-      var v = validate('');
+      let validate = myprompt.validate;
+      let v = validate('');
       assert.equal(v, 'The required \u001b[33mmyprompt\u001b[39m value is missing or invalid');
       v = validate('a value');
       assert.equal(v, true);
     });
 
     it('uses validate invalidMessage string for generated validate function', function () {
-      var origprompt = state.generator.prompts[1];
-      var myprompt = state.generator.processedPrompts[1];
+      let origprompt = state.generator.prompts[1];
+      let myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      var validate = myprompt.validate;
+      let validate = myprompt.validate;
       origprompt.invalidMessage = 'Bad stuff';
-      var v = validate('');
+      let v = validate('');
       delete origprompt.invalidMessage;
       assert.equal(v, 'Bad stuff');
     });
 
     it('uses validate invalidMessage function for generated validate function', function () {
-      var origprompt = state.generator.prompts[1];
-      var myprompt = state.generator.processedPrompts[1];
+      let origprompt = state.generator.prompts[1];
+      let myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      var validate = myprompt.validate;
+      let validate = myprompt.validate;
       origprompt.invalidMessage = function () {
         return 'Your input is bad';
       };
-      var v = validate('');
+      let v = validate('');
       delete origprompt.invalidMessage;
       assert.equal(v, 'Your input is bad');
     });

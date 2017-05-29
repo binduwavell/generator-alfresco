@@ -1,34 +1,33 @@
 'use strict';
-var debug = require('debug')('generator-alfresco:amp');
-var filters = require('generator-alfresco-common').prompt_filters;
-var SubGenerator = require('../subgenerator.js');
+let debug = require('debug')('generator-alfresco:amp');
+let filters = require('generator-alfresco-common').prompt_filters;
+let SubGenerator = require('../subgenerator.js');
 
-var AMP_TYPE_SOURCE = 'Source AMP';
-var AMP_TYPE_LOCAL = 'Local AMP';
-var AMP_TYPE_REMOTE = 'Remote AMP';
-var AMP_TYPE_COMMON = 'Common AMP';
-var AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE, AMP_TYPE_COMMON];
-var AMP_TYPE_CHOICES = {
+let AMP_TYPE_SOURCE = 'Source AMP';
+let AMP_TYPE_LOCAL = 'Local AMP';
+let AMP_TYPE_REMOTE = 'Remote AMP';
+let AMP_TYPE_COMMON = 'Common AMP';
+let AMP_TYPES = [AMP_TYPE_SOURCE, AMP_TYPE_LOCAL, AMP_TYPE_REMOTE, AMP_TYPE_COMMON];
+let AMP_TYPE_CHOICES = {
   'source': AMP_TYPE_SOURCE,
   'local': AMP_TYPE_LOCAL,
   'remote': AMP_TYPE_REMOTE,
   'common': AMP_TYPE_COMMON,
 };
-var NAMESPACE_SOURCE = 'alfresco:amp-add-source';
-var NAMESPACE_LOCAL = 'alfresco:amp-add-local';
-var NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
-var NAMESPACE_COMMON = 'alfresco:amp-add-common';
-var NAMESPACE_CHOICES = [
+let NAMESPACE_SOURCE = 'alfresco:amp-add-source';
+let NAMESPACE_LOCAL = 'alfresco:amp-add-local';
+let NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
+let NAMESPACE_COMMON = 'alfresco:amp-add-common';
+let NAMESPACE_CHOICES = [
   {label: AMP_TYPE_SOURCE, namespace: NAMESPACE_SOURCE},
   {label: AMP_TYPE_LOCAL, namespace: NAMESPACE_LOCAL},
   {label: AMP_TYPE_REMOTE, namespace: NAMESPACE_REMOTE},
   {label: AMP_TYPE_COMMON, namespace: NAMESPACE_COMMON},
 ];
 
-module.exports = SubGenerator.extend({
-
-  constructor: function () {
-    SubGenerator.apply(this, arguments);
+module.exports = class extends SubGenerator {
+  constructor (args, opts) {
+    super(args, opts);
 
     this.prompts = [
       {
@@ -51,34 +50,34 @@ module.exports = SubGenerator.extend({
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
-  },
+  }
 
-  help: function () {
-    var Generator = require('yeoman-generator');
-    var helpArray = [Generator.prototype.help.apply(this)];
-    NAMESPACE_CHOICES.forEach(function (subgenDesc) {
+  help () {
+    let Generator = require('yeoman-generator');
+    let helpArray = [Generator.prototype.help.apply(this)];
+    NAMESPACE_CHOICES.forEach(subgenDesc => {
       helpArray.push('\n' + subgenDesc.label + ' Options:');
-      var subgen = this.env.create(subgenDesc.namespace);
+      let subgen = this.env.create(subgenDesc.namespace);
       ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
         subgen._options[op].hide = true;
       });
       helpArray.push(Generator.prototype.optionsHelp.apply(subgen));
-    }.bind(this));
+    });
     return helpArray.join('\n');
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     return this.subgeneratorPrompt(this.prompts, function (props) {
-      NAMESPACE_CHOICES.forEach(function (subgenDesc) {
+      NAMESPACE_CHOICES.forEach(subgenDesc => {
         if (props.ampType === subgenDesc.label) {
           debug('delegating to %s', subgenDesc.namespace);
           this.composeWith(subgenDesc.namespace, this.options);
         }
-      }.bind(this));
+      });
     }).then(function () {
       debug('prompting finished');
     });
-  },
-});
+  }
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

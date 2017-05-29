@@ -1,16 +1,15 @@
 'use strict';
-var debug = require('debug')('generator-alfresco:amp-remote');
-var chalk = require('chalk');
-var constants = require('generator-alfresco-common').constants;
-var filters = require('generator-alfresco-common').prompt_filters;
-var SubGenerator = require('../subgenerator.js');
+let debug = require('debug')('generator-alfresco:amp-remote');
+let chalk = require('chalk');
+let constants = require('generator-alfresco-common').constants;
+let filters = require('generator-alfresco-common').prompt_filters;
+let SubGenerator = require('../subgenerator.js');
 
-var WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+let WAR_TYPES = [constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
-module.exports = SubGenerator.extend({
-
-  constructor: function () {
-    SubGenerator.apply(this, arguments);
+module.exports = class extends SubGenerator {
+  constructor (args, opts) {
+    super(args, opts);
 
     this.prompts = [
       {
@@ -49,9 +48,9 @@ module.exports = SubGenerator.extend({
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     if (this.bail) return;
 
     this.out.docs([
@@ -72,14 +71,14 @@ module.exports = SubGenerator.extend({
     }).then(function () {
       debug('prompting finished');
     });
-  },
+  }
 
-  writing: function () {
+  writing () {
     if (this.bail) return;
 
     debug('installing %s into %s', this.props.path, this.props.warType);
 
-    var mod = {
+    let mod = {
       'groupId': this.props.groupId,
       'artifactId': this.props.artifactId,
       'version': this.props.ampVersion,
@@ -92,13 +91,7 @@ module.exports = SubGenerator.extend({
     this.moduleManager.addModule(mod);
     // complete all scheduled activities
     this.moduleManager.save();
-  },
-
-  /*
-  install: function () {
-    if (this.bail) return;
-  },
-  */
-});
+  }
+};
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

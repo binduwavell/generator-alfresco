@@ -1,24 +1,23 @@
 'use strict';
-var chalk = require('chalk');
-var fs = require('fs');
-var debug = require('debug')('generator-alfresco:amp-source');
-var path = require('path');
-var constants = require('generator-alfresco-common').constants;
-var filters = require('generator-alfresco-common').prompt_filters;
-var validators = require('generator-alfresco-common').prompt_validators;
-var SubGenerator = require('../subgenerator.js');
+let chalk = require('chalk');
+let fs = require('fs');
+let debug = require('debug')('generator-alfresco:amp-source');
+let path = require('path');
+let constants = require('generator-alfresco-common').constants;
+let filters = require('generator-alfresco-common').prompt_filters;
+let validators = require('generator-alfresco-common').prompt_validators;
+let SubGenerator = require('../subgenerator.js');
 
-var WAR_TYPE_BOTH = 'Both repo & share';
-var WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
+let WAR_TYPE_BOTH = 'Both repo & share';
+let WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
-module.exports = SubGenerator.extend({
+module.exports = class extends SubGenerator {
+  constructor (args, opts) {
+    super(args, opts);
 
-  constructor: function () {
-    SubGenerator.apply(this, arguments);
-
-    var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
-    var defArtifactIdPrefix = this.config.get(constants.PROP_PROJECT_ARTIFACT_ID);
-    var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
+    let defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
+    let defArtifactIdPrefix = this.config.get(constants.PROP_PROJECT_ARTIFACT_ID);
+    let defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
 
     this.prompts = [
       {
@@ -79,8 +78,8 @@ module.exports = SubGenerator.extend({
         name: 'createParent',
         option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean, choices: ['false', 'true'] } },
         when: function (readonlyProps) {
-          var warType = (readonlyProps[constants.PROP_WAR] || this.answerOverrides[constants.PROP_WAR]);
-          var show = (WAR_TYPE_BOTH === warType);
+          let warType = (readonlyProps[constants.PROP_WAR] || this.answerOverrides[constants.PROP_WAR]);
+          let show = (WAR_TYPE_BOTH === warType);
           if (show) {
             this.out.docs([
               'Unlike the traditional all-in-one SDK structure, where source',
@@ -101,7 +100,7 @@ module.exports = SubGenerator.extend({
         name: 'parentName',
         option: { name: 'parent-name', config: { alias: 'm', desc: 'Name for parent pom', type: String } },
         when: function (readonlyProps) {
-          var create = (readonlyProps.createParent !== undefined
+          let create = (readonlyProps.createParent !== undefined
             ? readonlyProps.createParent
             : this.answerOverrides.createParent);
           return create;
@@ -115,7 +114,7 @@ module.exports = SubGenerator.extend({
         name: 'parentDescription',
         option: { name: 'parent-description', config: { alias: 's', desc: 'Description for parent pom', type: String } },
         when: function (readonlyProps) {
-          var create = (readonlyProps.createParent !== undefined
+          let create = (readonlyProps.createParent !== undefined
             ? readonlyProps.createParent
             : this.answerOverrides.createParent);
           return create;
@@ -163,9 +162,9 @@ module.exports = SubGenerator.extend({
     ];
 
     this.setupArgumentsAndOptions(this.prompts);
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     if (this.bail) return;
 
     this.out.info([
@@ -181,8 +180,8 @@ module.exports = SubGenerator.extend({
       'customizations in.'].join(' '),
       'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-add-custom-amps-aio.html');
 
-    var defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
-    var defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
+    let defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
+    let defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
 
     return this.subgeneratorPrompt(this.prompts, '', function (props) {
       this.props = props;
@@ -200,40 +199,40 @@ module.exports = SubGenerator.extend({
     }).then(function () {
       debug('prompting finished');
     });
-  },
+  }
 
-  writing: function () {
+  writing () {
     if (this.bail) return;
 
     // Do regular module instantiation stuff
     debug('writing %s', this.props[constants.PROP_WAR]);
-    this.props[constants.PROP_WAR].forEach(function (war) {
-      var prefix = this.props[constants.PROP_PROJECT_ARTIFACT_ID_PREFIX];
-      var artifactId = prefix + '-' + war + '-amp';
-      var groupId = this.props[constants.PROP_PROJECT_GROUP_ID];
-      var version = this.props[constants.PROP_PROJECT_VERSION];
-      var hasCustomizations = fs.existsSync(
+    this.props[constants.PROP_WAR].forEach(war => {
+      let prefix = this.props[constants.PROP_PROJECT_ARTIFACT_ID_PREFIX];
+      let artifactId = prefix + '-' + war + '-amp';
+      let groupId = this.props[constants.PROP_PROJECT_GROUP_ID];
+      let version = this.props[constants.PROP_PROJECT_VERSION];
+      let hasCustomizations = fs.existsSync(
         path.join(this.destinationPath(constants.FOLDER_CUSTOMIZATIONS), 'pom.xml'));
-      var parentPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
+      let parentPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
       // If are parent folder is created we need to put a pom in it
       // and link said pom into the customizations pom
       if (this.props.createParent) {
-        var parentGroupId = groupId;
+        let parentGroupId = groupId;
         if (parentGroupId === constants.VAR_PROJECT_GROUPID) {
           parentGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
         }
-        var parentArtifactId = prefix + '-parent';
-        var parentVersion = version;
+        let parentArtifactId = prefix + '-parent';
+        let parentVersion = version;
         if (parentVersion === constants.VAR_PROJECT_VERSION) {
           parentVersion = this.config.get(constants.PROP_PROJECT_VERSION);
         }
         parentPath = path.join(parentPath, parentArtifactId);
-        var parentPomPath = path.join(parentPath, 'pom.xml');
-        var parentPomStr;
+        let parentPomPath = path.join(parentPath, 'pom.xml');
+        let parentPomStr;
         if (this.fs.exists(parentPomPath)) {
           parentPomStr = this.fs.read(parentPomPath);
         }
-        var parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
+        let parentPom = require('generator-alfresco-common').maven_pom(parentPomStr);
         parentPom.setProjectGAV(parentGroupId, parentArtifactId, parentVersion, 'pom');
         if (this.props.parentName) parentPom.setTopLevelElementTextContent('pom', 'name', this.props.parentName);
         if (this.props.parentDescription) parentPom.setTopLevelElementTextContent('pom', 'description', this.props.parentDescription);
@@ -248,98 +247,88 @@ module.exports = SubGenerator.extend({
         }
         this.fs.write(parentPomPath, parentPom.getPOMString());
 
-        var containingFolderPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
-        var containingPomPath = this.destinationPath(path.join(containingFolderPath, 'pom.xml'));
+        let containingFolderPath = (hasCustomizations ? constants.FOLDER_CUSTOMIZATIONS : '');
+        let containingPomPath = this.destinationPath(path.join(containingFolderPath, 'pom.xml'));
         this.out.info('Adding ' + parentArtifactId + ' module to containing pom ' + containingPomPath);
-        var containingPomStr = this.fs.read(containingPomPath);
-        var containingPom = require('generator-alfresco-common').maven_pom(containingPomStr);
+        let containingPomStr = this.fs.read(containingPomPath);
+        let containingPom = require('generator-alfresco-common').maven_pom(containingPomStr);
         if (!containingPom.findModule(parentArtifactId)) {
           containingPom.addModule(parentArtifactId, true);
           this.fs.write(containingPomPath, containingPom.getPOMString());
         }
       }
-      var modulePath = path.join(parentPath, artifactId);
+      let modulePath = path.join(parentPath, artifactId);
       debug('register and do initial setup for our module(s)');
       this.moduleManager.addModule(groupId, artifactId, version, 'amp', war, 'source', modulePath);
       debug('schedule setup activities for our module(s)');
       if (constants.WAR_TYPE_REPO === war) {
         debug('We are creating a new module so we need to schedule it to be setup');
-        this.moduleManager.pushOp(function () { this.sdk.setupNewRepoModule.call(this, modulePath) }.bind(this));
+        this.moduleManager.pushOp(() => { this.sdk.setupNewRepoModule.call(this, modulePath) });
         debug('If we have a custom name or description then arrange to get that info into the pom');
         if (this.props.repoName || this.props.repoDescription) {
-          this.moduleManager.pushOp(function () {
+          this.moduleManager.pushOp(() => {
             this.out.info('Setting name: ' + this.props.repoName + ' and description: ' + this.props.repoDescription + ' for: ' + artifactId);
-            var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
-            var pomStr = this.fs.read(pomPath);
-            var pom = require('generator-alfresco-common').maven_pom(pomStr);
+            let pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
+            let pomStr = this.fs.read(pomPath);
+            let pom = require('generator-alfresco-common').maven_pom(pomStr);
             if (this.props.repoName) pom.setTopLevelElementTextContent('pom', 'name', this.props.repoName);
             if (this.props.repoDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.repoDescription);
             this.fs.write(pomPath, pom.getPOMString());
-          }.bind(this));
+          });
         }
         if (this.props.removeDefaultSourceSamples) {
           debug('scheduling sample source code/config removal');
-          this.moduleManager.pushOp(
-            function () {
-              this.sdk.removeRepoSamples.call(this,
-                modulePath,
-                this.config.get(constants.PROP_PROJECT_PACKAGE),
-                prefix
-              );
-            }.bind(this)
-          );
+          this.moduleManager.pushOp(() => {
+            this.sdk.removeRepoSamples.call(this,
+              modulePath,
+              this.config.get(constants.PROP_PROJECT_PACKAGE),
+              prefix
+            );
+          });
         } else {
           debug('NOT scheduling sample source code/config removal');
         }
       }
       if (constants.WAR_TYPE_SHARE === war) {
         // We are creating a new module so we need to set it up
-        this.moduleManager.pushOp(function () { this.sdk.setupNewShareModule.call(this, modulePath) }.bind(this));
+        this.moduleManager.pushOp(() => { this.sdk.setupNewShareModule.call(this, modulePath) });
         // If we have a custom name or description then get that info into the pom
         if (this.props.shareName || this.props.shareDescription) {
-          this.moduleManager.pushOp(function () {
+          this.moduleManager.pushOp(() => {
             this.out.info('Setting name: ' + this.props.shareName + ' and description: ' + this.props.shareDescription + ' for: ' + artifactId);
-            var pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
-            var pomStr = this.fs.read(pomPath);
-            var pom = require('generator-alfresco-common').maven_pom(pomStr);
+            let pomPath = this.destinationPath(path.join(modulePath, 'pom.xml'));
+            let pomStr = this.fs.read(pomPath);
+            let pom = require('generator-alfresco-common').maven_pom(pomStr);
             if (this.props.shareName) pom.setTopLevelElementTextContent('pom', 'name', this.props.shareName);
             if (this.props.shareDescription) pom.setTopLevelElementTextContent('pom', 'description', this.props.shareDescription);
             this.fs.write(pomPath, pom.getPOMString());
-          }.bind(this));
+          });
         }
         if (this.props.removeDefaultSourceSamples) {
-          this.moduleManager.pushOp(
-            function () {
-              this.sdk.removeShareSamples.call(this,
-                modulePath,
-                this.config.get(constants.PROP_PROJECT_PACKAGE),
-                prefix
-              );
-            }.bind(this)
-          );
+          this.moduleManager.pushOp(() => {
+            this.sdk.removeShareSamples.call(this,
+              modulePath,
+              this.config.get(constants.PROP_PROJECT_PACKAGE),
+              prefix
+            );
+          });
         }
       }
-    }.bind(this));
+    });
     // complete all scheduled activities
     this.moduleManager.save();
-  },
-
-  /*
-  install: function () {
-    if (this.bail) return;
-  },
-  */
-});
+  }
+};
 
 function whenRepoWar (props) {
-  var warType = props[constants.PROP_WAR];
-  var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
+  let warType = props[constants.PROP_WAR];
+  let show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_REPO === warType);
   return show;
 }
 
 function whenShareWar (props) {
-  var warType = props[constants.PROP_WAR];
-  var show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
+  let warType = props[constants.PROP_WAR];
+  let show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
   return show;
 }
 

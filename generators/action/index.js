@@ -1,30 +1,31 @@
 'use strict';
-var _ = require('lodash');
-var chalk = require('chalk');
-var debug = require('debug')('generator-alfresco:action');
-var path = require('path');
-var constants = require('generator-alfresco-common').constants;
-var filters = require('generator-alfresco-common').prompt_filters;
-var SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
+let _ = require('lodash');
+let chalk = require('chalk');
+let debug = require('debug')('generator-alfresco:action');
+let path = require('path');
+let trace = require('debug')('generator-alfresco-trace:action');
+let constants = require('generator-alfresco-common').constants;
+let filters = require('generator-alfresco-common').prompt_filters;
+let SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
-module.exports = SourceSelectingSubGenerator.extend({
-  constructor: function () {
-    debug('constructor');
-    arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_REPO;
-    SourceSelectingSubGenerator.apply(this, arguments);
+module.exports = class extends SourceSelectingSubGenerator {
+  constructor (args, opts) {
+    trace('constructor');
+    opts[constants.PROP_WAR] = constants.WAR_TYPE_REPO;
+    super(args, opts);
 
     this.out.docs(
       'An Action is a discrete unit of work that can be invoked repeatedly. It can be invoked from a number of Alfresco features, such as Folder Rules, Workflows, Web Scripts, and Scheduled Jobs.',
       'http://docs.alfresco.com/5.1/references/dev-extension-points-actions.html');
 
-    var defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
+    let defPackage = packageFilter(this.config.get(constants.PROP_PROJECT_PACKAGE));
 
     this.prompts = [
       {
         type: 'input',
         name: 'name',
         option: { name: 'name', config: { alias: 'n', desc: 'Action name', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The action name will be used to construct the bean id and class name for the action.');
           return true;
         },
@@ -36,7 +37,7 @@ module.exports = SourceSelectingSubGenerator.extend({
         type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The java package that your action class must be placed into.');
           return true;
         },
@@ -58,31 +59,31 @@ module.exports = SourceSelectingSubGenerator.extend({
 
     this.setupArgumentsAndOptions(this.prompts);
     debug('constructor finished');
-  },
+  }
 
-  prompting: function () {
+  prompting () {
     debug('prompting');
     return this.subgeneratorPrompt(this.prompts, function (props) {
       debug('starting done prompting function');
       this.props = props;
 
       // figure stuff out about our environment
-      var targetModule = this.targetModule.module;
-      var artifactId = targetModule.artifactId;
-      var moduleRoot = this.destinationPath(targetModule.path);
-      var msgRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages';
-      var genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      let targetModule = this.targetModule.module;
+      let artifactId = targetModule.artifactId;
+      let moduleRoot = this.destinationPath(targetModule.path);
+      let msgRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages';
+      let genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
 
       // get information from prompts
-      var actionTitle = props.name;
-      var actionId = _.kebabCase(actionTitle);
-      var className = _.upperFirst(_.camelCase(actionTitle)) + 'ActionExecuter';
-      var packageName = props.package;
-      if (!_.endsWith(packageName, '.actions')) {
+      let actionTitle = props.name;
+      let actionId = _.kebabCase(actionTitle);
+      let className = _.upperFirst(_.camelCase(actionTitle)) + 'ActionExecuter';
+      let packageName = props.package;
+      if (!packageName.endsWith('.actions')) {
         packageName += '.actions';
       }
-      var actionDescription = props.description;
-      var templateContext = {
+      let actionDescription = props.description;
+      let templateContext = {
         actionDescription: actionDescription,
         actionId: actionId,
         actionTitle: actionTitle,
@@ -91,14 +92,14 @@ module.exports = SourceSelectingSubGenerator.extend({
         packageName: packageName,
       };
 
-      var classSrc = this.templatePath('ActionExecuter.java');
-      var contextSrc = this.templatePath('action-context.xml');
-      var messagesSrc = this.templatePath('action.properties');
+      let classSrc = this.templatePath('ActionExecuter.java');
+      let contextSrc = this.templatePath('action-context.xml');
+      let messagesSrc = this.templatePath('action.properties');
 
-      var packagePath = _.replace(packageName, /\./g, '/');
-      var classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
-      var contextDst = path.join(moduleRoot, genRoot, 'action-' + actionId + '-context.xml');
-      var messagesDst = path.join(moduleRoot, msgRoot, artifactId + '-' + actionId + '-action.properties');
+      let packagePath = packageName.replace(/\./g, '/');
+      let classDst = path.join(moduleRoot, 'src/main/java', packagePath, className + '.java');
+      let contextDst = path.join(moduleRoot, genRoot, 'action-' + actionId + '-context.xml');
+      let messagesDst = path.join(moduleRoot, msgRoot, artifactId + '-' + actionId + '-action.properties');
 
       this.fs.copyTpl(classSrc, classDst, templateContext);
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
@@ -108,29 +109,19 @@ module.exports = SourceSelectingSubGenerator.extend({
     }).then(function () {
       debug('prompting finished');
     });
-  },
-
-  /*
-  writing: function () {
-    if (this.bail) return;
-  },
-
-  install: function () {
-    if (this.bail) return;
-  },
-  */
-});
+  }
+};
 
 function packageFilter (pkg) {
   if (!_.isString(pkg) || _.isEmpty(pkg)) return undefined;
-  var output = pkg;
+  let output = pkg;
   // To begin with, if package is provided in path notation replace
   // slashes with dots also, treat spaces like path separators
-  output = _.replace(output, /[/\s]/g, '.');
+  output = output.replace(/[/\s]/g, '.');
   // package should not start with any dots
-  output = _.replace(output, /^\.*/, '');
+  output = output.replace(/^\.*/, '');
   // package should not end with any dots
-  output = _.replace(output, /\.*$/, '');
+  output = output.replace(/\.*$/, '');
   // package should be all lower case
   output = output.toLocaleLowerCase();
   if (_.isEmpty(output)) return undefined;
