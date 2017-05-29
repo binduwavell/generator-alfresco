@@ -16,18 +16,18 @@ const SubGenerator = require('./subgenerator.js');
  * arguments[1][constants.PROP_WAR] = constants.WAR_TYPE_SHARE;
  *
  */
-module.exports = class extends SubGenerator {
+class SourceSelectingSubGenearator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
     // Only source modules
-    this.modules = this.modules.filter(function (mod) {
+    this.modules = this.modules.filter(mod => {
       return (mod.module.location === 'source');
     });
     // If a war target is passed in further restrict our list
     const targetWar = arguments[1][constants.PROP_WAR];
     if (targetWar) {
-      this.modules = this.modules.filter(function (mod) {
+      this.modules = this.modules.filter(mod => {
         return (targetWar === mod.module.war);
       });
     }
@@ -84,7 +84,7 @@ module.exports = class extends SubGenerator {
           if (this.targetModule) return false;
           // Reduce module options based on which war type was selected
           this.modules = this.modules
-            .filter(function (mod) {
+            .filter(mod => {
               return (props[constants.PROP_WAR] === mod.module.war);
             });
           // Error out if there are no matching modules
@@ -104,13 +104,13 @@ module.exports = class extends SubGenerator {
         },
         choices: props => {
           return this.modules
-            .map(function (module) {
+            .map(module => {
               return module.name;
             });
         },
         message: 'Which source module would you like to add to?',
         filter: input => {
-          return this.modules.filter(function (module) {
+          return this.modules.filter(module => {
             return (module.name === input);
           })[0];
         },
@@ -130,7 +130,7 @@ module.exports = class extends SubGenerator {
       donePromptingFunc = desc;
       desc = undefined;
     }
-    return super.subgeneratorPrompt(p, desc, function (props) {
+    return super.subgeneratorPrompt(p, desc, props => {
       if (this.targetModule === undefined && props.targetModule !== undefined) {
         debug('capturing targetModule from prompt response');
         this.targetModule = props.targetModule;
@@ -149,5 +149,7 @@ module.exports = class extends SubGenerator {
     });
   }
 };
+
+module.exports = SourceSelectingSubGenearator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

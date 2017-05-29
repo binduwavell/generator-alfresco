@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 module.exports = {
 
-  alphaLowerCaseFilter: function (name) {
+  alphaLowerCaseFilter: name => {
     if (!_.isString(name) || _.isEmpty(name)) return undefined;
     let retv;
     retv = name.replace(/[^A-Za-z]/g, '');
@@ -11,7 +11,7 @@ module.exports = {
     return _.toLower(retv);
   },
 
-  alphaCamelCaseFilter: function (name) {
+  alphaCamelCaseFilter: name => {
     if (!_.isString(name) || _.isEmpty(name)) return undefined;
     name = _.camelCase(name);
     let retv;
@@ -20,7 +20,7 @@ module.exports = {
     return retv;
   },
 
-  modelNameFilter: function (name) {
+  modelNameFilter: name => {
     let retv = module.exports.alphaCamelCaseFilter(name);
     if (undefined === retv) return undefined;
     // If the name ends with model, remove it
@@ -30,7 +30,7 @@ module.exports = {
     return retv;
   },
 
-  requiredRegexFilter: function (input, regex) {
+  requiredRegexFilter: (input, regex) => {
     if (_.isNumber(input)) {
       input = '' + input;
     }
@@ -40,13 +40,13 @@ module.exports = {
     return (valid ? input : undefined);
   },
 
-  requiredRegexFilterFactory: function (regex) {
+  requiredRegexFilterFactory: regex => {
     return input => {
       return module.exports.requiredRegexFilter(input, regex);
     };
   },
 
-  versionNumberFilter: function (input) {
+  versionNumberFilter: input => {
     if (_.isNumber(input)) {
       input = '' + input;
       if (input.indexOf('.') === -1) {

@@ -8,7 +8,7 @@ const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;
 const SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
-module.exports = class extends SourceSelectingSubGenerator {
+class BehaviorSubGenerator extends SourceSelectingSubGenerator {
   constructor (args, opts) {
     trace('constructor');
     opts[constants.PROP_WAR] = constants.WAR_TYPE_REPO;
@@ -33,7 +33,7 @@ module.exports = class extends SourceSelectingSubGenerator {
         type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Java package for action class', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('The java package that your behavior class must be placed into.');
           return true;
         },
@@ -51,7 +51,7 @@ module.exports = class extends SourceSelectingSubGenerator {
 
   prompting () {
     debug('prompting');
-    return this.subgeneratorPrompt(this.prompts, function (props) {
+    return this.subgeneratorPrompt(this.prompts, props => {
       debug('prompting done function');
       this.props = props;
 
@@ -86,7 +86,7 @@ module.exports = class extends SourceSelectingSubGenerator {
       this.fs.copyTpl(contextSrc, contextDst, templateContext);
 
       debug('prompting done function finished');
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
@@ -107,5 +107,7 @@ function packageFilter (pkg) {
   if (_.isEmpty(output)) return undefined;
   return output;
 }
+
+module.exports = BehaviorSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

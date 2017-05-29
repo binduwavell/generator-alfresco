@@ -13,7 +13,7 @@ const constants = require('generator-alfresco-common').constants;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 const versions = require('generator-alfresco-common').dependency_versions;
 
-module.exports = class extends Generator {
+class AlfrescoGenerator extends Generator {
   _getConfigValue (key) {
     if (!_.isNil(key)) {
       if (!_.isNil(this.config.get(key))) {
@@ -228,7 +228,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: constants.PROP_PROJECT_PACKAGE,
         message: 'Project package?',
-        default: function (readonlyProps) {
+        default: readonlyProps => {
           return readonlyProps.projectGroupId;
         },
         when: readonlyProps => {
@@ -490,7 +490,7 @@ module.exports = class extends Generator {
   _writingGenerateArchetypeBackupSourceTemplates (sourceDir, forceInMemoryCopy) {
     if (this.sdk.defaultModuleRegistry) {
       this.out.info('Attempting to backup generated amp templates');
-      const folders = this.sdk.defaultModuleRegistry.call(this).map(function (mod) {
+      const folders = this.sdk.defaultModuleRegistry.call(this).map(mod => {
         return mod.artifactId;
       });
       folders.forEach(folderName => {
@@ -592,10 +592,10 @@ module.exports = class extends Generator {
       if (this.sdk.setupNewRepoModule) {
         // Arrange for all generated beans to be included
         paths = this.sdk.defaultModuleRegistry.call(this)
-          .filter(function (mod) {
+          .filter(mod => {
             return (mod.war === constants.WAR_TYPE_REPO);
           })
-          .map(function (mod) {
+          .map(mod => {
             return mod.path;
           });
         if (paths && paths.length > 0) {
@@ -607,10 +607,10 @@ module.exports = class extends Generator {
       if (this.sdk.setupNewShareModule) {
         // Arrange for all generated beans to be included
         paths = this.sdk.defaultModuleRegistry.call(this)
-          .filter(function (mod) {
+          .filter(mod => {
             return (mod.war === constants.WAR_TYPE_REPO);
           })
-          .map(function (mod) {
+          .map(mod => {
             return mod.path;
           });
         if (paths && paths.length > 0) {
@@ -695,5 +695,7 @@ module.exports = class extends Generator {
     }
   }
 };
+
+module.exports = AlfrescoGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -25,7 +25,7 @@ const NAMESPACE_CHOICES = [
   {label: AMP_TYPE_COMMON, namespace: NAMESPACE_COMMON},
 ];
 
-module.exports = class extends SubGenerator {
+class AmpSubGenerator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -34,7 +34,7 @@ module.exports = class extends SubGenerator {
         type: 'list',
         name: 'ampType',
         option: { name: 'amp-type', config: { alias: 'A', desc: 'Type of AMP: Source AMP, Local AMP, Remote AMP or Common AMP', type: String, choices: AMP_TYPES } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs('This generator will create/install amps into your project files:');
           this.out.definition(AMP_TYPE_SOURCE, 'We\'ll create a new source code projects that you can add code/config to');
           this.out.definition(AMP_TYPE_LOCAL, 'Installs an amp file from ./customizations/amps or ./customizations/amps_share into this project');
@@ -58,7 +58,7 @@ module.exports = class extends SubGenerator {
     NAMESPACE_CHOICES.forEach(subgenDesc => {
       helpArray.push('\n' + subgenDesc.label + ' Options:');
       const subgen = this.env.create(subgenDesc.namespace);
-      ['help', 'skip-cache', 'skip-install'].forEach(function (op) {
+      ['help', 'skip-cache', 'skip-install'].forEach(op => {
         subgen._options[op].hide = true;
       });
       helpArray.push(Generator.prototype.optionsHelp.apply(subgen));
@@ -67,17 +67,19 @@ module.exports = class extends SubGenerator {
   }
 
   prompting () {
-    return this.subgeneratorPrompt(this.prompts, function (props) {
+    return this.subgeneratorPrompt(this.prompts, props => {
       NAMESPACE_CHOICES.forEach(subgenDesc => {
         if (props.ampType === subgenDesc.label) {
           debug('delegating to %s', subgenDesc.namespace);
           this.composeWith(subgenDesc.namespace, this.options);
         }
       });
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
 };
+
+module.exports = AmpSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -10,7 +10,7 @@ const filters = require('generator-alfresco-common').prompt_filters;
 const properties = require('generator-alfresco-common').java_properties;
 const SubGenerator = require('../subgenerator.js');
 
-module.exports = class extends SubGenerator {
+class AmpAddLocalSubGenerator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -40,7 +40,7 @@ module.exports = class extends SubGenerator {
         type: 'input',
         name: 'groupId',
         option: { name: 'group-id', config: { alias: 'g', desc: 'amp groupId', type: String } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const p = (readonlyProps.path || this.answerOverrides.path);
           this.gav = getGAVFromAMP(this.destinationPath(p));
           return true;
@@ -94,7 +94,7 @@ module.exports = class extends SubGenerator {
       'and ask you if you want to update each file.',
       '\nType "h" when prompted to get details about your choices.'].join(' '));
 
-    return this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
       if (this.props.path.startsWith(path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_AMPS, path.sep))) {
         this.props.warType = 'repo';
@@ -106,7 +106,7 @@ module.exports = class extends SubGenerator {
         this.out.error('Did not find AMP in expected local AMP folder.');
         this.bail = true;
       }
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
@@ -144,11 +144,11 @@ function findAmps (projectRootPath, folderName) {
   const ampFolder = path.join(projectRootPath, folderName);
   if (!fs.existsSync(ampFolder)) return [];
   return fs.readdirSync(ampFolder)
-    .filter(function (file) {
+    .filter(file => {
       debug('Evaluating if %s ends in .amp', file);
       return file.toLowerCase().endsWith('.amp');
     })
-    .map(function (file) {
+    .map(file => {
       debug('Producing relative path for %s', file);
       return path.join(folderName, file);
     });
@@ -212,7 +212,7 @@ function getGAVFromAMP (path) {
  * @returns {Function}
  */
 function getObjectValueFactory (obj, prop, key, def) {
-  return function () {
+  return () => {
     if (_.isObject(obj) && obj.hasOwnProperty(prop) && _.isObject(obj[prop]) && obj[prop].hasOwnProperty(key)) {
       debug('found obj[%s][%s] = %s', prop, key, obj[prop][key]);
       return obj[prop][key];
@@ -220,5 +220,7 @@ function getObjectValueFactory (obj, prop, key, def) {
     return def || '';
   };
 }
+
+module.exports = AmpAddLocalSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -13,7 +13,7 @@ const BaseGenerator = require('./base-generator.js');
  *
  * Displays a default message
  */
-module.exports = class extends BaseGenerator {
+class SubGenerator extends BaseGenerator {
   subgeneratorPrompt (prompts, desc, donePromptingFunc) {
     const subgeneratorName = path.basename(this.templatePath('..'));
     if (donePromptingFunc === undefined && _.isFunction(desc)) {
@@ -35,11 +35,13 @@ module.exports = class extends BaseGenerator {
 
       debug('calling BaseGenerator.subgeneratorPrompt');
       return super.subgeneratorPrompt(prompts, desc, donePromptingFunc)
-        .then(function () {
+        .then(() => {
           debug('completed BaseGenerator.subgeneratorPrompt');
         });
     }
   }
 };
+
+module.exports = SubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -239,7 +239,7 @@ const PROJECTS = [
   },
 ];
 
-module.exports = class extends SubGenerator {
+class AmpAddCommonSubGenerator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -248,11 +248,11 @@ module.exports = class extends SubGenerator {
     const communityOrEnterprise = this.config.get(constants.PROP_COMMUNITY_OR_ENTERPRISE);
     const sdkVersion = this.config.get(constants.PROP_SDK_VERSION);
     const projects = PROJECTS
-      .filter(function (project) {
+      .filter(project => {
         if (communityOrEnterprise === undefined) return true;
         return (project.availability.indexOf(communityOrEnterprise) > -1);
       })
-      .filter(function (project) {
+      .filter(project => {
         if (sdkVersion === undefined) return true;
         return (project.hasOwnProperty('sdkVersions') ? project.sdkVersions.indexOf(sdkVersion) > -1 : true);
       })
@@ -264,7 +264,7 @@ module.exports = class extends SubGenerator {
       return;
     }
 
-    const projectNames = projects.map(function (project) { return project.name });
+    const projectNames = projects.map(project => project.name);
 
     debug('Offering the following common amps: ', projectNames);
 
@@ -273,7 +273,7 @@ module.exports = class extends SubGenerator {
         type: 'checkbox',
         name: 'projectNames',
         option: { name: 'project-names', config: { alias: 'p', desc: 'Which project(s): ' + projectNames.join(', ') + ' (comma separated)', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           projects.map(project => {
             this.out.definition(project.name, project.description);
             this.out.docs(undefined, project.url);
@@ -296,7 +296,7 @@ module.exports = class extends SubGenerator {
     return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
       const projects = PROJECTS
-        .filter(function (project) {
+        .filter(project => {
           return (props.projectNames.indexOf(project.name) > -1);
         });
       projects.forEach(project => {
@@ -350,9 +350,11 @@ function isNotApplied (project, moduleRegistry) {
 }
 
 function isNotAppliedFactory (moduleRegistry) {
-  return function (project) {
+  return project => {
     return isNotApplied(project, moduleRegistry);
   };
 }
+
+module.exports = AmpAddCommonSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

@@ -54,7 +54,7 @@ const Generator = require('yeoman-generator');
  * In order to reduce boilerplate, each function we create will be bound to this
  * yeoman generator instance automatically.
  */
-module.exports = class extends Generator {
+class BaseGenerator extends Generator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -178,5 +178,7 @@ module.exports = class extends Generator {
     });
   }
 };
+
+module.exports = BaseGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

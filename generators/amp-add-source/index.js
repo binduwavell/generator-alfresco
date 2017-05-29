@@ -11,7 +11,7 @@ const SubGenerator = require('../subgenerator.js');
 const WAR_TYPE_BOTH = 'Both repo & share';
 const WAR_TYPES = [WAR_TYPE_BOTH, constants.WAR_TYPE_REPO, constants.WAR_TYPE_SHARE];
 
-module.exports = class extends SubGenerator {
+class AmpAddSourceSubGenerator extends SubGenerator {
   constructor (args, opts) {
     super(args, opts);
 
@@ -42,7 +42,7 @@ module.exports = class extends SubGenerator {
         type: 'input',
         name: constants.PROP_PROJECT_ARTIFACT_ID_PREFIX,
         option: { name: 'project-artifact-id', config: { alias: 'a', desc: 'prefix for project artifactId', type: String } },
-        when: function (readonlyProps) {
+        when: () => {
           this.out.docs([
             'In order to have consistent artifact names, we will automatically append',
             '-repo, -share and/or -parent to your artifactId prefix where appropriate.',
@@ -77,7 +77,7 @@ module.exports = class extends SubGenerator {
         type: 'confirm',
         name: 'createParent',
         option: { name: 'create-parent', config: { alias: 'p', desc: 'Create parent folder for amps', type: Boolean, choices: ['false', 'true'] } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const warType = (readonlyProps[constants.PROP_WAR] || this.answerOverrides[constants.PROP_WAR]);
           const show = (WAR_TYPE_BOTH === warType);
           if (show) {
@@ -99,7 +99,7 @@ module.exports = class extends SubGenerator {
         type: 'input',
         name: 'parentName',
         option: { name: 'parent-name', config: { alias: 'm', desc: 'Name for parent pom', type: String } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const create = (readonlyProps.createParent !== undefined
             ? readonlyProps.createParent
             : this.answerOverrides.createParent);
@@ -113,7 +113,7 @@ module.exports = class extends SubGenerator {
         type: 'input',
         name: 'parentDescription',
         option: { name: 'parent-description', config: { alias: 's', desc: 'Description for parent pom', type: String } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           const create = (readonlyProps.createParent !== undefined
             ? readonlyProps.createParent
             : this.answerOverrides.createParent);
@@ -183,7 +183,7 @@ module.exports = class extends SubGenerator {
     const defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
     const defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
 
-    return this.subgeneratorPrompt(this.prompts, '', function (props) {
+    return this.subgeneratorPrompt(this.prompts, '', props => {
       this.props = props;
       if (defGroupId === props[constants.PROP_PROJECT_GROUP_ID]) {
         props[constants.PROP_PROJECT_GROUP_ID] = constants.VAR_PROJECT_GROUPID;
@@ -196,7 +196,7 @@ module.exports = class extends SubGenerator {
       } else {
         this.props[constants.PROP_WAR] = [this.props[constants.PROP_WAR]];
       }
-    }).then(function () {
+    }).then(() => {
       debug('prompting finished');
     });
   }
@@ -331,5 +331,7 @@ function whenShareWar (props) {
   const show = (WAR_TYPE_BOTH === warType || constants.WAR_TYPE_SHARE === warType);
   return show;
 }
+
+module.exports = AmpAddSourceSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2

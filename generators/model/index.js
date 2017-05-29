@@ -8,7 +8,7 @@ const filters = require('generator-alfresco-common').prompt_filters;
 const modelFilters = require('./model-prompt-filters.js');
 const SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
 
-module.exports = class extends SourceSelectingSubGenerator {
+class ModelSubGenerator extends SourceSelectingSubGenerator {
   constructor (args, opts) {
     trace('constructor');
     opts[constants.PROP_WAR] = constants.WAR_TYPE_REPO;
@@ -144,10 +144,12 @@ module.exports = class extends SourceSelectingSubGenerator {
       debug('from %s to %s with context %j', templateMessagePath, messageGenPath, props);
       this.fs.copyTpl(templateMessagePath, messageGenPath, props);
       debug('completed model prompting done function');
-    }).then(function () {
+    }).then(() => {
       debug('model prompting finished');
     });
   }
 };
+
+module.exports = ModelSubGenerator;
 
 // vim: autoindent expandtab tabstop=2 shiftwidth=2 softtabstop=2
