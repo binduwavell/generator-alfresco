@@ -1,10 +1,10 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var fs = require('fs');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const fs = require('fs');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
@@ -12,7 +12,7 @@ describe('generator-alfresco:amp-add-local', function () {
   this.timeout(30000);
 
   describe('an advanced project', function () {
-    var osTempDir = path.join(os.tmpdir(), 'temp-test');
+    const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
     // We need a test project setup before we begin
     before(function () {
@@ -50,8 +50,8 @@ describe('generator-alfresco:amp-add-local', function () {
 
     describe('installing a local repo amp using options', function () {
       before(function () {
-        var ampSrc = path.join(__dirname, 'fixtures/repo-amp.amp');
-        var ampPath = path.join(osTempDir, 'customizations/amps/repo-amp.amp');
+        const ampSrc = path.join(__dirname, 'fixtures/repo-amp.amp');
+        const ampPath = path.join(osTempDir, 'customizations/amps/repo-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
           .cd(osTempDir)
@@ -75,8 +75,8 @@ describe('generator-alfresco:amp-add-local', function () {
 
     describe('installing a local share amp using prompts', function () {
       before(function () {
-        var ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
-        var ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
+        const ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
+        const ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
           .cd(osTempDir)
@@ -100,8 +100,8 @@ describe('generator-alfresco:amp-add-local', function () {
 
     describe('installing an empty local repo amp using prompts', function () {
       before(function () {
-        var ampSrc = path.join(__dirname, 'fixtures/empty-amp.amp');
-        var ampPath = path.join(osTempDir, 'customizations/amps/empty-amp.amp');
+        const ampSrc = path.join(__dirname, 'fixtures/empty-amp.amp');
+        const ampPath = path.join(osTempDir, 'customizations/amps/empty-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
           .cd(osTempDir)
@@ -134,8 +134,8 @@ describe('generator-alfresco:amp-add-local', function () {
       // we bail when we discover that there are no amps in ./amps or
       // ./amps_share that aren't already referenced in the module registry.
       before(function () {
-        var ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
-        var ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
+        const ampSrc = path.join(__dirname, 'fixtures/share-amp.amp');
+        const ampPath = path.join(osTempDir, 'customizations/amps_share/share-amp.amp');
         fs.writeFileSync(ampPath, fs.readFileSync(ampSrc));
         return helpers.run(path.join(__dirname, '../generators/amp-add-local'))
           .cd(osTempDir)
@@ -155,7 +155,7 @@ describe('generator-alfresco:amp-add-local', function () {
   });
 
   describe('a basic project', function () {
-    var osTempDir = path.join(os.tmpdir(), 'temp-test');
+    const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
     // We need a test project setup before we begin
     before(function () {

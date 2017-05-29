@@ -1,9 +1,9 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:app-2-1-1', function () {
   describe('provide non-standard project GAV with SDK 2.1.1', function () {

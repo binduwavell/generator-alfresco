@@ -1,14 +1,14 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var debug = require('debug')('generator-alfresco-test:action');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const debug = require('debug')('generator-alfresco-test:action');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:action', function () {
   this.timeout(60000);
-  var osTempDir = path.join(os.tmpdir(), 'temp-test');
+  const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('with 2.1.1 project containing default amps and samples', function () {
     before(function () {
@@ -26,9 +26,9 @@ describe('generator-alfresco:action', function () {
     });
 
     describe('when creating action with two word name', function () {
-      var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TwoWordsActionExecuter.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-two-words-context.xml');
-      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-two-words-action.properties');
+      const actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TwoWordsActionExecuter.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-two-words-context.xml');
+      const messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-two-words-action.properties');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
@@ -66,9 +66,9 @@ describe('generator-alfresco:action', function () {
     });
 
     describe('when creating action with camel case name', function () {
-      var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/CamelCaseActionExecuter.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-camel-case-context.xml');
-      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-camel-case-action.properties');
+      const actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/CamelCaseActionExecuter.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-camel-case-context.xml');
+      const messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-camel-case-action.properties');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
@@ -106,9 +106,9 @@ describe('generator-alfresco:action', function () {
     });
 
     describe('when creating action using package that does not end with .actions', function () {
-      var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TestActionExecuter.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-test-context.xml');
-      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-test-action.properties');
+      const actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/TestActionExecuter.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-test-context.xml');
+      const messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-test-action.properties');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
@@ -146,9 +146,9 @@ describe('generator-alfresco:action', function () {
     });
 
     describe('when creating action using prompts', function () {
-      var actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/PromptsActionExecuter.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-prompts-context.xml');
-      var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-prompts-action.properties');
+      const actionFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/actions/PromptsActionExecuter.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-prompts-context.xml');
+      const messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-prompts-action.properties');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/action'))
@@ -187,7 +187,7 @@ describe('generator-alfresco:action', function () {
   });
 
   describe('when creating actions when there is no project', function () {
-    var noProjectTempDir = path.join(os.tmpdir(), 'no-project');
+    const noProjectTempDir = path.join(os.tmpdir(), 'no-project');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/action'))
@@ -201,9 +201,9 @@ describe('generator-alfresco:action', function () {
     });
 
     it('does not create action files', function () {
-      var actionFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/actions/NoProjectActionExecuter.java');
-      var contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-no-project-context.xml');
-      var messageFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-no-project-action.properties');
+      const actionFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/actions/NoProjectActionExecuter.java');
+      const contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/action-no-project-context.xml');
+      const messageFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/repo-amp-no-project-action.properties');
       assert.noFile([
         actionFile,
         contextFile,

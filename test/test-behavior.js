@@ -1,13 +1,13 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:behavior', function () {
   this.timeout(60000);
-  var osTempDir = path.join(os.tmpdir(), 'temp-test');
+  const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('with simple 2.1.1 project', function () {
     before(function () {
@@ -24,8 +24,8 @@ describe('generator-alfresco:behavior', function () {
     });
 
     describe('when creating behavior with two word name', function () {
-      var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/TwoWords.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-two-words-context.xml');
+      const behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/TwoWords.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-two-words-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
@@ -62,8 +62,8 @@ describe('generator-alfresco:behavior', function () {
     });
 
     describe('when creating behavior with CamelCase class', function () {
-      var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/CamelCase.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-camel-case-context.xml');
+      const behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/CamelCase.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-camel-case-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
@@ -100,8 +100,8 @@ describe('generator-alfresco:behavior', function () {
     });
 
     describe('when creating behavior using package that does not end with .behaviors', function () {
-      var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Test.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-test-context.xml');
+      const behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Test.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-test-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
@@ -138,8 +138,8 @@ describe('generator-alfresco:behavior', function () {
     });
 
     describe('when creating behaviors with prompts', function () {
-      var behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Prompts.java');
-      var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-prompts-context.xml');
+      const behaviorFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/Prompts.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-prompts-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/behavior'))
@@ -177,7 +177,7 @@ describe('generator-alfresco:behavior', function () {
   });
 
   describe('when creating behavior when there is no project', function () {
-    var noProjectTempDir = path.join(os.tmpdir(), 'no-project');
+    const noProjectTempDir = path.join(os.tmpdir(), 'no-project');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/behavior'))
@@ -191,8 +191,8 @@ describe('generator-alfresco:behavior', function () {
     });
 
     it('does not create action files', function () {
-      var behaviorFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/NoProject.java');
-      var contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-no-project-context.xml');
+      const behaviorFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/behaviors/NoProject.java');
+      const contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/behavior-no-project-context.xml');
       assert.noFile([
         behaviorFile,
         contextFile,

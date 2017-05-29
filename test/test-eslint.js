@@ -1,7 +1,8 @@
 'use strict';
 /* eslint-env node, mocha */
-var semver = require('semver');
-var versions = process.versions;
+const semver = require('semver');
+const versions = process.versions;
+
 if (semver.lt(versions.node, '4.4.0')) {
   console.warn('Not running eslint because ' + versions.node + ' is not supported by eslint, min node version is 4.4.0');
 } else {
@@ -9,15 +10,15 @@ if (semver.lt(versions.node, '4.4.0')) {
 }
 
 function runESLint () {
-  var lint = require('mocha-eslint');
+  const lint = require('mocha-eslint');
 
-  var paths = [
+  const paths = [
     'generators/*.js',
     'generators/*/*.js',
     'test/*.js',
   ];
 
-  var options = {
+  const options = {
     // Specify style of output
     formatter: 'compact',
     // Only display warnings if a test is failing

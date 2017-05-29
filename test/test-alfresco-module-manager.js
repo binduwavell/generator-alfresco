@@ -1,24 +1,24 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('assert');
-var memFs = require('mem-fs');
-var FileEditor = require('mem-fs-editor');
-var os = require('os');
-var path = require('path');
-var constants = require('generator-alfresco-common').constants;
+const assert = require('assert');
+const memFs = require('mem-fs');
+const FileEditor = require('mem-fs-editor');
+const os = require('os');
+const path = require('path');
+const constants = require('generator-alfresco-common').constants;
 
 describe('generator-alfresco:alfresco-module-manager', function () {
-  var yomock = {
+  const yomock = {
     config: {
-      'get': function () { return undefined },
-      'set': function () { },
+      'get': () => { return undefined },
+      'set': () => { },
     },
     tmpdir: os.tmpdir(),
-    destinationPath: function (p) { if (p) { return path.join(yomock.tmpdir, p) } else { return yomock.tmpdir } },
+    destinationPath: p => { if (p) { return path.join(yomock.tmpdir, p) } else { return yomock.tmpdir } },
     out: {
-      info: function (msg) { /* console.log('INFO: ' + msg) */ },
-      warn: function (msg) { /* console.log('WARN: ' + msg) */ },
-      error: function (msg) { /* console.log('ERROR: ' + msg) */ },
+      info: msg => { /* console.log('INFO: ' + msg) */ },
+      warn: msg => { /* console.log('WARN: ' + msg) */ },
+      error: msg => { /* console.log('ERROR: ' + msg) */ },
     },
     projectGroupId: 'org.example',
     projectArtifactId: 'test',
@@ -46,7 +46,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('adds a module to the registry', function () {
-      var modules = yomock.moduleManager.moduleRegistry.getModules();
+      const modules = yomock.moduleManager.moduleRegistry.getModules();
       assert.ok(modules);
       assert.deepEqual(modules, [{
         'groupId': 'groupId',
@@ -60,30 +60,30 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('copies the module template', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.templatePomPath)
       );
       assert.ok(pom.getPOMString());
     });
 
     it('updates the project pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.projectPomPath)
       );
       // console.log(pom.getPOMString());
-      var groupIdNode = pom.getOrCreateTopLevelElement('pom', 'groupId');
+      const groupIdNode = pom.getOrCreateTopLevelElement('pom', 'groupId');
       assert.ok(groupIdNode);
       assert.equal(groupIdNode.textContent, 'groupId');
-      var artifactIdNode = pom.getOrCreateTopLevelElement('pom', 'artifactId');
+      const artifactIdNode = pom.getOrCreateTopLevelElement('pom', 'artifactId');
       assert.ok(artifactIdNode);
       assert.equal(artifactIdNode.textContent, 'artifactId');
-      var versionNode = pom.getOrCreateTopLevelElement('pom', 'version');
+      const versionNode = pom.getOrCreateTopLevelElement('pom', 'version');
       assert.ok(versionNode);
       assert.equal(versionNode.textContent, 'version');
-      var packagingNode = pom.getOrCreateTopLevelElement('pom', 'packaging');
+      const packagingNode = pom.getOrCreateTopLevelElement('pom', 'packaging');
       assert.ok(packagingNode);
       assert.equal(packagingNode.textContent, 'packaging');
-      var parentNode = pom.getOrCreateTopLevelElement('pom', 'parent');
+      const parentNode = pom.getOrCreateTopLevelElement('pom', 'parent');
       assert.ok(parentNode);
       assert.equal(parentNode.toString(), [
         '<parent xmlns="http://maven.apache.org/POM/4.0.0">',
@@ -95,28 +95,28 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('adds a module to the top pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.topPomPath)
       );
-      var mod = pom.findModule('artifactId');
+      const mod = pom.findModule('artifactId');
       // console.log(pom.getPOMString());
       assert.ok(mod);
     });
 
     it('adds a dependency to the war pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.wrapperPomPath)
       );
-      var dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
+      const dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
       // console.log(pom.getPOMString());
       assert.ok(dep);
     });
 
     it('adds an overlay to the war pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.wrapperPomPath)
       );
-      var overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');
+      const overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');
       // console.log(pom.getPOMString());
       assert.ok(overlay);
     });
@@ -128,11 +128,11 @@ describe('generator-alfresco:alfresco-module-manager', function () {
       // no module.
       yomock.moduleManager.addModule('groupId', 'artifactId', 'version', 'packaging', 'repo', 'source', 'path');
       yomock.moduleManager.save();
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.topPomPath)
       );
       pom.removeModule('artifactId');
-      var mod = pom.findModule('artifactId');
+      const mod = pom.findModule('artifactId');
       assert.equal(mod, undefined);
     });
   });
@@ -157,7 +157,7 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes a module from the registry', function () {
-      var modules = yomock.moduleManager.moduleRegistry.getModules();
+      const modules = yomock.moduleManager.moduleRegistry.getModules();
       assert.ok(modules);
       assert.deepEqual(modules, []);
     });
@@ -167,26 +167,26 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     });
 
     it('removes module from the top pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.topPomPath)
       );
-      var mod = pom.findModule('artifactId');
+      const mod = pom.findModule('artifactId');
       assert.equal(mod, undefined);
     });
 
     it('removes dependency from the war wrapper pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.wrapperPomPath)
       );
-      var dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
+      const dep = pom.findDependency('groupId', 'artifactId', 'version', 'packaging');
       assert.equal(dep, undefined);
     });
 
     it('removes overlay from the war wrapper pom', function () {
-      var pom = require('generator-alfresco-common').maven_pom(
+      const pom = require('generator-alfresco-common').maven_pom(
         yomock.fs.read(yomock.wrapperPomPath)
       );
-      var overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');
+      const overlay = pom.findOverlay('groupId', 'artifactId', 'packaging');
       assert.equal(overlay, undefined);
     });
   });
