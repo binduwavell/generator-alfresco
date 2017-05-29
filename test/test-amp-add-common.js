@@ -1,14 +1,14 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:amp-add-common', function () {
   this.timeout(30000);
 
-  var osTempDir = path.join(os.tmpdir(), 'temp-common-test');
+  const osTempDir = path.join(os.tmpdir(), 'temp-common-test');
 
   // We need a test project setup before we begin
   before(function () {

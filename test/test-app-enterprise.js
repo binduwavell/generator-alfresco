@@ -1,9 +1,9 @@
 'use strict';
 /* eslint-env node, mocha */
-var path = require('path');
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
+const path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
 
 describe('generator-alfresco:app:enterprise', function () {
   this.timeout(60000);

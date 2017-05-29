@@ -1,15 +1,15 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:app-remove-sample-code', function () {
   describe('remove sdk sample code', function () {
     this.timeout(60000);
 
-    var osTempDir = path.join(os.tmpdir(), './temp-test');
+    const osTempDir = path.join(os.tmpdir(), './temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
@@ -50,23 +50,26 @@ describe('generator-alfresco:app-remove-sample-code', function () {
 
       it('deletes sample files', function () {
         assert.noFile([
-          'repo-amp/src/main/amp/web/css/demoamp.css',
-          'repo-amp/src/main/amp/web/jsp/demoamp.jsp',
-          'repo-amp/src/main/amp/web/scripts/demoamp.js',
-          'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
-          'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
-          'repo-amp/src/main/amp/config/alfresco/extension/templates/webscripts/helloworld.get.js',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/bootstrap-context.xml',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/service-context.xml',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/webscript-context.xml',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/content-model.xml',
-          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/workflow-model.xml',
-          'repo-amp/src/main/java/org/alfresco/demoamp/Demo.java',
-          'repo-amp/src/main/java/org/alfresco/demoamp/DemoComponent.java',
-          'repo-amp/src/main/java/org/alfresco/demoamp/HelloWorldWebScript.java',
-          'repo-amp/src/test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
-        ]);
+          'web/css/demoamp.css',
+          'web/jsp/demoamp.jsp',
+          'web/scripts/demoamp.js',
+          'config/alfresco/extension/templates/webscripts/helloworld.get.desc.xml',
+          'config/alfresco/extension/templates/webscripts/helloworld.get.html.ftl',
+          'config/alfresco/extension/templates/webscripts/helloworld.get.js',
+          'config/alfresco/module/repo-amp/webscripts/helloworld.get.js',
+          'config/alfresco/module/repo-amp/context/bootstrap-context.xml',
+          'config/alfresco/module/repo-amp/context/service-context.xml',
+          'config/alfresco/module/repo-amp/context/webscript-context.xml',
+          'config/alfresco/module/repo-amp/model/content-model.xml',
+          'config/alfresco/module/repo-amp/model/workflow-model.xml',
+        ].map(relativePath => path.join('repo-amp/src/main/amp', relativePath)));
+
+        assert.noFile([
+          'main/java/org/alfresco/demoamp/Demo.java',
+          'main/java/org/alfresco/demoamp/DemoComponent.java',
+          'main/java/org/alfresco/demoamp/HelloWorldWebScript.java',
+          'test/java/org/alfresco/demoamp/test/DemoComponentTest.java',
+        ].map(relativePath => path.join('repo-amp/src', relativePath)));
       });
 
       it('creates files to protect some directories', function () {

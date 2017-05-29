@@ -1,10 +1,10 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var constants = require('generator-alfresco-common').constants;
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const constants = require('generator-alfresco-common').constants;
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:app-environment', function () {
   describe('detects invalid JAVA_HOME quickly', function () {
@@ -13,7 +13,7 @@ describe('generator-alfresco:app-environment', function () {
     before(function () {
       this.bail = false;
       if (process.env.JAVA_HOME) {
-        var javaHome = process.env.JAVA_HOME;
+        const javaHome = process.env.JAVA_HOME;
         process.env.JAVA_HOME = 'asdfASDF';
         return helpers.run(path.join(__dirname, '../generators/app'))
           .inDir(path.join(os.tmpdir(), './temp-test'))
@@ -23,7 +23,7 @@ describe('generator-alfresco:app-environment', function () {
             removeDefaultSourceSamples: false,
           })
           .toPromise()
-          .then(function (dir) {
+          .then(dir => {
             process.env.JAVA_HOME = javaHome;
           });
       } else {
@@ -76,7 +76,7 @@ describe('generator-alfresco:app-environment', function () {
     this.timeout(4000);
 
     before(function () {
-      var m2Home = process.env.M2_HOME;
+      const m2Home = process.env.M2_HOME;
       process.env.M2_HOME = 'asdfASDF';
       return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
@@ -86,7 +86,7 @@ describe('generator-alfresco:app-environment', function () {
           removeDefaultSourceSamples: false,
         })
         .toPromise()
-        .then(function (dir) {
+        .then(dir => {
           if (m2Home) {
             process.env.M2_HOME = m2Home;
           } else {

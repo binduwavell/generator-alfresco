@@ -1,11 +1,11 @@
 'use strict';
 /* eslint-env node, mocha */
-let assert = require('yeoman-assert');
-let helpers = require('yeoman-test');
-let os = require('os');
-let path = require('path');
-let BaseGenerator = require('../generators/base-generator.js');
-let filters = require('generator-alfresco-common').prompt_filters;
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
+const BaseGenerator = require('../generators/base-generator.js');
+const filters = require('generator-alfresco-common').prompt_filters;
 
 let state = { };
 
@@ -27,7 +27,7 @@ class TestGenerator extends BaseGenerator {
         type: 'input',
         name: 'myprompt',
         option: { name: 'myprompt', config: { alias: 'p', desc: 'Prompt item', type: String } },
-        when: function () {
+        when: () => {
           return true;
         },
         message: 'What is the value of your prompt?',
@@ -38,7 +38,7 @@ class TestGenerator extends BaseGenerator {
         type: 'input',
         name: 'bail',
         option: { name: 'bail', config: { alias: 'b', desc: 'Bail item', type: String } },
-        when: function (readonlyProps) {
+        when: readonlyProps => {
           if (readonlyProps.myprompt === 'bail') {
             this.bail = true;
           }
@@ -73,7 +73,7 @@ class TestGenerator extends BaseGenerator {
 
 describe('generator-alfresco:base-generator', function () {
   this.timeout(300);
-  let osTempDir = path.join(os.tmpdir(), 'temp-test');
+  const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   describe('withOptions', function () {
     // We need a test project setup before we begin
@@ -92,9 +92,9 @@ describe('generator-alfresco:base-generator', function () {
     });
 
     it('sets appropriate filter function', function () {
-      let myprompt = state.generator.processedPrompts[1];
+      const myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('filter'));
-      let filter = myprompt.filter;
+      const filter = myprompt.filter;
       let v = filter('');
       assert.equal(v, undefined);
       v = filter(123);
@@ -102,9 +102,9 @@ describe('generator-alfresco:base-generator', function () {
     });
 
     it('sets appropriate validate function', function () {
-      let myprompt = state.generator.processedPrompts[1];
+      const myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      let validate = myprompt.validate;
+      const validate = myprompt.validate;
       let v = validate('');
       assert.equal(v, 'The required \u001b[33mmyprompt\u001b[39m value is missing or invalid');
       v = validate('a value');
@@ -112,25 +112,25 @@ describe('generator-alfresco:base-generator', function () {
     });
 
     it('uses validate invalidMessage string for generated validate function', function () {
-      let origprompt = state.generator.prompts[1];
-      let myprompt = state.generator.processedPrompts[1];
+      const origprompt = state.generator.prompts[1];
+      const myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      let validate = myprompt.validate;
+      const validate = myprompt.validate;
       origprompt.invalidMessage = 'Bad stuff';
-      let v = validate('');
+      const v = validate('');
       delete origprompt.invalidMessage;
       assert.equal(v, 'Bad stuff');
     });
 
     it('uses validate invalidMessage function for generated validate function', function () {
-      let origprompt = state.generator.prompts[1];
-      let myprompt = state.generator.processedPrompts[1];
+      const origprompt = state.generator.prompts[1];
+      const myprompt = state.generator.processedPrompts[1];
       assert.ok(myprompt.hasOwnProperty('validate'));
-      let validate = myprompt.validate;
-      origprompt.invalidMessage = function () {
+      const validate = myprompt.validate;
+      origprompt.invalidMessage = () => {
         return 'Your input is bad';
       };
-      let v = validate('');
+      const v = validate('');
       delete origprompt.invalidMessage;
       assert.equal(v, 'Your input is bad');
     });

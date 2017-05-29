@@ -1,16 +1,16 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var constants = require('generator-alfresco-common').constants;
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const constants = require('generator-alfresco-common').constants;
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:app-local', function () {
   describe('default prompts with local SDK', function () {
     this.timeout(60000);
 
-    var osTempDir = path.join(os.tmpdir(), './temp-test');
+    const osTempDir = path.join(os.tmpdir(), './temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))

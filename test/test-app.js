@@ -1,12 +1,12 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var constants = require('generator-alfresco-common').constants;
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
-var fs = require('fs');
-var rmdir = require('rmdir');
+const assert = require('yeoman-assert');
+const constants = require('generator-alfresco-common').constants;
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
+const rmdir = require('rmdir');
 
 describe('generator-alfresco:app', function () {
   describe('default prompts', function () {
@@ -94,7 +94,7 @@ describe('generator-alfresco:app', function () {
     });
 
     describe('when trying to generate model without any source modules', function () {
-      var osTempDir = path.join(os.tmpdir(), 'temp-test');
+      const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/model'))
@@ -111,8 +111,8 @@ describe('generator-alfresco:app', function () {
       });
 
       it('model files should not be generated', function () {
-        var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
-        var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        const modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+        const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
         assert.noFile([
           modelFile,
           contextFile,
@@ -123,7 +123,7 @@ describe('generator-alfresco:app', function () {
 
   describe('generate project with default source amps', function () {
     this.timeout(60000);
-    var osTempDir = path.join(os.tmpdir(), 'temp-test');
+    const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
@@ -184,8 +184,8 @@ describe('generator-alfresco:app', function () {
             .toPromise();
         });
         it('model files should not be generated', function () {
-          var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
-          var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+          const modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+          const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
           assert.noFile([
             modelFile,
             contextFile,
@@ -197,11 +197,12 @@ describe('generator-alfresco:app', function () {
 
   describe('generate project within a different yeoman project', function () {
     this.timeout(60000);
-    var osTempDir = path.join(os.tmpdir(), 'a-yo-project');
+    const osTempDir = path.join(os.tmpdir(), 'a-yo-project');
     if (!fs.existsSync(osTempDir)) {
       fs.mkdirSync(osTempDir);
     } else {
-      rmdir(osTempDir, function (err, dirs, files) {
+      // TODO(bwavell): this rmdir is async and could cause issues!
+      rmdir(osTempDir, err => {
         if (err) throw err;
         fs.mkdirSync(osTempDir);
       });

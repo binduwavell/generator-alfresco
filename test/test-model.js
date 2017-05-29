@@ -1,13 +1,13 @@
 'use strict';
 /* eslint-env node, mocha */
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
-var os = require('os');
-var path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
+const os = require('os');
+const path = require('path');
 
 describe('generator-alfresco:model', function () {
   this.timeout(60000);
-  var osTempDir = path.join(os.tmpdir(), 'temp-test');
+  const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
   before(function () {
     return helpers.run(path.join(__dirname, '../generators/app'))
@@ -36,10 +36,10 @@ describe('generator-alfresco:model', function () {
         'namespace-prefix': 'zz',
       })
       .toPromise()
-      .then(function (dir) {
-        var modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
-        var contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
-        var messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/testModel.properties');
+      .then(dir => {
+        const modelFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/testModel.xml');
+        const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/test-model-context.xml');
+        const messageFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/testModel.properties');
         assert.file([
           modelFile,
           contextFile,
@@ -101,13 +101,13 @@ describe('generator-alfresco:model', function () {
         'model-version': 'asd',
       })
       .toPromise()
-      .then(function (dir) {
+      .then(dir => {
         // console.log(fs.readdirSync(path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated')));
         assert.noFile([
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/invalidVersionModel.xml'),
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/invalidversion-model-context.xml'),
-          path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/invalidVersionModel.properties'),
-        ]);
+          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/model/generated/invalidVersionModel.xml',
+          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/invalidversion-model-context.xml',
+          'repo-amp/src/main/amp/config/alfresco/module/repo-amp/messages/generated/invalidVersionModel.properties',
+        ].map(relativePath => path.join(osTempDir, relativePath)));
       });
   });
 
