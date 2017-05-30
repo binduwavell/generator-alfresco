@@ -326,18 +326,24 @@ const PROJECTS = [
     ],
   },
   // Younes Regaieg via Skype suggests com/ent 4.2 through 5.2
+  // https://search.maven.org/#search%7Cga%7C1%7Calfresco-dynamic-extensions-repo
+  // http://localhost:8080/alfresco/service/dynamic-extensions/
+  // http://localhost:8080/alfresco/s/dynamic-extensions/web-scripts
   {
-    name: 'Xenit build of Alfresco Dynamic Extensions',
+    name: 'Xenit - Dynamic Extensions',
     description: 'Rapid development of Alfresco repository extensions in Java.',
     url: 'https://github.com/xenit-eu/dynamic-extensions-for-alfresco',
     availability: ['Community', 'Enterprise'],
     repoGroupId: 'eu.xenit',
     repoArtifactId: 'alfresco-dynamic-extensions-repo',
-    repoVersion: '1.5.0',
+    repoVersion: '1.5.1',
     shareGroupId: undefined,
     shareArtifactId: undefined,
     shareVersion: undefined,
   },
+  // https://search.maven.org/#search%7Cga%7C1%7Ccare4alf
+  // https://bitbucket.org/xenit/care4alf
+  // http://localhost:8080/alfresco/service/xenit/care4alf/
 ];
 
 class AmpAddCommonSubGenerator extends SubGenerator {

@@ -213,7 +213,7 @@ of the SDK:
 | Share Site Space Templates     | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      |
 | Support Tools                  |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |
 | Uploader Plus                  | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        |
-| Xenit Alfresco Dynamic Exts    | 1.5.0     | 1.5.0      | 1.5.0     | 1.5.0      | 1.5.0     | 1.5.0      | 1.5.0     | 1.5.0      | 1.5.0     | 1.5.0      |
+| Xenit Dynamic Extensions       | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      |
 
 You don't need to worry about this too much as it will automatically detect the SDK 
 version and if you are using Community or Enterprise and even which AMPs you have
