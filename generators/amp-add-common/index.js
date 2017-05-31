@@ -325,6 +325,49 @@ const PROJECTS = [
       },
     ],
   },
+  // https://search.maven.org/#search%7Cga%7C1%7Ccare4alf
+  // http://localhost:8080/alfresco/service/xenit/care4alf/
+  // http://localhost:8080/alfresco/service/xenit/care4alf/#/monitoring
+  // http://central.maven.org/maven2/eu/xenit/care4alf/1.1.0/care4alf-1.1.0.jar
+  {
+    name: 'Xenit - Care4Alf',
+    description: 'Helps administrators with common Alfresco problems. It also helps developers with debugging Alfresco. \nNOT COMPATIBLE WITH SPRING-LOADED.',
+    url: 'https://bitbucket.org/xenit/care4alf',
+    availability: ['Community', 'Enterprise'],
+    sdkVersions: ['2.1.0', '2.1.1', '2.2.0'],
+    repo: [
+      {
+        groupId: 'eu.xenit',
+        artifactId: 'care4alf',
+        version: '1.1.0',
+      },
+      {
+        groupId: 'eu.xenit',
+        artifactId: 'alfresco-dynamic-extensions-repo',
+        version: '1.5.1',
+      },
+    ],
+    share: [],
+  },
+  // Younes Regaieg via Skype suggests com/ent 4.2 through 5.2
+  // https://search.maven.org/#search%7Cga%7C1%7Calfresco-dynamic-extensions-repo
+  // http://localhost:8080/alfresco/service/dynamic-extensions/
+  // http://localhost:8080/alfresco/s/dynamic-extensions/web-scripts
+  {
+    name: 'Xenit - Dynamic Extensions',
+    description: 'Rapid development of Alfresco repository extensions in Java. \nNOT COMPATIBLE WITH SPRING-LOADED.',
+    url: 'https://github.com/xenit-eu/dynamic-extensions-for-alfresco',
+    availability: ['Community', 'Enterprise'],
+    sdkVersions: ['2.1.0', '2.1.1', '2.2.0'],
+    repo: [
+      {
+        groupId: 'eu.xenit',
+        artifactId: 'alfresco-dynamic-extensions-repo',
+        version: '1.5.1',
+      },
+    ],
+    share: [],
+  },
 ];
 
 class AmpAddCommonSubGenerator extends SubGenerator {
