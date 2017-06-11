@@ -7,6 +7,7 @@ TODO
   - [ ] run-without-springloaded.sh should not be added to the project
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
   - [ ] check if scripts need updating
+  - [ ] need to test and update all sub-generators
 - [ ] Include instructions about how to configure IDEs (or generate the config)
   - [ ] Eclipse
   - [ ] IntelliJ
