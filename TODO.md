@@ -1,11 +1,12 @@
 TODO
 ====
 
-- [ ] Make progress on a share widget sub-generator
-  - [ ] Offer list of share source modules
-  - [ ] Start from https://github.com/myprysm/generator-alfresco/tree/master/generators/share-widget
-- [ ] Ask if we should include codenvy factory in the project
-  - [ ] Need to figure out how we are going to handle enterprise
+- [ ] Support SDK 3.0 and up
+  - [ ] tests are broken!
+  - [ ] run.sh rewriting is wrong for SDK 3
+  - [ ] run-without-springloaded.sh should not be added to the project
+  - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [ ] check if scripts need updating
 - [ ] Include instructions about how to configure IDEs (or generate the config)
   - [ ] Eclipse
   - [ ] IntelliJ

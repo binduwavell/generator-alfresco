@@ -32,21 +32,27 @@ function MakeAlfrescoModuleManager (yo) {
       yo.out.info('Adding ' + mod.artifactId + ' module to module registry');
       this.moduleRegistry.addModule(mod);
 
+      // SDK 3.0 and up use an enhaned Alfresco Maven plugin that is able to do
+      // tasks that were previously handled manually via runner and wrapper modules.
+      const enhancedPlugin = (yo.sdk.usesEnhancedAlfrescoMavenPlugin && yo.sdk.usesEnhancedAlfrescoMavenPlugin.call(yo));
+
       // Stuff we only need to do for source amps
       if (mod.location === 'source') {
         debug('Scheduling ops for ' + mod.artifactId);
         this.ops.push(() => { copyTemplateForModule(mod) });
         this.ops.push(() => { renamePathElementsForModule(mod) });
         this.ops.push(() => { addModuleToParentPom(mod) });
-        if (mod.war === constants.WAR_TYPE_SHARE) {
+        if (mod.war === constants.WAR_TYPE_SHARE && !enhancedPlugin) {
           this.ops.push(() => { addFailsafeConfigToRunner(mod) });
         }
         this.ops.push(() => { addModuleToTomcatContext(mod) });
         this.ops.push(() => { updateProjectPom(mod) });
       }
 
-      this.ops.push(() => { addModuleToWarWrapper(mod) });
-      // TODO: what else do we need to do when we remove a module?
+      if (!enhancedPlugin) {
+        this.ops.push(() => { addModuleToWarWrapper(mod) });
+      }
+      // TODO: what else do we need to do when we add a module?
       debug('addModule() finished');
     }
 
@@ -92,7 +98,13 @@ function MakeAlfrescoModuleManager (yo) {
     if (!yo.fs.exists(toPath)) {
       const prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId');
-      const fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
+      let modType = mod.war;
+      // Alfresco SDK 3.0 and up use the word platform instead of repo in source module names
+      const enhancedPlugin = (yo.sdk.usesEnhancedAlfrescoMavenPlugin && yo.sdk.usesEnhancedAlfrescoMavenPlugin.call(yo));
+      if (enhancedPlugin && modType === constants.WAR_TYPE_REPO) {
+        modType = 'platform';
+      }
+      const fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + modType + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         debug('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);

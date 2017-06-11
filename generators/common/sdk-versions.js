@@ -9,26 +9,50 @@ const domutils = require('generator-alfresco-common').xml_dom_utils;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 
 module.exports = {
+  '3.0.0': {
+    archetypeGroupId: 'org.alfresco.maven.archetype',
+    archetypeArtifactId: 'alfresco-allinone-archetype',
+    archetypeVersion: '3.0.0',
+    promptForProjectPackage: true,
+    providedCommunityVersion: '5.2.e',
+    providedEnterpriseVersion: '5.2.0',
+    supportedJavaVersions: '^1.8.0',
+    supportedMavenVersions: '^3.3.0',
+    supportedRepositoryVersions: '5.2.e+ and 5.2.0+',
+    useArchetypeTemplate: true,
+    defaultModuleRegistry: jarModuleRegistry,
+    registerDefaultModules: registerDefaultModules,
+    removeDefaultModules: undefined,
+    removeRepoSamples: undefined,
+    removeShareSamples: undefined,
+    sdkVersionPrefix: sdkVersionPrefix,
+    setupNewRepoModule: setupNewPlatformJar,
+    setupNewShareModule: setupNewShareJar,
+    targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
+  },
   '2.2.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.2.0',
     promptForProjectPackage: true,
-    supportedJavaVersions: '^1.8.0',
-    supportedMavenVersions: '^3.2.5',
     providedCommunityVersion: '5.1.e',
     providedEnterpriseVersion: '5.1',
+    supportedJavaVersions: '^1.8.0',
+    supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.1.d+ and 5.1+',
     useArchetypeTemplate: true,
-    sdkVersionPrefix: sdkVersionPrefix,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    setupNewRepoModule: setupNewRepoAmp,
-    setupNewShareModule: setupNewShareAmp,
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkVersionPrefix: sdkVersionPrefix,
+    setupNewRepoModule: setupNewRepoAmp,
+    setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: beforeExit,
   },
   '2.1.1': {
@@ -36,61 +60,67 @@ module.exports = {
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.1.1',
     promptForProjectPackage: true,
-    supportedJavaVersions: '^1.7.0',
-    supportedMavenVersions: '^3.2.5',
     providedCommunityVersion: '5.0.d',
     providedEnterpriseVersion: '5.0.1',
+    supportedJavaVersions: '^1.7.0',
+    supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.0.d+ and 5.0.1+',
     useArchetypeTemplate: true,
-    sdkVersionPrefix: sdkVersionPrefix,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    setupNewRepoModule: setupNewRepoAmp,
-    setupNewShareModule: setupNewShareAmp,
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkVersionPrefix: sdkVersionPrefix,
+    setupNewRepoModule: setupNewRepoAmp,
+    setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
   },
   '2.1.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.1.0',
     promptForProjectPackage: true,
-    supportedJavaVersions: '^1.8.0',
-    supportedMavenVersions: '^3.2.5',
     providedCommunityVersion: '5.0.d',
     providedEnterpriseVersion: '5.0.1',
+    supportedJavaVersions: '^1.8.0',
+    supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.0.d+ and 5.0.1+',
     useArchetypeTemplate: true,
-    sdkVersionPrefix: sdkVersionPrefix,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    setupNewRepoModule: setupNewRepoAmp,
-    setupNewShareModule: setupNewShareAmp,
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkVersionPrefix: sdkVersionPrefix,
+    setupNewRepoModule: setupNewRepoAmp,
+    setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
   },
   '2.0.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
     archetypeVersion: '2.0.0',
     promptForProjectPackage: false,
-    supportedJavaVersions: '^1.7.0',
-    supportedMavenVersions: '^3.0.5',
     providedCommunityVersion: '5.0.c',
     providedEnterpriseVersion: '5.0',
+    supportedJavaVersions: '^1.7.0',
+    supportedMavenVersions: '^3.0.5',
     supportedRepositoryVersions: '5.0.c and 5.0',
     useArchetypeTemplate: true,
-    sdkVersionPrefix: sdkVersionPrefix,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultModules: removeAmps,
+    sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
-    removeDefaultModules: removeAmps,
     targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
   },
   'local': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
@@ -99,19 +129,21 @@ module.exports = {
     archetypeCatalog: 'local',
     promptForArchetypeVersion: true,
     promptForProjectPackage: true,
-    supportedJavaVersions: '^1.8.0',
-    supportedMavenVersions: '^3.2.5',
     providedCommunityVersion: '?',
     providedEnterpriseVersion: '?',
+    supportedJavaVersions: '^1.8.0',
+    supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: 'Use local Alfresco SDK clone',
     useArchetypeTemplate: false,
-    sdkVersionPrefix: sdkVersionPrefix,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultModules: removeAmps,
+    sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
-    removeDefaultModules: removeAmps,
     targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
   },
 };
 
@@ -156,12 +188,16 @@ function targetFolderName (basename) {
   return basename;
 }
 
+/*
+ * When a project is created from an archetype there
+ * may be source amps/jars provided by the archetype.
+ * These functions produce module registry entries that
+ * represent these OOTB source modules.
+ */
+
 /**
- * All supported SDK versions work with amps and not
- * jar modules. However, we know jar modules are
- * going to happen soon, so factored this out so we
- * can create something similar for jar modules for
- * newer SDK version.
+ * All SDK versions prior to 3.0 work with amps and not
+ * jar modules.
  *
  * @returns {*[]} The module registry that represents
  *   what is provided when the archetype has stamped
@@ -192,6 +228,39 @@ function ampModuleRegistry () {
 }
 
 /**
+ * SDK 3.0 and above work with jar packaging. Although
+ * it is possible to also configure that an amp be created
+ * via the assembly plugin and an included config file.
+ *
+ * @returns {*[]} The module registry that represents
+ *   what is provided when the archetype has stamped
+ *   a project out.
+ */
+function jarModuleRegistry () {
+  const prefix = sdkVersionPrefix.call(this);
+  return [
+    {
+      'groupId': '${project.groupId}',
+      'artifactId': prefix + 'platform-jar',
+      'version': '${project.version}',
+      'packaging': 'jar',
+      'war': constants.WAR_TYPE_REPO,
+      'location': 'source',
+      'path': prefix + 'platform-jar',
+    },
+    {
+      'groupId': '${project.groupId}',
+      'artifactId': prefix + 'share-jar',
+      'version': '${project.version}',
+      'packaging': 'jar',
+      'war': constants.WAR_TYPE_SHARE,
+      'location': 'source',
+      'path': prefix + 'share-jar',
+    },
+  ];
+}
+
+/**
  * During initial project setup we need code that will
  * register the default modules provided by the SDK with
  * the module manager / registry. Currently this is
@@ -214,8 +283,20 @@ function registerDefaultModules () {
   debug('registerDefaultModules() finished');
 }
 
+/*
+ * When a repo/platform source module is created, we apply some
+ * customizations to what is provided by the original archetype.
+ */
+
 /**
- * Apply generator specific repository amp customizations.
+ * @param pathPrefix
+ */
+function setupNewPlatformJar (pathPrefix) {
+  this.out.info('Setting up new platform jar: ' + pathPrefix);
+  debug('setupNewPlatformJar() finished');
+}
+
+/**
  * For example we add the generated context folder and an
  * include for the same.
  *
@@ -266,15 +347,25 @@ function setupNewRepoAmp (pathPrefix) {
   debug('setupNewRepoAmp() finished');
 }
 
+/*
+ * When a share source module is created, we apply some customizations
+ * to what is provided by the original archetype.
+ */
+
 /**
- * Apply generator specific share amp customizations.
- * Currently nothing to do here.
- *
  * @param pathPrefix
  */
 function setupNewShareAmp (pathPrefix) {
   this.out.info('Setting up new share amp: ' + pathPrefix);
   debug('setupNewShareAmp() finished');
+}
+
+/**
+ * @param pathPrefix
+ */
+function setupNewShareJar (pathPrefix) {
+  this.out.info('Setting up new share jar: ' + pathPrefix);
+  debug('setupNewShareJar() finished');
 }
 
 function removeAmps () {
@@ -398,9 +489,39 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   debug('removeShareSamples() finished');
 }
 
+/*
+ * Alfresco SDK 3.0 added a much improved Alfresco Maven Plugin.
+ * This is able to replace the runner module and the war wrapper
+ * modules.
+ */
+
+/**
+ * @returns {boolean}
+ */
+function usesEnhancedAlfrescoMavenPlugin () {
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=3.0.0-SNAPSHOT')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/*
+ * Once archetype generation has been completed and everything is
+ * written out to the filesystem, we may want to perform some additional
+ * tasks.
+ */
+
+/**
+ * For SDK >= 2.2.0 and < 3.0.0 we make run.sh print a warning that
+ * spring-loaded is no longer supported and run-without-springloaded.sh
+ * should be used instead.
+ */
 function beforeExit () {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')
+      && semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '<3.0.0-SNAPSHOT')) {
       fs.writeFileSync(this.destinationPath(constants.FILE_RUN_SH), [
         '#!/bin/bash',
         'echo WARNING: This version of the SDK does not support spring-loaded.',
