@@ -25,6 +25,7 @@ module.exports = {
     removeDefaultModules: undefined,
     removeRepoSamples: undefined,
     removeShareSamples: undefined,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewPlatformJar,
     setupNewShareModule: setupNewShareJar,
@@ -48,6 +49,7 @@ module.exports = {
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
@@ -71,6 +73,7 @@ module.exports = {
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
@@ -94,6 +97,7 @@ module.exports = {
     removeDefaultModules: removeAmps,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
@@ -115,6 +119,7 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeAmps,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
@@ -138,6 +143,7 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeAmps,
+    sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
@@ -148,6 +154,20 @@ module.exports = {
 };
 
 // ===== Shared scripts =====
+
+/**
+ * Looks at the SDK archetype version used to create the project and
+ * extracts the major version number.
+ *
+ * @returns {number} major version number from SDK
+ * @throws {TypeError}
+ */
+function sdkMajorVersion () {
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    return semver.major(this.config.get(constants.PROP_ARCHETYPE_VERSION));
+  }
+  throw TypeError('Unable to locate SDK version to evaluate.');
+}
 
 /**
  * Starting in the dev branch for the 2.2.0 SDK we started creating

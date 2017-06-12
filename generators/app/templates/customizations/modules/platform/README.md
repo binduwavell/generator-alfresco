@@ -1,7 +1,7 @@
 platform
 ========
-Place pre-packaged repo modules in here and then use:
+Place pre-packaged repo jar modules in here and then use:
 
-    yo alfresco:module (NOT IMPLEMENTED YET)
+    yo alfresco:module-add-local
 
-to insert references to them into the repo pom.
+to install into your project.

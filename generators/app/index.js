@@ -561,12 +561,31 @@ class AlfrescoGenerator extends Generator {
         tplContext
       );
     });
-    // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
-    trace('Copying scripts');
-    [
-      constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
-      constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
-    ].forEach(fileName => {
+    // copy sdk specific scripts
+    const sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
+    this.out.info('Copying SDK ' + sdkMajorVersion + ' specific scripts');
+    this.fs.copyTpl(
+      this.templatePath('sdk' + sdkMajorVersion + '-' + constants.FOLDER_SCRIPTS),
+      this.destinationPath(constants.FOLDER_SCRIPTS),
+      tplContext
+    );
+    // copy launcher scripts like run.sh to top level folder
+    trace('Copying scripts to top level folder');
+    let scriptsToTop = [];
+    if (sdkMajorVersion === 2) {
+      scriptsToTop = [
+        constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
+        constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
+      ];
+    }
+    if (sdkMajorVersion === 3) {
+      scriptsToTop = [
+        constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
+        constants.FILE_DEBUG_SH, 'debug.bat',
+      ];
+    }
+    scriptsToTop.forEach(fileName => {
+      trace('Copying ' + fileName + ' to top level folder');
       this.fs.copy(
         this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
         this.destinationPath(fileName)
@@ -670,19 +689,36 @@ class AlfrescoGenerator extends Generator {
 
   _installMakeScriptsExecutable () {
     if (this.bail) return;
-    const cwd = process.cwd();
-    const scripts = [
-      constants.FILE_RUN_SH,
-      constants.FILE_RUN_BAT,
-      path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+    const sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
+    let scripts = [
       path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
-      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
-      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
-      path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
     ];
+    if (sdkMajorVersion === 2) {
+      scripts = scripts.concat([
+        constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
+      ]);
+    }
+    if (sdkMajorVersion === 3) {
+      scripts = scripts.concat([
+        'debug.sh',
+        'debug.bat',
+        constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'debug.bat'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+      ]);
+    }
+    const cwd = process.cwd();
     scripts.forEach(scriptName => {
       this.out.info('Marking ' + scriptName + ' as executable');
       fs.chmodSync(cwd + '/' + scriptName, '0755');

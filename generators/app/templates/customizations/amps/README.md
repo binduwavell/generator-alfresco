@@ -6,4 +6,4 @@ Place pre-packaged repo amps in here and then use:
 yo alfresco:amp-add-local
 ```
 
-to insert references to them into the repo pom.
+to install into your project.
