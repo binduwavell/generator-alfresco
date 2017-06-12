@@ -2,7 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.0 and up
-  - [ ] tests are broken!
   - [ ] run.sh rewriting is wrong for SDK 3
   - [ ] run-without-springloaded.sh should not be added to the project
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
