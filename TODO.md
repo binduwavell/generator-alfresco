@@ -2,11 +2,21 @@ TODO
 ====
 
 - [ ] Support SDK 3.0 and up
+  - [ ] update alfresco-module-manager
+    - [ ] need remove module for removing default source jars
+    - [ ] need add module for adding source jars under customizations
+  - [ ] remove samples
+  - [ ] need to test and update all sub-generators
+  - [ ] new sub-generators
+    - [ ] module
+    - [ ] module-add-common \(?\)
+    - [ ] module-add-local
+    - [ ] module-add-remote
+    - [ ] module-add-source
+  - [ ] check if scripts need updating
+  - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
   - [x] run.sh rewriting is wrong for SDK 3
   - [x] run-without-springloaded.sh should not be added to the project
-  - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
-  - [ ] check if scripts need updating
-  - [ ] need to test and update all sub-generators
 - [ ] Include instructions about how to configure IDEs (or generate the config)
   - [ ] Eclipse
   - [ ] IntelliJ
