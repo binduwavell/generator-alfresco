@@ -50,6 +50,10 @@ class AlfrescoGenerator extends Generator {
     this.defaultConfig[constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES] = true;
     this.bail = false;
     try {
+      debug('grabbing node version');
+      if (semver.lt(process.versions.node, '4.5.0')) {
+        throw new Error('Node 4.5.0 or above is required you are using: ' + process.versions.node + '.');
+      }
       debug('grabbing current java version');
       this.javaVersion = versions.getJavaVersion();
       if (!this.javaVersion) {
