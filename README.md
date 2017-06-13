@@ -24,7 +24,7 @@ to install Yeoman.
 npm install -g yo
 ```
 
-NOTE: that we now require Node 4.x or above. Information on installing Node is linked from
+NOTE: that we now require Node 4.5 or above. Information on installing Node is linked from
 our [Supported Platforms / Node Versions][installing-node] wiki page.
 
 ### Installing and using the generator
