@@ -58,7 +58,7 @@ class AmpAddRemoveSubGenerator extends SubGenerator {
       'such as Records Management (RM), Google Docs Integration, and Alfresco Office Services, which',
       'provides SharePoint Protocol support. If you know the maven groupId, artifactId and version,',
       'we can link such modules to your project.'].join(' '),
-      'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-link-alf-amps-aio.html');
+    'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-link-alf-amps-aio.html');
 
     this.out.info([
       'This sub-generator will update existing POM\'s and context files.',

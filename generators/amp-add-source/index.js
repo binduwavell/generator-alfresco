@@ -178,7 +178,7 @@ class AmpAddSourceSubGenerator extends SubGenerator {
       'is still to create AMPs. Here we\'ll walk you through what you need to provide',
       'in order for us to create source code projects for you to place your',
       'customizations in.'].join(' '),
-      'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-add-custom-amps-aio.html');
+    'http://docs.alfresco.com/5.1/tasks/alfresco-sdk-advanced-add-custom-amps-aio.html');
 
     const defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
     const defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
