@@ -47,14 +47,14 @@ const PROJECTS = [
       {
         groupId: 'net.wavell',
         artifactId: 'alf-dev-helper-repo-amp',
-        version: '1.0.0',
+        version: '1.0.1',
       },
     ],
     share: [
       {
         groupId: 'net.wavell',
         artifactId: 'alf-dev-helper-share-amp',
-        version: '1.0.0',
+        version: '1.0.1',
       },
     ],
   },
