@@ -187,6 +187,7 @@ behalf. Currently these include:
 - JavaMelody
 - JavaScript Console
 - JScript Extensions
+- Order of the Bee Support Tools
 - Records Management (RM)
 - Share Inbound Calendar Invites
 - Share Site Announcements
@@ -194,6 +195,8 @@ behalf. Currently these include:
 - Share Site Space Templates
 - Support Tools
 - Uploader Plus
+- Xenit Care4Alf
+- Xenit Dynamic Extensions
 
 Here is a summary of which versions of common AMPS are available with each version
 of the SDK:
