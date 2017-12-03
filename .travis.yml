@@ -7,6 +7,7 @@ dist: precise
 sudo: false
 
 env:
+  - NODE_VERSION=v8
   - NODE_VERSION=v7
   - NODE_VERSION=v6
   - NODE_VERSION=v5
@@ -25,7 +26,7 @@ install:
   - $HOME/.yarn/bin/yarn
 
 script:
-  - if [[ "${NODE_VERSION}" == 'v7' ]]; then npm run codecov; else npm run test; fi
+  - if [[ "${NODE_VERSION}" == 'v8' ]]; then npm run codecov; else npm run test; fi
 
 notifications:
   webhooks:
