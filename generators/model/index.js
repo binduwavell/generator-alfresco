@@ -125,9 +125,9 @@ class ModelSubGenerator extends SourceSelectingSubGenerator {
 
       const targetModule = this.targetModule.module;
       const modulePath = this.destinationPath(targetModule.path);
-      const contextGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
-      const modelGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/model/generated';
-      const messageGenRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages/generated';
+      const contextGenRoot = this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      const modelGenRoot = this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/model/generated';
+      const messageGenRoot = this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/messages/generated';
       const templateModelPath = this.templatePath('customModel.xml');
       const templateMessagePath = this.templatePath('customModel.properties');
       const templateContextPath = this.templatePath('custom-model-context.xml');

@@ -2,29 +2,23 @@ TODO
 ====
 
 - [ ] Support SDK 3.0 and up
-  - [ ] update alfresco-module-manager
-    - [ ] need remove module for removing default source jars
-    - [ ] need add module for adding source jars under customizations
-  - [ ] remove samples
-  - [ ] need to test and update all sub-generators
+  - [ ] need to be able to remove SDK 3 sample files
+  - [ ] configure project for enterprise
+  - [ ] need to test and update all existing sub-generators
   - [ ] new sub-generators
     - [ ] module
-    - [ ] module-add-common \(?\)
     - [ ] module-add-local
-    - [ ] module-add-remote
-    - [ ] module-add-source
+    - [ ] module-add-source 
+      - [ ] Option to enable AMP assembly stuff
+    - [ ] module-add-remote (Deferred)
+    - [ ] module-add-common (Deferred)
   - [ ] check if scripts need updating
+  - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [x] update alfresco-module-manager
+    - [x] need remove operations for removing default source jars and other SDK2 specific stuff
   - [x] run.sh rewriting is wrong for SDK 3
   - [x] run-without-springloaded.sh should not be added to the project
-- [ ] Include instructions about how to configure IDEs (or generate the config)
-  - [ ] Eclipse
-  - [ ] IntelliJ
-  - [ ] NetBeans
-  - [ ] Codenvy (based on previous answer)
-    - [ ] Codenvy IDE
-    - [ ] Codenvy via Eclipse plugin
-    - [ ] Codenvy via CLI
 
 TODONE
 ======

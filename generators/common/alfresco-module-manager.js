@@ -59,17 +59,21 @@ function MakeAlfrescoModuleManager (yo) {
     removeModule (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
       debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
       const mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      debug('removeModule() - using module: %s', mod.artifactId);
+      const sdkMajorVersion = yo.sdk.sdkMajorVersion.call(yo);
       if (mod) {
         debug('removing module: %s', mod.artifactId);
         this.moduleRegistry.removeModule(mod);
         if (mod.location === 'source') {
           this.ops.push(() => { removeModuleFiles(mod) });
           this.ops.push(() => { removeModuleFromParentPom(mod) });
-          this.ops.push(() => { removeModuleFromWarWrapper(mod) });
-          if (mod.war === constants.WAR_TYPE_SHARE) {
-            this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
+          if (sdkMajorVersion === 2) {
+            this.ops.push(() => { removeModuleFromWarWrapper(mod) });
+            if (mod.war === constants.WAR_TYPE_SHARE) {
+              this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
+            }
+            this.ops.push(() => { removeModuleFromTomcatContext(mod) });
           }
-          this.ops.push(() => { removeModuleFromTomcatContext(mod) });
           // TODO: what else do we need to do when we remove a module?
         }
       }
@@ -128,17 +132,17 @@ function MakeAlfrescoModuleManager (yo) {
       });
       if (defaultMods && defaultMods.length > 0) {
         if (mod.artifactId !== defaultMods[0].artifactId) {
-          // <path>/src/main/amp/config/alfresco/module/<artifactId>
+          // <path>/<sdk.srcModuleModuleBase>/<artifactId>
           const fromPath = path.join(
             yo.destinationPath(),
             mod.path,
-            '/src/main/amp/config/alfresco/module',
+            yo.sdk.repoConfigBase + '/alfresco/module',
             defaultMods[0].artifactId
           );
           const toPath = path.join(
             yo.destinationPath(),
             mod.path,
-            '/src/main/amp/config/alfresco/module',
+            yo.sdk.repoConfigBase + '/alfresco/module',
             mod.artifactId
           );
           yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);

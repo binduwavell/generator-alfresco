@@ -22,7 +22,7 @@ module.exports = {
     useArchetypeTemplate: true,
     defaultModuleRegistry: jarModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: undefined,
+    removeDefaultModules: removeDefaultModules,
     removeRepoSamples: undefined,
     removeShareSamples: undefined,
     sdkMajorVersion: sdkMajorVersion,
@@ -30,6 +30,8 @@ module.exports = {
     setupNewRepoModule: setupNewPlatformJar,
     setupNewShareModule: setupNewShareJar,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/resources',
+    shareConfigBase: 'src/main/resources',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
   },
@@ -46,7 +48,7 @@ module.exports = {
     useArchetypeTemplate: true,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: removeAmps,
+    removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
     sdkMajorVersion: sdkMajorVersion,
@@ -54,6 +56,8 @@ module.exports = {
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/amp/config',
+    shareConfigBase: 'src/main/amp/config',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: beforeExit,
   },
@@ -70,7 +74,7 @@ module.exports = {
     useArchetypeTemplate: true,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: removeAmps,
+    removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
     sdkMajorVersion: sdkMajorVersion,
@@ -78,6 +82,8 @@ module.exports = {
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/amp/config',
+    shareConfigBase: 'src/main/amp/config',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
   },
@@ -94,7 +100,7 @@ module.exports = {
     useArchetypeTemplate: true,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: removeAmps,
+    removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples,
     removeShareSamples: removeShareSamples,
     sdkMajorVersion: sdkMajorVersion,
@@ -102,6 +108,8 @@ module.exports = {
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/amp/config',
+    shareConfigBase: 'src/main/amp/config',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
   },
@@ -118,12 +126,14 @@ module.exports = {
     useArchetypeTemplate: true,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: removeAmps,
+    removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/amp/config',
+    shareConfigBase: 'src/main/amp/config',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
   },
@@ -142,12 +152,14 @@ module.exports = {
     useArchetypeTemplate: false,
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
-    removeDefaultModules: removeAmps,
+    removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoAmp,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
+    repoConfigBase: 'src/main/amp/config',
+    shareConfigBase: 'src/main/amp/config',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
   },
@@ -156,15 +168,24 @@ module.exports = {
 // ===== Shared scripts =====
 
 /**
- * Looks at the SDK archetype version used to create the project and
- * extracts the major version number.
+ * Looks at the SDK archetype version used to create the project or if
+ * that is not found in the current SDK context and extracts the major
+ * version number.
  *
  * @returns {number} major version number from SDK
  * @throws {TypeError}
  */
 function sdkMajorVersion () {
-  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    return semver.major(this.config.get(constants.PROP_ARCHETYPE_VERSION));
+  let archetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
+  if (archetypeVersion) {
+    debug('archetypeVersion from config: %s', archetypeVersion);
+  } else {
+    archetypeVersion = this.sdk.archetypeVersion;
+    debug('archetypeVersion from execution context: %s', archetypeVersion);
+  }
+  if (archetypeVersion) {
+    const majorVersion = semver.major(archetypeVersion);
+    return majorVersion;
   }
   throw TypeError('Unable to locate SDK version to evaluate.');
 }
@@ -326,7 +347,7 @@ function setupNewRepoAmp (pathPrefix) {
   this.out.info('Setting up new repository amp: ' + pathPrefix);
   const basename = path.basename(pathPrefix);
 
-  const moduleContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/module-context.xml';
+  const moduleContextPath = pathPrefix + '/' + this.sdk.repoConfigBase + '/alfresco/module/' + basename + '/module-context.xml';
   const importPath = 'classpath:alfresco/module/${project.artifactId}/context/generated/*-context.xml';
   debug('Editing: %s', this.destinationPath(moduleContextPath));
   // debug(memFsUtils.dumpFileNames(this.fs));
@@ -342,7 +363,7 @@ function setupNewRepoAmp (pathPrefix) {
   }
 
   // TODO(bwavell): Consider updating spring-context.js module to handle this
-  const serviceContextPath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/service-context.xml';
+  const serviceContextPath = pathPrefix + '/' + this.sdk.repoConfigBase + '/alfresco/module/' + basename + '/context/service-context.xml';
   const serviceContextDocOrig = this.fs.read(this.destinationPath(serviceContextPath));
   const doc = domutils.parseFromString(serviceContextDocOrig);
   const moduleIdProp = domutils.getFirstNodeMatchingXPath('//property[@name="moduleId"]', doc);
@@ -358,7 +379,7 @@ function setupNewRepoAmp (pathPrefix) {
   }
 
   const templatePath = path.resolve(this.sourceRoot(), '../../app/templates/generated-README.md');
-  const generatedReadmePath = pathPrefix + '/src/main/amp/config/alfresco/module/' + basename + '/context/generated/README.md';
+  const generatedReadmePath = pathPrefix + '/' + this.sdk.repoConfigBase + '/alfresco/module/' + basename + '/context/generated/README.md';
   debug('Adding: %s', generatedReadmePath);
   this.fs.copyTpl(
     templatePath,
@@ -388,8 +409,8 @@ function setupNewShareJar (pathPrefix) {
   debug('setupNewShareJar() finished');
 }
 
-function removeAmps () {
-  this.out.info('Removing default amps');
+function removeDefaultModules () {
+  this.out.info('Removing default source modules');
   if (this.sdk.defaultModuleRegistry) {
     const defaultModules = this.sdk.defaultModuleRegistry.call(this);
     if (defaultModules && defaultModules.length > 0) {
@@ -399,7 +420,7 @@ function removeAmps () {
       this.moduleManager.save();
     }
   }
-  debug('removeAmps() finished');
+  debug('removeDefaultModules() finished');
 }
 
 function removeRepoSamples (pathPrefix, projectPackage, artifactIdPrefix) {
