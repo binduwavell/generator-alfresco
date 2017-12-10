@@ -237,7 +237,10 @@ class AmpAddSourceSubGenerator extends SubGenerator {
         if (this.props.parentName) parentPom.setTopLevelElementTextContent('pom', 'name', this.props.parentName);
         if (this.props.parentDescription) parentPom.setTopLevelElementTextContent('pom', 'description', this.props.parentDescription);
         if (hasCustomizations) {
-          parentPom.setParentGAV('org.alfresco.maven', 'customizations', '1.0.0-SNAPSHOT');
+          parentPom.setParentGAV(
+            constants.CUSTOMIZATIONS_GROUP_ID,
+            constants.CUSTOMIZATIONS_ARTIFACT_ID,
+            constants.CUSTOMIZATIONS_VERSION);
         } else {
           parentPom.setParentGAV(
             this.config.get(constants.PROP_PROJECT_GROUP_ID),
