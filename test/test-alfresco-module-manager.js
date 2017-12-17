@@ -24,8 +24,9 @@ describe('generator-alfresco:alfresco-module-manager', function () {
     projectArtifactId: 'test',
     projectPackaging: 'pom',
     projectVersion: '1.0',
-    sdkVersions: require('../generators/common/sdk-versions.js'),
     sdk: require('../generators/common/sdk-versions.js')['2.1.1'],
+    sdkMajorVersion: 2,
+    sdkVersions: require('../generators/common/sdk-versions.js'),
   };
 
   describe('.addModule()', function () {

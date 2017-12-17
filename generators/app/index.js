@@ -310,6 +310,7 @@ class AlfrescoGenerator extends Generator {
           }
         }
         this.sdk = this.sdkVersions[combinedProps.sdkVersion || this.answerOverrides.sdkVersion];
+        this.sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
         this._saveProps([
           constants.PROP_ORIGINAL_GENERATOR_VERSION,
           constants.PROP_GENERATOR_VERSION,
@@ -562,23 +563,22 @@ class AlfrescoGenerator extends Generator {
       );
     });
     // copy sdk specific scripts
-    const sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
-    this.out.info('Copying SDK ' + sdkMajorVersion + ' specific scripts');
+    this.out.info('Copying SDK ' + this.sdkMajorVersion + ' specific scripts');
     this.fs.copyTpl(
-      this.templatePath('sdk' + sdkMajorVersion + '-' + constants.FOLDER_SCRIPTS),
+      this.templatePath('sdk' + this.sdkMajorVersion + '-' + constants.FOLDER_SCRIPTS),
       this.destinationPath(constants.FOLDER_SCRIPTS),
       tplContext
     );
     // copy launcher scripts like run.sh to top level folder
     trace('Copying scripts to top level folder');
     let scriptsToTop = [];
-    if (sdkMajorVersion === 2) {
+    if (this.sdkMajorVersion === 2) {
       scriptsToTop = [
         constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
         constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
       ];
     }
-    if (sdkMajorVersion === 3) {
+    if (this.sdkMajorVersion === 3) {
       scriptsToTop = [
         constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
         constants.FILE_DEBUG_SH, 'debug.bat',
@@ -689,14 +689,13 @@ class AlfrescoGenerator extends Generator {
 
   _installMakeScriptsExecutable () {
     if (this.bail) return;
-    const sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
     let scripts = [
       path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
     ];
-    if (sdkMajorVersion === 2) {
+    if (this.sdkMajorVersion === 2) {
       scripts = scripts.concat([
         constants.FILE_RUN_SH,
         constants.FILE_RUN_BAT,
@@ -706,7 +705,7 @@ class AlfrescoGenerator extends Generator {
         path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
       ]);
     }
-    if (sdkMajorVersion === 3) {
+    if (this.sdkMajorVersion === 3) {
       scripts = scripts.concat([
         'debug.sh',
         'debug.bat',

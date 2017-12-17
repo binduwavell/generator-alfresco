@@ -172,11 +172,17 @@ module.exports = {
  * that is not found in the current SDK context and extracts the major
  * version number.
  *
+ * @param [version] optional version number to process
  * @returns {number} major version number from SDK
  * @throws {TypeError}
  */
-function sdkMajorVersion () {
-  let archetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
+function sdkMajorVersion (version) {
+  let archetypeVersion = version;
+  if (archetypeVersion) {
+    debug('archetypeVersion from version argument: %s', archetypeVersion);
+  } else {
+    archetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
+  }
   if (archetypeVersion) {
     debug('archetypeVersion from config: %s', archetypeVersion);
   } else {

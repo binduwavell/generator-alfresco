@@ -60,14 +60,13 @@ function MakeAlfrescoModuleManager (yo) {
       debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
       const mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
       debug('removeModule() - using module: %s', mod.artifactId);
-      const sdkMajorVersion = yo.sdk.sdkMajorVersion.call(yo);
       if (mod) {
         debug('removing module: %s', mod.artifactId);
         this.moduleRegistry.removeModule(mod);
         if (mod.location === 'source') {
           this.ops.push(() => { removeModuleFiles(mod) });
           this.ops.push(() => { removeModuleFromParentPom(mod) });
-          if (sdkMajorVersion === 2) {
+          if (yo.sdkMajorVersion === 2) {
             this.ops.push(() => { removeModuleFromWarWrapper(mod) });
             if (mod.war === constants.WAR_TYPE_SHARE) {
               this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
