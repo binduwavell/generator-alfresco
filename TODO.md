@@ -12,6 +12,9 @@ TODO
       - [ ] Option to enable AMP assembly stuff
     - [ ] module-add-remote (Deferred)
     - [ ] module-add-common (Deferred)
+  - [ ] handle new integration-test module
+    - specifically it should probably depend on source repo modules
+    - need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
