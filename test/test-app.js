@@ -137,7 +137,7 @@ describe('generator-alfresco:app', function () {
 
     describe('generate second pair of source modules', function () {
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+        return helpers.run(path.join(__dirname, '../generators/module-add-source'))
           .cd(osTempDir)
           .withOptions({
             'force': true, // tests can't handle conflicts

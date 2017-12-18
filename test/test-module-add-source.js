@@ -7,7 +7,7 @@ const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp-add-source', function () {
+describe('generator-alfresco:module-add-source', function () {
   this.timeout(30000);
 
   const osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -28,7 +28,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('after creating both a repo and share amp', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -43,16 +43,13 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
   });
 
   describe('after creating both a repo and share amp and removing samples', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -67,9 +64,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
@@ -90,7 +84,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('after creating both a repo and share amp via prompts', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -109,9 +103,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'shareName': 'share name',
           'shareDescription': 'share description',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
@@ -125,7 +116,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('after creating repo amp', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -140,9 +131,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
@@ -157,7 +145,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('after creating share amp', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -172,9 +160,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': '',
           'repo-description': '',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
@@ -189,7 +174,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('after creating both repo and share amps in parent folder', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -204,9 +189,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'repo-name': 'repo name',
           'repo-description': 'repo description',
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
@@ -221,7 +203,7 @@ describe('generator-alfresco:amp-add-source', function () {
 
   describe('when creating amp with invalid war type', function () {
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/amp-add-source'))
+      return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
         .withOptions({
           'force': true, // tests can't handle conflicts
@@ -229,9 +211,6 @@ describe('generator-alfresco:amp-add-source', function () {
           'project-artifact-id': 'invalid-war-type',
           'remove-default-source-samples': true,
         })
-        .withGenerators([
-          path.join(__dirname, '../generators/module-add-source'),
-        ])
         .toPromise();
     });
 
