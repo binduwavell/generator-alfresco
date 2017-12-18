@@ -2,15 +2,26 @@ TODO
 ====
 
 - [ ] Support SDK 3.0 and up
+  - [ ] update to latest 3.x SDK
   - [ ] need to be able to remove SDK 3 sample files
   - [ ] configure project for enterprise
-  - [ ] need to test and update all existing sub-generators
   - [ ] handle new integration-test module
     - specifically it should probably depend on source repo modules
     - need to handle adding and removing source repo modules
+  - [ ] need to test and update all existing sub-generators
+    - [ ] amp
+    - [x] amp-add-common
+      - [ ] update to latest amps
+      - [ ] validate common amps with latest 3.x SDK with community & enterprise
+      - [ ] update documentation based on preceeding
+    - [x] amp-add-local
+    - [x] amp-add-remote
+    - [x] amp-add-source
+      - [x] redirect/delegate to module-add-source
+    - [ ] behavior
+    - [ ] model
+    - [ ] webscript
   - [ ] split tests so we have 2.x and 3.x variants where necessary
-  - [ ] update to latest 3.x SDK
-  - [ ] validate amps in amp-add-common against latest 3.x SDK with community & enterprise
   - [ ] new sub-generators
     - [ ] module
       - wrapper for amp-*, jar-* and module-*
