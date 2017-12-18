@@ -16,6 +16,9 @@ describe('generator-alfresco:app', function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
+        .withPrompts({
+          projectStructure: 'basic',
+        })
         .toPromise();
     });
 
@@ -157,15 +160,15 @@ describe('generator-alfresco:app', function () {
 
       it('amp files exist in project', function () {
         assert.file([
-          path.join(osTempDir, 'both-customizations-repo-amp/pom.xml'),
-          path.join(osTempDir, 'both-customizations-share-amp/pom.xml'),
+          path.join(osTempDir, 'customizations/both-customizations-repo-amp/pom.xml'),
+          path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
         ]);
       });
 
       it('sample files exist in project', function () {
         assert.file([
-          path.join(osTempDir, 'both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
-          path.join(osTempDir, 'both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
+          path.join(osTempDir, 'customizations/both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
+          path.join(osTempDir, 'customizations/both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
         ]);
       });
 
