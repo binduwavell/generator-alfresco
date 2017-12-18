@@ -5,15 +5,20 @@ TODO
   - [ ] need to be able to remove SDK 3 sample files
   - [ ] configure project for enterprise
   - [ ] need to test and update all existing sub-generators
+  - [ ] handle new integration-test module
+    - specifically it should probably depend on source repo modules
+    - need to handle adding and removing source repo modules
+  - [ ] split tests so we have 2.x and 3.x variants where necessary
   - [ ] new sub-generators
     - [ ] module
       - wrapper for amp-*, jar-* and module-*
-    - [ ] jar-add-local
+    - [x] jar-add-local
+      - [ ] add tests
     - [ ] module-add-local
       - wrapper for amp-add-local and jar-add-local
-    - [ ] module-add-source 
+    - [x] module-add-source 
       - Ideally can handle SDK2 and SDK3 projects
-        - [ ] If we can do this, then amp-add-source should be marked as deprecated
+        - [x] If we can do this, then amp-add-source should be marked as deprecated
       - [ ] Option to enable AMP assembly stuff
     - [ ] jar-add-remote (Deferred)
     - [ ] module-add-remote (Deferred)
@@ -21,9 +26,6 @@ TODO
     - [ ] jar-add-common (Deferred)
     - [ ] module-add-common (Deferred)
       - wrapper for amp-add-common and jar-add-common
-  - [ ] handle new integration-test module
-    - specifically it should probably depend on source repo modules
-    - need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
