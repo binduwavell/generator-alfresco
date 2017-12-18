@@ -7,11 +7,20 @@ TODO
   - [ ] need to test and update all existing sub-generators
   - [ ] new sub-generators
     - [ ] module
+      - wrapper for amp-*, jar-* and module-*
+    - [ ] jar-add-local
     - [ ] module-add-local
+      - wrapper for amp-add-local and jar-add-local
     - [ ] module-add-source 
+      - Ideally can handle SDK2 and SDK3 projects
+        - [ ] If we can do this, then amp-add-source should be marked as deprecated
       - [ ] Option to enable AMP assembly stuff
+    - [ ] jar-add-remote (Deferred)
     - [ ] module-add-remote (Deferred)
+      - wrapper for amp-add-remote and jar-add-remote
+    - [ ] jar-add-common (Deferred)
     - [ ] module-add-common (Deferred)
+      - wrapper for amp-add-common and jar-add-common
   - [ ] handle new integration-test module
     - specifically it should probably depend on source repo modules
     - need to handle adding and removing source repo modules
