@@ -6,7 +6,7 @@ const Generator = require('yeoman-generator');
 
 /**
  * Base class for a yeoman generator in the generator-alfresco project. This
- * class provides some common things like the our output handling module,
+ * class provides some common things like our output handling module,
  * the SDK version for the main project and the module registry and manager.
  *
  * We will create / wrap a when function in order to perform bail checking.
