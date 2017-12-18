@@ -9,6 +9,8 @@ TODO
     - specifically it should probably depend on source repo modules
     - need to handle adding and removing source repo modules
   - [ ] split tests so we have 2.x and 3.x variants where necessary
+  - [ ] update to latest 3.x SDK
+  - [ ] validate amps in amp-add-common against latest 3.x SDK with community & enterprise
   - [ ] new sub-generators
     - [ ] module
       - wrapper for amp-*, jar-* and module-*
