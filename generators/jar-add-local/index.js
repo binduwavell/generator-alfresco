@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const AdmZip = require('adm-zip');
 const chalk = require('chalk');
-const debug = require('debug')('generator-alfresco:amp-local');
+const debug = require('debug')('generator-alfresco:jar-add-local');
 const fs = require('fs');
 const path = require('path');
 const constants = require('generator-alfresco-common').constants;
@@ -19,11 +19,11 @@ class JarAddLocalSubGenerator extends SubGenerator {
     super(args, opts);
 
     const possibleRepoJars = unknownModules(
-      findModules(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_MODULES, constants.FOLDER_MODULES_PLATFORM)),
-      this.moduleRegistry, '.jar');
+      findModules(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_MODULES, constants.FOLDER_MODULES_PLATFORM), '.jar'),
+      this.moduleRegistry);
     const possibleShareJars = unknownModules(
-      findModules(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_MODULES, constants.FOLDER_MODULES_SHARE)),
-      this.moduleRegistry, '.jar');
+      findModules(this.destinationPath(), path.join(constants.FOLDER_CUSTOMIZATIONS, constants.FOLDER_MODULES, constants.FOLDER_MODULES_SHARE), '.jar'),
+      this.moduleRegistry);
     this.possibleJars = _.orderBy(possibleRepoJars, 'name').concat(_.orderBy(possibleShareJars, 'name'));
 
     if (this.possibleJars.length > 0) {
@@ -147,6 +147,7 @@ class JarAddLocalSubGenerator extends SubGenerator {
  * @returns {Array<string>}
  */
 function findModules (projectRootPath, folderName, extension) {
+  debug('Looking for modules ending with %s in %s/%s', extension, projectRootPath, folderName);
   const jarFolder = path.join(projectRootPath, folderName);
   if (!fs.existsSync(jarFolder)) return [];
   return fs.readdirSync(jarFolder)

@@ -1,5 +1,5 @@
 'use strict';
-const debug = require('debug')('generator-alfresco:amp-common');
+const debug = require('debug')('generator-alfresco:amp-add-common');
 const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;
 const trace = require('debug')('generator-alfresco-trace:amp-common');

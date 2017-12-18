@@ -1,7 +1,7 @@
 'use strict';
 const chalk = require('chalk');
 const fs = require('fs');
-const debug = require('debug')('generator-alfresco:amp-source');
+const debug = require('debug')('generator-alfresco:amp-add-source');
 const path = require('path');
 const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;

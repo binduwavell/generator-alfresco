@@ -337,6 +337,7 @@ function MakeAlfrescoModuleManager (yo) {
       if (!execution) {
         debug('execution not found, so creating it');
         execution = domutils.createChild(executions, 'pom', 'execution');
+        domutils.setOrClearChildText(execution, 'pom', 'id', id);
       }
       domutils.setOrClearChildText(execution, 'pom', 'phase', 'clean');
       let configuration = domutils.getOrCreateChild(execution, 'pom', 'configuration');
