@@ -1,7 +1,7 @@
 'use strict';
 const chalk = require('chalk');
 const fs = require('fs');
-const debug = require('debug')('generator-alfresco:jar-source');
+const debug = require('debug')('generator-alfresco:module-add-source');
 const path = require('path');
 const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;
@@ -131,36 +131,36 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
       {
         type: 'input',
         name: 'repoName',
-        option: { name: 'repo-name', config: { alias: 'n', desc: 'Name for repo pom', type: String } },
+        option: { name: 'repo-name', config: { alias: 'n', desc: 'Name for repo module pom', type: String } },
         when: whenRepoWar,
-        message: 'Name for repo JAR?',
+        message: 'Name for repo module?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
       },
       {
         type: 'input',
         name: 'repoDescription',
-        option: { name: 'repo-description', config: { alias: 'd', desc: 'Description for repo pom', type: String } },
+        option: { name: 'repo-description', config: { alias: 'd', desc: 'Description for repo module pom', type: String } },
         when: whenRepoWar,
-        message: 'Description for repo JAR?',
+        message: 'Description for repo module?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
       },
       {
         type: 'input',
         name: 'shareName',
-        option: { name: 'share-name', config: { alias: 'N', desc: 'Name for share pom', type: String } },
+        option: { name: 'share-name', config: { alias: 'N', desc: 'Name for share module pom', type: String } },
         when: whenShareWar,
-        message: 'Name for share JAR?',
+        message: 'Name for share module?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
       },
       {
         type: 'input',
         name: 'shareDescription',
-        option: { name: 'share-description', config: { alias: 'D', desc: 'Description for share pom', type: String } },
+        option: { name: 'share-description', config: { alias: 'D', desc: 'Description for share module pom', type: String } },
         when: whenShareWar,
-        message: 'Description for share JAR?',
+        message: 'Description for share module?',
         commonFilter: filters.optionalTextFilter,
         valueRequired: false,
       },
@@ -173,16 +173,14 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
     if (this.bail) return;
 
     this.out.info([
-      'This sub-generator will update existing POM\'s.',
+      'This sub-generator will update existing project files.',
       'Yeoman will display ' + chalk.yellow('conflict <filename>'),
       'and ask you if you want to update each file.',
       '\nType "h" when prompted to get details about your choices.'].join(' '));
 
     this.out.docs([
-      'In order to customize the Alfresco repository and/or share, the best practice',
-      'is now to create JARs when possible. Here we\'ll walk you through what you',
-      'need to provide in order for us to create source code projects for you to',
-      'place your customizations in.'].join(' '));
+      'We\'ll walk you through what you need to provide in order for us to create',
+      'source code projects for you to place your customizations in.'].join(' '));
 
     const defGroupId = this.config.get(constants.PROP_PROJECT_GROUP_ID);
     const defVersion = this.config.get(constants.PROP_PROJECT_VERSION);
@@ -212,8 +210,8 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
     debug('writing %s', this.props[constants.PROP_WAR]);
     this.props[constants.PROP_WAR].forEach(war => {
       const prefix = this.props[constants.PROP_PROJECT_ARTIFACT_ID_PREFIX];
-      const suffix = (war === constants.WAR_TYPE_REPO ? 'platform' : war);
-      const artifactId = prefix + '-' + suffix;
+      const suffix = (this.usingEnhancedAlfrescoMavenPlugin ? '' : '-amp');
+      const artifactId = prefix + '-' + war + suffix;
       const groupId = this.props[constants.PROP_PROJECT_GROUP_ID];
       const version = this.props[constants.PROP_PROJECT_VERSION];
       const hasCustomizations = fs.existsSync(
@@ -270,7 +268,8 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
 
       const modulePath = path.join(parentPath, artifactId);
       debug('register and do initial setup for our module(s)');
-      this.moduleManager.addModule(groupId, artifactId, version, 'jar', war, 'source', modulePath);
+      const packaging = (this.usingEnhancedAlfrescoMavenPlugin ? 'jar' : 'amp');
+      this.moduleManager.addModule(groupId, artifactId, version, packaging, war, 'source', modulePath);
       debug('schedule setup activities for our module(s)');
       if (war === constants.WAR_TYPE_REPO) {
         debug('We are creating a new module so we need to schedule it to be setup');
