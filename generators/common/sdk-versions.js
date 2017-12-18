@@ -169,26 +169,33 @@ module.exports = {
 
 /**
  * Looks at the SDK archetype version used to create the project or if
- * that is not found in the current SDK context and extracts the major
+ * that is not found, looks in the current SDK context and extracts the
  * version number.
  *
- * @param [version] optional version number to process
- * @returns {number} major version number from SDK
- * @throws {TypeError}
+ * @returns {number} the archetype version being used or undefined
  */
-function sdkMajorVersion (version) {
-  let archetypeVersion = version;
-  if (archetypeVersion) {
-    debug('archetypeVersion from version argument: %s', archetypeVersion);
-  } else {
-    archetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
-  }
+function _findArchetypeVersion () {
+  let archetypeVersion = this.config.get(constants.PROP_ARCHETYPE_VERSION);
   if (archetypeVersion) {
     debug('archetypeVersion from config: %s', archetypeVersion);
   } else {
     archetypeVersion = this.sdk.archetypeVersion;
     debug('archetypeVersion from execution context: %s', archetypeVersion);
   }
+  return archetypeVersion;
+}
+
+/**
+ * Extract the major version number from the provided version string. If
+ * no version parameter is provided then attempts to look in the project
+ * config or the current SDK context.
+ *
+ * @param {string} [version] optional version number to process
+ * @returns {number} major version number from SDK
+ * @throws {TypeError}
+ */
+function sdkMajorVersion (version) {
+  const archetypeVersion = version || _findArchetypeVersion.call(this);
   if (archetypeVersion) {
     const majorVersion = semver.major(archetypeVersion);
     return majorVersion;
@@ -379,7 +386,6 @@ function setupNewRepoAmp (pathPrefix) {
       debug('Updating moduleId in: %s', serviceContextPath);
       moduleIdProp.setAttribute('value', constants.VAR_PROJECT_ARTIFACTID);
       const serviceContextDocNew = domutils.prettyPrint(doc);
-      // console.log(serviceContextDocNew);
       this.fs.write(serviceContextPath, serviceContextDocNew);
     }
   }
@@ -543,15 +549,25 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
  */
 
 /**
- * @returns {boolean}
+ * Determines if the provided version uses the enhanced
+ * alfresco-maven-plugin that was introduced with SDK 3.0. If no
+ * version parameter is provided then attempts to look in the project
+ * config or the current SDK context for the version before considering
+ * if the enhanced plugin is applicable.
+ *
+ * @param {string} [version] optional version number to process
+ * @returns {boolean} true if new plugin is used, otherwise false
+ * @throws {TypeError}
  */
-function usesEnhancedAlfrescoMavenPlugin () {
-  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=3.0.0-SNAPSHOT')) {
+function usesEnhancedAlfrescoMavenPlugin (version) {
+  const archetypeVersion = version || _findArchetypeVersion.call(this);
+  if (archetypeVersion) {
+    if (semver.satisfies(semver.clean(archetypeVersion), '>=3.0.0-SNAPSHOT')) {
       return true;
     }
+    return false;
   }
-  return false;
+  throw TypeError('Unable to locate SDK version to evaluate.');
 }
 
 /*

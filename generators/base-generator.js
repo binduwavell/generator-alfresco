@@ -62,7 +62,8 @@ class BaseGenerator extends Generator {
     this.out = require('generator-alfresco-common').generator_output(this);
     this.sdkVersions = require('./common/sdk-versions.js');
     this.sdk = this.sdkVersions[this.config.get('sdkVersion')];
-    this.sdkMajorVersion = (this.sdk ? this.sdk.sdkMajorVersion.call(this) : -1);
+    this.sdkMajorVersion = (this.sdk ? this.sdk.sdkMajorVersion.call(this) : undefined);
+    this.usingEnhancedAlfrescoMavenPlugin = (this.sdk ? this.sdk.usesEnhancedAlfrescoMavenPlugin.call(this) : undefined);
     this.moduleRegistry = this.options._moduleRegistry || require('generator-alfresco-common').alfresco_module_registry(this);
     this.modules = this.options._modules || this.moduleRegistry.getNamedModules();
     this.moduleManager = this.options._moduleManager || require('./common/alfresco-module-manager.js')(this);

@@ -68,9 +68,9 @@ class AmpSubGenerator extends SubGenerator {
   }
 
   prompting () {
-    if (this.sdkMajorVersion !== 2) {
+    if (this.usingEnhancedAlfrescoMavenPlugin) {
       this.out.warn([
-        'This sub-generator is deprecated starting with SDK 3,',
+        'This sub-generator is deprecated starting from SDK 3,',
         'consider using' + chalk.yellow('yo alfresco:module'),
         'instead'].join(' '));
     }

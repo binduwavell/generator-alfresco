@@ -309,8 +309,10 @@ class AlfrescoGenerator extends Generator {
             this.destinationRoot(projectPath);
           }
         }
-        this.sdk = this.sdkVersions[combinedProps.sdkVersion || this.answerOverrides.sdkVersion];
+        const sdkVersion = (combinedProps.sdkVersion || this.answerOverrides.sdkVersion);
+        this.sdk = this.sdkVersions[sdkVersion];
         this.sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
+        this.usingEnhancedAlfrescoMavenPlugin = this.sdk.usesEnhancedAlfrescoMavenPlugin.call(this);
         this._saveProps([
           constants.PROP_ORIGINAL_GENERATOR_VERSION,
           constants.PROP_GENERATOR_VERSION,
@@ -339,7 +341,6 @@ class AlfrescoGenerator extends Generator {
 
   _saveProps (propNames, propObject) {
     propNames.forEach(propName => {
-      // console.log("SETTING " + propName + " to " + propObject[propName]);
       this._saveProp(propName, propObject);
     });
   }
@@ -555,7 +556,7 @@ class AlfrescoGenerator extends Generator {
       templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
     }
     templateFolders.forEach(folderName => {
-      this.out.info('Copying ' + folderName);
+      this.out.info(`Copying ${folderName}`);
       this.fs.copyTpl(
         this.templatePath(folderName),
         this.destinationPath(folderName),
@@ -563,9 +564,9 @@ class AlfrescoGenerator extends Generator {
       );
     });
     // copy sdk specific scripts
-    this.out.info('Copying SDK ' + this.sdkMajorVersion + ' specific scripts');
+    this.out.info(`Copying SDK ${this.sdkMajorVersion} specific scripts`);
     this.fs.copyTpl(
-      this.templatePath('sdk' + this.sdkMajorVersion + '-' + constants.FOLDER_SCRIPTS),
+      this.templatePath(`sdk${this.sdkMajorVersion}-${constants.FOLDER_SCRIPTS}`),
       this.destinationPath(constants.FOLDER_SCRIPTS),
       tplContext
     );
@@ -585,7 +586,7 @@ class AlfrescoGenerator extends Generator {
       ];
     }
     scriptsToTop.forEach(fileName => {
-      trace('Copying ' + fileName + ' to top level folder');
+      trace(`Copying ${fileName} to top level folder`);
       this.fs.copy(
         this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
         this.destinationPath(fileName)
@@ -695,16 +696,6 @@ class AlfrescoGenerator extends Generator {
       path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
     ];
-    if (this.sdkMajorVersion === 2) {
-      scripts = scripts.concat([
-        constants.FILE_RUN_SH,
-        constants.FILE_RUN_BAT,
-        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
-        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
-        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
-        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
-      ]);
-    }
     if (this.sdkMajorVersion === 3) {
       scripts = scripts.concat([
         'debug.sh',
@@ -715,6 +706,16 @@ class AlfrescoGenerator extends Generator {
         path.join(constants.FOLDER_SCRIPTS, 'debug.bat'),
         path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
         path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+      ]);
+    }
+    if (this.sdkMajorVersion === 2) {
+      scripts = scripts.concat([
+        constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
       ]);
     }
     const cwd = process.cwd();
