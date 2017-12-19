@@ -21,10 +21,13 @@ TODO
     - [ ] model
     - [ ] webscript
   - [ ] split tests so we have 2.x and 3.x variants where necessary
+    - [x] rename existing tests that are tied to a specific version to reference said version
+    - [ ] make 3.x versions of any tests that are tied to 2.x
   - [ ] new sub-generators
     - [ ] module
       - wrapper for amp-*, jar-* and module-*
     - [x] jar-add-local
+      - [ ] fix GAV detection for JARs
       - [ ] add tests
     - [ ] module-add-local
       - wrapper for amp-add-local and jar-add-local
@@ -42,10 +45,10 @@ TODO
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
   - [x] update to latest 3.x SDK
-  - [x] update alfresco-module-manager
+  - [x] update alfresco-module-manager for SDK 3
     - [x] need remove operations for removing default source jars and other SDK2 specific stuff
   - [x] run.sh rewriting is wrong for SDK 3
-  - [x] run-without-springloaded.sh should not be added to the project
+  - [x] run-without-springloaded.sh should not be added to SDK 3 projects
 
 TODONE
 ======
