@@ -9,13 +9,13 @@ const domutils = require('generator-alfresco-common').xml_dom_utils;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 
 module.exports = {
-  '3.0.0': {
+  '3.0.1': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
-    archetypeVersion: '3.0.0',
+    archetypeVersion: '3.0.1',
     promptForProjectPackage: true,
-    providedCommunityVersion: '5.2.e',
-    providedEnterpriseVersion: '5.2.0',
+    providedCommunityVersion: '5.2.f',
+    providedEnterpriseVersion: '5.2.2',
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.3.0',
     supportedRepositoryVersions: '5.2.e+ and 5.2.0+',

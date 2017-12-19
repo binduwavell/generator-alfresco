@@ -6,7 +6,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:action', function () {
+describe('generator-alfresco:action-2-1-1', function () {
   this.timeout(60000);
   const osTempDir = path.join(os.tmpdir(), 'temp-test');
 

@@ -6,7 +6,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app-local', function () {
+describe('generator-alfresco:app-local-2x', function () {
   describe('default prompts with local SDK', function () {
     this.timeout(60000);
 

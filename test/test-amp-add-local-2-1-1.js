@@ -8,7 +8,7 @@ const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp-add-local', function () {
+describe('generator-alfresco:amp-add-local-2-1-1', function () {
   this.timeout(30000);
 
   describe('an advanced project', function () {

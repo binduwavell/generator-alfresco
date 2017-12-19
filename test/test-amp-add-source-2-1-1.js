@@ -7,7 +7,7 @@ const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:amp-add-source', function () {
+describe('generator-alfresco:amp-add-source-2-1-1', function () {
   this.timeout(30000);
 
   const osTempDir = path.join(os.tmpdir(), 'temp-test');

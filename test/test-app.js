@@ -17,6 +17,7 @@ describe('generator-alfresco:app', function () {
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
+          sdkVersion: '2.1.1',
           projectStructure: 'basic',
         })
         .toPromise();
@@ -42,9 +43,9 @@ describe('generator-alfresco:app', function () {
         'scripts/run.sh',
         'scripts/run.bat',
         'scripts/run-without-springloaded.sh',
-        constants.FOLDER_SOURCE_TEMPLATES + '/README.md',
-        constants.FOLDER_SOURCE_TEMPLATES + '/repo-amp/pom.xml',
-        constants.FOLDER_SOURCE_TEMPLATES + '/share-amp/pom.xml',
+        'source_templates/README.md',
+        'source_templates/repo-amp/pom.xml',
+        'source_templates/share-amp/pom.xml',
         'repo/pom.xml',
         'runner/pom.xml',
         'share/pom.xml',
@@ -56,10 +57,10 @@ describe('generator-alfresco:app', function () {
     it('does not create advanced files', function () {
       // TODO(bwavell): add more tests
       assert.noFile([
-        constants.FOLDER_CUSTOMIZATIONS + '/amps/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/amps_share/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/README.md',
-        constants.FOLDER_CUSTOMIZATIONS + '/pom.xml',
+        'customizations/amps/README.md',
+        'customizations/amps_share/README.md',
+        'customizations/README.md',
+        'customizations/pom.xml',
       ]);
     });
 
@@ -133,9 +134,18 @@ describe('generator-alfresco:app', function () {
         .inDir(osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
+          sdkVersion: '2.1.1',
+          projectStructure: 'advanced',
           removeDefaultSourceAmps: false,
         })
         .toPromise();
+    });
+
+    it('default source amps exist', function () {
+      assert.file([
+        path.join(osTempDir, 'repo-amp/pom.xml'),
+        path.join(osTempDir, 'share-amp/pom.xml'),
+      ]);
     });
 
     describe('generate second pair of source modules', function () {
@@ -158,14 +168,14 @@ describe('generator-alfresco:app', function () {
           .toPromise();
       });
 
-      it('amp files exist in project', function () {
+      it('second amp files exist in project', function () {
         assert.file([
           path.join(osTempDir, 'customizations/both-customizations-repo-amp/pom.xml'),
           path.join(osTempDir, 'customizations/both-customizations-share-amp/pom.xml'),
         ]);
       });
 
-      it('sample files exist in project', function () {
+      it('sample files exist in second amp files', function () {
         assert.file([
           path.join(osTempDir, 'customizations/both-customizations-repo-amp/src/main/amp/web/css/demoamp.css'),
           path.join(osTempDir, 'customizations/both-customizations-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),

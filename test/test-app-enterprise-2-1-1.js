@@ -5,7 +5,7 @@ const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const os = require('os');
 
-describe('generator-alfresco:app:enterprise', function () {
+describe('generator-alfresco:app-enterprise-2-1-1', function () {
   this.timeout(60000);
 
   before(function () {
@@ -13,6 +13,8 @@ describe('generator-alfresco:app:enterprise', function () {
       .inDir(path.join(os.tmpdir(), './temp-test'))
       .withOptions({ 'skip-install': true })
       .withPrompts({
+        sdkVersion: '2.1.1',
+        projectStructure: 'basic',
         communityOrEnterprise: 'Enterprise',
         removeDefaultSourceAmps: false,
         removeDefaultSourceSamples: false,

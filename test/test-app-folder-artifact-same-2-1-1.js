@@ -6,7 +6,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app-folder-artifact-same', function () {
+describe('generator-alfresco:app-folder-artifact-same-2-1-1', function () {
   describe('when artifactId != current directory name', function () {
     this.timeout(60000);
     const osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -17,6 +17,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
         .withOptions({ 'skip-install': true })
         .withPrompts({
           sdkVersion: '2.1.1',
+          projectStructure: 'basic',
           projectArtifactId: 'test-artifact',
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
@@ -76,6 +77,7 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
         .withOptions({ 'skip-install': true })
         .withPrompts({
           sdkVersion: '2.1.1',
+          projectStructure: 'basic',
           projectArtifactId: 'demo',
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
@@ -113,6 +115,8 @@ describe('generator-alfresco:app-folder-artifact-same', function () {
         .inDir(osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
+          sdkVersion: '2.1.1',
+          projectStructure: 'basic',
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
         })

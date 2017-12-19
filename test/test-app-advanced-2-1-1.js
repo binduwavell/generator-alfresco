@@ -6,7 +6,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app', function () {
+describe('generator-alfresco:app-advanced-2-1-1', function () {
   describe('default prompts', function () {
     this.timeout(60000);
     const osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -16,6 +16,7 @@ describe('generator-alfresco:app', function () {
         .inDir(osTempDir)
         .withOptions({ 'skip-install': true })
         .withPrompts({
+          sdkVersion: '2.1.1',
           projectStructure: 'advanced',
         })
         .toPromise();

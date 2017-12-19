@@ -6,7 +6,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app', function () {
+describe('generator-alfresco:app-2-2-0', function () {
   describe('SDK 2.2.0', function () {
     this.timeout(60000);
 

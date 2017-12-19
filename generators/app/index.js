@@ -39,7 +39,7 @@ class AlfrescoGenerator extends Generator {
     this.sdkVersions = require('../common/sdk-versions.js');
     debug('assigning default values');
     this.defaultConfig = {};
-    this.defaultConfig[constants.PROP_SDK_VERSION] = '2.1.1';
+    this.defaultConfig[constants.PROP_SDK_VERSION] = '3.0.1';
     this.defaultConfig[constants.PROP_PROJECT_STRUCTURE] = constants.PROJECT_STRUCTURE_ADVANCED;
     this.defaultConfig[constants.PROP_PROJECT_GROUP_ID] = 'org.alfresco';
     this.defaultConfig[constants.PROP_PROJECT_ARTIFACT_ID] = path.basename(process.cwd());
@@ -252,7 +252,7 @@ class AlfrescoGenerator extends Generator {
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
-        message: 'Should we remove the default source amps?',
+        message: 'Should we remove the default source modules?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         when: readonlyProps => {
           if (this.bail) return false;
@@ -265,7 +265,7 @@ class AlfrescoGenerator extends Generator {
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
-        message: 'Should we remove samples from the default source amps?',
+        message: 'Should we remove samples from the default source modules?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
         when: readonlyProps => {
           if (this.bail) return false;
@@ -281,7 +281,7 @@ class AlfrescoGenerator extends Generator {
       },
     ];
 
-    debug('initiating prompting and returning promise for inquierer completion');
+    debug('initiating prompting and returning promise for inquirer completion');
     return this.prompt(prompts).then(props => {
       let combinedProps = {};
       _.assign(combinedProps, this.answerOverrides);
@@ -724,7 +724,7 @@ class AlfrescoGenerator extends Generator {
       fs.chmodSync(cwd + '/' + scriptName, '0755');
     });
     if (this.removeDefaultSourceAmps) {
-      this.out.warn('Since you choose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+      this.out.warn('Since you choose to remove default source modules, you should probably run "' + chalk.yellow('yo alfresco:module-add-source') + '" to add one or more customized source modules.');
     }
   }
 

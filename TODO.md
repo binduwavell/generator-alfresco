@@ -1,8 +1,7 @@
 TODO
 ====
 
-- [ ] Support SDK 3.0 and up
-  - [ ] update to latest 3.x SDK
+- [ ] Support SDK 3.x and up
   - [ ] need to be able to remove SDK 3 sample files
   - [ ] configure project for enterprise
   - [ ] handle new integration-test module
@@ -42,6 +41,7 @@ TODO
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [x] update to latest 3.x SDK
   - [x] update alfresco-module-manager
     - [x] need remove operations for removing default source jars and other SDK2 specific stuff
   - [x] run.sh rewriting is wrong for SDK 3

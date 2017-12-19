@@ -5,7 +5,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:amp-add-common', function () {
+describe('generator-alfresco:amp-add-common-2-1-1', function () {
   this.timeout(30000);
 
   const osTempDir = path.join(os.tmpdir(), 'temp-common-test');
