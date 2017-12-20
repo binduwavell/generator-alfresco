@@ -667,16 +667,22 @@ class AlfrescoGenerator extends Generator {
     if (this.bail) return;
     if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
       if (this.sdk.removeRepoSamples) {
-        // TODO(bwavell): 'repo-amp' should be generalized
+        let moduleSuffix = 'repo-amp'; // SDK2
+        if (this.sdkMajorVersion === 3) {
+          moduleSuffix = 'platform-jar';
+        }
         this.sdk.removeRepoSamples.call(this,
-          this.sdk.sdkVersionPrefix.call(this) + 'repo-amp',
+          this.sdk.sdkVersionPrefix.call(this) + moduleSuffix,
           this.projectPackage
         );
       }
       if (this.sdk.removeShareSamples) {
-        // TODO(bwavell): 'share-amp' should be generalized
+        let moduleSuffix = 'share-amp'; // SDK2
+        if (this.sdkMajorVersion === 3) {
+          moduleSuffix = 'share-jar';
+        }
         this.sdk.removeShareSamples.call(this,
-          this.sdk.sdkVersionPrefix.call(this) + 'share-amp',
+          this.sdk.sdkVersionPrefix.call(this) + moduleSuffix,
           this.projectPackage
         );
       }

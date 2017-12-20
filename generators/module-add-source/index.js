@@ -286,7 +286,7 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
             this.fs.write(pomPath, pom.getPOMString());
           });
         }
-        if (this.props.removeDefaultSourceSamples) {
+        if (this.props.removeDefaultSourceSamples && this.sdk.removeRepoSamples) {
           debug('scheduling sample source code/config removal');
           this.moduleManager.pushOp(() => {
             this.sdk.removeRepoSamples.call(this,
@@ -314,7 +314,7 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
             this.fs.write(pomPath, pom.getPOMString());
           });
         }
-        if (this.props.removeDefaultSourceSamples) {
+        if (this.props.removeDefaultSourceSamples && this.sdk.removeShareSamples) {
           this.moduleManager.pushOp(() => {
             this.sdk.removeShareSamples.call(this,
               modulePath,

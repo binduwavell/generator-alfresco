@@ -23,12 +23,12 @@ module.exports = {
     defaultModuleRegistry: jarModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
-    removeRepoSamples: undefined,
-    removeShareSamples: undefined,
+    removeRepoSamples: removeRepoSamples3x,
+    removeShareSamples: undefined, // THIS
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewPlatformJar,
-    setupNewShareModule: setupNewShareJar,
+    setupNewRepoModule: setupNewRepoModule,
+    setupNewShareModule: setupNewShareJar, // THIS
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/resources',
     shareConfigBase: 'src/main/resources',
@@ -49,11 +49,11 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
-    removeRepoSamples: removeRepoSamples,
-    removeShareSamples: removeShareSamples,
+    removeRepoSamples: removeRepoSamples2x,
+    removeShareSamples: removeShareSamples2x,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewRepoAmp,
+    setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
@@ -75,11 +75,11 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
-    removeRepoSamples: removeRepoSamples,
-    removeShareSamples: removeShareSamples,
+    removeRepoSamples: removeRepoSamples2x,
+    removeShareSamples: removeShareSamples2x,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewRepoAmp,
+    setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
@@ -101,11 +101,11 @@ module.exports = {
     defaultModuleRegistry: ampModuleRegistry,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
-    removeRepoSamples: removeRepoSamples,
-    removeShareSamples: removeShareSamples,
+    removeRepoSamples: removeRepoSamples2x,
+    removeShareSamples: removeShareSamples2x,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewRepoAmp,
+    setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
@@ -129,7 +129,7 @@ module.exports = {
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewRepoAmp,
+    setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
@@ -155,7 +155,7 @@ module.exports = {
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
-    setupNewRepoModule: setupNewRepoAmp,
+    setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareAmp,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
@@ -343,21 +343,13 @@ function registerDefaultModules () {
  */
 
 /**
- * @param pathPrefix
- */
-function setupNewPlatformJar (pathPrefix) {
-  this.out.info('Setting up new platform jar: ' + pathPrefix);
-  debug('setupNewPlatformJar() finished');
-}
-
-/**
  * For example we add the generated context folder and an
  * include for the same.
  *
  * @param pathPrefix
  */
-function setupNewRepoAmp (pathPrefix) {
-  this.out.info('Setting up new repository amp: ' + pathPrefix);
+function setupNewRepoModule (pathPrefix) {
+  this.out.info('Setting up new repository module: ' + pathPrefix);
   const basename = path.basename(pathPrefix);
 
   const moduleContextPath = pathPrefix + '/' + this.sdk.repoConfigBase + '/alfresco/module/' + basename + '/module-context.xml';
@@ -377,17 +369,26 @@ function setupNewRepoAmp (pathPrefix) {
 
   // TODO(bwavell): Consider updating spring-context.js module to handle this
   const serviceContextPath = pathPrefix + '/' + this.sdk.repoConfigBase + '/alfresco/module/' + basename + '/context/service-context.xml';
+  debug('Looking for moduleId property in %s', serviceContextPath);
   const serviceContextDocOrig = this.fs.read(this.destinationPath(serviceContextPath));
   const doc = domutils.parseFromString(serviceContextDocOrig);
-  const moduleIdProp = domutils.getFirstNodeMatchingXPath('//property[@name="moduleId"]', doc);
+  let moduleIdProp = domutils.getFirstNodeMatchingXPath('//property[@name="moduleId"]', doc);
+  // SDK3 includes schema info that SDK2 did not include
+  if (!moduleIdProp) {
+    moduleIdProp = domutils.getFirstNodeMatchingXPath('//beans:property[@name="moduleId"]', doc);
+  }
   if (moduleIdProp) {
     const valueAttr = moduleIdProp.getAttribute('value');
     if (valueAttr) {
-      debug('Updating moduleId in: %s', serviceContextPath);
+      debug('Setting value of moduleId property in: %s to %s', serviceContextPath, constants.VAR_PROJECT_ARTIFACTID);
       moduleIdProp.setAttribute('value', constants.VAR_PROJECT_ARTIFACTID);
       const serviceContextDocNew = domutils.prettyPrint(doc);
       this.fs.write(serviceContextPath, serviceContextDocNew);
+    } else {
+      debug('Could not find @value to update for moduleId');
     }
+  } else {
+    debug('Failed to find a moduleId property to update');
   }
 
   const templatePath = path.resolve(this.sourceRoot(), '../../app/templates/generated-README.md');
@@ -397,7 +398,7 @@ function setupNewRepoAmp (pathPrefix) {
     templatePath,
     this.destinationPath(generatedReadmePath)
   );
-  debug('setupNewRepoAmp() finished');
+  debug('setupNewRepoModule() finished');
 }
 
 /*
@@ -435,7 +436,119 @@ function removeDefaultModules () {
   debug('removeDefaultModules() finished');
 }
 
-function removeRepoSamples (pathPrefix, projectPackage, artifactIdPrefix) {
+function removeRepoSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
+  this.out.info('Removing repository sample code/config: ' + pathPrefix + ':' + projectPackage + ':' + artifactIdPrefix);
+  const basename = (artifactIdPrefix ? path.basename(pathPrefix) : pathPrefix);
+  const projectPackagePath = projectPackage.replace(/\./g, '/');
+  [
+    `${pathPrefix}/src/main/java/${projectPackagePath}/platformsample/Demo.java`,
+    `${pathPrefix}/src/main/java/${projectPackagePath}/platformsample/DemoComponent.java`,
+    `${pathPrefix}/src/main/java/${projectPackagePath}/platformsample/HelloWorldWebScript.java`,
+    `${pathPrefix}/src/main/java/${projectPackagePath}/platformsample`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials/helloworld.get.desc.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials/helloworld.get.html.ftl`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials/helloworld.get.js`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/alfresco`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/context/bootstrap-context.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/context/service-context.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/context/webscript-context.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/messages/content-model.properties`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/model/content-model.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/model/workflow-model.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/workflow/sample-process.bpmn20.xml`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/test.html`,
+    `${pathPrefix}/src/test/java/${projectPackagePath}/platformsample/test/HelloWorldWebScriptControllerTest.java`,
+    `${pathPrefix}/src/test/java/${projectPackagePath}/platformsample`,
+  ].forEach(file => {
+    this.out.info('Removing sample file: ' + file);
+    this.fs.delete(file, {globOptions: {strict: true}});
+  });
+
+  [
+    `${pathPrefix}/src/main/java/${projectPackagePath}/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/alfresco/extension/templates/webscripts/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/messages/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/model/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/alfresco/module/${basename}/workflow/EMPTY.txt`,
+    `${pathPrefix}/src/test/java/${projectPackagePath}/EMPTY.txt`,
+  ].forEach(empty => {
+    this.out.info('Creating empty file to protect important module folder: ' + empty);
+    this.fs.write(empty, '<EMPTY/>\n');
+  });
+
+  const moduleContextPath = `${pathPrefix}/src/main/resources/alfresco/module/${basename}/module-context.xml`;
+  const contextDocOrig = this.fs.read(this.destinationPath(moduleContextPath));
+  const context = require('generator-alfresco-common').spring_context(contextDocOrig);
+  [
+    'classpath:alfresco/module/${project.artifactId}/context/bootstrap-context.xml',
+    'classpath:alfresco/module/${project.artifactId}/context/service-context.xml',
+    'classpath:alfresco/module/${project.artifactId}/context/webscript-context.xml',
+  ].forEach(resource => {
+    this.out.info('Removing import from module-context.xml: ' + resource);
+    context.removeImport(resource);
+  });
+  const contextDocNew = context.getContextString();
+  this.fs.write(moduleContextPath, contextDocNew);
+  debug('removeRepoSamples3x() finished');
+}
+
+/*
+function removeShareSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
+  this.out.info('Removing share sample code/config');
+  const prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
+  const projectPackagePath = projectPackage.replace(/\./g, '/');
+  [
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/' + prefix + 'share-amp.properties',
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/' + prefix + 'share-amp-example-widgets.xml',
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
+    pathPrefix + '/src/main/amp/web/js/example/widgets/TemplateWidget.js',
+    pathPrefix + '/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
+    pathPrefix + '/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
+    pathPrefix + '/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
+    pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
+    pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
+    pathPrefix + '/src/test/resources/testng.xml',
+  ].forEach(file => {
+    this.out.info('Removing share-amp sample file created by maven archetype: ' + file);
+    this.fs.delete(file, {globOptions: {strict: true}});
+  });
+
+  [
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
+    pathPrefix + '/src/main/amp/web/js/EMPTY.txt',
+    pathPrefix + '/src/test/java/EMPTY.txt',
+  ].forEach(empty => {
+    this.out.info('Creating empty file to protect important share-amp folder: ' + empty);
+    this.fs.write(empty, '<EMPTY/>\n');
+  });
+
+  let slingshotContextFile = 'custom-slingshot-application-context.xml';
+  if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
+    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.1.1')) {
+      const versionPrefix = sdkVersionPrefix.call(this);
+      slingshotContextFile = versionPrefix + 'share-amp-slingshot-application-context.xml';
+    }
+  }
+  [
+    pathPrefix + '/src/main/amp/config/alfresco/web-extension/' + slingshotContextFile,
+  ].forEach(file => {
+    const destinationFile = this.destinationPath(file);
+    if (memFsUtils.existsInMemory(this.fs, destinationFile) || fs.existsSync(file)) {
+      this.out.info('Renaming share-amp file to *.sample: ' + file);
+      this.fs.move(destinationFile, destinationFile + '.sample');
+    } else {
+      debug('Unable to locate ' + file + ' in order to rename with .sample');
+    }
+  });
+  debug('removeShareSamples3x() finished');
+}
+*/
+
+function removeRepoSamples2x (pathPrefix, projectPackage, artifactIdPrefix) {
   this.out.info('Removing repository sample code/config');
   const prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   const projectPackagePath = projectPackage.replace(/\./g, '/');
@@ -486,11 +599,11 @@ function removeRepoSamples (pathPrefix, projectPackage, artifactIdPrefix) {
   });
   const contextDocNew = context.getContextString();
   this.fs.write(moduleContextPath, contextDocNew);
-  debug('removeRepoSamples() finished');
+  debug('removeRepoSamples2x() finished');
 }
 
-function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
-  this.out.info('Removing share sample code/config');
+function removeShareSamples2x (pathPrefix, projectPackage, artifactIdPrefix) {
+  this.out.info(`Removing share sample code/config>${pathPrefix}:${projectPackage}:${artifactIdPrefix}`);
   const prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
   const projectPackagePath = projectPackage.replace(/\./g, '/');
   [
@@ -539,7 +652,7 @@ function removeShareSamples (pathPrefix, projectPackage, artifactIdPrefix) {
       debug('Unable to locate ' + file + ' in order to rename with .sample');
     }
   });
-  debug('removeShareSamples() finished');
+  debug('removeShareSamples2x() finished');
 }
 
 /*
