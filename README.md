@@ -106,7 +106,9 @@ yo alfresco --help
 yo alfresco:action --help
 yo alfresco:amp --help
 yo alfresco:behavior --help
+yo alfresco:jar --help
 yo alfresco:model --help
+yo alfresco:module --help
 yo alfresco:webscript --help
 ```
 
@@ -118,39 +120,38 @@ Will print out information about cli arguments and options.
 yo alfresco:amp
 ```
 
-This starts by asking if you would like to add source, local, remote or common AMPs. 
+This starts by asking if you would like to add source, local, remote or common AMPs.
+This sub-generator is **deprecated** starting with SDK3, use `yo alfresco:module`
+instead.
 
 ##### alfresco:amp-add-source
 
 When you select **Source AMP**, we'll ask a few questions and then create additional 
-repo/share source AMPs under the `customizations` folder. These are created by copying
-the `repo-amp` and `share-amp` folders from `source_templates`. Of course, we update
-paths and names appropriately. We also automatically plug them into your project files 
-(including maven and spring/tomcat contexts.) 
+repo/share source AMPs under the `customizations` folder (unless you don't have one,
+in which case they will be created in the project root). These are created by copying
+the appropriate platform/repo/share folders from `source_templates`. Of course, we
+update paths and names appropriately. We also automatically plug them into your
+project files (including maven and spring/tomcat contexts.) 
 
-You can use either of the following as a shortcut for adding source AMPs:
+You can use the following as a shortcut for adding source AMPs:
 
 ```bash
-yo alfresco:amp -A source
 yo alfresco:amp-add-source
 ```
 
 ##### alfresco:amp-add-local
 
 If you have AMP files you'd like to incorporate into your project, you can place
-repository AMPs into the `amps` root folder (just like you do when you use the
-Alfresco installer.) Similarly you can place your pre-packaged Share AMP files
-into the `amps_share` root folder. In order to get these plugged into the project
-you use the **Local AMP** option with the `yo alfresco:amp` sub-generator. Here
-are some example commands you could use:
+repository AMPs into the `customizations/amps` folder. Similarly you can place
+your pre-packaged Share AMP files into the `customizations/amps_share` folder.
+In order to get these plugged into the project you use the **Local AMP** option with
+the `yo alfresco:module` sub-generator. Here is an example command you could use:
 
 ```bash
-yo alfresco:amp
-yo alfresco:amp -A local
 yo alfresco:amp-add-local
 ```
 
-When you use these commands, we'll go through the `amps` and `amps_share` folders
+When you use this command, we'll go through the `amps` and `amps_share` folders
 and find any AMP files that are not already linked into your project structure.
 You select the AMP files one at a time, you'll be asked to provide a Maven
 groupId, artifactId and version for the AMP. If this information is included 
@@ -161,18 +162,16 @@ the project in a month or a year.
 
 ##### alfresco:amp-add-remote
 
-The **Remote AMP** option allows you to specify if the AMP should be installed into the 
-repository or Share. It also asks you to provide Maven groupId, artifactId and version 
-for an AMP file that is in a Maven repository that your build has access to. For example, 
-the Uploader Plus plugin is available in Maven Central, so you can provide information for
-one of these AMPs and the build will automatically download and install the AMP the next
-time you run your project.
+The **Remote AMP** option allows you to specify if an AMP should be installed into
+the repository or Share. It also asks you to provide Maven groupId, artifactId and
+version for an AMP file that is in a Maven repository that your build has access
+to. For example, the Uploader Plus plugin is available in Maven Central, so you can
+provide information for one of these AMPs and the build will automatically download
+and install the AMP the next time you run your project.
 
-Here are some sample command lines you can use:
+Here is a sample command line you can use:
 
 ```bash
-yo alfresco:amp
-yo alfresco:amp -A remote
 yo alfresco:amp-add-remote
 ```
 
@@ -201,34 +200,32 @@ behalf. Currently these include:
 Here is a summary of which versions of common AMPS are available with each version
 of the SDK:
 
-|                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
-| ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
-| Alfresco Office Services       | 1.1       | 1.1.7      |           |            |           |            |           |            |           |            |
-| Developer Helper               | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      |
-| JavaMelody                     | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
-| JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
-| JScript Extensions             | 1.3       | 1.3        | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      |           |            |
-| Order of the Bee Support Tools | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    |
-| Records Management             | 2.5.a     | 2.5.0      | 2.3       | 2.3        | 2.3       | 2.3        |           |            |           |            |
-| Share Inbound Calendar Invites | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |
-| Share Site Announcements       | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      |
-| Share Site Creators            | 0.0.5     | 0.0.5      |           |            |           |            |           |            |           |            |
-| Share Site Space Templates     | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      |
-| Support Tools                  |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |
-| Uploader Plus                  | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        |
-| Xenit Care4Alf                 | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |           |            |
-| Xenit Dynamic Extensions       | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      |           |            |
+|                                | SDK 3.0.1<br/>Community | SDK 3.0.1<br/>Enterprise | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
+| ------------------------------ | --------- | --------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
+| Alfresco Office Services       | 1.1.7     | 1.1.7     | 1.1.7     | 1.1.7      |           |            |           |            |           |            |           |            |
+| Developer Helper               | 1.0.1     | 1.0.1     | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      |
+| JavaMelody                     |           |           | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
+| JavaScript Console             | 0.6       | 0.6       | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
+| JScript Extensions             |           |           | 1.3       | 1.3        | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      |           |            |
+| Order of the Bee Support Tools | 1.0.0.0   | 1.0.0.0   | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    |
+| Records Management             |           |           | 2.5.a     | 2.5.0      | 2.3       | 2.3        | 2.3       | 2.3        |           |            |           |            |
+| Share Inbound Calendar Invites | 1.1.0     | 1.1.0     | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |
+| Share Site Announcements       | 0.0.2     | 0.0.2     | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      |
+| Share Site Creators            | 0.0.5     | 0.0.5     | 0.0.5     | 0.0.5      |           |            |           |            |           |            |           |            |
+| Share Site Space Templates     | 1.1.2     | 1.1.2     | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      | 1.1.2     | 1.1.2      |
+| Support Tools                  |           |           |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |           | 1.11       |
+| Uploader Plus                  | 1.2       | 1.2       | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        | 1.2       | 1.2        |
+| Xenit Care4Alf                 |           |           | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |           |            |
+| Xenit Dynamic Extensions       |           |           | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      | 1.5.1     | 1.5.1      |           |            |
 
 You don't need to worry about this too much as it will automatically detect the SDK 
 version and if you are using Community or Enterprise and even which AMPs you have
 already applied and only show you ones that are valid for your project.
 
 
-Here are some sample command lines you can use:
+Here is a sample command line you can use:
 
 ```bash
-yo alfresco:amp
-yo alfresco:amp -A common
 yo alfresco:amp-add-common
 ```
 
@@ -259,6 +256,48 @@ for the `onUpdateProperties` policy on all `cm:content` nodes. We'll also genera
 context file that registers a bean for this class and passes in the minimal items 
 you'll need to create behavior code.
 
+<!--
+#### alfresco:jar
+
+```bash
+yo alfresco:jar
+```
+
+This starts by asking if you would like to add local or remote JARs.
+-->
+#### alfresco:jar-add-local
+
+If you have JAR files you'd like to incorporate into your project, you can place
+repository JARs into the `customizations/modules/platform` folder. Similarly you
+can place your pre-packaged Share JAR files into the `customizations/modules/share`
+folder. In order to get these plugged into the project you use the **Local JAR**
+option with the `yo alfresco:module` sub-generator. Here is an example command
+you could use:
+
+```bash
+yo alfresco:jar-add-local
+```
+
+When you use this command, we'll go through the `platform` and `share` modules
+folders and find any JAR files that are not already linked into your project
+structure. You select the JAR files one at a time, you'll be asked to provide a
+Maven groupId, artifactId and version for the JAR. If this information is included 
+inside the JAR file, we'll try to provide you with sane default values.
+
+<!--
+##### alfresco:jar-add-remote
+
+The **Remote JAR** option allows you to specify if a JAR should be installed into
+the repository or Share. It also asks you to provide Maven groupId, artifactId and
+version for a JAR file that is in a Maven repository that your build has access
+to.
+
+Here is a sample command line you can use:
+
+```bash
+yo alfresco:jar-add-remote
+```
+-->
 #### alfresco:model
 
 ```bash
@@ -271,6 +310,30 @@ file has a bunch of commented out examples in it, so you should be able to creat
 valid model pretty easily. Of course we also provide a context file that registers
 the model.
 
+#### alfresco:module
+
+```bash
+yo alfresco:module
+```
+
+This starts by asking if you would like to add a source module, a local AMP or JAR,
+a remote AMP or common AMPs. It delegates to other sub-generators.
+
+#### alfresco:module-add-source
+
+When you select **Source Module**, we'll ask a few questions and then create additional 
+repo/share source modules under the `customizations` folder (unless you don't have one,
+in which case they will be created in the project root). These are created by copying
+the appropriate platform/repo/share folders from `source_templates`. Of course, we
+update paths and names appropriately. We also automatically plug them into your
+project files (including maven and spring/tomcat contexts.) 
+
+You can use the following as a shortcut for adding source AMPs:
+
+```bash
+yo alfresco:module-add-source
+```
+
 #### alfresco:webscript
 
 ```bash
@@ -278,12 +341,14 @@ yo alfresco:webscript
 ```
 
 This will ask you a bunch of questions and then produce appropriate repo/share files
-for your WebScript. If you choose multiple HTTP methods you can in fact scaffold multiple
-webscripts with one pass through this sub-generator.
+for your WebScript. If you choose multiple HTTP methods you can in fact scaffold
+multiple webscripts with one pass through this sub-generator.
 
-We are planning to add many more sub-generators for things like: jobs, workflows, JavaScript
-root objects, metadata extractors, content transformers, etc. We also hope to add 
-sub-generators for doing a bunch of common tasks with Share customization.
+#### future sub-generators
+
+We are planning to add many more sub-generators for things like: jobs, workflows,
+JavaScript root objects, metadata extractors, content transformers, etc. We may
+add sub-generators for doing a bunch of common tasks with Share customization.
 
 ### Try The Project / Contribute
 

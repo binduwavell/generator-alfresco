@@ -2,9 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.x and up
-  - [ ] handle new integration-test module
-    - specifically it should probably depend on source repo modules
-    - need to handle adding and removing source repo modules
   - [ ] need to test and update all existing sub-generators
     - [ ] amp
     - [x] amp-add-common
@@ -39,6 +36,9 @@ TODO
     - [ ] jar-add-common (Deferred)
     - [ ] module-add-common (Deferred)
       - wrapper for amp-add-common and jar-add-common
+  - [ ] handle new integration-test module
+    - specifically it should probably depend on source repo modules
+    - need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
