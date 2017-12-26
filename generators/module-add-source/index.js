@@ -45,7 +45,7 @@ class ModuleAddSourceSubGenerator extends SubGenerator {
         when: () => {
           this.out.docs([
             'In order to have consistent artifact names, we will automatically append',
-            '-platform, -share and/or -parent to your artifactId prefix where appropriate.',
+            '-repo, -share and/or -parent to your artifactId prefix where appropriate.',
           ].join(' '));
           return true;
         },

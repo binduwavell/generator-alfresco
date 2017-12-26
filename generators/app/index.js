@@ -632,7 +632,7 @@ class AlfrescoGenerator extends Generator {
         // Arrange for all generated beans to be included
         paths = this.sdk.defaultModuleRegistry.call(this)
           .filter(mod => {
-            return (mod.war === constants.WAR_TYPE_REPO);
+            return (mod.war === constants.WAR_TYPE_SHARE);
           })
           .map(mod => {
             return mod.path;

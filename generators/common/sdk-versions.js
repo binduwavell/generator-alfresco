@@ -20,15 +20,16 @@ module.exports = {
     supportedMavenVersions: '^3.3.0',
     supportedRepositoryVersions: '5.2.e+ and 5.2.0+',
     useArchetypeTemplate: true,
-    defaultModuleRegistry: jarModuleRegistry,
+    defaultModuleRegistry: defaultJarModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples3x,
-    removeShareSamples: undefined, // THIS
+    removeShareSamples: removeShareSamples3x,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareJar, // THIS
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/resources',
     shareConfigBase: 'src/main/resources',
@@ -46,7 +47,8 @@ module.exports = {
     supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.1.d+ and 5.1+',
     useArchetypeTemplate: true,
-    defaultModuleRegistry: ampModuleRegistry,
+    defaultModuleRegistry: defaultAmpModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
@@ -54,7 +56,7 @@ module.exports = {
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareAmp,
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
     shareConfigBase: 'src/main/amp/config',
@@ -72,7 +74,8 @@ module.exports = {
     supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.0.d+ and 5.0.1+',
     useArchetypeTemplate: true,
-    defaultModuleRegistry: ampModuleRegistry,
+    defaultModuleRegistry: defaultAmpModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
@@ -80,7 +83,7 @@ module.exports = {
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareAmp,
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
     shareConfigBase: 'src/main/amp/config',
@@ -98,7 +101,8 @@ module.exports = {
     supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: '5.0.d+ and 5.0.1+',
     useArchetypeTemplate: true,
-    defaultModuleRegistry: ampModuleRegistry,
+    defaultModuleRegistry: defaultAmpModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
@@ -106,7 +110,7 @@ module.exports = {
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareAmp,
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
     shareConfigBase: 'src/main/amp/config',
@@ -124,13 +128,14 @@ module.exports = {
     supportedMavenVersions: '^3.0.5',
     supportedRepositoryVersions: '5.0.c and 5.0',
     useArchetypeTemplate: true,
-    defaultModuleRegistry: ampModuleRegistry,
+    defaultModuleRegistry: defaultAmpModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareAmp,
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
     shareConfigBase: 'src/main/amp/config',
@@ -150,13 +155,14 @@ module.exports = {
     supportedMavenVersions: '^3.2.5',
     supportedRepositoryVersions: 'Use local Alfresco SDK clone',
     useArchetypeTemplate: false,
-    defaultModuleRegistry: ampModuleRegistry,
+    defaultModuleRegistry: defaultAmpModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
     setupNewRepoModule: setupNewRepoModule,
-    setupNewShareModule: setupNewShareAmp,
+    setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
     repoConfigBase: 'src/main/amp/config',
     shareConfigBase: 'src/main/amp/config',
@@ -257,7 +263,7 @@ function targetFolderName (basename) {
  *   what is provided when the archetype has stamped
  *   a project out.
  */
-function ampModuleRegistry () {
+function defaultAmpModuleRegistry () {
   const prefix = sdkVersionPrefix.call(this);
   return [
     {
@@ -290,7 +296,7 @@ function ampModuleRegistry () {
  *   what is provided when the archetype has stamped
  *   a project out.
  */
-function jarModuleRegistry () {
+function defaultJarModuleRegistry () {
   const prefix = sdkVersionPrefix.call(this);
   return [
     {
@@ -312,6 +318,26 @@ function jarModuleRegistry () {
       'path': prefix + 'share-jar',
     },
   ];
+}
+
+/**
+ * Returns the default source module for a given SDK
+ * version and warType. If not found then returns
+ * undefined.
+ *
+ * @param warType
+ */
+function defaultSourceModule (warType) {
+  debug(`Searching for default ${warType} module definition`);
+  if (this.sdk.defaultModuleRegistry) {
+    const defaultModules = this.sdk.defaultModuleRegistry.call(this).filter(mod => {
+      return (mod.location === 'source' && mod.war === warType);
+    });
+    if (defaultModules && defaultModules.length === 1) {
+      return defaultModules[0];
+    }
+  }
+  debug('defaultSourceModule() finished');
 }
 
 /**
@@ -409,17 +435,66 @@ function setupNewRepoModule (pathPrefix) {
 /**
  * @param pathPrefix
  */
-function setupNewShareAmp (pathPrefix) {
+function setupNewShareModule (pathPrefix) {
   this.out.info('Setting up new share amp: ' + pathPrefix);
-  debug('setupNewShareAmp() finished');
-}
+  const basename = path.basename(pathPrefix);
 
-/**
- * @param pathPrefix
- */
-function setupNewShareJar (pathPrefix) {
-  this.out.info('Setting up new share jar: ' + pathPrefix);
-  debug('setupNewShareJar() finished');
+  const defaultModule = this.sdk.defaultSourceModule.call(this, constants.WAR_TYPE_SHARE);
+  if (defaultModule) {
+    const webExtensionPath = this.destinationPath(`${pathPrefix}/${this.sdk.shareConfigBase}/alfresco/web-extension`);
+    const appContextName = `${defaultModule.artifactId}-slingshot-application-context.xml`;
+    const appContextPath = path.join(webExtensionPath, appContextName);
+    debug('Looking for resources bean in %s', appContextPath);
+    if (memFsUtils.existsInMemory(this.fs, appContextPath) || fs.existsSync(appContextPath)) {
+      const appContextDocOrig = this.fs.read(appContextPath);
+      const doc = domutils.parseFromString(appContextDocOrig);
+      let bean = domutils.getFirstNodeMatchingXPath(`//bean[@id="org.alfresco.${defaultModule.artifactId}.resources"]`, doc);
+      // SDK3 includes schema info that SDK2 did not include
+      if (!bean) {
+        bean = domutils.getFirstNodeMatchingXPath(`//beans:bean[@id="org.alfresco.${defaultModule.artifactId}.resources"]`, doc);
+      }
+      if (bean) {
+        let value = domutils.getFirstNodeMatchingXPath(`property[@name="resourceBundles"]/list/value`, bean);
+        // SDK3 includes schema info that SDK2 did not include
+        if (!value) {
+          value = domutils.getFirstNodeMatchingXPath(`beans:property[@name="resourceBundles"]/beans:list/beans:value`, bean);
+        }
+        if (value) {
+          bean.setAttribute('id', 'org.alfresco.${project.artifactId}.resources');
+          value.textContent = 'alfresco.web-extension.messages.${project.artifactId}';
+          const appContextDocNew = domutils.prettyPrint(doc);
+          this.fs.write(appContextPath, appContextDocNew);
+        } else {
+          debug('Failed to find value element');
+        }
+      } else {
+        debug('Failed to find resources bean element');
+      }
+
+      // Rename files with artifactId in their name
+      [
+        path.join(webExtensionPath, appContextName),
+        path.join(webExtensionPath, 'messages', `${defaultModule.artifactId}.properties`),
+        path.join(webExtensionPath, 'site-data', 'extensions', `${defaultModule.artifactId}-example-widgets.xml`),
+      ].forEach((file) => {
+        if (memFsUtils.existsInMemory(this.fs, file) || fs.existsSync(file)) {
+          const dir = path.dirname(file);
+          const base = path.basename(file);
+          const baseNew = base.replace(new RegExp(`^${defaultModule.artifactId}`), basename);
+          if (baseNew !== base) {
+            const fileNew = path.join(dir, baseNew);
+            debug('RENAME FROM %s TO %s', file, fileNew);
+            this.fs.move(file, fileNew);
+          }
+        } else {
+          debug('Could not find %s, so not attempting to rename it', file);
+        }
+      });
+    } else {
+      debug('Did not find %s', appContextPath);
+    }
+  }
+  debug('setupNewShareAmp() finished');
 }
 
 function removeDefaultModules () {
@@ -493,52 +568,51 @@ function removeRepoSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
   debug('removeRepoSamples3x() finished');
 }
 
-/*
 function removeShareSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
-  this.out.info('Removing share sample code/config');
-  const prefix = (artifactIdPrefix ? artifactIdPrefix + '-' : sdkVersionPrefix.call(this));
-  const projectPackagePath = projectPackage.replace(/\./g, '/');
+  this.out.info(`Removing share sample code/config>${pathPrefix}:${projectPackage}:${artifactIdPrefix}`);
+  const basename = (artifactIdPrefix ? path.basename(pathPrefix) : pathPrefix);
   [
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/' + prefix + 'share-amp.properties',
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/' + prefix + 'share-amp-example-widgets.xml',
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml',
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl',
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js',
-    pathPrefix + '/src/main/amp/web/js/example/widgets/TemplateWidget.js',
-    pathPrefix + '/src/main/amp/web/js/example/widgets/css/TemplateWidget.css',
-    pathPrefix + '/src/main/amp/web/js/example/widgets/i18n/TemplateWidget.properties',
-    pathPrefix + '/src/main/amp/web/js/example/widgets/templates/TemplateWidget.html',
-    pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/DemoPageTestIT.java',
-    pathPrefix + '/src/test/java/' + projectPackagePath + '/demoamp/po/DemoPage.java',
-    pathPrefix + '/src/test/resources/testng.xml',
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/messages/${basename}.properties`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-data/extensions/${basename}-example-widgets.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.desc.xml`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.html.ftl`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com/example/pages/simple-page.get.js`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com/example/pages`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com/example`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-webscripts/com`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials/widgets/css/TemplateWidget.css`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials/widgets/i18n/TemplateWidget.properties`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials/widgets/templates/TemplateWidget.html`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials/widgets/TemplateWidget.js`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials/widgets`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js/tutorials`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/js`,
   ].forEach(file => {
-    this.out.info('Removing share-amp sample file created by maven archetype: ' + file);
+    this.out.info('Removing share module sample file created by maven archetype: ' + file);
     this.fs.delete(file, {globOptions: {strict: true}});
   });
 
   [
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/messages/EMPTY.txt',
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/site-data/extensions/EMPTY.txt',
-    pathPrefix + '/src/main/amp/web/js/EMPTY.txt',
-    pathPrefix + '/src/test/java/EMPTY.txt',
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/messages/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/alfresco/web-extension/site-data/extensions/EMPTY.txt`,
+    `${pathPrefix}/src/main/resources/META-INF/resources/${basename}/EMPTY.txt`,
   ].forEach(empty => {
-    this.out.info('Creating empty file to protect important share-amp folder: ' + empty);
+    this.out.info('Creating empty file to protect important share module folder: ' + empty);
     this.fs.write(empty, '<EMPTY/>\n');
   });
 
   let slingshotContextFile = 'custom-slingshot-application-context.xml';
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
     if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.1.1')) {
-      const versionPrefix = sdkVersionPrefix.call(this);
-      slingshotContextFile = versionPrefix + 'share-amp-slingshot-application-context.xml';
+      slingshotContextFile = `${basename}-slingshot-application-context.xml`;
     }
   }
   [
-    pathPrefix + '/src/main/amp/config/alfresco/web-extension/' + slingshotContextFile,
+    pathPrefix + '/src/main/resources/alfresco/web-extension/' + slingshotContextFile,
   ].forEach(file => {
     const destinationFile = this.destinationPath(file);
     if (memFsUtils.existsInMemory(this.fs, destinationFile) || fs.existsSync(file)) {
-      this.out.info('Renaming share-amp file to *.sample: ' + file);
+      this.out.info('Renaming share module context file to *.sample: ' + file);
       this.fs.move(destinationFile, destinationFile + '.sample');
     } else {
       debug('Unable to locate ' + file + ' in order to rename with .sample');
@@ -546,7 +620,6 @@ function removeShareSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
   });
   debug('removeShareSamples3x() finished');
 }
-*/
 
 function removeRepoSamples2x (pathPrefix, projectPackage, artifactIdPrefix) {
   this.out.info('Removing repository sample code/config');

@@ -38,15 +38,18 @@ function MakeAlfrescoModuleManager (yo) {
         this.ops.push(() => { copyTemplateForModule(mod) });
         this.ops.push(() => { renamePathElementsForModule(mod) });
         this.ops.push(() => { addModuleToParentPom(mod) });
-        if (mod.war === constants.WAR_TYPE_SHARE && !yo.usingEnhancedAlfrescoMavenPlugin) {
-          this.ops.push(() => { addFailsafeConfigToRunner(mod) });
+        // SDK2 must configure tomcat context manually and configure failsafe for share source modules
+        if (yo.sdkMajorVersion === 2) {
+          this.ops.push(() => { addModuleToTomcatContext(mod) });
+          if (mod.war === constants.WAR_TYPE_SHARE) {
+            this.ops.push(() => { addFailsafeConfigToRunner(mod) });
+          }
         }
-        this.ops.push(() => { addModuleToTomcatContext(mod) });
+        // SDK3 has a "packaged" hierarchy for share under META-INF/resources
+        if (yo.sdkMajorVersion === 3) {
+          this.ops.push(() => { renamePathElementsForResources(mod) });
+        }
         this.ops.push(() => { updateProjectPom(mod) });
-      /*
-      } else if (mod.location === constants.LOCATION_LOCAL || mod.location === constants.LOCATION_REMOTE) {
-        debug('Scheduling ops for ' + mod.artifactId + ' module.');
-      */
       }
 
       if (yo.usingEnhancedAlfrescoMavenPlugin) {
@@ -127,17 +130,14 @@ function MakeAlfrescoModuleManager (yo) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
 
     if (mod.war === constants.WAR_TYPE_REPO) {
-      const defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(mod => {
-        return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
-      });
-      if (defaultMods && defaultMods.length > 0) {
-        if (mod.artifactId !== defaultMods[0].artifactId) {
-          // <path>/<sdk.srcModuleModuleBase>/<artifactId>
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_REPO);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
           const fromPath = path.join(
             yo.destinationPath(),
             mod.path,
             yo.sdk.repoConfigBase + '/alfresco/module',
-            defaultMods[0].artifactId
+            defaultMod.artifactId
           );
           const toPath = path.join(
             yo.destinationPath(),
@@ -157,8 +157,75 @@ function MakeAlfrescoModuleManager (yo) {
         }
       }
     }
+    if (mod.war === constants.WAR_TYPE_SHARE) {
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_SHARE);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
+          const fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            yo.sdk.shareConfigBase + '/alfresco/module',
+            defaultMod.artifactId
+          );
+          if (memFsUtils.existsInMemory(yo.fs, fromPath) || yo.fs.exists(fromPath)) {
+            const toPath = path.join(
+              yo.destinationPath(),
+              mod.path,
+              yo.sdk.shareConfigBase + '/alfresco/module',
+              mod.artifactId
+            );
+            yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+            debug('MOVING FROM: ' + fromPath + ' to: ' + toPath);
+            if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+              debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+              memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+            } else {
+              debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+              yo.fs.move(fromPath + '/**', toPath);
+            }
+          }
+        }
+      }
+    }
 
     debug('renamePathElementsForModule() finished');
+  }
+
+  function renamePathElementsForResources (mod) {
+    debug('renamePathElementsForResources() - start by getting default repo module artifactId');
+
+    if (mod.war === constants.WAR_TYPE_SHARE) {
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_SHARE);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
+          const fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            yo.sdk.shareConfigBase + '/META-INF/resources',
+            defaultMod.artifactId
+          );
+          if (memFsUtils.existsInMemory(yo.fs, fromPath) || yo.fs.exists(fromPath)) {
+            const toPath = path.join(
+              yo.destinationPath(),
+              mod.path,
+              yo.sdk.shareConfigBase + '/META-INF/resources',
+              mod.artifactId
+            );
+            yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+            debug('MOVING FROM: ' + fromPath + ' to: ' + toPath);
+            if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+              debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+              memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+            } else {
+              debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+              yo.fs.move(fromPath + '/**', toPath);
+            }
+          }
+        }
+      }
+    }
+
+    debug('renamePathElementsForResources() finished');
   }
 
   function addFailsafeConfigToRunner (mod) {
