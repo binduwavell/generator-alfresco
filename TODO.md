@@ -2,7 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.x and up
-  - [ ] configure project for enterprise
   - [ ] handle new integration-test module
     - specifically it should probably depend on source repo modules
     - need to handle adding and removing source repo modules
@@ -43,6 +42,7 @@ TODO
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [x] configure project for enterprise
   - [x] need to be able to remove SDK 3 sample files
   - [x] update to latest 3.x SDK
   - [x] update alfresco-module-manager for SDK 3

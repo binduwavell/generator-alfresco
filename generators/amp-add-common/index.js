@@ -9,31 +9,16 @@ const NAMESPACE_REMOTE = 'alfresco:amp-add-remote';
 
 const PROJECTS = [
   {
-    name: 'AOS Community - Alfresco Office Services (5.1)',
+    name: 'AOS - Alfresco Office Services',
     description: 'Alfresco Office Services (AOS) allows you to access Alfresco directly from your Microsoft Office applications.',
     url: 'http://docs.alfresco.com/aos/concepts/aos-intro.html',
-    availability: ['Community'],
-    sdkVersions: ['2.2.0'],
+    availability: ['Community', 'Enterprise'],
+    sdkVersions: ['2.2.0', '3.0.1'],
     repo: [
       {
         groupId: 'org.alfresco.aos-module',
         artifactId: 'alfresco-aos-module',
-        version: '1.1',
-      },
-    ],
-    share: [],
-  },
-  {
-    name: 'AOS Enterprise - Alfresco Office Services (5.1)',
-    description: 'Alfresco Office Services (AOS) allows you to access Alfresco directly from your Microsoft Office applications.',
-    url: 'http://docs.alfresco.com/aos/concepts/aos-intro.html',
-    availability: ['Enterprise'],
-    sdkVersions: ['2.2.0'],
-    repo: [
-      {
-        groupId: 'org.alfresco.aos-module',
-        artifactId: 'alfresco-aos-module',
-        version: '1.1.3',
+        version: '1.1.7',
       },
     ],
     share: [],
@@ -130,20 +115,20 @@ const PROJECTS = [
   {
     name: 'Order of the Bee - Support Tools',
     description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
-    url: 'https://github.com/AFaust/ootbee-support-tools',
+    url: 'https://github.com/OrderOfTheBee/ootbee-support-tools',
     availability: ['Community', 'Enterprise'],
     repo: [
       {
         groupId: 'org.orderofthebee.support-tools',
         artifactId: 'support-tools-repo',
-        version: '0.0.1.0',
+        version: '1.0.0.0',
       },
     ],
     share: [
       {
         groupId: 'org.orderofthebee.support-tools',
         artifactId: 'support-tools-share',
-        version: '0.0.1.0',
+        version: '1.0.0.0',
       },
     ],
   },
@@ -296,6 +281,7 @@ const PROJECTS = [
     description: 'Provides the Alfresco admin a set of tools to help troubleshoot performance issues.',
     url: 'https://github.com/Alfresco/alfresco-support-tools',
     availability: ['Enterprise'],
+    sdkVersions: ['2.0.0', '2.1.0', '2.1.1', '2.2.0'],
     repo: [
       {
         groupId: 'org.alfresco.support',

@@ -16,6 +16,8 @@ module.exports = {
     promptForProjectPackage: true,
     providedCommunityVersion: '5.2.f',
     providedEnterpriseVersion: '5.2.2',
+    providedEnterpriseShareVersion: '5.2.2',
+    providedEnterpriseSurfVersion: '6.11',
     supportedJavaVersions: '^1.8.0',
     supportedMavenVersions: '^3.3.0',
     supportedRepositoryVersions: '5.2.e+ and 5.2.0+',

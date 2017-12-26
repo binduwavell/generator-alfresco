@@ -203,12 +203,12 @@ of the SDK:
 
 |                                | SDK 2.2.0<br/>Community | SDK 2.2.0<br/>Enterprise | SDK 2.1.1<br/>Community | SDK 2.1.1<br/>Enterprise | SDK 2.1.0<br/>Community | SDK 2.1.0<br/>Enterprise | SDK 2.0.0<br/>Community | SDK 2.0.0<br/>Enterprise | local SDK<br/>Community | local SDK<br/>Enterprise |
 | ------------------------------ | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- | --------- | ---------- |
-| Alfresco Office Services       | 1.1       | 1.1.3      |           |            |           |            |           |            |           |            |
+| Alfresco Office Services       | 1.1       | 1.1.7      |           |            |           |            |           |            |           |            |
 | Developer Helper               | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      | 1.0.1     | 1.0.1      |
 | JavaMelody                     | 1.62.0    | 1.62.0     |           |            |           |            |           |            |           |            |
 | JavaScript Console             | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        | 0.6       | 0.6        |
 | JScript Extensions             | 1.3       | 1.3        | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      | 1.3.1     | 1.3.1      |           |            |
-| Order of the Bee Support Tools | 0.0.1.0   | 0.0.1.0    | 0.0.1.0   | 0.0.1.0    | 0.0.1.0   | 0.0.1.0    | 0.0.1.0   | 0.0.1.0    | 0.0.1.0   | 0.0.1.0    |
+| Order of the Bee Support Tools | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    | 1.0.0.0   | 1.0.0.0    |
 | Records Management             | 2.5.a     | 2.5.0      | 2.3       | 2.3        | 2.3       | 2.3        |           |            |           |            |
 | Share Inbound Calendar Invites | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      | 1.1.0     | 1.1.0      |
 | Share Site Announcements       | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      | 0.0.2     | 0.0.2      |

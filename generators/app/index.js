@@ -523,8 +523,12 @@ class AlfrescoGenerator extends Generator {
     trace('generatorOverlay');
     if (this.bail) return;
     const isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    const isSDK2 = (this.sdkMajorVersion === 2);
+    const isSDK3 = (this.sdkMajorVersion === 3);
     const tplContext = {
       isEnterprise: isEnterprise,
+      isSDK2: isSDK2,
+      isSDK3: isSDK3,
       enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
       projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
       projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
@@ -652,6 +656,21 @@ class AlfrescoGenerator extends Generator {
       const topPomContent = this.fs.read(topPomPath);
       const topPom = require('generator-alfresco-common').maven_pom(topPomContent);
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
+      this.fs.write(topPomPath, topPom.getPOMString());
+    }
+
+    // In SDK3 we now enable enterprise editing in the top pom
+    // See: http://docs.alfresco.com/5.2/concepts/sdk-using-enterprise.html
+    const isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    if (this.sdkMajorVersion === 3 && isEnterprise) {
+      const topPomPath = this.destinationPath('pom.xml');
+      const topPomContent = this.fs.read(topPomPath);
+      const topPom = require('generator-alfresco-common').maven_pom(topPomContent);
+      topPom.setProperty('maven.alfresco.edition', 'enterprise');
+      topPom.setProperty('alfresco.platform.war.artifactId', 'alfresco-enterprise');
+      topPom.setProperty('alfresco.platform.version', this.sdk.providedEnterpriseVersion);
+      topPom.setProperty('alfresco.share.version', this.sdk.providedEnterpriseShareVersion);
+      topPom.setProperty('alfresco.surf.version', this.sdk.providedEnterpriseSurfVersion);
       this.fs.write(topPomPath, topPom.getPOMString());
     }
   }
