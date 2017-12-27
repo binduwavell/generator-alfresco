@@ -3,11 +3,8 @@ TODO
 
 - [ ] Support SDK 3.x and up
   - [ ] need to test and update all existing sub-generators
-    - [ ] amp
+    - [x] amp
     - [x] amp-add-common
-      - [ ] update to latest amps
-      - [ ] validate common amps with latest 3.x SDK with community & enterprise
-      - [ ] update documentation based on preceeding
     - [x] amp-add-local
     - [x] amp-add-remote
     - [x] amp-add-source
@@ -41,6 +38,10 @@ TODO
     - need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
+  - [ ] Update common amps (amp-add-common)
+    - [ ] update to latest amps
+    - [ ] validate common amps with latest 3.x SDK with community & enterprise
+    - [ ] update documentation based on preceding
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
   - [x] configure project for enterprise
   - [x] need to be able to remove SDK 3 sample files
