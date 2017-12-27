@@ -1353,9 +1353,9 @@ generate-object-property@^1.1.0:
   dependencies:
     is-property "^1.0.0"
 
-generator-alfresco-common@0.9.14:
-  version "0.9.14"
-  resolved "https://registry.yarnpkg.com/generator-alfresco-common/-/generator-alfresco-common-0.9.14.tgz#0b1f208fc700a9e22a1b7db59146ab683478fbd7"
+generator-alfresco-common@0.9.17:
+  version "0.9.17"
+  resolved "https://registry.yarnpkg.com/generator-alfresco-common/-/generator-alfresco-common-0.9.17.tgz#01f5f0e4af3f6c82de7e51925dcfddd16f5c12e3"
   dependencies:
     chalk "2.3.0"
     cross-spawn "5.1.0"
