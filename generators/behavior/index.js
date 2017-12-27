@@ -56,10 +56,12 @@ class BehaviorSubGenerator extends SourceSelectingSubGenerator {
       this.props = props;
 
       // figure stuff out about our environment
+      const configBase = this.sdk.repoConfigBase;
       const targetModule = this.targetModule.module;
       const artifactId = targetModule.artifactId;
       const moduleRoot = this.destinationPath(targetModule.path);
-      const genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      const targetModuleBase = path.basename(targetModule.path);
+      const genRoot = `${configBase}/alfresco/module/${targetModuleBase}/context/generated`;
 
       // get information from prompts
       const behaviorId = _.kebabCase(props.class);

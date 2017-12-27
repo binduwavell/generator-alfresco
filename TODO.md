@@ -9,7 +9,7 @@ TODO
     - [x] amp-add-remote
     - [x] amp-add-source
       - [x] redirect/delegate to module-add-source
-    - [ ] behavior
+    - [x] behavior
     - [ ] model
     - [ ] webscript
   - [ ] split tests so we have 2.x and 3.x variants where necessary
