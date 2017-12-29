@@ -150,7 +150,6 @@ describe('generator-alfresco:webscript-3-0-1', function () {
     });
 
     it('amp files exist in project', function () {
-      console.log('PATH: ' + process.cwd());
       assert.file([
         'javascript.get.desc.xml',
         'javascript.get.js',
