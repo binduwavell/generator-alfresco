@@ -7,7 +7,7 @@ const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:webscript', function () {
+describe('generator-alfresco:webscript-2-1-1', function () {
   this.timeout(30000);
 
   const osTempDir = path.join(os.tmpdir(), 'temp-test');

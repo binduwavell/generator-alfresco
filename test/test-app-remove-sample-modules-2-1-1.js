@@ -5,7 +5,7 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app-remove-sample-modules', function () {
+describe('generator-alfresco:app-remove-sample-modules-2-1-1', function () {
   describe('remove sdk samples', function () {
     this.timeout(60000);
 
@@ -14,6 +14,7 @@ describe('generator-alfresco:app-remove-sample-modules', function () {
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': false })
         .withPrompts({
+          sdkVersion: '2.1.1',
           removeDefaultSourceAmps: true,
           removeDefaultSourceSamples: false,
         })

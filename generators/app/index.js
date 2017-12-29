@@ -597,8 +597,8 @@ class AlfrescoGenerator extends Generator {
       );
     });
     // enterprise specific stuff
-    trace('Copying enterprise license');
-    if (isEnterprise) {
+    if (this.sdkMajorVersion === 2 && isEnterprise) {
+      trace('Copying enterprise license');
       this.fs.copy(
         this.templatePath(constants.FOLDER_REPO),
         this.destinationPath(constants.FOLDER_REPO),

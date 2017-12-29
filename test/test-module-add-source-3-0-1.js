@@ -7,7 +7,7 @@ const path = require('path');
 
 // TODO(bwavell): add a bunch more tests
 
-describe('generator-alfresco:module-add-source', function () {
+describe('generator-alfresco:module-add-source-3-0-1', function () {
   this.timeout(30000);
 
   const osTempDir = path.join(os.tmpdir(), 'temp-test');
@@ -18,7 +18,7 @@ describe('generator-alfresco:module-add-source', function () {
       .inDir(osTempDir)
       .withOptions({ 'skip-install': true })
       .withPrompts({
-        sdkVersion: '2.1.1',
+        sdkVersion: '3.0.1',
         projectStructure: 'advanced',
         projectArtifactId: 'temp-test',
         removeDefaultSourceAmps: true,
@@ -26,7 +26,7 @@ describe('generator-alfresco:module-add-source', function () {
       .toPromise();
   });
 
-  describe('after creating both a repo and share amp', function () {
+  describe('after creating both a repo and share source module', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -45,9 +45,23 @@ describe('generator-alfresco:module-add-source', function () {
         })
         .toPromise();
     });
+
+    it('module files exist in project', function () {
+      assert.file([
+        path.join(osTempDir, 'customizations/both-customizations-repo/pom.xml'),
+        path.join(osTempDir, 'customizations/both-customizations-share/pom.xml'),
+      ]);
+    });
+
+    it('sample files exist in project', function () {
+      assert.file([
+        path.join(osTempDir, 'customizations/both-customizations-repo/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials/helloworld.get.desc.xml'),
+        path.join(osTempDir, 'customizations/both-customizations-share/src/main/resources/META-INF/resources/both-customizations-share/js/tutorials/widgets/css/TemplateWidget.css'),
+      ]);
+    });
   });
 
-  describe('after creating both a repo and share amp and removing samples', function () {
+  describe('after creating both repo and share source modules and removing samples', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -67,22 +81,22 @@ describe('generator-alfresco:module-add-source', function () {
         .toPromise();
     });
 
-    it('amp files exist in project', function () {
+    it('module files exist in project', function () {
       assert.file([
-        path.join(osTempDir, 'customizations/remove-samples-repo-amp/pom.xml'),
-        path.join(osTempDir, 'customizations/remove-samples-share-amp/pom.xml'),
+        path.join(osTempDir, 'customizations/remove-samples-repo/pom.xml'),
+        path.join(osTempDir, 'customizations/remove-samples-share/pom.xml'),
       ]);
     });
 
     it('sample files do not exist in project', function () {
       assert.noFile([
-        path.join(osTempDir, 'customizations/remove-samples-repo-amp/src/main/amp/web/css/demoamp.css'),
-        path.join(osTempDir, 'customizations/remove-samples-share-amp/src/main/amp/web/js/example/widgets/TemplateWidget.js'),
+        path.join(osTempDir, 'customizations/remove-samples-repo/src/main/resources/alfresco/extension/templates/webscripts/alfresco/tutorials/helloworld.get.desc.xml'),
+        path.join(osTempDir, 'customizations/remove-samples-share/src/main/resources/META-INF/resources/remove-samples-share/js/tutorials/widgets/css/TemplateWidget.css'),
       ]);
     });
   });
 
-  describe('after creating both a repo and share amp via prompts', function () {
+  describe('after creating both repo and share source modules via prompts', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -106,15 +120,15 @@ describe('generator-alfresco:module-add-source', function () {
         .toPromise();
     });
 
-    it('amp files exist in project', function () {
+    it('module files exist in project', function () {
       assert.file([
-        path.join(osTempDir, 'customizations/prompts-repo-amp/pom.xml'),
-        path.join(osTempDir, 'customizations/prompts-share-amp/pom.xml'),
+        path.join(osTempDir, 'customizations/prompts-repo/pom.xml'),
+        path.join(osTempDir, 'customizations/prompts-share/pom.xml'),
       ]);
     });
   });
 
-  describe('after creating repo amp', function () {
+  describe('after creating repo source module', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -134,16 +148,16 @@ describe('generator-alfresco:module-add-source', function () {
         .toPromise();
     });
 
-    it('repo amp files exist in project', function () {
-      assert.file(path.join(osTempDir, 'customizations/repo-customizations-repo-amp/pom.xml'));
+    it('repo module files exist in project', function () {
+      assert.file(path.join(osTempDir, 'customizations/repo-customizations-repo/pom.xml'));
     });
 
-    it('share amp files do NOT exist in project', function () {
-      assert.noFile(path.join(osTempDir, 'customizations/repo-customizations-share-amp/pom.xml'));
+    it('share modules files do NOT exist in project', function () {
+      assert.noFile(path.join(osTempDir, 'customizations/repo-customizations-share/pom.xml'));
     });
   });
 
-  describe('after creating share amp', function () {
+  describe('after creating share source module', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -163,16 +177,16 @@ describe('generator-alfresco:module-add-source', function () {
         .toPromise();
     });
 
-    it('share amp files exist in project', function () {
-      assert.file(path.join(osTempDir, 'customizations/share-customizations-share-amp/pom.xml'));
+    it('share module files exist in project', function () {
+      assert.file(path.join(osTempDir, 'customizations/share-customizations-share/pom.xml'));
     });
 
-    it('repo amp files do NOT exist in project', function () {
-      assert.noFile(path.join(osTempDir, 'customizations/share-customizations-repo-amp/pom.xml'));
+    it('repo module files do NOT exist in project', function () {
+      assert.noFile(path.join(osTempDir, 'customizations/share-customizations-repo/pom.xml'));
     });
   });
 
-  describe('after creating both repo and share amps in parent folder', function () {
+  describe('after creating both repo and share source modules in parent folder', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -192,16 +206,16 @@ describe('generator-alfresco:module-add-source', function () {
         .toPromise();
     });
 
-    it('amp files exist under the parent project folder', function () {
+    it('module files exist under the parent project folder', function () {
       assert.file([
         path.join(osTempDir, 'customizations/both-parent-parent/pom.xml'),
-        path.join(osTempDir, 'customizations/both-parent-parent/both-parent-repo-amp/pom.xml'),
-        path.join(osTempDir, 'customizations/both-parent-parent/both-parent-share-amp/pom.xml'),
+        path.join(osTempDir, 'customizations/both-parent-parent/both-parent-repo/pom.xml'),
+        path.join(osTempDir, 'customizations/both-parent-parent/both-parent-share/pom.xml'),
       ]);
     });
   });
 
-  describe('when creating amp with invalid war type', function () {
+  describe('when creating source module with invalid war type', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/module-add-source'))
         .cd(osTempDir)
@@ -216,8 +230,8 @@ describe('generator-alfresco:module-add-source', function () {
 
     it('nothing is created', function () {
       assert.noFile([
-        path.join(osTempDir, 'customizations/invalid-war-type-repo-amp/pom.xml'),
-        path.join(osTempDir, 'customizations/invalid-war-type-share-amp/pom.xml'),
+        path.join(osTempDir, 'customizations/invalid-war-type-repo/pom.xml'),
+        path.join(osTempDir, 'customizations/invalid-war-type-share/pom.xml'),
       ]);
     });
   });
