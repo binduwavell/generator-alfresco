@@ -21,6 +21,7 @@ cache:
 
 install:
   - nvm install $NODE_VERSION
+  - npm install
 #  - wget https://yarnpkg.com/install.sh
 #  - chmod 755 install.sh
 #  - ./install.sh
