@@ -10,7 +10,7 @@ TODO
     - [x] amp-add-source
       - [x] redirect/delegate to module-add-source
     - [x] behavior
-    - [ ] model
+    - [x] model
     - [ ] webscript
   - [ ] split tests so we have 2.x and 3.x variants where necessary
     - [x] rename existing tests that are tied to a specific version to reference said version
