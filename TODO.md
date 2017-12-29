@@ -2,16 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.x and up
-  - [ ] need to test and update all existing sub-generators
-    - [x] amp
-    - [x] amp-add-common
-    - [x] amp-add-local
-    - [x] amp-add-remote
-    - [x] amp-add-source
-      - [x] redirect/delegate to module-add-source
-    - [x] behavior
-    - [x] model
-    - [ ] webscript
   - [ ] split tests so we have 2.x and 3.x variants where necessary
     - [x] rename existing tests that are tied to a specific version to reference said version
     - [ ] make 3.x versions of any tests that are tied to 2.x
@@ -43,6 +33,16 @@ TODO
     - [ ] validate common amps with latest 3.x SDK with community & enterprise
     - [ ] update documentation based on preceding
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [x] need to test and update all existing sub-generators
+    - [x] amp
+    - [x] amp-add-common
+    - [x] amp-add-local
+    - [x] amp-add-remote
+    - [x] amp-add-source
+      - [x] redirect/delegate to module-add-source
+    - [x] behavior
+    - [x] model
+    - [x] webscript
   - [x] configure project for enterprise
   - [x] need to be able to remove SDK 3 sample files
   - [x] update to latest 3.x SDK
