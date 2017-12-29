@@ -7,7 +7,7 @@ TODO
       - wrapper for amp-*, jar-* and module-*
     - [x] jar-add-local
       - [ ] fix GAV detection for JARs
-      - [ ] add tests
+      - [x] add tests
     - [ ] module-add-local
       - wrapper for amp-add-local and jar-add-local
     - [x] module-add-source 
