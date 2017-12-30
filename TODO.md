@@ -3,23 +3,18 @@ TODO
 
 - [ ] Support SDK 3.x and up
   - [ ] new sub-generators
-    - [ ] module
-      - wrapper for amp-*, jar-* and module-*
-    - [x] jar-add-local
-      - [ ] fix GAV detection for JARs
-      - [x] add tests
-    - [ ] module-add-local
-      - wrapper for amp-add-local and jar-add-local
-    - [x] module-add-source 
-      - Ideally can handle SDK2 and SDK3 projects
-        - [x] If we can do this, then amp-add-source should be marked as deprecated
-      - [ ] Option to enable AMP assembly stuff
+    - [x] module-add-source
+      - [x] can handle SDK2 and SDK3 projects
+        - [x] amp-add-source should be marked as deprecated
+      - [ ] option to enable AMP assembly stuff
     - [ ] jar-add-remote (Deferred)
-    - [ ] module-add-remote (Deferred)
-      - wrapper for amp-add-remote and jar-add-remote
+      - [ ] include in the module wrapper generator
     - [ ] jar-add-common (Deferred)
-    - [ ] module-add-common (Deferred)
-      - wrapper for amp-add-common and jar-add-common
+      - [ ] include in the module wrapper generator
+    - [x] jar-add-local
+      - [x] add tests
+    - [x] module
+      - wrapper for amp-*, jar-* and module-*
   - [ ] handle new integration-test module
     - specifically it should probably depend on source repo modules
     - need to handle adding and removing source repo modules

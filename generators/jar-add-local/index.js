@@ -78,6 +78,16 @@ class JarAddLocalSubGenerator extends SubGenerator {
   }
 
   prompting () {
+    if (!this.usingEnhancedAlfrescoMavenPlugin) {
+      this.out.error('Unfortunately, this sub-generator may only be used with SDK 3 or newer.');
+      this.out.info([
+        'We should be able to make local JARs work with older SDK version.',
+        'If this is important to you, let us know on our GitHub issues.',
+        'https://github.com/binduwavell/generator-alfresco/issues',
+      ].join(' '));
+      this.bail = true;
+      return;
+    }
     if (this.possibleJars.length === 0) {
       this.out.error('There are no new JARs in customizations/modules/platform or customizations/modules/share for us to import');
       this.bail = true;

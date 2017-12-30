@@ -19,7 +19,7 @@ class AmpAddSourceSubGenerator extends Generator {
   prompting () {
     this.out.warn(`This sub-generator is deprecated, delegating to ${chalk.yellow('yo alfresco:module-add-source')} instead`);
 
-    return this.prompt([]).then(props => {
+    return this.prompt([]).then(() => {
       debug(`Delegating to the ${DELEGATED_NAMESPACE} generator`);
       this.composeWith(DELEGATED_NAMESPACE, this.options);
     }).then(() => {
