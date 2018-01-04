@@ -1,8 +1,13 @@
-Use the main generator to scaffold a new Alfresco all-in-one project you can use for 
-configuring and customizing Alfresco.
+Use the main generator to scaffold a new Alfresco all-in-one project you can use for configuring and customizing Alfresco.
 
 Sub-generators:
-    yo alfresco:amp -- scaffolds additional source amps into your existing project
+    yo alfresco:module -- scaffolds modules into your project
+    yo alfresco:module-add-source -- scaffolds source modules into your project
+    yo alfresco:amp-add-local -- integrates existing amp into the project
+    yo alfresco:jar-add-local -- integrates existing jar into the project
+    yo alfresco:amp-add-remote -- integrates existing amp from public maven repo into the project
+    yo alfresco:amp-add-common -- integrates common 3rd party amps into the project
+
     yo alfresco:action -- scaffolds a repository action into an existing source module
     yo alfresco:behavior -- scaffolds a class for behaviors into an existing source module
     yo alfresco:model -- scaffolds a model XML file into an existing source module
