@@ -7,6 +7,7 @@ TODO
       - [x] can handle SDK2 and SDK3 projects
         - [x] amp-add-source should be marked as deprecated
       - [ ] option to enable AMP assembly stuff
+        - http://docs.alfresco.com/5.2/tasks/sdk-using-amps.html
     - [ ] jar-add-remote (Deferred)
       - [ ] include in the module wrapper generator
     - [ ] jar-add-common (Deferred)
@@ -16,8 +17,8 @@ TODO
     - [x] module
       - wrapper for amp-*, jar-* and module-*
   - [ ] handle new integration-test module
-    - specifically it should probably depend on source repo modules
-    - need to handle adding and removing source repo modules
+    - [ ] it should depend on source repo modules
+    - [ ] need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] Update common amps (amp-add-common)
