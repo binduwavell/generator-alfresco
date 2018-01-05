@@ -10,6 +10,7 @@ const rmdir = require('rmdir');
 const semver = require('semver');
 const trace = require('debug')('generator-alfresco-trace:app');
 const constants = require('generator-alfresco-common').constants;
+const domutils = require('generator-alfresco-common').xml_dom_utils;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 const versions = require('generator-alfresco-common').dependency_versions;
 
@@ -657,6 +658,23 @@ class AlfrescoGenerator extends Generator {
       const topPom = require('generator-alfresco-common').maven_pom(topPomContent);
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
+    }
+
+    // In SDK3 AMPs are not created by default. We uncomment the assembly plugin that
+    // produces AMPs for our source modules.
+    if (this.sdkMajorVersion === 3) {
+      const topPomPath = this.destinationPath('pom.xml');
+      const topPomContent = this.fs.read(topPomPath);
+      const doc = domutils.parseFromString(topPomContent);
+      const comments = domutils.selectMatchingXPath('/pom:project/pom:build/pom:pluginManagement/pom:plugins/comment()', doc);
+      comments.forEach((comment) => {
+        if (comment.textContent.indexOf('<artifactId>maven-assembly-plugin</artifactId>') !== -1) {
+          const plugin = domutils.parseFromString(comment.textContent);
+          const importedPlugin = doc.importNode(plugin.documentElement, true);
+          comment.parentNode.replaceChild(importedPlugin, comment);
+        }
+      });
+      this.fs.write(topPomPath, domutils.prettyPrint(doc));
     }
 
     // In SDK3 we now enable enterprise editing in the top pom

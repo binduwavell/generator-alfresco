@@ -2,20 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.x and up
-  - [ ] new sub-generators
-    - [x] module-add-source
-      - [x] can handle SDK2 and SDK3 projects
-        - [x] amp-add-source should be marked as deprecated
-      - [ ] option to enable AMP assembly stuff
-        - http://docs.alfresco.com/5.2/tasks/sdk-using-amps.html
-    - [ ] jar-add-remote (Deferred)
-      - [ ] include in the module wrapper generator
-    - [ ] jar-add-common (Deferred)
-      - [ ] include in the module wrapper generator
-    - [x] jar-add-local
-      - [x] add tests
-    - [x] module
-      - wrapper for amp-*, jar-* and module-*
   - [ ] handle new integration-test module
     - [ ] it should depend on source repo modules
     - [ ] need to handle adding and removing source repo modules
@@ -26,6 +12,21 @@ TODO
     - [ ] validate common amps with latest 3.x SDK with community & enterprise
     - [ ] update documentation based on preceding
   - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [ ] new sub-generators
+    - [ ] jar-add-remote (Deferred)
+      - [ ] include in the module wrapper generator
+    - [ ] jar-add-common (Deferred)
+      - [ ] include in the module wrapper generator
+  - [x] new sub-generators
+    - [x] module-add-source
+      - [x] can handle SDK2 and SDK3 projects
+        - [x] amp-add-source should be marked as deprecated
+      - [x] enable AMP assembly plugin
+        - http://docs.alfresco.com/5.2/tasks/sdk-using-amps.html
+    - [x] jar-add-local
+      - [x] add tests
+    - [x] module
+      - wrapper for amp-*, jar-* and module-*
   - [x] split tests so we have 2.x and 3.x variants where necessary
     - [x] rename existing tests that are tied to a specific version to reference said version
     - [x] make 3.x versions of any tests that are tied to 2.x
