@@ -33,10 +33,10 @@ module.exports = {
     setupNewRepoModule: setupNewRepoModule,
     setupNewShareModule: setupNewShareModule,
     targetFolderName: targetFolderName,
-    repoConfigBase: 'src/main/resources',
-    shareConfigBase: 'src/main/resources',
     usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
     beforeExit: undefined,
+    repoConfigBase: 'src/main/resources',
+    shareConfigBase: 'src/main/resources',
   },
   '2.2.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
