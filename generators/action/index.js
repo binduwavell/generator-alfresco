@@ -71,8 +71,8 @@ class ActionSubGenerator extends SourceSelectingSubGenerator {
       const targetModule = this.targetModule.module;
       const artifactId = targetModule.artifactId;
       const moduleRoot = this.destinationPath(targetModule.path);
-      const msgRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/messages';
-      const genRoot = 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
+      const msgRoot = this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/messages';
+      const genRoot = this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/context/generated';
 
       // get information from prompts
       const actionTitle = props.name;

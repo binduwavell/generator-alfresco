@@ -6,4 +6,4 @@ Place pre-packaged share amps in here and then use:
 yo alfresco:amp-add-local
 ```
 
-to insert references to them into the share pom.
+to install into your project.

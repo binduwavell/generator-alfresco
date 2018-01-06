@@ -529,12 +529,12 @@ class WebScriptSubGenerator extends SourceSelectingSubGenerator {
       const moduleRoot = this.destinationPath(targetModule.path);
       debug('module root: %s', moduleRoot);
       const wsRoot = (targetModule.war === 'repo'
-        ? 'src/main/amp/config/alfresco/extension/templates/webscripts'
-        : 'src/main/amp/config/alfresco/web-extension/site-webscripts');
+        ? this.sdk.repoConfigBase + '/alfresco/extension/templates/webscripts'
+        : this.sdk.shareConfigBase + '/alfresco/web-extension/site-webscripts');
       debug('webscript root: %s', wsRoot);
       const genRoot = (targetModule.war === 'repo'
-        ? 'src/main/amp/config/alfresco/module/' + path.basename(targetModule.path) + '/context/generated'
-        : 'src/main/amp/config/alfresco/web-extension');
+        ? this.sdk.repoConfigBase + '/alfresco/module/' + path.basename(targetModule.path) + '/context/generated'
+        : this.sdk.shareConfigBase + '/alfresco/web-extension');
       debug('generated root: %s', genRoot);
       const configSrcPath = this.templatePath('config.xml');
       const descSrcPath = this.templatePath('desc.xml.ejs');

@@ -10,6 +10,7 @@ const rmdir = require('rmdir');
 const semver = require('semver');
 const trace = require('debug')('generator-alfresco-trace:app');
 const constants = require('generator-alfresco-common').constants;
+const domutils = require('generator-alfresco-common').xml_dom_utils;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 const versions = require('generator-alfresco-common').dependency_versions;
 
@@ -39,8 +40,8 @@ class AlfrescoGenerator extends Generator {
     this.sdkVersions = require('../common/sdk-versions.js');
     debug('assigning default values');
     this.defaultConfig = {};
-    this.defaultConfig[constants.PROP_SDK_VERSION] = '2.1.1';
-    this.defaultConfig[constants.PROP_PROJECT_STRUCTURE] = constants.PROJECT_STRUCTURE_BASIC;
+    this.defaultConfig[constants.PROP_SDK_VERSION] = '3.0.1';
+    this.defaultConfig[constants.PROP_PROJECT_STRUCTURE] = constants.PROJECT_STRUCTURE_ADVANCED;
     this.defaultConfig[constants.PROP_PROJECT_GROUP_ID] = 'org.alfresco';
     this.defaultConfig[constants.PROP_PROJECT_ARTIFACT_ID] = path.basename(process.cwd());
     this.defaultConfig[constants.PROP_PROJECT_VERSION] = '1.0.0-SNAPSHOT';
@@ -252,7 +253,7 @@ class AlfrescoGenerator extends Generator {
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS,
-        message: 'Should we remove the default source amps?',
+        message: 'Should we remove the default source modules?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_AMPS),
         when: readonlyProps => {
           if (this.bail) return false;
@@ -265,7 +266,7 @@ class AlfrescoGenerator extends Generator {
       {
         type: 'confirm',
         name: constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES,
-        message: 'Should we remove samples from the default source amps?',
+        message: 'Should we remove samples from the default source modules?',
         default: this._getConfigValue(constants.PROP_REMOVE_DEFAULT_SOURCE_SAMPLES),
         when: readonlyProps => {
           if (this.bail) return false;
@@ -281,7 +282,7 @@ class AlfrescoGenerator extends Generator {
       },
     ];
 
-    debug('initiating prompting and returning promise for inquierer completion');
+    debug('initiating prompting and returning promise for inquirer completion');
     return this.prompt(prompts).then(props => {
       let combinedProps = {};
       _.assign(combinedProps, this.answerOverrides);
@@ -309,7 +310,10 @@ class AlfrescoGenerator extends Generator {
             this.destinationRoot(projectPath);
           }
         }
-        this.sdk = this.sdkVersions[combinedProps.sdkVersion || this.answerOverrides.sdkVersion];
+        const sdkVersion = (combinedProps.sdkVersion || this.answerOverrides.sdkVersion);
+        this.sdk = this.sdkVersions[sdkVersion];
+        this.sdkMajorVersion = this.sdk.sdkMajorVersion.call(this);
+        this.usingEnhancedAlfrescoMavenPlugin = this.sdk.usesEnhancedAlfrescoMavenPlugin.call(this);
         this._saveProps([
           constants.PROP_ORIGINAL_GENERATOR_VERSION,
           constants.PROP_GENERATOR_VERSION,
@@ -338,7 +342,6 @@ class AlfrescoGenerator extends Generator {
 
   _saveProps (propNames, propObject) {
     propNames.forEach(propName => {
-      // console.log("SETTING " + propName + " to " + propObject[propName]);
       this._saveProp(propName, propObject);
     });
   }
@@ -521,8 +524,12 @@ class AlfrescoGenerator extends Generator {
     trace('generatorOverlay');
     if (this.bail) return;
     const isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    const isSDK2 = (this.sdkMajorVersion === 2);
+    const isSDK3 = (this.sdkMajorVersion === 3);
     const tplContext = {
       isEnterprise: isEnterprise,
+      isSDK2: isSDK2,
+      isSDK3: isSDK3,
       enterpriseFlag: (isEnterprise ? '-Penterprise' : ''),
       projectGroupId: this.config.get(constants.PROP_PROJECT_GROUP_ID),
       projectArtifactId: this.config.get(constants.PROP_PROJECT_ARTIFACT_ID),
@@ -554,27 +561,45 @@ class AlfrescoGenerator extends Generator {
       templateFolders = templateFolders.concat(constants.FOLDER_CUSTOMIZATIONS);
     }
     templateFolders.forEach(folderName => {
-      this.out.info('Copying ' + folderName);
+      this.out.info(`Copying ${folderName}`);
       this.fs.copyTpl(
         this.templatePath(folderName),
         this.destinationPath(folderName),
         tplContext
       );
     });
-    // copy run.sh, run-without-springloaded.sh and debug.sh to top level folder
-    trace('Copying scripts');
-    [
-      constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
-      constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
-    ].forEach(fileName => {
+    // copy sdk specific scripts
+    this.out.info(`Copying SDK ${this.sdkMajorVersion} specific scripts`);
+    this.fs.copyTpl(
+      this.templatePath(`sdk${this.sdkMajorVersion}-${constants.FOLDER_SCRIPTS}`),
+      this.destinationPath(constants.FOLDER_SCRIPTS),
+      tplContext
+    );
+    // copy launcher scripts like run.sh to top level folder
+    trace('Copying scripts to top level folder');
+    let scriptsToTop = [];
+    if (this.sdkMajorVersion === 2) {
+      scriptsToTop = [
+        constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
+        constants.FILE_RUN_WITHOUT_SPRINGLOADED_SH, constants.FILE_DEBUG_SH,
+      ];
+    }
+    if (this.sdkMajorVersion === 3) {
+      scriptsToTop = [
+        constants.FILE_RUN_SH, constants.FILE_RUN_BAT,
+        constants.FILE_DEBUG_SH, 'debug.bat',
+      ];
+    }
+    scriptsToTop.forEach(fileName => {
+      trace(`Copying ${fileName} to top level folder`);
       this.fs.copy(
         this.destinationPath(path.join(constants.FOLDER_SCRIPTS, fileName)),
         this.destinationPath(fileName)
       );
     });
     // enterprise specific stuff
-    trace('Copying enterprise license');
-    if (isEnterprise) {
+    if (this.sdkMajorVersion === 2 && isEnterprise) {
+      trace('Copying enterprise license');
       this.fs.copy(
         this.templatePath(constants.FOLDER_REPO),
         this.destinationPath(constants.FOLDER_REPO),
@@ -612,7 +637,7 @@ class AlfrescoGenerator extends Generator {
         // Arrange for all generated beans to be included
         paths = this.sdk.defaultModuleRegistry.call(this)
           .filter(mod => {
-            return (mod.war === constants.WAR_TYPE_REPO);
+            return (mod.war === constants.WAR_TYPE_SHARE);
           })
           .map(mod => {
             return mod.path;
@@ -634,6 +659,38 @@ class AlfrescoGenerator extends Generator {
       topPom.addModule(constants.FOLDER_CUSTOMIZATIONS, true);
       this.fs.write(topPomPath, topPom.getPOMString());
     }
+
+    // In SDK3 AMPs are not created by default. We uncomment the assembly plugin that
+    // produces AMPs for our source modules.
+    if (this.sdkMajorVersion === 3) {
+      const topPomPath = this.destinationPath('pom.xml');
+      const topPomContent = this.fs.read(topPomPath);
+      const doc = domutils.parseFromString(topPomContent);
+      const comments = domutils.selectMatchingXPath('/pom:project/pom:build/pom:pluginManagement/pom:plugins/comment()', doc);
+      comments.forEach((comment) => {
+        if (comment.textContent.indexOf('<artifactId>maven-assembly-plugin</artifactId>') !== -1) {
+          const plugin = domutils.parseFromString(comment.textContent);
+          const importedPlugin = doc.importNode(plugin.documentElement, true);
+          comment.parentNode.replaceChild(importedPlugin, comment);
+        }
+      });
+      this.fs.write(topPomPath, domutils.prettyPrint(doc));
+    }
+
+    // In SDK3 we now enable enterprise editing in the top pom
+    // See: http://docs.alfresco.com/5.2/concepts/sdk-using-enterprise.html
+    const isEnterprise = (this.communityOrEnterprise === 'Enterprise');
+    if (this.sdkMajorVersion === 3 && isEnterprise) {
+      const topPomPath = this.destinationPath('pom.xml');
+      const topPomContent = this.fs.read(topPomPath);
+      const topPom = require('generator-alfresco-common').maven_pom(topPomContent);
+      topPom.setProperty('maven.alfresco.edition', 'enterprise');
+      topPom.setProperty('alfresco.platform.war.artifactId', 'alfresco-enterprise');
+      topPom.setProperty('alfresco.platform.version', this.sdk.providedEnterpriseVersion);
+      topPom.setProperty('alfresco.share.version', this.sdk.providedEnterpriseShareVersion);
+      topPom.setProperty('alfresco.surf.version', this.sdk.providedEnterpriseSurfVersion);
+      this.fs.write(topPomPath, topPom.getPOMString());
+    }
   }
 
   _writingRemoveDefaultSourceModules () {
@@ -647,16 +704,22 @@ class AlfrescoGenerator extends Generator {
     if (this.bail) return;
     if (!this.removeDefaultSourceAmps && this.removeDefaultSourceSamples) {
       if (this.sdk.removeRepoSamples) {
-        // TODO(bwavell): 'repo-amp' should be generalized
+        let moduleSuffix = 'repo-amp'; // SDK2
+        if (this.sdkMajorVersion === 3) {
+          moduleSuffix = 'platform-jar';
+        }
         this.sdk.removeRepoSamples.call(this,
-          this.sdk.sdkVersionPrefix.call(this) + 'repo-amp',
+          this.sdk.sdkVersionPrefix.call(this) + moduleSuffix,
           this.projectPackage
         );
       }
       if (this.sdk.removeShareSamples) {
-        // TODO(bwavell): 'share-amp' should be generalized
+        let moduleSuffix = 'share-amp'; // SDK2
+        if (this.sdkMajorVersion === 3) {
+          moduleSuffix = 'share-jar';
+        }
         this.sdk.removeShareSamples.call(this,
-          this.sdk.sdkVersionPrefix.call(this) + 'share-amp',
+          this.sdk.sdkVersionPrefix.call(this) + moduleSuffix,
           this.projectPackage
         );
       }
@@ -670,25 +733,41 @@ class AlfrescoGenerator extends Generator {
 
   _installMakeScriptsExecutable () {
     if (this.bail) return;
-    const cwd = process.cwd();
-    const scripts = [
-      constants.FILE_RUN_SH,
-      constants.FILE_RUN_BAT,
-      path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+    let scripts = [
       path.join(constants.FOLDER_SCRIPTS, 'explode-alf-sources.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'find-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'grep-exploded.sh'),
       path.join(constants.FOLDER_SCRIPTS, 'package-to-exploded.sh'),
-      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
-      path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
-      path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
     ];
+    if (this.sdkMajorVersion === 3) {
+      scripts = scripts.concat([
+        'debug.sh',
+        'debug.bat',
+        constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, 'debug.bat'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+      ]);
+    }
+    if (this.sdkMajorVersion === 2) {
+      scripts = scripts.concat([
+        constants.FILE_RUN_SH,
+        constants.FILE_RUN_BAT,
+        path.join(constants.FOLDER_SCRIPTS, 'debug.sh'),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_SH),
+        path.join(constants.FOLDER_SCRIPTS, constants.FILE_RUN_BAT),
+        path.join(constants.FOLDER_SCRIPTS, 'run-without-springloaded.sh'),
+      ]);
+    }
+    const cwd = process.cwd();
     scripts.forEach(scriptName => {
       this.out.info('Marking ' + scriptName + ' as executable');
       fs.chmodSync(cwd + '/' + scriptName, '0755');
     });
     if (this.removeDefaultSourceAmps) {
-      this.out.warn('Since you choose to remove default source amps, you should probably run "' + chalk.yellow('yo alfresco:amp') + '" to add customized source amps.');
+      this.out.warn('Since you choose to remove default source modules, you should probably run "' + chalk.yellow('yo alfresco:module-add-source') + '" to add one or more customized source modules.');
     }
   }
 

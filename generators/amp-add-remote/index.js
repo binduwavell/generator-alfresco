@@ -1,5 +1,5 @@
 'use strict';
-const debug = require('debug')('generator-alfresco:amp-remote');
+const debug = require('debug')('generator-alfresco:amp-add-remote');
 const chalk = require('chalk');
 const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;

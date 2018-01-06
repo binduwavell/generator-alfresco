@@ -3,7 +3,7 @@ language: java
 jdk:
   - oraclejdk8
 
-dist: precise
+dist: trusty
 sudo: false
 
 env:
@@ -14,16 +14,16 @@ env:
   - NODE_VERSION=v4
 
 cache:
-  yarn: true
   directories:
   - $HOME/.m2
 
+# Not caching node_modules due to issue with node_modules/npm/node_modules/dezalgo
+# ENOENT for syscall rename...
+# - node_modules
+
 install:
   - nvm install $NODE_VERSION
-  - wget https://yarnpkg.com/install.sh
-  - chmod 755 install.sh
-  - ./install.sh
-  - $HOME/.yarn/bin/yarn
+  - npm install
 
 script:
   - if [[ "${NODE_VERSION}" == 'v8' ]]; then npm run codecov; else npm run test; fi

@@ -1,4 +1,5 @@
 'use strict';
+const chalk = require('chalk');
 const debug = require('debug')('generator-alfresco:amp');
 const filters = require('generator-alfresco-common').prompt_filters;
 const SubGenerator = require('../subgenerator.js');
@@ -67,6 +68,16 @@ class AmpSubGenerator extends SubGenerator {
   }
 
   prompting () {
+    if (this.usingEnhancedAlfrescoMavenPlugin) {
+      this.out.warn([
+        'This sub-generator is deprecated, please use ',
+        chalk.yellow('yo alfresco:module'),
+        'instead.',
+      ].join(' '));
+      this.bail = true;
+      return;
+    }
+
     return this.subgeneratorPrompt(this.prompts, props => {
       NAMESPACE_CHOICES.forEach(subgenDesc => {
         if (props.ampType === subgenDesc.label) {

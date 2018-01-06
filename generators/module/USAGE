@@ -1,0 +1,7 @@
+Note:
+  There is currently a bug in yeoman if you pass numbers as arguments;
+  as is often the case for the version option. Versions such as #.0
+  are treated as simply # (1.0 become 1). As as a short-term workaround
+  for this issue, you may prefix versions with "VERSION-", no quotes,
+  upper-case and the dash is required. We'll strip this prefix for you.
+  We apologise for the inconvenience -- The Mgmt

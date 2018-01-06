@@ -4,6 +4,7 @@ const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
+const stripAnsi = require('strip-ansi');
 const BaseGenerator = require('../generators/base-generator.js');
 const filters = require('generator-alfresco-common').prompt_filters;
 
@@ -106,7 +107,8 @@ describe('generator-alfresco:base-generator', function () {
       assert.ok(myprompt.hasOwnProperty('validate'));
       const validate = myprompt.validate;
       let v = validate('');
-      assert.equal(v, 'The required \u001b[33mmyprompt\u001b[39m value is missing or invalid');
+      // In IntelliJ, we get the ASCII back, in a terminal we don't. Just stripping it!
+      assert.equal(stripAnsi(v), 'The required myprompt value is missing or invalid');
       v = validate('a value');
       assert.equal(v, true);
     });

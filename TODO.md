@@ -1,19 +1,52 @@
 TODO
 ====
 
-- [ ] Make progress on a share widget sub-generator
-  - [ ] Offer list of share source modules
-  - [ ] Start from https://github.com/myprysm/generator-alfresco/tree/master/generators/share-widget
-- [ ] Ask if we should include codenvy factory in the project
-  - [ ] Need to figure out how we are going to handle enterprise
-- [ ] Include instructions about how to configure IDEs (or generate the config)
-  - [ ] Eclipse
-  - [ ] IntelliJ
-  - [ ] NetBeans
-  - [ ] Codenvy (based on previous answer)
-    - [ ] Codenvy IDE
-    - [ ] Codenvy via Eclipse plugin
-    - [ ] Codenvy via CLI
+- [ ] Support SDK 3.x and up
+  - [ ] check if scripts need updating
+  - [ ] add integration tests when generating code
+  - [ ] Update common amps (amp-add-common)
+    - [ ] update to latest amps
+    - [ ] validate common amps with latest 3.x SDK with community & enterprise
+    - [ ] update documentation based on preceding
+  - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+  - [ ] new sub-generators
+    - [ ] jar-add-remote (Deferred)
+      - [ ] include in the module wrapper generator
+    - [ ] jar-add-common (Deferred)
+      - [ ] include in the module wrapper generator
+  - [x] handle new integration-test module
+    - [x] it should depend on source repo modules
+    - [x] need to handle adding and removing source repo modules
+  - [x] new sub-generators
+    - [x] module-add-source
+      - [x] can handle SDK2 and SDK3 projects
+        - [x] amp-add-source should be marked as deprecated
+      - [x] enable AMP assembly plugin
+        - http://docs.alfresco.com/5.2/tasks/sdk-using-amps.html
+    - [x] jar-add-local
+      - [x] add tests
+    - [x] module
+      - wrapper for amp-*, jar-* and module-*
+  - [x] split tests so we have 2.x and 3.x variants where necessary
+    - [x] rename existing tests that are tied to a specific version to reference said version
+    - [x] make 3.x versions of any tests that are tied to 2.x
+  - [x] need to test and update all existing sub-generators
+    - [x] amp
+    - [x] amp-add-common
+    - [x] amp-add-local
+    - [x] amp-add-remote
+    - [x] amp-add-source
+      - [x] redirect/delegate to module-add-source
+    - [x] behavior
+    - [x] model
+    - [x] webscript
+  - [x] configure project for enterprise
+  - [x] need to be able to remove SDK 3 sample files
+  - [x] update to latest 3.x SDK
+  - [x] update alfresco-module-manager for SDK 3
+    - [x] need remove operations for removing default source jars and other SDK2 specific stuff
+  - [x] run.sh rewriting is wrong for SDK 3
+  - [x] run-without-springloaded.sh should not be added to SDK 3 projects
 
 TODONE
 ======

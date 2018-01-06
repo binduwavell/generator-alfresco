@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const AdmZip = require('adm-zip');
-const debug = require('debug')('generator-alfresco:amp-local');
+const debug = require('debug')('generator-alfresco:amp-add-local');
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');

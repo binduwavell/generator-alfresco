@@ -33,38 +33,58 @@ function MakeAlfrescoModuleManager (yo) {
       this.moduleRegistry.addModule(mod);
 
       // Stuff we only need to do for source amps
-      if (mod.location === 'source') {
-        debug('Scheduling ops for ' + mod.artifactId);
+      if (mod.location === constants.LOCATION_SOURCE) {
+        debug('Scheduling ops for ' + mod.artifactId + ' source module.');
         this.ops.push(() => { copyTemplateForModule(mod) });
         this.ops.push(() => { renamePathElementsForModule(mod) });
         this.ops.push(() => { addModuleToParentPom(mod) });
-        if (mod.war === constants.WAR_TYPE_SHARE) {
-          this.ops.push(() => { addFailsafeConfigToRunner(mod) });
+        // SDK2 must configure tomcat context manually and configure failsafe for share source modules
+        if (yo.sdkMajorVersion === 2) {
+          this.ops.push(() => { addModuleToTomcatContext(mod) });
+          if (mod.war === constants.WAR_TYPE_SHARE) {
+            this.ops.push(() => { addFailsafeConfigToRunner(mod) });
+          }
         }
-        this.ops.push(() => { addModuleToTomcatContext(mod) });
+        // SDK3 has a "packaged" hierarchy for share under META-INF/resources
+        if (yo.sdkMajorVersion === 3) {
+          this.ops.push(() => { renamePathElementsForResources(mod) });
+          if (mod.war === constants.WAR_TYPE_REPO) {
+            this.ops.push(() => { addToIntegrationTestModule(mod) });
+          }
+        }
         this.ops.push(() => { updateProjectPom(mod) });
       }
 
-      this.ops.push(() => { addModuleToWarWrapper(mod) });
-      // TODO: what else do we need to do when we remove a module?
+      if (yo.usingEnhancedAlfrescoMavenPlugin) {
+        this.ops.push(() => { addModuleToAlfrescoMavenPlugin(mod) });
+      } else {
+        this.ops.push(() => { addModuleToWarWrapper(mod) });
+      }
       debug('addModule() finished');
     }
 
     removeModule (modOrGroupId, artifactId, ver, packaging, war, loc, path) {
       debug('removeModule() - start by searching for module: %s', modOrGroupId.artifactId);
       const mod = this.moduleRegistry.findModule(modOrGroupId, artifactId, ver, packaging, war, loc, path);
+      debug('removeModule() - using module: %s', mod.artifactId);
       if (mod) {
         debug('removing module: %s', mod.artifactId);
         this.moduleRegistry.removeModule(mod);
         if (mod.location === 'source') {
           this.ops.push(() => { removeModuleFiles(mod) });
           this.ops.push(() => { removeModuleFromParentPom(mod) });
-          this.ops.push(() => { removeModuleFromWarWrapper(mod) });
-          if (mod.war === constants.WAR_TYPE_SHARE) {
-            this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
+          if (yo.usingEnhancedAlfrescoMavenPlugin) {
+            this.ops.push(() => { removeModuleFromAlfrescoMavenPlugin(mod) });
+          } else {
+            this.ops.push(() => { removeModuleFromWarWrapper(mod) });
+            if (mod.war === constants.WAR_TYPE_SHARE) {
+              this.ops.push(() => { removeFailsafeConfigFromRunner(mod) });
+            }
+            this.ops.push(() => { removeModuleFromTomcatContext(mod) });
           }
-          this.ops.push(() => { removeModuleFromTomcatContext(mod) });
-          // TODO: what else do we need to do when we remove a module?
+          if (yo.sdkMajorVersion === 3 && mod.war === constants.WAR_TYPE_REPO) {
+            this.ops.push(() => { removeFromIntegrationTestModule(mod) });
+          }
         }
       }
       debug('removeModule() finished');
@@ -92,7 +112,12 @@ function MakeAlfrescoModuleManager (yo) {
     if (!yo.fs.exists(toPath)) {
       const prefix = yo.sdk.sdkVersionPrefix.call(yo);
       yo.config.get('artifactId');
-      const fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + mod.war + '-' + mod.packaging);
+      let modType = mod.war;
+      // Alfresco SDK 3.0 and up use the word platform instead of repo in source module names
+      if (yo.usingEnhancedAlfrescoMavenPlugin && modType === constants.WAR_TYPE_REPO) {
+        modType = 'platform';
+      }
+      const fromPath = yo.destinationPath(constants.FOLDER_SOURCE_TEMPLATES + '/' + prefix + modType + '-' + mod.packaging);
       yo.out.info('Copying template for ' + mod.artifactId + ' module ' + fromPath + ' to ' + toPath);
       if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
         debug('IN-MEMORY COPY: ' + fromPath + ' to: ' + toPath);
@@ -111,22 +136,19 @@ function MakeAlfrescoModuleManager (yo) {
     debug('renamePathElementsForModule() - start by getting default repo module artifactId');
 
     if (mod.war === constants.WAR_TYPE_REPO) {
-      const defaultMods = yo.sdk.defaultModuleRegistry.call(yo).filter(mod => {
-        return (mod.location === 'source' && mod.war === constants.WAR_TYPE_REPO);
-      });
-      if (defaultMods && defaultMods.length > 0) {
-        if (mod.artifactId !== defaultMods[0].artifactId) {
-          // <path>/src/main/amp/config/alfresco/module/<artifactId>
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_REPO);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
           const fromPath = path.join(
             yo.destinationPath(),
             mod.path,
-            '/src/main/amp/config/alfresco/module',
-            defaultMods[0].artifactId
+            yo.sdk.repoConfigBase + '/alfresco/module',
+            defaultMod.artifactId
           );
           const toPath = path.join(
             yo.destinationPath(),
             mod.path,
-            '/src/main/amp/config/alfresco/module',
+            yo.sdk.repoConfigBase + '/alfresco/module',
             mod.artifactId
           );
           yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
@@ -141,8 +163,93 @@ function MakeAlfrescoModuleManager (yo) {
         }
       }
     }
+    if (mod.war === constants.WAR_TYPE_SHARE) {
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_SHARE);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
+          const fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            yo.sdk.shareConfigBase + '/alfresco/module',
+            defaultMod.artifactId
+          );
+          if (memFsUtils.existsInMemory(yo.fs, fromPath) || yo.fs.exists(fromPath)) {
+            const toPath = path.join(
+              yo.destinationPath(),
+              mod.path,
+              yo.sdk.shareConfigBase + '/alfresco/module',
+              mod.artifactId
+            );
+            yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+            debug('MOVING FROM: ' + fromPath + ' to: ' + toPath);
+            if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+              debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+              memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+            } else {
+              debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+              yo.fs.move(fromPath + '/**', toPath);
+            }
+          }
+        }
+      }
+    }
 
     debug('renamePathElementsForModule() finished');
+  }
+
+  function renamePathElementsForResources (mod) {
+    debug('renamePathElementsForResources() - start by getting default repo module artifactId');
+
+    if (mod.war === constants.WAR_TYPE_SHARE) {
+      const defaultMod = yo.sdk.defaultSourceModule.call(yo, constants.WAR_TYPE_SHARE);
+      if (defaultMod) {
+        if (mod.artifactId !== defaultMod.artifactId) {
+          const fromPath = path.join(
+            yo.destinationPath(),
+            mod.path,
+            yo.sdk.shareConfigBase + '/META-INF/resources',
+            defaultMod.artifactId
+          );
+          if (memFsUtils.existsInMemory(yo.fs, fromPath) || yo.fs.exists(fromPath)) {
+            const toPath = path.join(
+              yo.destinationPath(),
+              mod.path,
+              yo.sdk.shareConfigBase + '/META-INF/resources',
+              mod.artifactId
+            );
+            yo.out.info('Renaming path elements from ' + fromPath + ' to ' + toPath);
+            debug('MOVING FROM: ' + fromPath + ' to: ' + toPath);
+            if (memFsUtils.existsInMemory(yo.fs, fromPath)) {
+              debug('IN-MEMORY MOVE: ' + fromPath + ' to: ' + toPath);
+              memFsUtils.inMemoryMove(yo.fs, fromPath, toPath);
+            } else {
+              debug('PHYSICAL MOVE: ' + fromPath + '/** to: ' + toPath);
+              yo.fs.move(fromPath + '/**', toPath);
+            }
+          }
+        }
+      }
+    }
+
+    debug('renamePathElementsForResources() finished');
+  }
+
+  // TODO(bwavell): Add tests for this
+  function addToIntegrationTestModule (mod) {
+    debug('addToIntegrationTestModule() - Adding %s to integration-tests/pom.xml', mod.artifactId);
+    const itPomPath = yo.destinationPath('integration-tests/pom.xml');
+    const itPom = yo.fs.read(itPomPath);
+    const pom = require('generator-alfresco-common').maven_pom(itPom);
+    const g = mod.groupId;
+    const a = mod.artifactId;
+    const v = mod.version;
+    debug('Looking for existing dependency %s:%s:%s', g, a, v);
+    if (!pom.findDependency(g, a, v, undefined, 'test')) {
+      debug('It was not found, so we will add it');
+      pom.addDependency(g, a, v, undefined, 'test');
+      yo.fs.write(itPomPath, pom.getPOMString());
+    }
+    debug('addToIntegrationTestModule() finished');
   }
 
   function addFailsafeConfigToRunner (mod) {
@@ -270,9 +377,9 @@ function MakeAlfrescoModuleManager (yo) {
     const parentGroupIdEl = parentPom.getTopLevelElement('pom', 'groupId');
     const parentArtifactIdEl = parentPom.getTopLevelElement('pom', 'artifactId');
     const parentVersionEl = parentPom.getTopLevelElement('pom', 'version');
-    const parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROJECT_GROUP_ID));
+    const parentGroupId = (parentGroupIdEl ? parentGroupIdEl.textContent : yo.projectGroupId || yo.config.get(constants.PROP_PROJECT_GROUP_ID));
     const parentArtifactId = (parentArtifactIdEl ? parentArtifactIdEl.textContent : yo.projectArtifactId || yo.config.get(constants.PROP_PROJECT_ARTIFACT_ID));
-    const parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROJECT_VERSION));
+    const parentVersion = (parentVersionEl ? parentVersionEl.textContent : yo.projectVersion || yo.config.get(constants.PROP_PROJECT_VERSION));
 
     debug('POM EXISTS: ' + projectPomPath + ' [' + yo.fs.exists(projectPomPath) + ']');
     const projectPom = yo.fs.read(projectPomPath);
@@ -297,6 +404,69 @@ function MakeAlfrescoModuleManager (yo) {
     pom.setParentGAV(parentGroupId, parentArtifactId, parentVersion);
     yo.fs.write(projectPomPath, pom.getPOMString());
     debug('updateProjectPom() finished');
+  }
+
+  function addModuleToAlfrescoMavenPlugin (mod) {
+    yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' alfresco-maven-plugin');
+
+    const topPomPath = yo.destinationPath('pom.xml');
+    const topPomStr = yo.fs.read(topPomPath);
+    const topPom = require('generator-alfresco-common').maven_pom(topPomStr);
+
+    if (mod.location === constants.LOCATION_LOCAL) {
+      debug('Adding local ' + mod.artifactId + ' to maven-install-plugin');
+      let installPlugin = topPom.findPlugin('org.apache.maven.plugins', 'maven-install-plugin');
+      if (!installPlugin) {
+        installPlugin = topPom.addPlugin('org.apache.maven.plugins', 'maven-install-plugin', '2.5.2');
+        domutils.setOrClearChildText(installPlugin, 'pom', 'inherited', 'false');
+      }
+      const executions = domutils.getOrCreateChild(installPlugin, 'pom', 'executions');
+      const id = 'install-' + mod.artifactId;
+      const xp = `pom:execution[pom:id = '${id}']`;
+      debug('Searching for execution with xpath: ' + xp);
+      let execution = domutils.getFirstNodeMatchingXPath(xp, executions);
+      if (!execution) {
+        debug('execution not found, so creating it');
+        execution = domutils.createChild(executions, 'pom', 'execution');
+        domutils.setOrClearChildText(execution, 'pom', 'id', id);
+      }
+      domutils.setOrClearChildText(execution, 'pom', 'phase', 'clean');
+      let configuration = domutils.getOrCreateChild(execution, 'pom', 'configuration');
+      domutils.setOrClearChildText(configuration, 'pom', 'file', '${basedir}/' + mod.path);
+      domutils.setOrClearChildText(configuration, 'pom', 'repositoryLayout', 'default');
+      domutils.setOrClearChildText(configuration, 'pom', 'groupId', mod.groupId);
+      domutils.setOrClearChildText(configuration, 'pom', 'artifactId', mod.artifactId);
+      domutils.setOrClearChildText(configuration, 'pom', 'version', mod.version);
+      domutils.setOrClearChildText(configuration, 'pom', 'packaging', mod.packaging);
+      domutils.setOrClearChildText(configuration, 'pom', 'generatePom', 'true');
+      let goals = domutils.getOrCreateChild(execution, 'pom', 'goals');
+      domutils.setOrClearChildText(goals, 'pom', 'goal', 'install-file');
+    }
+
+    debug('Adding ' + mod.artifactId + ' to alfresco-maven-plugin');
+    let alfrescoPlugin = topPom.findPlugin('org.alfresco.maven.plugin', 'alfresco-maven-plugin');
+    const configuration = domutils.getOrCreateChild(alfrescoPlugin, 'pom', 'configuration');
+    const modulesElement = (mod.war === constants.WAR_TYPE_REPO ? 'platformModules' : 'shareModules');
+    debug(`Using ${modulesElement} for ${mod.war} module`);
+    const modules = domutils.getOrCreateChild(configuration, 'pom', modulesElement);
+    const xp = `pom:moduleDependency[pom:groupId = '${mod.groupId}' and pom:artifactId = '${mod.artifactId}']`;
+    debug('Searching for moduleDependency with xpath: ' + xp);
+    let moduleDependency = domutils.getFirstNodeMatchingXPath(xp, modules);
+    if (moduleDependency) {
+      debug(`Found moduleDependency for ${mod.groupId}:${mod.artifactId} in alfresco-maven-plugin`);
+    } else {
+      debug('moduleDependency not found, so creating it');
+      moduleDependency = domutils.createChild(modules, 'pom', 'moduleDependency');
+    }
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'groupId', mod.groupId);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'artifactId', mod.artifactId);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'version', mod.version);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'type', mod.packaging);
+
+    debug('Done adding ' + mod.artifactId + ' to pom.xml, saving changes');
+    yo.fs.write(topPomPath, topPom.getPOMString());
+
+    debug('addModuleToAlfrescoMavenPlugin() finished');
   }
 
   function addModuleToWarWrapper (mod) {
@@ -362,6 +532,7 @@ function MakeAlfrescoModuleManager (yo) {
   }
 
   function removeModuleFromParentPom (mod) {
+    // TODO(bwavell): support removing modules from sub-modules (like customizations)
     const parentPomPath = yo.destinationPath('pom.xml');
     yo.out.warn('Removing ' + mod.artifactId + ' module from ' + parentPomPath);
     const parentPom = yo.fs.read(parentPomPath);
@@ -371,6 +542,55 @@ function MakeAlfrescoModuleManager (yo) {
       yo.fs.write(parentPomPath, pom.getPOMString());
     }
     debug('removeModuleFromParentPom() finished');
+  }
+
+  function removeModuleFromAlfrescoMavenPlugin (mod) {
+    const topPomPath = yo.destinationPath('pom.xml');
+    const topPomStr = yo.fs.read(topPomPath);
+    const topPom = require('generator-alfresco-common').maven_pom(topPomStr);
+
+    if (mod.location === constants.LOCATION_LOCAL) {
+      debug('Removing local ' + mod.artifactId + ' from maven-install-plugin');
+      const installPlugin = topPom.findPlugin('org.apache.maven.plugins', 'maven-install-plugin');
+      if (installPlugin) {
+        const executions = domutils.getChild(installPlugin, 'pom', 'executions');
+        if (executions) {
+          const id = 'install-' + mod.artifactId;
+          const xp = `pom:execution[pom:id = '${id}']`;
+          debug('Searching for execution with xpath: ' + xp);
+          const execution = domutils.getFirstNodeMatchingXPath(xp, executions);
+          if (execution) {
+            debug('Found ' + mod.artifactId + ' in maven-install-plugin, removing it');
+            domutils.removeParentsChild(executions, execution);
+          }
+        }
+      }
+    }
+
+    debug('Removing ' + mod.artifactId + ' moduleDependency from alfresco-maven-plugin');
+    const alfrescoPlugin = topPom.findPlugin('org.alfresco.maven.plugin', 'alfresco-maven-plugin');
+    if (alfrescoPlugin) {
+      const configuration = domutils.getChild(alfrescoPlugin, 'pom', 'configuration');
+      if (configuration) {
+        const modulesElement = (mod.war === constants.WAR_TYPE_REPO ? 'platformModules' : 'shareModules');
+        debug(`Using ${modulesElement} for ${mod.war} module`);
+        const modules = domutils.getChild(configuration, 'pom', modulesElement);
+        if (modules) {
+          const xp = `pom:moduleDependency[pom:groupId = '${mod.groupId}' and pom:artifactId = '${mod.artifactId}']`;
+          debug('Searching for moduleDependency with xpath: ' + xp);
+          let moduleDependency = domutils.getFirstNodeMatchingXPath(xp, modules);
+          if (moduleDependency) {
+            debug('Found ' + mod.artifactId + ' in alfresco-maven-plugin, removing it');
+            domutils.removeParentsChild(modules, moduleDependency);
+          }
+        }
+      }
+    }
+
+    debug('Done removing ' + mod.artifactId + ' from pom.xml, saving changes');
+    yo.fs.write(topPomPath, topPom.getPOMString());
+
+    debug('removeModuleFromAlfrescoMavenPlugin() finished');
   }
 
   function removeModuleFromWarWrapper (mod) {
@@ -434,6 +654,31 @@ function MakeAlfrescoModuleManager (yo) {
       }
     }
     debug('removeModuleFromTomcatContext() finished');
+  }
+
+  // TODO(bwavell): Add tests for this
+  function removeFromIntegrationTestModule (mod) {
+    debug('removeFromIntegrationTestModule() - Removing %s from integration-tests/pom.xml', mod.artifactId);
+    const itPomPath = yo.destinationPath('integration-tests/pom.xml');
+    const itPom = yo.fs.read(itPomPath);
+    const pom = require('generator-alfresco-common').maven_pom(itPom);
+    const foundModule = pom.findDependency(mod.groupId, mod.artifactId, mod.version, undefined, 'test');
+    if (foundModule) {
+      debug('Found existing dependency for %s:%s:%s, so we will remove it', mod.groupId, mod.artifactId, mod.version);
+      pom.removeDependency(mod.groupId, mod.artifactId, mod.version);
+      yo.fs.write(itPomPath, pom.getPOMString());
+    }
+    if (mod.groupId === '${project.groupId}' || mod.version === '${project.version}') {
+      const g = yo.projectGroupId || yo.config.get(constants.PROP_PROJECT_GROUP_ID);
+      const v = yo.version || yo.config.get(constants.PROP_PROJECT_VERSION);
+      const foundAltModule = pom.findDependency(g, mod.artifactId, v, undefined, 'test');
+      if (foundAltModule) {
+        debug('Found existing concrete dependency %s:%s:%s, so we will remove it', g, mod.artifactId, v);
+        pom.removeDependency(g, mod.artifactId, v);
+        yo.fs.write(itPomPath, pom.getPOMString());
+      }
+    }
+    debug('removeFromIntegrationTestModule() finished');
   }
 
   return new AlfrescoModuleManager();
