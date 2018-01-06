@@ -34,20 +34,19 @@ depend on if you plan to extend the generator or if you simply want to use it.
 
 > _Checkout the next section for what to do if you plan to work on the generator code._
 
-We have not pushed a version of the Alfresco generator to npmjs.org yet, so if you don't
-plan to make changes to the generator itself, run:
+You can install the latest published release of the generator from npm with this command:
 
 ```bash
-npm install -g binduwavell/generator-alfresco
+npm install -g generator-alfresco
 ```
 
 WARNING: you will likely need to update this occasionally as the project is under active
 development.
 
 Now, assuming you have all of the pre-requisites installed (including appropriate
-versions of node, npm, yeoman, this generator, Java and Maven.) You can create an 
-Alfresco extension project using this generator. First of all you should create a 
-new folder for your project and change into the new folder. Then run the following 
+versions of node, npm, yeoman, this generator, Java and Maven.) You can create an
+Alfresco extension project using this generator. First of all you should create a
+new folder for your project and change into the new folder. Then run the following
 command:
 
 ```bash
@@ -65,8 +64,6 @@ Here is an example of what the top level folder structure might look like:
 
 ```
 TODO.md
-amps
-amps_share
 customizations
 debug.sh
 modules
@@ -82,11 +79,11 @@ solr-config
 source_templates
 ```
 
-Notice that we provide a `run-without-springloaded.sh` in addition to the default
-`run.sh`. The generator automatically makes these executable. There are some other
+Notice that for SDK 2 we provide a `run-without-springloaded.sh` in addition to the
+default `run.sh`. The generator automatically makes these executable. There are some other
 helpful scripts in the `scripts` folder.
 
-As part of the generation process, we actually copy the `repo-amp` and `share-amp` 
+As part of the generation process, we actually copy the `repo-amp` and `share-amp`
 folders to `source_templates`. That way we have SDK specific instances of these
 folder structures that we can use later on when you want to add **Source AMPS**
 to your project.
@@ -366,7 +363,7 @@ npm install
 npm link # may need sudo
 ```
 
-This is essentially the same as the `npm install -g binduwavell/generator-alfresco`
+This is essentially the same as the `npm install -g generator-alfresco`
 command above, but you'll have a project directory where you can tweak things, and
 push updates back to GitHub.
 
