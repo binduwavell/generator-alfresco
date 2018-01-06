@@ -16,7 +16,10 @@ env:
 cache:
   directories:
   - $HOME/.m2
-  - node_modules
+
+# Not caching node_modules due to issue with node_modules/npm/node_modules/dezalgo
+# ENOENT for syscall rename...
+# - node_modules
 
 install:
   - nvm install $NODE_VERSION
