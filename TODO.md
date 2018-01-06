@@ -2,9 +2,6 @@ TODO
 ====
 
 - [ ] Support SDK 3.x and up
-  - [ ] handle new integration-test module
-    - [ ] it should depend on source repo modules
-    - [ ] need to handle adding and removing source repo modules
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] Update common amps (amp-add-common)
@@ -17,6 +14,9 @@ TODO
       - [ ] include in the module wrapper generator
     - [ ] jar-add-common (Deferred)
       - [ ] include in the module wrapper generator
+  - [x] handle new integration-test module
+    - [x] it should depend on source repo modules
+    - [x] need to handle adding and removing source repo modules
   - [x] new sub-generators
     - [x] module-add-source
       - [x] can handle SDK2 and SDK3 projects
