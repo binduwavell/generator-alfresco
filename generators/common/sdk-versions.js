@@ -25,6 +25,7 @@ module.exports = {
     defaultModuleRegistry: defaultJarModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: removeDefaultIntegrationTests,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples3x,
     removeShareSamples: removeShareSamples3x,
@@ -52,6 +53,7 @@ module.exports = {
     defaultModuleRegistry: defaultAmpModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: undefined,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
     removeShareSamples: removeShareSamples2x,
@@ -79,6 +81,7 @@ module.exports = {
     defaultModuleRegistry: defaultAmpModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: undefined,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
     removeShareSamples: removeShareSamples2x,
@@ -106,6 +109,7 @@ module.exports = {
     defaultModuleRegistry: defaultAmpModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: undefined,
     removeDefaultModules: removeDefaultModules,
     removeRepoSamples: removeRepoSamples2x,
     removeShareSamples: removeShareSamples2x,
@@ -133,6 +137,7 @@ module.exports = {
     defaultModuleRegistry: defaultAmpModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: undefined,
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
@@ -160,6 +165,7 @@ module.exports = {
     defaultModuleRegistry: defaultAmpModuleRegistry,
     defaultSourceModule: defaultSourceModule,
     registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: undefined,
     removeDefaultModules: removeDefaultModules,
     sdkMajorVersion: sdkMajorVersion,
     sdkVersionPrefix: sdkVersionPrefix,
@@ -497,6 +503,25 @@ function setupNewShareModule (pathPrefix) {
     }
   }
   debug('setupNewShareAmp() finished');
+}
+
+function removeDefaultIntegrationTests (projectPackage) {
+  this.out.info('Removing default integration-tests: ' + projectPackage);
+  const projectPackagePath = projectPackage.replace(/\./g, '/');
+  [
+    `integration-tests/src/test/java/${projectPackagePath}/platformsample/CustomContentModelIT.java`,
+    `integration-tests/src/test/java/${projectPackagePath}/platformsample/DemoComponentIT.java`,
+    `integration-tests/src/test/java/${projectPackagePath}/platformsample/HelloWorldWebScriptIT.java`,
+  ].forEach(file => {
+    const destinationFile = this.destinationPath(file);
+    if (memFsUtils.existsInMemory(this.fs, destinationFile) || fs.existsSync(file)) {
+      this.out.info('Renaming integration-test file to *.sample: ' + file);
+      this.fs.move(destinationFile, destinationFile + '.sample');
+    } else {
+      debug('Unable to locate ' + file + ' in order to rename with .sample');
+    }
+  });
+  debug('removeDefaultIntegrationTests() finished');
 }
 
 function removeDefaultModules () {
