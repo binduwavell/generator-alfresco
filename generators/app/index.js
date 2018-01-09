@@ -697,6 +697,9 @@ class AlfrescoGenerator extends Generator {
     if (this.bail) return;
     if (this.removeDefaultSourceAmps && this.sdk.removeDefaultModules) {
       this.sdk.removeDefaultModules.call(this);
+      if (this.sdk.removeDefaultIntegrationTests) {
+        this.sdk.removeDefaultIntegrationTests.call(this, this.projectPackage);
+      }
     }
   }
 
@@ -712,6 +715,9 @@ class AlfrescoGenerator extends Generator {
           this.sdk.sdkVersionPrefix.call(this) + moduleSuffix,
           this.projectPackage
         );
+        if (this.sdk.removeDefaultIntegrationTests) {
+          this.sdk.removeDefaultIntegrationTests.call(this, this.projectPackage);
+        }
       }
       if (this.sdk.removeShareSamples) {
         let moduleSuffix = 'share-amp'; // SDK2
