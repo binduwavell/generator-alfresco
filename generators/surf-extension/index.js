@@ -73,6 +73,7 @@ class SurfExtensionSubGenerator extends SourceSelectingSubGenerator {
       {
         type: 'input',
         name: 'autoDeploy',
+        default: '1.0',
         option: { name: 'auto-deploy', config: { alias: 'a', desc: 'Auto Deploy', type: String } },
         when: () => {
           this.out.docs(
