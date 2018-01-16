@@ -80,7 +80,7 @@ class JSRootObjectSubGenerator extends SourceSelectingSubGenerator {
       const genRoot = `${configBase}/alfresco/module/${targetModuleBase}/context/generated`;
 
       // get information from prompts
-      const rootObjectId = _.lowerCase(props.root);
+      const rootObjectId = _.toLower(_.camelCase(props.root));
       const className = _.upperFirst(_.camelCase(props.class));
       let packageName = props.package;
       if (!packageName.endsWith('.jsroot')) {

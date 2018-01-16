@@ -5,17 +5,17 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:jsroot-3-0-1', function () {
+describe('generator-alfresco:jsroot-2-1-1', function () {
   this.timeout(60000);
   const osTempDir = path.join(os.tmpdir(), 'temp-test');
 
-  describe('with simple 3.0.1 project', function () {
+  describe('with simple 2.1.1 project', function () {
     before(function () {
       return helpers.run(path.join(__dirname, '../generators/app'))
         .inDir(osTempDir)
         .withOptions({'skip-install': true})
         .withPrompts({
-          sdkVersion: '3.0.1',
+          sdkVersion: '2.1.1',
           projectArtifactId: 'temp-test',
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
@@ -24,8 +24,8 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
     });
 
     describe('when creating class file with two words', function () {
-      const jsRootJavaFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/TwoWords.java');
-      const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-hello-context.xml');
+      const jsRootJavaFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/TwoWords.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-hello-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/jsroot'))
@@ -56,15 +56,15 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="temp-test-platform-jar.hello"/],
+          [contextFile, /<bean id="repo-amp.hello"/],
           [contextFile, /class="org.alfresco.jsroot.TwoWords/],
         ]);
       });
     });
 
     describe('when creating root object with CamelCase name', function () {
-      const jsRootJavaFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/CamelCase.java');
-      const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-camelroot-context.xml');
+      const jsRootJavaFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/CamelCase.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-camelroot-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/jsroot'))
@@ -95,15 +95,15 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="temp-test-platform-jar.camelroot"/],
+          [contextFile, /<bean id="repo-amp.camelroot"/],
           [contextFile, /class="org.alfresco.jsroot.CamelCase/],
         ]);
       });
     });
 
     describe('when creating root object with two words', function () {
-      const jsRootJavaFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/HelloWorld.java');
-      const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-twowords-context.xml');
+      const jsRootJavaFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/HelloWorld.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-twowords-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/jsroot'))
@@ -134,15 +134,15 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="temp-test-platform-jar.twowords"/],
+          [contextFile, /<bean id="repo-amp.twowords"/],
           [contextFile, /class="org.alfresco.jsroot.HelloWorld/],
         ]);
       });
     });
 
     describe('when creating root object using package that does not end with .jsroot', function () {
-      const jsRootJavaFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/Test.java');
-      const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-testroot-context.xml');
+      const jsRootJavaFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/Test.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-testroot-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/jsroot'))
@@ -173,15 +173,15 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="temp-test-platform-jar.testroot"/],
+          [contextFile, /<bean id="repo-amp.testroot"/],
           [contextFile, /class="org.alfresco.jsroot.Test/],
         ]);
       });
     });
 
     describe('when creating root objects with prompts', function () {
-      const jsRootJavaFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/Prompts.java');
-      const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-prompt-context.xml');
+      const jsRootJavaFile = path.join(osTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/Prompts.java');
+      const contextFile = path.join(osTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-prompt-context.xml');
 
       before(function () {
         return helpers.run(path.join(__dirname, '../generators/jsroot'))
@@ -212,7 +212,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
 
       it('has valid content in context file', function () {
         assert.fileContent([
-          [contextFile, /<bean id="temp-test-platform-jar.prompt"/],
+          [contextFile, /<bean id="repo-amp.prompt"/],
           [contextFile, /class="org.alfresco.jsroot.Prompts/],
         ]);
       });
@@ -235,8 +235,8 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
     });
 
     it('does not create javascript root object files', function () {
-      const jsRootJavaFile = path.join(noProjectTempDir, 'temp-test-platform-jar/src/main/java/org/alfresco/jsroot/NoProject.java');
-      const contextFile = path.join(noProjectTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-noproject-context.xml');
+      const jsRootJavaFile = path.join(noProjectTempDir, 'repo-amp/src/main/java/org/alfresco/jsroot/NoProject.java');
+      const contextFile = path.join(noProjectTempDir, 'repo-amp/src/main/amp/config/alfresco/module/repo-amp/context/generated/jsroot-object-noproject-context.xml');
       assert.noFile([
         jsRootJavaFile,
         contextFile,
