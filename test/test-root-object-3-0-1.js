@@ -28,7 +28,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
       const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-hello-context.xml');
 
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/jsroot'))
+        return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
           .cd(osTempDir)
           .withOptions({
             'root': 'hello',
@@ -67,7 +67,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
       const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-camelroot-context.xml');
 
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/jsroot'))
+        return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
           .cd(osTempDir)
           .withOptions({
             'root': 'CamelRoot',
@@ -106,7 +106,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
       const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-twowords-context.xml');
 
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/jsroot'))
+        return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
           .cd(osTempDir)
           .withOptions({
             'root': 'Two Words',
@@ -145,7 +145,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
       const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-testroot-context.xml');
 
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/jsroot'))
+        return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
           .cd(osTempDir)
           .withOptions({
             'root': 'testroot',
@@ -184,7 +184,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
       const contextFile = path.join(osTempDir, 'temp-test-platform-jar/src/main/resources/alfresco/module/temp-test-platform-jar/context/generated/jsroot-object-prompt-context.xml');
 
       before(function () {
-        return helpers.run(path.join(__dirname, '../generators/jsroot'))
+        return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
           .cd(osTempDir)
           .withPrompts({
             'root': 'prompt',
@@ -223,7 +223,7 @@ describe('generator-alfresco:jsroot-3-0-1', function () {
     const noProjectTempDir = path.join(os.tmpdir(), 'no-project');
 
     before(function () {
-      return helpers.run(path.join(__dirname, '../generators/jsroot'))
+      return helpers.run(path.join(__dirname, '../generators/jsrootobject'))
         .inDir(noProjectTempDir)
         // generator will create a temp directory and make sure it's empty
         .withOptions({

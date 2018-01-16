@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('lodash');
 const chalk = require('chalk');
-const debug = require('debug')('generator-alfresco:jsroot');
+const debug = require('debug')('generator-alfresco:jsrootobject');
 const path = require('path');
-const trace = require('debug')('generator-alfresco-trace:jsroot');
+const trace = require('debug')('generator-alfresco-trace:jsrootobject');
 const constants = require('generator-alfresco-common').constants;
 const filters = require('generator-alfresco-common').prompt_filters;
 const SourceSelectingSubGenerator = require('../source-selecting-subgenerator');
