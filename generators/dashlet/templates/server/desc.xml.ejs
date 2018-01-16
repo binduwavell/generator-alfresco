@@ -1,0 +1,30 @@
+<%
+function optionalAttribute(prop, attrName) {
+  if(prop) {
+    %> <%- attrName %>="<%- prop %>"<%
+  }
+}
+-%>
+<%
+function isEmpty(value) {
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
+}
+-%>
+<webscript<% optionalAttribute(kind, 'kind') %>>
+  <shortname><%- shortname %></shortname>
+  <description><%- description %></description>
+  <% urlTemplates.forEach(function(url) { -%>
+    <url><%- url %></url>
+  <% }) -%>
+  <cache>
+    <never><%- cacheNever %></never>
+    <public><%- cachePublic %></public>
+    <mustrevalidate><%- cacheMustrevalidate %></mustrevalidate>
+  </cache>
+  <family><%- family %></family>
+</webscript>

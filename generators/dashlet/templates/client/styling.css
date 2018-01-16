@@ -1,0 +1,8 @@
+/* Your custom styling to apply to the dashlet goes here */
+.<%- id %> h2{
+  color: green;
+}
+
+.<%- id %> p{
+  color: blue;
+}
