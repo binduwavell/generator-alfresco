@@ -1,0 +1,64 @@
+<extension>
+    <modules>
+        <module>
+            <id><%-moduleId%></id>
+            <description><%-moduleDescription%></description>
+            <version><%-moduleVersion%></version>
+            <auto-deploy><%-autoDeploy%></auto-deploy>
+            <!-- Example evaluator that limis this module to the test site
+            http://docs.alfresco.com/5.1/concepts/dev-extensions-share-module-dynamic-configuration.html
+            <evaluator type="site.module.evaluator">
+               <params>
+                  <sites>test</sites>
+                  <sitePresets>.*</sitePresets>
+               </params>
+            </evaluator>
+            -->
+            <components>
+                <!-- Example component that disables the add external users feature in sites.
+                <component>
+                    <region-id>addemail</region-id>
+                    <source-id>invite</source-id>
+                    <scope>template</scope>
+                    <sub-components>
+                        <sub-component id="default">
+                            <evaluations>
+                                <evaluation id="disable-add-external-users">
+                                    <render>false</render>
+                                </evaluation>
+                            </evaluations>
+                        </sub-component>
+                    </sub-components>
+                </component>
+                -->
+            </components>
+            <configurations>
+                <!-- Example document library configuration
+                <config evaluator="string-compare" condition="DocumentLibrary">
+                    <create-content>
+                         <content id="plain-text" mimetype="text/plain" label="Create an Acme Document" itemid="acme:doc"/>
+                    </create-content>
+                </config>
+                -->
+            </configurations>
+            <customizations>
+                <!-- Example customization that overrides files in the target with those in the source
+                <customization>
+                    <targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
+                    <sourcePackageRoot>org.alfresco.components.documentlibrary.customization</sourcePackageRoot>
+                </customization>
+                -->
+                <!-- Example customization to add dependencies
+                http://docs.alfresco.com/5.1/concepts/dev-extensions-share-module-dependencies.html
+                <customization>
+                    <targetPackageRoot>org.acme</targetPackageRoot>
+                    <dependencies>
+                        <css>/res/demo/dependencies/styles.css</css>
+                        <js>/res/demo/dependencies/script.js</js>
+                    </dependencies>
+                </customization>
+                -->
+            </customizations>
+        </module>
+    </modules>
+</extension>   
