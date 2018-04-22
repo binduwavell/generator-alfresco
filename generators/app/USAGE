@@ -10,5 +10,6 @@ Sub-generators:
 
     yo alfresco:action -- scaffolds a repository action into an existing source module
     yo alfresco:behavior -- scaffolds a class for behaviors into an existing source module
+    yo alfresco:jsrootobject -- scaffolds a Javascript root object into an existing source module
     yo alfresco:model -- scaffolds a model XML file into an existing source module
     yo alfresco:webscript -- scaffolds webscripts into an existing source module
