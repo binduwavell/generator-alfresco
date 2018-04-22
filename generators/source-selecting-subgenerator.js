@@ -54,7 +54,7 @@ class SourceSelectingSubGenearator extends SubGenerator {
           }
           // Error out if there are no matching modules
           if (this.modules.length === 0) {
-            this.out.error('No source modules available matching your criteria. Try creating a source module with ' + chalk.bold.green('"yo alfresco:amp"') + ' before using this sub-generator.');
+            this.out.error('No source modules available matching your criteria. Try creating a source module with ' + chalk.bold.green('"yo alfresco:module"') + ' before using this sub-generator.');
             this.targetModule = true;
             this.bail = true;
             return false;
