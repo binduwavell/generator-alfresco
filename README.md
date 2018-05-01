@@ -348,7 +348,7 @@ multiple webscripts with one pass through this sub-generator.
 yo alfresco:jsrootobject
 ```
 
-You'll be prompted for some basic information including which repo **Source AMP** you 
+You'll be prompted for some basic information including which repo **Source Module** you 
 want to create the Javascript root object in. We'll create a class with a sample method
 `callMe` that can be called from the Javascript root object. We'll also generate a
 context file that registers a bean for this class and passes in the minimal items 
