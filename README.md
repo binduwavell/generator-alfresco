@@ -104,10 +104,10 @@ yo alfresco:action --help
 yo alfresco:amp --help
 yo alfresco:behavior --help
 yo alfresco:jar --help
+yo alfresco:jsrootobject --help
 yo alfresco:model --help
 yo alfresco:module --help
 yo alfresco:webscript --help
-yo alfresco:jsrootobject --help
 ```
 
 Will print out information about cli arguments and options.
