@@ -35,18 +35,6 @@ class JSRootObjectSubGenerator extends SourceSelectingSubGenerator {
       },
       {
         type: 'input',
-        name: 'class',
-        option: { name: 'class', config: { alias: 'c', desc: 'Class name for Javascript Root Object', type: String } },
-        when: () => {
-          this.out.docs('The class name will be used to create the java class for the root object.');
-          return true;
-        },
-        message: 'What root object ' + chalk.yellow('class name') + ' should we use?',
-        commonFilter: filters.requiredTextFilter,
-        valueRequired: true,
-      },
-      {
-        type: 'input',
         name: 'package',
         option: { name: 'package', config: { alias: 'p', desc: 'Java package for root object class', type: String } },
         when: () => {
@@ -81,7 +69,7 @@ class JSRootObjectSubGenerator extends SourceSelectingSubGenerator {
 
       // get information from prompts
       const rootObjectId = _.toLower(_.camelCase(props.root));
-      const className = _.upperFirst(_.camelCase(props.class));
+      const className = _.upperFirst(_.camelCase(props.root));
       let packageName = props.package;
       if (!packageName.endsWith('.jsroot')) {
         packageName += '.jsroot';
