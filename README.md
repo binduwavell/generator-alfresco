@@ -296,6 +296,18 @@ Here is a sample command line you can use:
 yo alfresco:jar-add-remote
 ```
 -->
+#### alfresco:jsrootobject
+
+```bash
+yo alfresco:jsrootobject
+```
+
+You'll be prompted for some basic information including which repo **Source Module** you 
+want to create the Javascript root object in. We'll create a class with a sample method
+`callMe` that can be called from the Javascript root object. We'll also generate a
+context file that registers a bean for this class and passes in the minimal items 
+you'll need to create the Javascript root object code.
+
 #### alfresco:model
 
 ```bash
@@ -341,18 +353,6 @@ yo alfresco:webscript
 This will ask you a bunch of questions and then produce appropriate repo/share files
 for your WebScript. If you choose multiple HTTP methods you can in fact scaffold
 multiple webscripts with one pass through this sub-generator.
-
-#### alfresco:jsrootobject
-
-```bash
-yo alfresco:jsrootobject
-```
-
-You'll be prompted for some basic information including which repo **Source Module** you 
-want to create the Javascript root object in. We'll create a class with a sample method
-`callMe` that can be called from the Javascript root object. We'll also generate a
-context file that registers a bean for this class and passes in the minimal items 
-you'll need to create the Javascript root object code.
 
 #### future sub-generators
 
