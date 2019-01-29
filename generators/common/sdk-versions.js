@@ -9,6 +9,35 @@ const domutils = require('generator-alfresco-common').xml_dom_utils;
 const memFsUtils = require('generator-alfresco-common').mem_fs_utils;
 
 module.exports = {
+  '4.0.0-beta-1': {
+    archetypeGroupId: 'org.alfresco.maven.archetype',
+    archetypeArtifactId: 'alfresco-allinone-archetype',
+    archetypeVersion: '4.0.0-beta-1',
+    promptForProjectPackage: true,
+    providedCommunityVersion: '6.0.7-ga / 6.0.b',
+    providedEnterpriseVersion: '6.0.0.2',
+    providedEnterpriseShareVersion: '6.0',
+    supportedJavaVersions: '^1.8.0 || ^11.0',
+    supportedMavenVersions: '^3.3.0',
+    supportedRepositoryVersions: '6.0.b+ and 6.0.0+',
+    useArchetypeTemplate: true,
+    defaultModuleRegistry: defaultJarModuleRegistry,
+    defaultSourceModule: defaultSourceModule,
+    registerDefaultModules: registerDefaultModules,
+    removeDefaultIntegrationTests: removeDefaultIntegrationTests,
+    removeDefaultModules: removeDefaultModules,
+    removeRepoSamples: removeRepoSamples3x,
+    removeShareSamples: removeShareSamples3x,
+    sdkMajorVersion: sdkMajorVersion,
+    sdkVersionPrefix: sdkVersionPrefix,
+    setupNewRepoModule: setupNewRepoModule,
+    setupNewShareModule: setupNewShareModule,
+    targetFolderName: targetFolderName,
+    usesEnhancedAlfrescoMavenPlugin: usesEnhancedAlfrescoMavenPlugin,
+    beforeExit: undefined,
+    repoConfigBase: 'src/main/resources',
+    shareConfigBase: 'src/main/resources',
+  },
   '3.1.0': {
     archetypeGroupId: 'org.alfresco.maven.archetype',
     archetypeArtifactId: 'alfresco-allinone-archetype',
@@ -260,7 +289,7 @@ function sdkMajorVersion (version) {
 function sdkVersionPrefix () {
   debug('checking prefix for archetype version: %s', this.config.get('archetypeVersion'));
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
+    if (semver.gte(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '2.2.0-SNAPSHOT')) {
       debug('setting prefix for artifactId');
       return this.config.get(constants.PROP_PROJECT_ARTIFACT_ID) + '-';
     }
@@ -278,7 +307,7 @@ function sdkVersionPrefix () {
  */
 function targetFolderName (basename) {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')) {
+    if (semver.gte(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '2.2.0-SNAPSHOT')) {
       return 'amp';
     }
   }
@@ -660,7 +689,7 @@ function removeShareSamples3x (pathPrefix, projectPackage, artifactIdPrefix) {
 
   let slingshotContextFile = 'custom-slingshot-application-context.xml';
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.1.1')) {
+    if (semver.gte(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '2.1.1')) {
       slingshotContextFile = `${basename}-slingshot-application-context.xml`;
     }
   }
@@ -766,7 +795,7 @@ function removeShareSamples2x (pathPrefix, projectPackage, artifactIdPrefix) {
 
   let slingshotContextFile = 'custom-slingshot-application-context.xml';
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.1.1')) {
+    if (semver.gte(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '2.1.1')) {
       const versionPrefix = sdkVersionPrefix.call(this);
       slingshotContextFile = versionPrefix + 'share-amp-slingshot-application-context.xml';
     }
@@ -805,9 +834,11 @@ function removeShareSamples2x (pathPrefix, projectPackage, artifactIdPrefix) {
 function usesEnhancedAlfrescoMavenPlugin (version) {
   const archetypeVersion = version || _findArchetypeVersion.call(this);
   if (archetypeVersion) {
-    if (semver.satisfies(semver.clean(archetypeVersion), '>=3.0.0-SNAPSHOT')) {
+    if (semver.gte(semver.clean(archetypeVersion), '3.0.0-SNAPSHOT')) {
+      debug('SDK VERSION USES ENHANCED PLUGIN: ' + archetypeVersion);
       return true;
     }
+    debug('SDK VERSION IS OLD: ' + archetypeVersion);
     return false;
   }
   throw TypeError('Unable to locate SDK version to evaluate.');
@@ -826,8 +857,8 @@ function usesEnhancedAlfrescoMavenPlugin (version) {
  */
 function beforeExit () {
   if (this.config.get(constants.PROP_ARCHETYPE_VERSION)) {
-    if (semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '>=2.2.0-SNAPSHOT')
-      && semver.satisfies(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '<3.0.0-SNAPSHOT')) {
+    if (semver.gte(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '2.2.0-SNAPSHOT')
+      && semver.lt(semver.clean(this.config.get(constants.PROP_ARCHETYPE_VERSION)), '3.0.0-SNAPSHOT')) {
       fs.writeFileSync(this.destinationPath(constants.FILE_RUN_SH), [
         '#!/bin/bash',
         'echo WARNING: This version of the SDK does not support spring-loaded.',

@@ -1,7 +1,16 @@
 TODO
 ====
 
-- [ ] Support SDK 3.x and up
+- [ ] Support SDK 4.x
+  - [ ] check if scripts need updating
+  - [ ] check what is needed for adding debug support
+  - [ ] add integration tests when generating code
+  - [ ] Update common amps (amp-add-common)
+    - [ ] update to latest amps
+    - [ ] validate common amps with latest 3.x SDK with community & enterprise
+    - [ ] update documentation based on preceding
+  - [ ] possibly add run-with-jrebel and/or run-with-hotswap-agent
+- [ ] Support SDK 3.x
   - [ ] check if scripts need updating
   - [ ] add integration tests when generating code
   - [ ] Update common amps (amp-add-common)

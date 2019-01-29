@@ -74,4 +74,8 @@ For Enterprise Use
 <%_ if (isSDK3) { _%>
 - [ ] Copy your license file to src/test/license
 <%_ } _%>
+<%_ if (isSDK4) { _%>
+- [ ] Make sure you have logged into quay.io with credentials that can access enterprise images
+- [ ] Copy your license file to <%= projectArtifactId %>-platform-docker/src/main/docker/license
+<%_ } _%>
 <%_ } _%>

@@ -45,8 +45,8 @@ function MakeAlfrescoModuleManager (yo) {
             this.ops.push(() => { addFailsafeConfigToRunner(mod) });
           }
         }
-        // SDK3 has a "packaged" hierarchy for share under META-INF/resources
-        if (yo.sdkMajorVersion === 3) {
+        // SDK3+ has a "packaged" hierarchy for share under META-INF/resources
+        if (yo.sdkMajorVersion >= 3) {
           this.ops.push(() => { renamePathElementsForResources(mod) });
           if (mod.war === constants.WAR_TYPE_REPO) {
             this.ops.push(() => { addToIntegrationTestModule(mod) });
@@ -55,7 +55,10 @@ function MakeAlfrescoModuleManager (yo) {
         this.ops.push(() => { updateProjectPom(mod) });
       }
 
-      if (yo.usingEnhancedAlfrescoMavenPlugin) {
+      if (yo.sdkMajorVersion === 4) {
+        // !!!! DO NOT SUBMIT (bwavell) !!!!
+        this.ops.push(() => { addModuleToDocker(mod) });
+      } else if (yo.sdkMajorVersion === 3) {
         this.ops.push(() => { addModuleToAlfrescoMavenPlugin(mod) });
       } else {
         this.ops.push(() => { addModuleToWarWrapper(mod) });
@@ -73,7 +76,9 @@ function MakeAlfrescoModuleManager (yo) {
         if (mod.location === 'source') {
           this.ops.push(() => { removeModuleFiles(mod) });
           this.ops.push(() => { removeModuleFromParentPom(mod) });
-          if (yo.usingEnhancedAlfrescoMavenPlugin) {
+          if (yo.sdkMajorVersion === 4) {
+            this.ops.push(() => { removeModuleFromDocker(mod) });
+          } else if (yo.sdkMajorVersion === 3) {
             this.ops.push(() => { removeModuleFromAlfrescoMavenPlugin(mod) });
           } else {
             this.ops.push(() => { removeModuleFromWarWrapper(mod) });
@@ -82,7 +87,7 @@ function MakeAlfrescoModuleManager (yo) {
             }
             this.ops.push(() => { removeModuleFromTomcatContext(mod) });
           }
-          if (yo.sdkMajorVersion === 3 && mod.war === constants.WAR_TYPE_REPO) {
+          if (yo.sdkMajorVersion >= 3 && mod.war === constants.WAR_TYPE_REPO) {
             this.ops.push(() => { removeFromIntegrationTestModule(mod) });
           }
         }
@@ -469,6 +474,71 @@ function MakeAlfrescoModuleManager (yo) {
     debug('addModuleToAlfrescoMavenPlugin() finished');
   }
 
+  function addModuleToDocker (mod) {
+    yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' docker pom.');
+
+    /*
+    const topPomPath = yo.destinationPath('pom.xml');
+    const topPomStr = yo.fs.read(topPomPath);
+    const topPom = require('generator-alfresco-common').maven_pom(topPomStr);
+
+    if (mod.location === constants.LOCATION_LOCAL) {
+      debug('Adding local ' + mod.artifactId + ' to maven-install-plugin');
+      let installPlugin = topPom.findPlugin('org.apache.maven.plugins', 'maven-install-plugin');
+      if (!installPlugin) {
+        installPlugin = topPom.addPlugin('org.apache.maven.plugins', 'maven-install-plugin', '2.5.2');
+        domutils.setOrClearChildText(installPlugin, 'pom', 'inherited', 'false');
+      }
+      const executions = domutils.getOrCreateChild(installPlugin, 'pom', 'executions');
+      const id = 'install-' + mod.artifactId;
+      const xp = `pom:execution[pom:id = '${id}']`;
+      debug('Searching for execution with xpath: ' + xp);
+      let execution = domutils.getFirstNodeMatchingXPath(xp, executions);
+      if (!execution) {
+        debug('execution not found, so creating it');
+        execution = domutils.createChild(executions, 'pom', 'execution');
+        domutils.setOrClearChildText(execution, 'pom', 'id', id);
+      }
+      domutils.setOrClearChildText(execution, 'pom', 'phase', 'clean');
+      let configuration = domutils.getOrCreateChild(execution, 'pom', 'configuration');
+      domutils.setOrClearChildText(configuration, 'pom', 'file', '${basedir}/' + mod.path);
+      domutils.setOrClearChildText(configuration, 'pom', 'repositoryLayout', 'default');
+      domutils.setOrClearChildText(configuration, 'pom', 'groupId', mod.groupId);
+      domutils.setOrClearChildText(configuration, 'pom', 'artifactId', mod.artifactId);
+      domutils.setOrClearChildText(configuration, 'pom', 'version', mod.version);
+      domutils.setOrClearChildText(configuration, 'pom', 'packaging', mod.packaging);
+      domutils.setOrClearChildText(configuration, 'pom', 'generatePom', 'true');
+      let goals = domutils.getOrCreateChild(execution, 'pom', 'goals');
+      domutils.setOrClearChildText(goals, 'pom', 'goal', 'install-file');
+    }
+
+    debug('Adding ' + mod.artifactId + ' to alfresco-maven-plugin');
+    let alfrescoPlugin = topPom.findPlugin('org.alfresco.maven.plugin', 'alfresco-maven-plugin');
+    const configuration = domutils.getOrCreateChild(alfrescoPlugin, 'pom', 'configuration');
+    const modulesElement = (mod.war === constants.WAR_TYPE_REPO ? 'platformModules' : 'shareModules');
+    debug(`Using ${modulesElement} for ${mod.war} module`);
+    const modules = domutils.getOrCreateChild(configuration, 'pom', modulesElement);
+    const xp = `pom:moduleDependency[pom:groupId = '${mod.groupId}' and pom:artifactId = '${mod.artifactId}']`;
+    debug('Searching for moduleDependency with xpath: ' + xp);
+    let moduleDependency = domutils.getFirstNodeMatchingXPath(xp, modules);
+    if (moduleDependency) {
+      debug(`Found moduleDependency for ${mod.groupId}:${mod.artifactId} in alfresco-maven-plugin`);
+    } else {
+      debug('moduleDependency not found, so creating it');
+      moduleDependency = domutils.createChild(modules, 'pom', 'moduleDependency');
+    }
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'groupId', mod.groupId);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'artifactId', mod.artifactId);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'version', mod.version);
+    domutils.setOrClearChildText(moduleDependency, 'pom', 'type', mod.packaging);
+
+    debug('Done adding ' + mod.artifactId + ' to pom.xml, saving changes');
+    yo.fs.write(topPomPath, topPom.getPOMString());
+    */
+
+    debug('addModuleToDocker() finished');
+  }
+
   function addModuleToWarWrapper (mod) {
     yo.out.info('Adding ' + mod.artifactId + ' module to ' + mod.war + ' war wrapper');
     const wrapperPomPath = yo.destinationPath(mod.war + '/pom.xml');
@@ -591,6 +661,57 @@ function MakeAlfrescoModuleManager (yo) {
     yo.fs.write(topPomPath, topPom.getPOMString());
 
     debug('removeModuleFromAlfrescoMavenPlugin() finished');
+  }
+
+  function removeModuleFromDocker (mod) {
+    /*
+    const topPomPath = yo.destinationPath('pom.xml');
+    const topPomStr = yo.fs.read(topPomPath);
+    const topPom = require('generator-alfresco-common').maven_pom(topPomStr);
+
+    if (mod.location === constants.LOCATION_LOCAL) {
+      debug('Removing local ' + mod.artifactId + ' from maven-install-plugin');
+      const installPlugin = topPom.findPlugin('org.apache.maven.plugins', 'maven-install-plugin');
+      if (installPlugin) {
+        const executions = domutils.getChild(installPlugin, 'pom', 'executions');
+        if (executions) {
+          const id = 'install-' + mod.artifactId;
+          const xp = `pom:execution[pom:id = '${id}']`;
+          debug('Searching for execution with xpath: ' + xp);
+          const execution = domutils.getFirstNodeMatchingXPath(xp, executions);
+          if (execution) {
+            debug('Found ' + mod.artifactId + ' in maven-install-plugin, removing it');
+            domutils.removeParentsChild(executions, execution);
+          }
+        }
+      }
+    }
+
+    debug('Removing ' + mod.artifactId + ' moduleDependency from alfresco-maven-plugin');
+    const alfrescoPlugin = topPom.findPlugin('org.alfresco.maven.plugin', 'alfresco-maven-plugin');
+    if (alfrescoPlugin) {
+      const configuration = domutils.getChild(alfrescoPlugin, 'pom', 'configuration');
+      if (configuration) {
+        const modulesElement = (mod.war === constants.WAR_TYPE_REPO ? 'platformModules' : 'shareModules');
+        debug(`Using ${modulesElement} for ${mod.war} module`);
+        const modules = domutils.getChild(configuration, 'pom', modulesElement);
+        if (modules) {
+          const xp = `pom:moduleDependency[pom:groupId = '${mod.groupId}' and pom:artifactId = '${mod.artifactId}']`;
+          debug('Searching for moduleDependency with xpath: ' + xp);
+          let moduleDependency = domutils.getFirstNodeMatchingXPath(xp, modules);
+          if (moduleDependency) {
+            debug('Found ' + mod.artifactId + ' in alfresco-maven-plugin, removing it');
+            domutils.removeParentsChild(modules, moduleDependency);
+          }
+        }
+      }
+    }
+
+    debug('Done removing ' + mod.artifactId + ' from pom.xml, saving changes');
+    yo.fs.write(topPomPath, topPom.getPOMString());
+
+    */
+    debug('removeModuleFromDocker() finished');
   }
 
   function removeModuleFromWarWrapper (mod) {
