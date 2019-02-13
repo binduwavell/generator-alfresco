@@ -388,8 +388,8 @@ If you find a bug or something is confusing, you can review [existing](https://g
 
 Apache 2.0
 
-[travis-image]: https://img.shields.io/travis/binduwavell/generator-alfresco/master.svg
-[travis-url]: https://travis-ci.org/binduwavell/generator-alfresco
+[travis-image]: https://img.shields.io/travis/com/binduwavell/generator-alfresco/master.svg
+[travis-url]: https://travis-ci.com/binduwavell/generator-alfresco
 [daviddm-image]: https://david-dm.org/binduwavell/generator-alfresco.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/binduwavell/generator-alfresco
 [codecov-image]: https://codecov.io/github/binduwavell/generator-alfresco/coverage.svg?branch=master
