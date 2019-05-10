@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+        name="Alfresco All In One (AIO) Archetype."
+        xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <requiredProperties>
+        <requiredProperty key="version">
+            <defaultValue>1.0-SNAPSHOT</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+    <modules>
+        <module id="${rootArtifactId}-platform"
+                name="${rootArtifactId}-platform"
+                dir="__rootArtifactId__-platform">
+            <fileSets>
+                <fileSet filtered="false" packaged="false" encoding="UTF-8">
+                    <directory>src/main/assembly</directory>
+                    <includes>
+                        <include>**</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/main/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="false">
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*-context.xml</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="true" packaged="false">
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>**/*-context.xml</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
+
+        <module id="${rootArtifactId}-share"
+                name="${rootArtifactId}-share"
+                dir="__rootArtifactId__-share">
+            <fileSets>
+                <fileSet filtered="false" packaged="false" encoding="UTF-8">
+                    <directory>src/main/assembly</directory>
+                    <includes>
+                        <include>**</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/main/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false" encoding="UTF-8">
+                    <directory>src/main/resources/alfresco/web-extension</directory>
+                    <includes>
+                        <include>__artifactId__-slingshot-application-context.xml</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="false" encoding="UTF-8">
+                    <directory>src/main/resources/alfresco/web-extension/site-data/extensions</directory>
+                    <includes>
+                        <include>__artifactId__-example-widgets.xml</include>
+                    </includes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="false">
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/__artifactId__-slingshot-application-context.xml</exclude>
+                        <exclude>**/__artifactId__-example-widgets.xml</exclude>
+                    </excludes>
+                </fileSet>
+            </fileSets>
+        </module>
+
+        <module id="${rootArtifactId}-integration-tests"
+                name="${rootArtifactId}-integration-tests"
+                dir="__rootArtifactId__-integration-tests">
+            <fileSets>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/main/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
+
+        <module id="${rootArtifactId}-platform-docker"
+                name="${rootArtifactId}-platform-docker"
+                dir="__rootArtifactId__-platform-docker">
+            <fileSets>
+                <fileSet encoding="UTF-8" filtered="false">
+                    <directory>src/main/docker</directory>
+                    <includes>
+                        <include>license/**</include>
+                        <include>Dockerfile</include>
+                        <include>disable-webscript-caching-context.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="true">
+                    <directory>src/main/docker</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                    </includes>
+                    <excludes>
+                        <exclude>license/**</exclude>
+                        <exclude>Dockerfile</exclude>
+                        <exclude>disable-webscript-caching-context.xml</exclude>
+                    </excludes>
+                </fileSet>
+            </fileSets>
+        </module>
+
+        <module id="${rootArtifactId}-share-docker"
+                name="${rootArtifactId}-share-docker"
+                dir="__rootArtifactId__-share-docker">
+            <fileSets>
+                <fileSet encoding="UTF-8" filtered="false">
+                    <directory>src/main/docker</directory>
+                    <includes>
+                        <include>Dockerfile</include>
+                        <include>share-config-custom.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="true">
+                    <directory>src/main/docker</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                    </includes>
+                    <excludes>
+                        <exclude>Dockerfile</exclude>
+                        <exclude>share-config-custom.xml</exclude>
+                    </excludes>
+                </fileSet>
+            </fileSets>
+        </module>
+    </modules>
+
+    <fileSets>
+        <fileSet encoding="UTF-8" filtered="true">
+            <directory>docker</directory>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
+        <fileSet encoding="UTF-8" filtered="true">
+            <directory></directory>
+            <includes>
+                <include>.gitignore</include>
+                <include>run.sh</include>
+                <include>run.bat</include>
+                <include>README.md</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</archetype-descriptor>
