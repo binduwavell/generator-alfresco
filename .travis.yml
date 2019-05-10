@@ -7,7 +7,6 @@ dist: trusty
 sudo: false
 
 env:
-  - NODE_VERSION=v12
   - NODE_VERSION=v10
   - NODE_VERSION=v8
   - NODE_VERSION=v6
