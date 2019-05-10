@@ -48,12 +48,12 @@ const PROJECTS = [
     description: 'Monitor Alfresco in QA and production environments.',
     url: 'https://github.com/javamelody/alfresco-javamelody',
     availability: ['Community', 'Enterprise'],
-    sdkVersions: ['2.2.0'],
+    sdkVersions: ['2.2.0', '3.0.1'],
     repo: [
       {
         groupId: 'net.bull.javamelody',
         artifactId: 'alfresco-javamelody-addon',
-        version: '1.62.0',
+        version: '1.70.0',
       },
     ],
     share: [],
@@ -96,18 +96,17 @@ const PROJECTS = [
     share: [],
   },
   {
-    // https://addons.alfresco.com/addons/alfresco-jscript-extensions says com/ent 5.0 & 5.1
-    // SUCCESS with 5.1.e and 5.1.1
+    // https://addons.alfresco.com/addons/alfresco-jscript-extensions is missing new info
     name: 'JScript Extensions',
     description: 'Helpful javascript root object extensions which are helpful in many scenarios. Extensions include: auth, batch, database, downloads, favorites, fileWriter, policies, jobs, permissions, repoAdmin, tenantAdmin, trans and workflowAdmin',
     url: 'https://github.com/jgoldhammer/alfresco-jscript-extensions',
     availability: ['Community', 'Enterprise'],
-    sdkVersions: ['2.2.0'],
+    sdkVersions: ['2.2.0', '3.0.1'],
     repo: [
       {
         groupId: 'de.jgoldhammer',
         artifactId: 'alfresco-jscript-extension',
-        version: '1.3.1',
+        version: '1.7',
       },
     ],
     share: [],
@@ -116,7 +115,29 @@ const PROJECTS = [
     name: 'Order of the Bee - Support Tools',
     description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
     url: 'https://github.com/OrderOfTheBee/ootbee-support-tools',
-    availability: ['Community', 'Enterprise'],
+    availability: ['Community'],
+    sdkVersions: ['2.1.0', '2.1.1', '2.2.0', '3.0.1'],
+    repo: [
+      {
+        groupId: 'org.orderofthebee.support-tools',
+        artifactId: 'support-tools-repo',
+        version: '1.0.0.0',
+      },
+    ],
+    share: [
+      {
+        groupId: 'org.orderofthebee.support-tools',
+        artifactId: 'support-tools-share',
+        version: '1.0.0.0',
+      },
+    ],
+  },
+  {
+    name: 'Order of the Bee - Support Tools',
+    description: 'Aims to bring the functionality provided by the Enterprise-only Alfresco Support Tools addon, to the free and open Community Edition of Alfresco.',
+    url: 'https://github.com/OrderOfTheBee/ootbee-support-tools',
+    availability: ['Enterprise'],
+    sdkVersions: ['2.2.0', '3.0.1'],
     repo: [
       {
         groupId: 'org.orderofthebee.support-tools',
