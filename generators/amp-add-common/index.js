@@ -13,7 +13,7 @@ const PROJECTS = [
     description: 'Alfresco Office Services (AOS) allows you to access Alfresco directly from your Microsoft Office applications.',
     url: 'http://docs.alfresco.com/aos/concepts/aos-intro.html',
     availability: ['Community', 'Enterprise'],
-    sdkVersions: ['2.2.0', '3.0.1'],
+    sdkVersions: ['2.2.0', '3.0.1', '3.1.0'],
     repo: [
       {
         groupId: 'org.alfresco.aos-module',
