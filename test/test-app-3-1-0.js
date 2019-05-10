@@ -6,8 +6,8 @@ const helpers = require('yeoman-test');
 const os = require('os');
 const path = require('path');
 
-describe('generator-alfresco:app-3-0-1', function () {
-  describe('SDK 3.0.1', function () {
+describe('generator-alfresco:app-3-1-0', function () {
+  describe('SDK 3.1.0', function () {
     this.timeout(60000);
 
     before(function () {
@@ -15,7 +15,7 @@ describe('generator-alfresco:app-3-0-1', function () {
         .inDir(path.join(os.tmpdir(), './temp-test'))
         .withOptions({ 'skip-install': true })
         .withPrompts({
-          sdkVersion: '3.0.1',
+          sdkVersion: '3.1.0',
           projectArtifactId: 'test-artifact',
           removeDefaultSourceAmps: false,
           removeDefaultSourceSamples: false,
