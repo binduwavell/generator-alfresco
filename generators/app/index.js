@@ -40,7 +40,7 @@ class AlfrescoGenerator extends Generator {
     this.sdkVersions = require('../common/sdk-versions.js');
     debug('assigning default values');
     this.defaultConfig = {};
-    this.defaultConfig[constants.PROP_SDK_VERSION] = '3.0.1';
+    this.defaultConfig[constants.PROP_SDK_VERSION] = '3.1.0';
     this.defaultConfig[constants.PROP_PROJECT_STRUCTURE] = constants.PROJECT_STRUCTURE_ADVANCED;
     this.defaultConfig[constants.PROP_PROJECT_GROUP_ID] = 'org.alfresco';
     this.defaultConfig[constants.PROP_PROJECT_ARTIFACT_ID] = path.basename(process.cwd());
